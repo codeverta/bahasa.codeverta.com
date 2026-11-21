@@ -1,0 +1,526 @@
+package store
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+	"nihongo-master-backend/internal/database"
+	"nihongo-master-backend/internal/domain"
+	"os"
+	"strings"
+	"time"
+)
+
+// Billing shares the same durable database and process lock as progress.
+func (s *MemoryStore) EnableBillingPersistence() error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.gamificationDB == nil {
+		return fmt.Errorf("billing requires a persistent database")
+	}
+	if err := database.Migrate(s.ormDB, &database.BillingPurchase{}, &database.BillingToken{}, &database.Account{}, &database.DeletedDemo{}, &database.Session{}); err != nil {
+		return err
+	}
+	var purchases []database.BillingPurchase
+	if err := s.ormDB.Find(&purchases).Error; err != nil {
+		return err
+	}
+	for _, record := range purchases {
+		var purchase domain.Purchase
+		if err := json.Unmarshal(record.State, &purchase); err != nil {
+			return err
+		}
+		s.purchases[purchase.Platform+":"+purchase.ID] = purchase
+	}
+	var tokens []database.BillingToken
+	if err := s.ormDB.Find(&tokens).Error; err != nil {
+		return err
+	}
+	for _, record := range tokens {
+		s.billingTokens[record.UserID] = record.Token
+	}
+	var accounts []database.Account
+	if err := s.ormDB.Find(&accounts).Error; err != nil {
+		return err
+	}
+	for _, record := range accounts {
+		var a account
+		if err := json.Unmarshal(record.State, &a); err != nil {
+			return err
+		}
+		s.accounts[a.Email] = a
+		s.profiles[a.ID] = profileForAccount(a)
+	}
+	var deleted int64
+	if err := s.ormDB.Model(&database.DeletedDemo{}).Where("user_id = ?", database.DemoUserID).Count(&deleted).Error; err != nil {
+		return err
+	}
+
+	if deleted > 0 {
+		delete(s.accounts, "demo@nihongomaster.app")
+		delete(s.profiles, database.DemoUserID)
+	}
+	s.billingEnabled = true
+	return nil
+}
+
+func (s *MemoryStore) BillingAccountToken(user string) (string, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if token := s.billingTokens[user]; token != "" {
+		return token, nil
+	}
+	token := uuid.NewString()
+	if s.billingEnabled {
+		if err := s.ormWriter.Create(&database.BillingToken{UserID: user, Token: token}).Error; err != nil {
+			return "", err
+		}
+	}
+	s.billingTokens[user] = token
+	return token, nil
+}
+
+func (s *MemoryStore) entitlementLocked(user string) domain.Entitlement {
+	if user != "" && user == s.playReviewUserID {
+		return domain.Entitlement{Tier: domain.TierPremium}
+	}
+	for _, p := range s.purchases {
+		if p.UserID == user && p.State == "purchased" && time.Since(p.CheckedAt) < 15*time.Minute {
+			return domain.Entitlement{Tier: domain.TierPremium, IsLifetime: true}
+		}
+	}
+	return domain.Entitlement{Tier: domain.TierFree}
+}
+
+func (s *MemoryStore) Purchases(user string) []domain.Purchase {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	result := []domain.Purchase{}
+	for _, p := range s.purchases {
+		if user == "" || p.UserID == user {
+			result = append(result, p)
+		}
+	}
+	return result
+}
+
+func (s *MemoryStore) Purchase(platform, id string) (domain.Purchase, bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	p, ok := s.purchases[platform+":"+id]
+	return p, ok
+}
+
+// ErrPurchaseOwned means the store purchase belongs to another live
+// application account. The returned error is a *PurchaseOwnedError.
+var ErrPurchaseOwned = errors.New("purchase belongs to another account")
+
+// PurchaseOwnedError names the owning account as a masked email
+// ("ab***@gmail.com") so the user knows which account to sign in with.
+type PurchaseOwnedError struct{ Owner string }
+
+func (e *PurchaseOwnedError) Error() string { return ErrPurchaseOwned.Error() }
+
+func (e *PurchaseOwnedError) Is(target error) bool { return target == ErrPurchaseOwned }
+
+// MaskEmail keeps the first two characters of the local part and the domain.
+func MaskEmail(email string) string {
+	at := strings.LastIndex(email, "@")
+	if at <= 0 {
+		return ""
+	}
+	local := []rune(email[:at])
+	if len(local) > 2 {
+		local = local[:2]
+	}
+	return string(local) + "***" + email[at:]
+}
+
+func (s *MemoryStore) ownedErrorLocked(owner string) error {
+	for _, a := range s.accounts {
+		if a.ID == owner {
+			return &PurchaseOwnedError{Owner: MaskEmail(a.Email)}
+		}
+	}
+	return &PurchaseOwnedError{}
+}
+
+// A purchase is bound to one application account. After deletion its store proof
+// can restore to a new account; it cannot silently transfer between live accounts.
+// A Google purchase made outside the app's checkout (a redeemed promo code)
+// carries no account token: the first account that verifies it claims it.
+func (s *MemoryStore) SaveVerifiedPurchase(user string, p domain.Purchase) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.billingTokens[user] == "" {
+		return ErrInvalid
+	}
+	key := p.Platform + ":" + p.ID
+	old, exists := s.purchases[key]
+	if exists && old.UserID != "" && old.UserID != user {
+		return s.ownedErrorLocked(old.UserID)
+	}
+	if !exists && p.AccountToken != "" && p.AccountToken != s.billingTokens[user] {
+		for owner, token := range s.billingTokens {
+			if token == p.AccountToken {
+				return s.ownedErrorLocked(owner)
+			}
+		}
+		// The buying account was deleted before this purchase was ever
+		// verified: restoring it to the signed-in account is allowed.
+	}
+	if !exists && p.AccountToken == "" && p.Platform != "android" {
+		return ErrPremium
+	}
+	if exists && old.AccountToken != p.AccountToken {
+		return ErrPremium
+	}
+	p.UserID = user
+	if s.billingEnabled {
+		raw, err := json.Marshal(p)
+		if err != nil {
+			return err
+		}
+		if err = s.ormWriter.Clauses(clause.OnConflict{DoUpdates: clause.AssignmentColumns([]string{"state", "user_id"})}).Create(&database.BillingPurchase{PurchaseKey: key, UserID: database.OptionalUserID(user), State: raw}).Error; err != nil {
+			return err
+		}
+	}
+	s.purchases[key] = p
+	return nil
+}
+
+func (s *MemoryStore) UpdateVerifiedPurchase(p domain.Purchase) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	key := p.Platform + ":" + p.ID
+	old, ok := s.purchases[key]
+	if !ok {
+		return ErrNotFound
+	}
+	if p.AccountToken != old.AccountToken {
+		return ErrInvalid
+	}
+	p.UserID = old.UserID
+	if s.billingEnabled {
+		raw, err := json.Marshal(p)
+		if err != nil {
+			return err
+		}
+		if err = s.ormWriter.Model(&database.BillingPurchase{}).Where("purchase_key = ?", key).Updates(map[string]any{"state": raw, "user_id": database.OptionalUserID(p.UserID)}).Error; err != nil {
+			return err
+		}
+	}
+	s.purchases[key] = p
+	return nil
+}
+
+// openLearningAccess unlocks every study and exam feature (N3-N1 lessons, all
+// simulations, SSW practice, Anki JLPT decks) for any signed-in account. Guests
+// are still rejected because those endpoints require a session. Set the
+// environment variable NIHONGO_OPEN_ACCESS=false to restore the Lifetime Access
+// gates. Manga, jobs and offline downloads keep their own Lifetime rules.
+var openLearningAccess = !strings.EqualFold(strings.TrimSpace(os.Getenv("NIHONGO_OPEN_ACCESS")), "false")
+
+// OpenLearningAccess reports whether study and exam content is open to every signed-in account.
+func OpenLearningAccess() bool { return openLearningAccess }
+
+// SetOpenLearningAccess switches open study/exam access and returns the previous
+// value. It exists for tests; production code configures it with NIHONGO_OPEN_ACCESS.
+func SetOpenLearningAccess(open bool) bool {
+	previous := openLearningAccess
+	openLearningAccess = open
+	return previous
+}
+
+func PremiumLevel(level string) bool {
+	if openLearningAccess {
+		return false
+	}
+	switch strings.ToUpper(level) {
+	case "N3", "N2", "N1":
+		return true
+	}
+	return false
+}
+
+// LessonRef identifies the study lesson a request targets, either from its
+// lesson ID or from the attempt that belongs to one. ok is false for anything
+// that is not a grammar, kanji, reading or vocabulary lesson.
+func (s *MemoryStore) LessonRef(lessonID, attemptID string) (kind, id string, ok bool) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if lessonID == "" && attemptID != "" {
+		switch {
+		case s.grammarAttempts[attemptID] != nil:
+			lessonID = s.grammarAttempts[attemptID].Attempt.LessonID
+		case s.kanjiAttempts[attemptID] != nil:
+			lessonID = s.kanjiAttempts[attemptID].Attempt.LessonID
+		case s.readingAttempts[attemptID] != nil:
+			lessonID = s.readingAttempts[attemptID].Attempt.LessonID
+		case s.vocabAttempts[attemptID] != nil:
+			lessonID = s.vocabAttempts[attemptID].attempt.LessonID
+		}
+	}
+	if lessonID == "" {
+		return "", "", false
+	}
+	for _, l := range s.grammar {
+		if l.ID == lessonID {
+			return "grammar", lessonID, true
+		}
+	}
+	for _, l := range s.kanji {
+		if l.ID == lessonID {
+			return "kanji", lessonID, true
+		}
+	}
+	for _, l := range s.reading {
+		if l.ID == lessonID {
+			return "reading", lessonID, true
+		}
+	}
+	for _, level := range s.vocabulary {
+		for _, lesson := range level.Lessons {
+			if lesson.ID == lessonID {
+				return "vocabulary", lessonID, true
+			}
+		}
+	}
+	return "", "", false
+}
+
+func (s *MemoryStore) ExamRequiresPremium(id string) bool {
+	if openLearningAccess {
+		return false
+	}
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	for _, e := range s.exams {
+		if e.ID == id {
+			return !(e.System == "JLPT" && e.Level == "N5") && !IsFreeJLPTSimulationExam(e.ID)
+		}
+	}
+	return false
+}
+
+// Authorization covers catalogs, direct lesson URLs, and ongoing quiz IDs.
+func (s *MemoryStore) PremiumRequest(path, level, lessonID, attemptID string) bool {
+	if openLearningAccess {
+		return false
+	}
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if strings.Contains(path, "/simulation/") && attemptID == "" {
+		if IsSSWLevel(level) {
+			return true
+		}
+		return strings.ToUpper(level) == "N4" || strings.ToUpper(level) == "N3" || IsJFTLevel(level) || strings.ToUpper(level) == "NAT"
+	}
+	if strings.Contains(path, "/ssw/") {
+		return true
+	}
+	// Level catalogs only list lesson titles and progress, never lesson
+	// content, so they stay open: a free account has to see what it can unlock.
+	if strings.Contains(path, "/course") {
+		return false
+	}
+	for _, l := range s.grammar {
+		if l.ID == lessonID {
+			return PremiumLevel(l.Level)
+		}
+	}
+	for _, l := range s.kanji {
+		if l.ID == lessonID {
+			return PremiumLevel(l.Level)
+		}
+	}
+	for _, l := range s.reading {
+		if l.ID == lessonID {
+			return PremiumLevel(l.Level)
+		}
+	}
+	for _, l := range s.vocabulary {
+		for _, lesson := range l.Lessons {
+			if lesson.ID == lessonID {
+				return PremiumLevel(l.Level)
+			}
+		}
+	}
+	id := ""
+	if a := s.grammarAttempts[attemptID]; a != nil {
+		id = a.Attempt.LessonID
+	}
+	if a := s.kanjiAttempts[attemptID]; a != nil {
+		id = a.Attempt.LessonID
+	}
+	if a := s.readingAttempts[attemptID]; a != nil {
+		id = a.Attempt.LessonID
+	}
+	if a := s.vocabAttempts[attemptID]; a != nil {
+		id = a.attempt.LessonID
+	}
+	if a := s.simulationAttempts[attemptID]; a != nil {
+		return !IsFreeJLPTSimulationExam(a.session.Attempt.ExamID)
+	}
+	for _, level := range s.vocabulary {
+		for _, lesson := range level.Lessons {
+			if lesson.ID == id {
+				return PremiumLevel(level.Level)
+			}
+		}
+	}
+	return strings.Contains(id, "-n3-") || strings.Contains(id, "-n2-") || strings.Contains(id, "-n1-")
+}
+
+func (s *MemoryStore) DeleteAccount(user string) error {
+	_, err := s.DeleteAccountWithProfilePhoto(user)
+	return err
+}
+
+// DeleteAccountWithProfilePhoto returns the uploaded photo URL while removing
+// the account under the same lock, so callers can clean up COS without racing
+// with another profile update.
+func (s *MemoryStore) DeleteAccountWithProfilePhoto(user string) (string, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	var customPhotoURL string
+	for _, account := range s.accounts {
+		if account.ID == user {
+			customPhotoURL = account.CustomPhotoURL
+			break
+		}
+	}
+	detached := map[string]domain.Purchase{}
+	for key, p := range s.purchases {
+		if p.UserID == user {
+			p.UserID = ""
+			detached[key] = p
+		}
+	}
+	if s.billingEnabled {
+		if err := s.ormWriter.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Where("user_id = ?", user).Delete(&database.UserAnkiDeckMedia{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Where("user_id = ?", user).Delete(&database.UserAnkiDeck{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Where("user_id = ?", user).Delete(&database.GamificationUser{}).Error; err != nil {
+				return err
+			}
+			if err := deleteLeaderboardRows(tx, user); err != nil {
+				return err
+			}
+			if err := tx.Where("user_id = ?", user).Delete(&database.BillingToken{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Where("user_id = ?", user).Delete(&database.Session{}).Error; err != nil {
+				return err
+			}
+			for email, a := range s.accounts {
+				if a.ID == user {
+					if err := tx.Where("email = ?", email).Delete(&database.Account{}).Error; err != nil {
+						return err
+					}
+				}
+			}
+			if user == database.DemoUserID {
+				if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&database.DeletedDemo{UserID: user}).Error; err != nil {
+					return err
+				}
+			}
+			for key, p := range detached {
+				raw, err := json.Marshal(p)
+				if err != nil {
+					return err
+				}
+				if err := tx.Model(&database.BillingPurchase{}).Where("purchase_key = ?", key).Updates(map[string]any{"state": raw, "user_id": database.OptionalUserID(p.UserID)}).Error; err != nil {
+					return err
+				}
+			}
+			return nil
+		}); err != nil {
+			return "", err
+		}
+	} else if s.gamificationDB != nil {
+		if err := s.ormWriter.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Where("user_id = ?", user).Delete(&database.UserAnkiDeckMedia{}).Error; err != nil {
+				return err
+			}
+			if err := tx.Where("user_id = ?", user).Delete(&database.UserAnkiDeck{}).Error; err != nil {
+				return err
+			}
+			if err := deleteLeaderboardRows(tx, user); err != nil {
+				return err
+			}
+			return tx.Where("user_id = ?", user).Delete(&database.GamificationUser{}).Error
+		}); err != nil {
+			return "", err
+		}
+	}
+
+	for key, p := range detached {
+		s.purchases[key] = p
+	}
+	delete(s.profiles, user)
+	delete(s.progress, user)
+	delete(s.gamification, user)
+	s.forgetLeaderboardLocked(user)
+	s.forgetUserAnkiDecksLocked(user)
+	delete(s.billingTokens, user)
+	for email, a := range s.accounts {
+		if a.ID == user {
+			delete(s.accounts, email)
+		}
+	}
+	for token, id := range s.sessions {
+		if id == user {
+			delete(s.sessions, token)
+		}
+	}
+	for id, a := range s.vocabAttempts {
+		if a.userID == user {
+			delete(s.vocabAttempts, id)
+		}
+	}
+	for id, a := range s.grammarAttempts {
+		if a.UserID == user {
+			delete(s.grammarAttempts, id)
+		}
+	}
+	for id, a := range s.kanjiAttempts {
+		if a.UserID == user {
+			delete(s.kanjiAttempts, id)
+		}
+	}
+	for id, a := range s.readingAttempts {
+		if a.UserID == user {
+			delete(s.readingAttempts, id)
+		}
+	}
+	for id, a := range s.diagnosticAttempts {
+		if a.session.Attempt.UserID == user {
+			delete(s.diagnosticAttempts, id)
+		}
+	}
+	for id, a := range s.simulationAttempts {
+		if a.session.Attempt.UserID == user {
+			delete(s.simulationAttempts, id)
+		}
+	}
+	s.diagnosticOrder = filterAttemptIDs(s.diagnosticOrder, func(id string) bool { return s.diagnosticAttempts[id] != nil })
+	s.simulationOrder = filterAttemptIDs(s.simulationOrder, func(id string) bool { return s.simulationAttempts[id] != nil })
+	return customPhotoURL, nil
+}
+func filterAttemptIDs(ids []string, keep func(string) bool) []string {
+	result := []string{}
+	for _, id := range ids {
+		if keep(id) {
+			result = append(result, id)
+		}
+	}
+	return result
+}

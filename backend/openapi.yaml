@@ -1,0 +1,2784 @@
+openapi: 3.1.0
+info:
+  title: Nihongo Master API
+  version: 1.0.0
+  description: Contract for the Nihongo Master mobile application.
+servers:
+  - url: http://localhost:8080/v1
+    description: Local development
+paths:
+  /anki/import/preview:
+    post:
+      summary: Preview an APKG, CSV, or Nihongo Master JSON deck without saving it
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: {type: string, format: binary, description: Maximum 20 MiB and 10000 cards}
+      responses:
+        '200': {description: Metadata, first three cards, media count, and SHA-256 in data envelope}
+        '401': {description: Authentication required}
+        '402': {description: Premium level requires lifetime entitlement}
+        '413': {description: File too large}
+        '422': {description: Unsupported or invalid deck}
+        '429': {description: Transfer capacity busy}
+  /anki/import:
+    post:
+      summary: Create a private deck including bundled media and a fresh SRS schedule
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, sha256, requestId]
+              properties:
+                file: {type: string, format: binary}
+                title: {type: string, maxLength: 140}
+                sha256: {type: string, description: Digest from preview}
+                requestId: {type: string, format: uuid, description: Stable across retries; returns the original deck}
+      responses:
+        '201': {description: Private deck details in data envelope}
+        '401': {description: Authentication required}
+        '402': {description: Premium level requires lifetime entitlement}
+        '409': {description: File digest changed since preview}
+        '413': {description: File too large}
+        '422': {description: Invalid content or account storage limit exceeded}
+        '429': {description: Transfer capacity busy}
+  /anki/decks/{deckID}/export:
+    parameters:
+      - {in: path, name: deckID, required: true, schema: {type: string}}
+    get:
+      summary: Download all deck cards, up to 10000, with bundled media for APKG or JSON
+      security: [{bearerAuth: []}]
+      parameters:
+        - {in: query, name: format, schema: {type: string, enum: [apkg, csv, json], default: apkg}}
+      responses:
+        '200':
+          description: Private download with Content-Disposition; review history excluded
+          content:
+            application/octet-stream:
+              schema: {type: string, format: binary}
+            text/csv:
+              schema: {type: string}
+            application/json:
+              schema: {type: object}
+        '401': {description: Authentication required}
+        '402': {description: Premium deck requires lifetime entitlement}
+        '404': {description: Deck not found or owned by another account}
+        '422': {description: Unsupported format or export limit exceeded}
+        '429': {description: Transfer capacity busy}
+  /anki/decks/{deckID}:
+    parameters:
+      - {in: path, name: deckID, required: true, schema: {type: string}}
+    get:
+      summary: Deck metadata and previews; private deck ownership is enforced
+      responses:
+        '200': {description: Deck details in data envelope}
+        '404': {description: Deck not found}
+    delete:
+      summary: Delete an owned personal deck, media, and review schedule
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Deleted in data envelope}
+        '401': {description: Authentication required}
+        '404': {description: Deck not found or not owned}
+  /anki/decks/{deckID}/media/{name}:
+    parameters:
+      - {in: path, name: deckID, required: true, schema: {type: string}}
+      - {in: path, name: name, required: true, schema: {type: string}}
+    get:
+      summary: Read a bundled image or audio after account ownership and entitlement checks
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Raw image/audio bytes with private no-store and nosniff headers}
+        '401': {description: Authentication required}
+        '402': {description: Premium entitlement required}
+        '404': {description: Deck or media not found or not owned}
+  /manga:
+    get:
+      security: [{bearerAuth: []}]
+      description: Requires an active verified lifetime entitlement.
+      summary: Curated Japanese manga catalog read exclusively from MariaDB
+      parameters:
+        - {in: query, name: page, schema: {type: integer, minimum: 1, maximum: 10000, default: 1}}
+        - {in: query, name: limit, schema: {type: integer, minimum: 1, maximum: 40, default: 20}}
+        - {in: query, name: q, schema: {type: string, maxLength: 100}}
+        - {in: query, name: genre, schema: {type: string, maxLength: 50}}
+      responses:
+        '401': {description: Missing, invalid or revoked session}
+        '402': {description: Lifetime Access required}
+        '200': {description: 'Stored items, total, page, pageSize, sourceName, sourceUrl, cacheEnabled. Cover URLs use application COS/CDN.'}
+        '400': {description: Invalid filter or pagination}
+        '503': {description: Database unavailable}
+  /manga/{id}:
+    get:
+      security: [{bearerAuth: []}]
+      description: Requires an active verified lifetime entitlement.
+      summary: Stored series detail and ordered chapter metadata with source attribution
+      parameters:
+        - {in: path, name: id, required: true, schema: {type: string}}
+      responses:
+        '401': {description: Missing, invalid or revoked session}
+        '402': {description: Lifetime Access required}
+        '200': {description: 'Series metadata and chapters. Japanese panels are not translated. Does not fetch upstream.'}
+        '404': {description: Missing, disabled or blocked title}
+  /manga/chapters/{id}:
+    get:
+      security: [{bearerAuth: []}]
+      description: Requires an active verified lifetime entitlement.
+      summary: Stored chapter status; COS pages are returned only after complete import
+      parameters:
+        - {in: path, name: id, required: true, schema: {type: string}}
+      responses:
+        '401': {description: Missing, invalid or revoked session}
+        '402': {description: Lifetime Access required}
+        '200': {description: 'Chapter with status, sourceUrl, retryAt, fetchedAt and pages [{index,url,width,height}]. Never hotlinks upstream images.'}
+        '404': {description: Chapter missing or parent title hidden}
+  /manga/chapters/{id}/prepare:
+    post:
+      security: [{bearerAuth: []}]
+      description: Requires an active verified lifetime entitlement.
+      summary: Idempotently queue an existing chapter without making an upstream request
+      parameters:
+        - {in: path, name: id, required: true, schema: {type: string}}
+      responses:
+        '401': {description: Missing, invalid or revoked session}
+        '402': {description: Lifetime Access required}
+        '200': {description: Already cached or in failed-attempt cooldown}
+        '202': {description: Queued or currently processing; poll stored status after 15 seconds}
+        '404': {description: Missing or hidden chapter}
+        '429': {description: Shared bounded queue is full}
+        '503': {description: MariaDB or COS configuration unavailable}
+  /admin/manga:
+    get:
+      summary: Manga editorial catalog, durable weekly deadlines and COS configuration status
+      security: [{adminBearerAuth: []}]
+      responses:
+        '200': {description: Stored catalog, including hidden titles}
+        '401': {description: Invalid or unconfigured admin key}
+  /admin/manga/series:
+    post:
+      summary: Add a reviewed Rawkuma series or immediately hide it; never bypass fetch deadlines
+      security: [{adminBearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sourceUrl, enabled]
+              properties:
+                sourceUrl: {type: string, format: uri}
+                enabled: {type: boolean}
+                japaneseVerified: {type: boolean}
+                nonAdultReviewed: {type: boolean}
+      responses:
+        '200': {description: Editorial settings persisted}
+        '400': {description: URL is outside the supported source or enabled title lacks editorial review}
+        '401': {description: Invalid or unconfigured admin key}
+  /news:
+    get:
+      summary: Public database-only news catalog; never fetches publishers on reads
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {in: query, name: page, schema: {type: integer, minimum: 1, maximum: 100000, default: 1}}
+        - {in: query, name: limit, schema: {type: integer, minimum: 1, maximum: 50, default: 20}}
+        - {in: query, name: source, schema: {type: string, enum: [global-voices, osaka]}}
+      responses:
+        '200': {description: 'data contains items (metadata and title tokens), total, page, pageSize, sources with synchronization timestamps', headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '400': {description: Invalid pagination or source, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '503': {description: Database unavailable; no publisher fallback, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /news/{id}:
+    get:
+      summary: Public stored article with credits, licensing and UTF-16 paragraph tokens
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200': {description: 'Article with titleTokens and paragraphs [{text, kind, tokens}], credits, references, publishedAt UTC, originalDate in the publisher Japanese calendar, dateType, fetchedAt, license and change notice. Images include backend-local imageUrl, imageCredit, imageLicense, imageSourceUrl and imageLicenseUrl. Tokens contain start/end UTF-16 offsets, surface/base/reading/readingSource.', headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '404': {description: Missing, hidden or deleted article, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '503': {description: Database unavailable, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /admin/news:
+    get:
+      summary: List all stored articles and private source fetch statuses
+      security: [{adminBearerAuth: []}]
+      parameters:
+        - {in: query, name: page, schema: {type: integer, minimum: 1, default: 1}}
+        - {in: query, name: source, schema: {type: string, enum: [global-voices, osaka]}}
+      responses:
+        '200': {description: Includes hidden articles and source errors}
+        '401': {description: Invalid or unconfigured news admin key}
+  /admin/news/{id}:
+    parameters:
+      - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+    get:
+      summary: Read stored article including hidden articles for editing
+      security: [{adminBearerAuth: []}]
+      responses:
+        '200': {description: Stored article including editable ruby tokens}
+        '404': {description: Missing or deleted article}
+    put:
+      summary: Save visibility, uploaded image metadata and selected token reading corrections
+      security: [{adminBearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                hidden: {type: boolean}
+                revision: {type: string, description: Revision from article GET; required when editing readings to reject stale token positions}
+                imageUrl: {type: string, description: Empty or existing /news-images/hash.png or jpg}
+                imageCredit: {type: string, maxLength: 8000}
+                imageLicense: {type: string, maxLength: 200}
+                readings:
+                  type: array
+                  maxItems: 1000
+                  items:
+                    type: object
+                    required: [paragraph, token, reading]
+                    properties:
+                      paragraph: {type: integer, minimum: -1, description: '-1 for title; otherwise paragraph index'}
+                      token: {type: integer, minimum: 0}
+                      reading: {type: string, maxLength: 100}
+      responses:
+        '200': {description: Saved without modifying source text}
+        '400': {description: Invalid token or image metadata}
+        '409': {description: Source article changed since the editor loaded its token positions}
+        '404': {description: Missing article}
+    delete:
+      summary: Delete article body and retain URL tombstone to prevent reimport
+      security: [{adminBearerAuth: []}]
+      responses:
+        '204': {description: Deleted}
+        '404': {description: Missing article}
+  /admin/news/sources/{id}:
+    put:
+      summary: Persist calendar schedule for a fixed supported source
+      security: [{adminBearerAuth: []}]
+      parameters:
+        - {in: path, name: id, required: true, schema: {type: string, enum: [global-voices, osaka]}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [timezone, days, hour, minute, enabled]
+              properties:
+                timezone: {type: string, example: Asia/Jakarta}
+                days: {type: array, minItems: 1, maxItems: 2, uniqueItems: true, items: {type: integer, minimum: 0, maximum: 6}}
+                hour: {type: integer, minimum: 0, maximum: 23}
+                minute: {type: integer, minimum: 0, maximum: 59}
+                enabled: {type: boolean}
+      responses:
+        '200': {description: Schedule saved in MariaDB}
+        '400': {description: Invalid zone or schedule}
+  /admin/news/sources/{id}/fetch:
+    post:
+      summary: Request background import, preserving previous articles on failure
+      security: [{adminBearerAuth: []}]
+      parameters:
+        - {in: path, name: id, required: true, schema: {type: string, enum: [global-voices, osaka]}}
+      responses:
+        '202': {description: Request accepted; inspect source status after completion}
+        '409': {description: Source is running or within the one-minute manual cooldown}
+        '404': {description: Unsupported source}
+  /admin/news/images:
+    post:
+      summary: Upload a licensed or owned PNG/JPEG to persistent backend storage
+      security: [{adminBearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: {type: string, format: binary}
+      responses:
+        '201': {description: Stored /news-images/hash.png or jpg URL; credit/license required when assigning it to an article}
+        '400': {description: Invalid file, over 5 MiB or over 4096 pixels per dimension}
+  /admin/notifications:
+    get:
+      summary: List private announcement drafts/history and sender configuration state (admin bearer key)
+      responses:
+        '200': {description: Announcement history; requires NOTIFICATIONS_ADMIN_TOKEN or branding admin key}
+        '401': {description: Invalid admin key}
+    post:
+      summary: Save an announcement draft without sending it (admin bearer key)
+      responses:
+        '201': {description: Draft saved with generated ID}
+        '401': {description: Invalid admin key}
+        '422': {description: Invalid title/body/allowed internal route or oversized topic message}
+  /admin/notifications/{id}:
+    put:
+      summary: Edit a draft or explicitly reopen a definitively rejected message (admin bearer key)
+      parameters:
+        - {in: path, name: id, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Draft saved}
+        '409': {description: Sent or uncertain message cannot be edited or retried}
+  /admin/notifications/{id}/send:
+    post:
+      summary: Dispatch a saved draft once to the public Nihongo announcement topic
+      parameters:
+        - {in: path, name: id, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [confirmId]
+              properties:
+                confirmId: {type: string, description: Must match the saved draft ID}
+      responses:
+        '200': {description: Persisted result (sent, failed, or uncertain); sent means FCM acceptance, not device receipt}
+        '409': {description: Message already processed; duplicate dispatch blocked}
+        '503': {description: FCM sender not configured}
+  /admin/notifications/check:
+    post:
+      summary: Validate FCM access without sending a notification (validate_only)
+      responses:
+        '200': {description: Sender validated; no broadcast sent}
+        '502': {description: Firebase rejected validation or connection failed}
+        '503': {description: FCM sender not configured}
+
+  /app-update-policy:
+    get:
+      tags: [App updates]
+      summary: Get public Android and iOS minimum build and OS requirements before login
+      security: []
+      responses:
+        '200':
+          description: 'data.android and data.ios contain enabled, minimumBuild (0 disables forced updates), latestBuild, latestVersion, minimumAndroidApi, minimumIOSVersion, storeUrl, unsupportedDevicePolicy (allow/block), message. Cache-Control no-store.'
+  /admin/app-update-policy:
+    put:
+      tags: [App updates]
+      summary: Save durable update requirements; requires APP_UPDATE_ADMIN_TOKEN or the configured branding admin token
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [android, ios]
+              properties:
+                android: {type: object}
+                ios: {type: object}
+      responses:
+        '200': {description: Validated policy saved atomically and applied immediately}
+        '401': {description: Invalid or disabled admin token}
+        '422': {description: Invalid minimum build, OS version, or platform-specific store URL}
+        '500': {description: Policy could not be saved; previous policy remains active}
+  /admin/pricing:
+    get:
+      tags: [Subscription]
+      summary: Load configured in-app display price (admin bearer key)
+      security: [{adminBearerAuth: []}]
+      responses:
+        '200': {description: Current IDR display price}
+        '401': {description: Invalid or disabled admin token}
+    put:
+      tags: [Subscription]
+      summary: Save durable lifetime display price; store-console prices remain manual
+      security: [{adminBearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PricingConfig'}
+      responses:
+        '200': {description: Price saved and applied immediately}
+        '401': {description: Invalid or disabled admin token}
+        '422': {description: 'Price must be between IDR 1,000 and 100,000,000'}
+        '500': {description: Price could not be saved; previous price remains active}
+  /pricing:
+    get:
+      tags: [Subscription]
+      summary: Get the current lifetime display price in IDR
+      security: []
+      responses:
+        '200': {description: Public pricing configuration; Cache-Control no-store}
+  /map/spots:
+    get:
+      tags: [Map]
+      summary: Published Japan map spots with text resolved per language (id, en)
+      description: Content was fetched once from Wikidata, Wikipedia, Wikivoyage, and Wikimedia Commons by an admin and is served from MariaDB only. Supports If-None-Match.
+      security: []
+      responses:
+        '200': {description: 'data contains spots (id, category, prefecture, lat, lng, name, nameJa, reading, summary, tips, phrases, image, sources) and categories; ETag header'}
+        '304': {description: Unchanged since the given ETag}
+        '503': {description: Map not configured or database unavailable}
+  /jobs/prefecture-counts:
+    get:
+      tags: [Jobs]
+      summary: Active job counts keyed by prefecture code (01-47)
+      security: []
+      responses:
+        '200': {description: 'data.counts maps prefecture codes to active job counts; prefectures without jobs are omitted'}
+        '503': {description: Jobs catalog not connected}
+  /admin/map/spots:
+    get:
+      tags: [Map]
+      summary: List all spots including drafts, with missingIndonesian and publishable flags
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: data contains spots and categories}
+        '401': {description: Invalid map admin token}
+    post:
+      tags: [Map]
+      summary: Import a spot from a Wikidata ID, en.wikipedia URL, or en.wikipedia title (saved unpublished)
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [input, category]
+              properties:
+                input: {type: string, maxLength: 300}
+                category: {type: string, enum: [culture, shrine, nature, food, city, history]}
+      responses:
+        '201': {description: Imported spot}
+        '400': {description: Invalid input or category}
+        '404': {description: Title or Wikidata ID not found}
+        '409': {description: Spot already exists; data contains the existing spot}
+        '502': {description: Wikimedia unreachable from the server}
+  /admin/map/spots/{id}:
+    put:
+      tags: [Map]
+      summary: Edit category, location, names, manual text, phrases, and published state
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Updated spot}
+        '400': {description: Invalid edit or spot not publishable}
+    delete:
+      tags: [Map]
+      summary: Delete a spot permanently
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '204': {description: Deleted}
+  /admin/map/spots/{id}/refresh:
+    post:
+      tags: [Map]
+      summary: Re-fetch sources; manual text, phrases, category, published state, manual location, and uploaded photos are kept
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Refreshed spot}
+        '502': {description: Wikimedia unreachable from the server}
+  /admin/map/spots/{id}/image:
+    post:
+      tags: [Map]
+      summary: Upload an own photo (multipart image, author, license); kept on refresh
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Updated spot}
+    delete:
+      tags: [Map]
+      summary: Remove the uploaded photo so the next refresh uses Commons again
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Updated spot}
+  /dictionary/search:
+    get:
+      tags: [Dictionary]
+      summary: Search free Japanese-English dictionary via Jisho
+      security: []
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {name: q, in: query, required: true, schema: {type: string, minLength: 1, maxLength: 100}}
+        - {name: mode, in: query, schema: {type: string, enum: [auto, japanese, english], default: auto}}
+        - {name: page, in: query, schema: {type: integer, minimum: 1, maximum: 100, default: 1}}
+        - {name: jlpt, in: query, schema: {type: string, enum: [N5, N4, N3, N2, N1]}}
+        - {name: common, in: query, schema: {type: boolean, default: false}}
+      responses:
+        '200': {description: 'data contains query, page, hasMore, entries (original Jisho entry objects), source', headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '400': {description: Invalid query or filter, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '503': {description: External source busy or unavailable, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /admin/dictionary:
+    get:
+      tags: [Dictionary]
+      summary: List permanent cached searches and process cache counters
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: page, in: query, schema: {type: integer, minimum: 1, maximum: 100000, default: 1}}
+        - {name: q, in: query, schema: {type: string, maxLength: 100}}
+      responses:
+        '200': {description: 'data contains items, total, page, pageSize (50), stats; effective modes include japanese, english, raw, kanji'}
+        '401': {description: Invalid dictionary admin token}
+        '503': {description: Database unavailable}
+  /admin/dictionary/{id}/refresh:
+    post:
+      tags: [Dictionary]
+      summary: Atomically refresh one cached response while preserving old data on failure
+      security: [{bearerAuth: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Refreshed successfully}
+        '400': {description: Legacy response without refresh metadata}
+        '401': {description: Invalid dictionary admin token}
+        '404': {description: Cache record not found}
+        '503': {description: Refresh failed; old response retained}
+  /dictionary/kanji/{character}:
+    get:
+      tags: [Dictionary]
+      summary: Get kanji readings and meanings from kanjiapi.dev
+      security: []
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {name: character, in: path, required: true, schema: {type: string}, description: One Han character}
+      responses:
+        '200': {description: data contains a kanjiapi.dev kanji object; JLPT classification uses legacy levels, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '400': {description: Invalid character, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '404': {description: Kanji not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '503': {description: External source busy or unavailable, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /billing:
+    get:
+      tags: [Billing]
+      summary: Get lifetime product ID, opaque account binding, configured platforms and verified entitlement
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Billing account includes configured display priceIdr, entitlement and (when configured) an account-bound Ed25519 offlineLease JWT expiring 30 days after its last authoritative store verification}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '503': {description: Store revalidation unavailable}
+  /billing/verify:
+    post:
+      tags: [Billing]
+      summary: Verify one-time lifetime purchase with Google Play or App Store and bind one app account
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [platform, productId, verificationData]
+              properties:
+                platform: {type: string, enum: [android, ios]}
+                productId: {type: string, example: nihongo_master_lifetime}
+                verificationData: {type: string, description: Google purchase token or Apple StoreKit 2 signed JWS}
+                transactionId: {type: string}
+      responses:
+        '200': {description: Verified purchased or revoked state, current entitlement, and a signed offlineLease when the purchase is currently active}
+        '202': {description: Pending payment; no entitlement granted}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '402': {description: Transaction belongs to another active app account}
+        '422': {description: Invalid proof, product, platform, or account binding}
+        '503': {description: Store verifier unavailable; retry without repurchasing}
+  /billing/notifications/google:
+    post:
+      tags: [Billing]
+      summary: Receive authenticated Google Pub/Sub RTDN; re-fetch authoritative store state
+      responses:
+        '204': {description: Notification processed}
+        '401': {description: Invalid Pub/Sub OIDC audience or service account identity}
+        '503': {description: Temporary store failure; Pub/Sub should retry}
+  /billing/notifications/apple:
+    post:
+      tags: [Billing]
+      summary: Receive App Store Server Notifications V2 with verified Apple signedPayload
+      responses:
+        '204': {description: Notification processed}
+        '422': {description: Invalid signed notification}
+        '503': {description: Temporary store failure; Apple should retry}
+  /me/account:
+    delete:
+      tags: [Profile]
+      summary: Permanently delete account and personal learning data; detach purchase for legitimate store restore
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [confirmation]
+              properties:
+                confirmation: {type: string, enum: [DELETE]}
+      responses:
+        '204': {description: Account deleted and sessions revoked; does not request store refund}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '422': {description: Missing explicit confirmation}
+  /assets/images/onboarding-japanese-journey.webp:
+    servers:
+      - url: http://localhost:8080
+    get:
+      tags: [Assets]
+      summary: Public onboarding artwork
+      responses:
+        '200':
+          description: WebP image; cached for one day
+          content:
+            image/webp:
+              schema: {type: string, format: binary}
+        '404':
+          description: Image unavailable
+  /assets/images/{category}/{filename}:
+    servers:
+      - url: http://localhost:8080
+    get:
+      tags: [Assets]
+      summary: Public learning image served outside the mobile bundle
+      parameters:
+        - in: path
+          name: category
+          required: true
+          schema: {type: string, enum: [reading, vocabulary]}
+        - in: path
+          name: filename
+          required: true
+          schema: {type: string, pattern: '\.webp$'}
+      responses:
+        '200':
+          description: WebP image; cached for one day
+          content:
+            image/png:
+              schema: {type: string, format: binary}
+        '404':
+          description: Image unavailable or path disallowed
+  /simulation/n5:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Simulation]
+      summary: N5 language simulation overview, active attempt and latest ten results
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Original paper, 21 vocabulary items plus 17 grammar items, no dokkai/listening
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      paperId: {type: string}
+                      title: {type: string}
+                      questionCount: {type: integer, const: 38}
+                      durationMinutes: {type: integer, const: 40}
+                      sections: {type: array, items: {$ref: '#/components/schemas/SimulationSection'}}
+                      activeAttemptId: {type: string}
+                      omittedSections: {type: array, items: {type: string}}
+                      history: {type: array, items: {type: object}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+  /simulation/n4:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Simulation]
+      summary: N4 language simulation overview, active attempt and latest ten results
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Original paper, 28 vocabulary items (25 minutes) plus 21 grammar and 8 reading items (55 minutes), no listening
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      paperId: {type: string}
+                      title: {type: string}
+                      questionCount: {type: integer, const: 57}
+                      durationMinutes: {type: integer, const: 80}
+                      sections: {type: array, items: {$ref: '#/components/schemas/SimulationSection'}}
+                      activeAttemptId: {type: string}
+                      omittedSections: {type: array, items: {type: string}}
+                      history: {type: array, items: {type: object}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+  /simulation/n3:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Simulation]
+      summary: N3 language simulation overview, active attempt and latest ten results
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Original paper, 35 vocabulary items (30 minutes) plus 23 grammar and 16 reading items (70 minutes), no listening
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      paperId: {type: string}
+                      title: {type: string}
+                      questionCount: {type: integer, const: 74}
+                      durationMinutes: {type: integer, const: 100}
+                      sections: {type: array, items: {$ref: '#/components/schemas/SimulationSection'}}
+                      activeAttemptId: {type: string}
+                      omittedSections: {type: array, items: {type: string}}
+                      history: {type: array, items: {type: object}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+  /simulation/nat:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Simulation]
+      summary: NAT 5Q Exam 1 written practice overview, active attempt and latest ten results
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: 43 original written items; vocabulary (21 questions, 20 minutes) then grammar and reading (22 questions, 40 minutes); listening excluded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      paperId: {type: string}
+                      title: {type: string}
+                      questionCount: {type: integer, const: 43}
+                      durationMinutes: {type: integer, const: 60}
+                      sections: {type: array, items: {$ref: '#/components/schemas/SimulationSection'}}
+                      activeAttemptId: {type: string}
+                      omittedSections: {type: array, items: {type: string}}
+                      history: {type: array, items: {type: object}}
+        '402': {description: Lifetime Access required, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+  /simulation/{level}:
+    get:
+      tags: [Simulation]
+      summary: Simulation overview for a supported exam level, including NAT/JFT Exam 2–5 and data-driven SSW papers
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {name: level, in: path, required: true, description: Use N5-2 through N5-10, N4-2 through N4-10 or N3-2 through N3-10, N2-2 through N2-10 or N1-2 through N1-10 for the additional free JLPT papers (furigana markup on N5/N4 and, for kanji outside the N5/N4 set, N3; none on N2/N1), NAT-2 through NAT-10 for additional NAT 5Q papers, or JFT and JFT-2 through JFT-10 for original written practice papers., schema: {type: string, example: NAT-2}}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Paper overview with section timers, question count, active attempt, history, and omitted content. Each NAT 5Q paper has 43 original written questions and a 60-minute timer; each JFT paper has 36 original written questions and a shared 45-minute timer. Listening is omitted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      paperId: {type: string}
+                      title: {type: string, description: SSW titles identify original learning simulations and scope limits}
+                      questionCount: {type: integer}
+                      durationMinutes: {type: integer}
+                      sections: {type: array, items: {$ref: '#/components/schemas/SimulationSection'}}
+                      activeAttemptId: {type: string}
+                      omittedSections: {type: array, items: {type: string}}
+                      history: {type: array, items: {type: object}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '402': {description: Premium access required for simulation, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '404': {description: Unsupported level, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /ssw/{sector}/practice:
+    get:
+      tags: [SSW]
+      summary: Original SSW study questions for a sector and optional module
+      description: Requires premium access. Question keys and explanations are withheld until answer checking.
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {name: sector, in: path, required: true, schema: {type: string}}
+        - {name: module, in: query, required: false, schema: {type: string}}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Practice questions for the requested sector/module
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      questions:
+                        type: array
+                        items:
+                          type: object
+                          required: [id, moduleId, group, lessonId, prompt, options]
+                          properties:
+                            id: {type: string}
+                            moduleId: {type: string}
+                            group: {type: string}
+                            lessonId: {type: string}
+                            prompt: {type: string}
+                            options: {type: array, minItems: 4, maxItems: 4, items: {type: string}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '402': {description: Premium access required for practice, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '404': {description: Sector or module not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /ssw/{sector}/practice/check:
+    post:
+      tags: [SSW]
+      summary: Check a response and return feedback for an original SSW practice question
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {name: sector, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [questionId, answer]
+              properties:
+                questionId: {type: string}
+                answer: {type: integer, minimum: 0, maximum: 3}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Correctness, answer index, explanation, and related lesson
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    required: [correct, answer, explanation, lessonId]
+                    properties:
+                      correct: {type: boolean}
+                      answer: {type: integer, minimum: 0, maximum: 3}
+                      explanation: {type: string}
+                      lessonId: {type: string}
+        '400': {description: Invalid input, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '402': {description: Premium access required for practice, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '404': {description: Sector or question not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /simulation/jft:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Simulation]
+      summary: JFT Exam 1 written practice overview, active attempt and latest ten results
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: 36 original written items across vocabulary, conversation/expression and reading; one shared 45-minute deadline, listening excluded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      sharedTimer: {type: boolean, const: true}
+                      paperId: {type: string}
+                      title: {type: string}
+                      questionCount: {type: integer, const: 36}
+                      durationMinutes: {type: integer, const: 45}
+                      sections: {type: array, items: {$ref: '#/components/schemas/SimulationSection'}}
+                      activeAttemptId: {type: string}
+                      omittedSections: {type: array, items: {type: string}}
+                      history: {type: array, items: {type: object}}
+        '402': {description: Lifetime Access required, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+  /simulation/attempts/{attemptID}:
+    parameters:
+      - {name: attemptID, in: path, required: true, schema: {type: string}}
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Simulation]
+      summary: Resume owned simulation; expired sections advance at their original deadline
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Only active-section questions and answers until final completion; no answer key while active
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/SimulationSession'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Unknown or not owned, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /simulation/attempts/{attemptID}/answers:
+    parameters:
+      - {name: attemptID, in: path, required: true, schema: {type: string}}
+    put:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Simulation]
+      summary: Save active-section answer and review flag; empty optionId clears the answer
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [questionId, optionId, marked]
+              properties:
+                questionId: {type: string}
+                optionId: {type: string}
+                marked: {type: boolean}
+      responses:
+        '200': {description: Saved, without correctness feedback, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Unknown or not owned, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Closed section, expired session or invalid option, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /simulation/attempts/{attemptID}/submit-section:
+    parameters:
+      - {name: attemptID, in: path, required: true, schema: {type: string}}
+    post:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Simulation]
+      summary: Lock expected section; vocabulary starts grammar immediately; retries are idempotent
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [section]
+              properties:
+                section: {type: string, enum: [vocabulary, grammar, conversation, reading]}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Updated session; result and reviews only after grammar finishes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/SimulationSession'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Unknown or not owned, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Invalid section or trying to skip vocabulary, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /branding:
+    get:
+      tags: [Branding]
+      summary: Public application branding (empty image URLs use bundled defaults)
+      responses:
+        '200':
+          description: Branding settings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/Branding'}
+  /admin/branding:
+    put:
+      tags: [Branding]
+      summary: Replace durable branding using BRANDING_ADMIN_TOKEN (not a user session)
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Branding'}
+      responses:
+        '200': {description: Settings saved}
+        '401': {description: Missing or incorrect admin token}
+        '422': {description: Invalid name, image URL or color}
+        '500': {description: Settings could not be persisted}
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Login with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: {type: string, format: email}
+                password: {type: string, format: password}
+      responses:
+        '200': {$ref: '#/components/responses/AuthSession'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /auth/google:
+    post:
+      tags: [Authentication]
+      summary: Exchange a Google ID token
+      parameters:
+        - in: header
+          name: X-Device-Timezone
+          required: false
+          description: IANA timezone saved for a newly created account; ignored for returning accounts
+          schema: {type: string, maxLength: 64, example: America/Los_Angeles}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [idToken]
+              properties:
+                idToken: {type: string}
+      responses:
+        '200': {$ref: '#/components/responses/AuthSession'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /auth/logout:
+    post:
+      tags: [Authentication]
+      security: [{bearerAuth: []}]
+      responses:
+        '204': {description: Session revoked}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /auth/me:
+    get:
+      tags: [Authentication]
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {$ref: '#/components/responses/Profile'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /home:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Home]
+      summary: Get the complete home dashboard
+      description: Includes enabled backend-managed carousel banners. A valid optional bearer token adds personal profile, daily goal, and achievements.
+      security: [{}, {bearerAuth: []}]
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Guest or authenticated dashboard
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data: {$ref: '#/components/schemas/Dashboard'}
+  /admin/home-banners:
+    get:
+      tags: [Home]
+      summary: Read carousel settings including disabled banners
+      security: [{adminBearerAuth: []}]
+      responses:
+        '200':
+          description: Current banner settings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/HomeBannerConfig'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+    put:
+      tags: [Home]
+      summary: Persist carousel content, images, order, and visibility
+      security: [{adminBearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/HomeBannerConfig'}
+      responses:
+        '200':
+          description: Saved banner settings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/HomeBannerConfig'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '422': {description: Invalid banner content or image reference}
+        '500': {description: Settings could not be persisted; live settings unchanged}
+  /admin/home-banners/images:
+    post:
+      tags: [Home]
+      summary: Upload a PNG or JPEG for a home banner
+      description: Maximum 5 MiB and 12 million pixels. Save the returned root-relative imageUrl in a banner to publish it.
+      security: [{adminBearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image: {type: string, format: binary}
+      responses:
+        '201':
+          description: Image saved to durable storage
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      imageUrl: {type: string}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '413': {description: Upload exceeds the size limit}
+        '422': {description: Unsupported, corrupt, or oversized image dimensions}
+  /learning/categories:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Learning]
+      responses:
+        '200': {$ref: '#/components/responses/Categories'}
+  /learning/tracks:
+    get:
+      tags: [Learning]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/System'}
+      responses:
+        '200': {$ref: '#/components/responses/Tracks'}
+  /exams:
+    get:
+      tags: [Exams]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/System'}
+      responses:
+        '200': {$ref: '#/components/responses/Exams'}
+  /exam-attempts:
+    post:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Exams]
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [examId]
+              properties:
+                examId: {type: string, description: "Simulation IDs include jlpt-n5-simulation-1 through jlpt-n5-simulation-10, jlpt-n4-simulation-1 through jlpt-n4-simulation-10, jlpt-n3-simulation-1, jft-a2-full-1 through jft-a2-full-5, and nat-5q-full-1"}
+      responses:
+        '201': {description: Exam attempt created, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '402': {$ref: '#/components/responses/PremiumRequired'}
+  /diagnostic/n5:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Exams]
+      summary: N5 diagnostic metadata, active attempt and up to ten completed results
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Diagnostic overview
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      exam: {$ref: '#/components/schemas/Exam'}
+                      sectionCounts: {type: object, additionalProperties: {type: integer}}
+                      activeAttemptId: {type: string}
+                      history: {type: array, items: {$ref: '#/components/schemas/DiagnosticResult'}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+  /exam-attempts/{attemptID}:
+    get:
+      tags: [Exams]
+      summary: Restore an owned N5 diagnostic session without exposing answer keys
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {name: attemptID, in: path, required: true, schema: {type: string}}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Session with questions, saved answers, serverTime, expiresAt and optional completed result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/DiagnosticSession'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or belongs to another account, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /exam-attempts/{attemptID}/answers:
+    put:
+      tags: [Exams]
+      summary: Save or replace a selected answer before the server deadline
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {name: attemptID, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [questionId, optionId]
+              properties:
+                questionId: {type: string}
+                optionId: {type: string}
+      responses:
+        '200': {description: Answer saved without revealing correctness, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or belongs to another account, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Invalid question or option, expired deadline, or already completed session, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /exam-attempts/{attemptID}/complete:
+    post:
+      tags: [Exams]
+      summary: Grade saved answers, count blanks as incorrect and return an idempotent result
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {name: attemptID, in: path, required: true, schema: {type: string}}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Percentage, section scores and answer reviews; not official JLPT scoring
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/DiagnosticResult'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or belongs to another account, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /plans:
+    get:
+      tags: [Subscription]
+      responses:
+        '200': {$ref: '#/components/responses/Plans'}
+  /me/profile:
+    get:
+      tags: [Profile]
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {$ref: '#/components/responses/Profile'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+    patch:
+      tags: [Profile]
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [displayName, target]
+              properties:
+                displayName: {type: string}
+                target: {type: string, example: JLPT N3}
+      responses:
+        '200': {$ref: '#/components/responses/Profile'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /me/profile/photo:
+    post:
+      tags: [Profile]
+      summary: Compress and upload the signed-in user's profile photo to Tencent COS
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [photo]
+              properties:
+                photo: {type: string, format: binary, description: 'JPEG, PNG, or GIF; maximum 8 MB'}
+      responses:
+        '200': {description: Profile with updated photoUrl; backend resizes to at most 512 px, re-encodes as JPEG, and strips image metadata before COS upload}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '413': {description: Upload exceeds 8 MB}
+        '422': {description: Invalid or unsupported image}
+        '502': {description: COS upload failed}
+        '503': {description: COS upload credentials or public URL are unavailable}
+  /me/timezone:
+    put:
+      tags: [Profile]
+      summary: Update the signed-in user's study timezone
+      description: Stores an IANA timezone identifier used to calculate daily progress and streak boundaries. Existing accounts keep Asia/Jakarta until this endpoint is called.
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [timezone]
+              properties:
+                timezone: {type: string, minLength: 1, maxLength: 64, example: Europe/Paris}
+      responses:
+        '200': {$ref: '#/components/responses/Profile'}
+        '400':
+          description: Invalid JSON request body
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '422':
+          description: Timezone is not a recognized IANA timezone
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '500':
+          description: Timezone could not be persisted
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /me/learning-history:
+    get:
+      tags: [Learning]
+      summary: Recently opened learning materials, newest first, isolated per account
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          description: 'data.items contains kind, lessonId, title, level, zero-based position, total, completed, locked, available, and accessedAt (UTC). Metadata and completion are server-derived. Cache-Control is no-store.'
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /me/learning-history/{kind}/{lessonId}:
+    put:
+      tags: [Learning]
+      summary: Save the last successfully opened material position without awarding quiz progress or XP
+      security: [{bearerAuth: []}]
+      parameters:
+        - in: path
+          name: kind
+          required: true
+          schema: {type: string, enum: [vocabulary, grammar, kanji, reading]}
+        - in: path
+          name: lessonId
+          required: true
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [position, accessedAt]
+              properties:
+                position: {type: integer, minimum: 0, description: Must be less than the current material count}
+                accessedAt: {type: string, format: date-time, description: UTC access time; timestamps over five minutes in the future are rejected. Older updates cannot replace a newer position.}
+      responses:
+        '200': {description: Canonical saved activity; stale retries return the newer stored activity}
+        '400': {description: Invalid position or timestamp}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {description: Premium material requires an active entitlement}
+        '404': {description: Material or learning category not found}
+  /me/progress:
+    get:
+      tags: [Profile]
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Lesson progress list}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /me/progress/{lessonId}:
+    put:
+      tags: [Profile]
+      security: [{bearerAuth: []}]
+      parameters:
+        - in: path
+          name: lessonId
+          required: true
+          schema: {type: string}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [completion, lastPosition]
+              properties:
+                completion: {type: integer, minimum: 0, maximum: 100}
+                lastPosition: {type: integer, minimum: 0}
+      responses:
+        '200': {description: Progress saved}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /me/gamification:
+    get:
+      tags: [Profile]
+      summary: Server-verified XP, level, Jakarta daily streak, and permanent achievements
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          description: Current account summary; fresh accounts have zero XP and locked achievements
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/GamificationSummary'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /me/achievements:
+    get:
+      tags: [Profile]
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {description: Achievement list}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+  /vocabulary/levels:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+      tags: [Vocabulary]
+      summary: List JLPT N5-N1 vocabulary levels, lessons, and user progress
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Vocabulary course catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: {$ref: '#/components/schemas/VocabularyLevel'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+  /vocabulary/lessons/{lessonId}:
+    get:
+      tags: [Vocabulary]
+      summary: Get teaching content for a vocabulary lesson
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/LessonId'}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Lesson and vocabulary words
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/VocabularyLesson'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Lesson not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /vocabulary/lessons/{lessonId}/attempts:
+    post:
+      tags: [Vocabulary]
+      summary: Start or retry a server-evaluated lesson quiz
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/LessonId'}
+      responses:
+        '201':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: New attempt with questions; correct answers are withheld
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    required: [id, lessonId, questions, startedAt]
+                    properties:
+                      id: {type: string}
+                      lessonId: {type: string}
+                      startedAt: {type: string, format: date-time}
+                      questions: {type: array, items: {$ref: '#/components/schemas/VocabularyQuestion'}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Lesson not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /vocabulary/attempts/{attemptId}/answers:
+    post:
+      tags: [Vocabulary]
+      summary: Submit one answer and receive educational feedback
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/AttemptId'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [questionId, optionId]
+              properties:
+                questionId: {type: string}
+                optionId: {type: string}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Correctness, correct option, and explanation
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or not owned by user, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Invalid question or option, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /vocabulary/attempts/{attemptId}/complete:
+    post:
+      tags: [Vocabulary]
+      summary: Complete an attempt and persist best score/progress
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/AttemptId'}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Score, pass status, best score, and total progress
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or not owned by user, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Not all questions have been answered, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /grammar/course:
+    get:
+      tags: [Grammar]
+      summary: Get an N5, N4, N3, N2, or N1 grammar curriculum and signed-in user's completion progress
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - in: query
+          name: level
+          schema: {type: string, enum: [N5, N4, N3, N2, N1], default: N5}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Grammar course
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/GrammarCourse'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '422': {description: Unsupported grammar level; supported levels are N5, N4, N3, N2, and N1, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /grammar/lessons/{lessonId}:
+    get:
+      tags: [Grammar]
+      summary: Get grammar explanations and examples without quiz answers
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/LessonId'}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Grammar lesson
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/GrammarLesson'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Lesson not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /grammar/lessons/{lessonId}/attempts:
+    post:
+      tags: [Grammar]
+      summary: Start a new five-question quiz; correct answers withheld
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/LessonId'}
+      responses:
+        '201':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Quiz attempt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/GrammarAttempt'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Lesson not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /grammar/attempts/{attemptId}/answers:
+    post:
+      tags: [Grammar]
+      summary: Evaluate an answer; repeat requests return the original feedback
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/AttemptId'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [questionId, optionId]
+              properties:
+                questionId: {type: string}
+                optionId: {type: string}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Answer feedback
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/GrammarFeedback'}
+        '400': {description: Invalid JSON, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or owned by another user, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Invalid question or option ID, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /grammar/attempts/{attemptId}/complete:
+    post:
+      tags: [Grammar]
+      summary: Grade all answers, preserve best score, award XP once; idempotent
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/AttemptId'}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Result with completion progress (passed lessons / total lessons)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/GrammarResult'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or owned by another user, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Not all questions have been answered, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /kanji/course:
+    get:
+      tags: [Kanji]
+      summary: Get the selected kanji curriculum and signed-in user's completion progress
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - name: level
+          in: query
+          description: Defaults to N5. Completion progress is independent per level.
+          schema: {type: string, enum: [N5, N4, N3, N2, N1], default: N5}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Kanji course
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/KanjiCourse'}
+        '400':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Unsupported kanji level; N5, N4, N3, N2, and N1 are available
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+  /kanji/lessons/{lessonId}:
+    get:
+      tags: [Kanji]
+      summary: Get kanji explanations and examples without quiz answers
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/LessonId'}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Kanji lesson
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/KanjiLesson'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Lesson not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /kanji/lessons/{lessonId}/attempts:
+    post:
+      tags: [Kanji]
+      summary: Start a new five-question quiz; correct answers withheld
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/LessonId'}
+      responses:
+        '201':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Quiz attempt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/KanjiAttempt'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Lesson not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /kanji/attempts/{attemptId}/answers:
+    post:
+      tags: [Kanji]
+      summary: Evaluate an answer; repeat requests return the original feedback
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/AttemptId'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [questionId, optionId]
+              properties:
+                questionId: {type: string}
+                optionId: {type: string}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Answer feedback
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/KanjiFeedback'}
+        '400': {description: Invalid JSON, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or owned by another user, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Invalid question or option ID, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /kanji/attempts/{attemptId}/complete:
+    post:
+      tags: [Kanji]
+      summary: Grade all answers, preserve best score, award XP once; idempotent
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/AttemptId'}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Result with completion progress (passed lessons / total lessons)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/KanjiResult'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or owned by another user, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Not all questions have been answered, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /reading/course:
+    get:
+      tags: [Reading]
+      summary: Get the selected reading curriculum and signed-in user's completion progress
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - name: level
+          in: query
+          description: Defaults to N5 for existing clients. Progress is independent per level.
+          schema: {type: string, enum: [N5, N4, N3, N2, N1], default: N5}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Reading course
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/ReadingCourse'}
+        '400':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Unsupported reading level; N5, N4, N3, N2, and N1 are available
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+  /reading/lessons/{lessonId}:
+    get:
+      tags: [Reading]
+      summary: Get reading explanations and examples without quiz answers
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/LessonId'}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Reading lesson
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/ReadingLesson'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Lesson not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /reading/lessons/{lessonId}/attempts:
+    post:
+      tags: [Reading]
+      summary: Start a new five-question quiz; correct answers withheld
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/LessonId'}
+      responses:
+        '201':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Quiz attempt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/ReadingAttempt'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Lesson not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /reading/attempts/{attemptId}/answers:
+    post:
+      tags: [Reading]
+      summary: Evaluate an answer; repeat requests return the original feedback
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/AttemptId'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [questionId, optionId]
+              properties:
+                questionId: {type: string}
+                optionId: {type: string}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Answer feedback
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/ReadingFeedback'}
+        '400': {description: Invalid JSON, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or owned by another user, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Invalid question or option ID, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /reading/attempts/{attemptId}/complete:
+    post:
+      tags: [Reading]
+      summary: Grade all answers, preserve best score, award XP once; idempotent
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - {$ref: '#/components/parameters/AttemptId'}
+      responses:
+        '200':
+          headers:
+            Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+          description: Result with completion progress (passed lessons / total lessons)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: {$ref: '#/components/schemas/ReadingResult'}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '404': {description: Attempt not found or owned by another user, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '422': {description: Not all questions have been answered, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /offline/practice/{kind}/{lessonId}:
+    get:
+      tags: [Learning]
+      summary: Get an authenticated, signed snapshot of one lesson or SSW practice question bank
+      description: The package contains practice feedback answers for offline use. It is versioned by content hash and bound to the authenticated account. Kinds vocabulary, grammar, kanji and reading use a lesson ID; kind ssw uses an ordinary practice sector ID. Official exam simulations remain online.
+      security: [{bearerAuth: []}]
+      parameters:
+        - {$ref: '#/components/parameters/AcceptLanguage'}
+        - in: path
+          name: kind
+          required: true
+          schema: {type: string, enum: [vocabulary, grammar, kanji, reading, ssw]}
+        - in: path
+          name: lessonId
+          required: true
+          schema: {type: string}
+      responses:
+        '200': {description: Signed question bank with practice feedback, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '401': {$ref: '#/components/responses/LocalizedUnauthorized'}
+        '402': {description: Premium access required for N3-N1 lessons or any SSW practice, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '404': {description: Lesson, SSW sector, or practice questions not found, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+        '503': {description: Offline package signing is not configured, headers: {Content-Language: {$ref: '#/components/headers/ContentLanguage'}}}
+  /offline/practice-attempts/sync:
+    post:
+      tags: [Learning]
+      summary: Idempotently sync an offline lesson or SSW practice attempt for authoritative server scoring
+      description: Validates the account-bound signed package and recomputes the score from selected option IDs. JLPT lessons update best score, pass, XP and achievements; ordinary SSW practice records verified answers without XP, lesson progress or achievements.
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [attemptId, package, answers]
+              properties:
+                attemptId: {type: string, format: uuid}
+                package: {type: object, description: The complete immutable package returned by the GET endpoint}
+                answers:
+                  type: array
+                  items:
+                    type: object
+                    required: [questionId, optionId]
+                    properties:
+                      questionId: {type: string}
+                      optionId: {type: string}
+      responses:
+        '200': {description: Authoritative verified result; duplicate attempt IDs return the original result}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '402': {description: Premium access required for N3-N1 lessons or any SSW practice}
+        '422': {description: Invalid signature, package, or answers}
+        '503': {description: Offline package signing is not configured}
+components:
+  securitySchemes:
+    adminBearerAuth: {type: http, scheme: bearer, description: Backend admin key (feature-specific admin token or BRANDING_ADMIN_TOKEN)}
+    bearerAuth: {type: http, scheme: bearer, bearerFormat: opaque-session-token}
+  parameters:
+    System:
+      in: query
+      name: system
+      schema: {type: string, enum: [JLPT, NAT, JFT]}
+    LessonId:
+      in: path
+      name: lessonId
+      required: true
+      schema: {type: string}
+    AttemptId:
+      in: path
+      name: attemptId
+      required: true
+      schema: {type: string}
+    AcceptLanguage:
+      in: header
+      name: Accept-Language
+      description: Preferred response language. The server supports Indonesian and English and may fall back to Indonesian when English is not enabled.
+      required: false
+      schema: {type: string, example: "en-US,en;q=0.9"}
+  headers:
+    ContentLanguage:
+      description: The response language selected by the server; English may fall back to Indonesian while its release gate is closed.
+      schema: {type: string, enum: [id, en]}
+  responses:
+    AuthSession:
+      description: Authenticated session
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  token: {type: string}
+                  user: {$ref: '#/components/schemas/Profile'}
+    Profile:
+      description: User profile
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data: {$ref: '#/components/schemas/Profile'}
+    Categories:
+      headers:
+        Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+      description: Learning categories
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/CategoriesResponse'}
+    Tracks:
+      headers:
+        Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+      description: Learning tracks
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/TracksResponse'}
+    Exams:
+      headers:
+        Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+      description: Exams
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ExamsResponse'}
+    Plans:
+      description: Subscription plans
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/PlansResponse'}
+    Unauthorized:
+      description: Missing, invalid, or revoked token
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorResponse'}
+    PremiumRequired:
+      headers:
+        Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+      description: Premium entitlement required
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorResponse'}
+    LocalizedUnauthorized:
+      description: Missing, invalid, or revoked token
+      headers:
+        Content-Language: {$ref: '#/components/headers/ContentLanguage'}
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorResponse'}
+  schemas:
+    SimulationSection:
+      type: object
+      required: [id, name, durationSeconds, questionCount]
+      properties:
+        id: {type: string, enum: [vocabulary, grammar, conversation, reading]}
+        name: {type: string}
+        durationSeconds: {type: integer, const: 1200}
+        questionCount: {type: integer}
+    SimulationQuestion:
+      type: object
+      required: [id, number, section, group, instructions, prompt, options]
+      properties:
+        id: {type: string}
+        number: {type: integer, minimum: 1, maximum: 38}
+        section: {type: string, enum: [vocabulary, grammar, conversation, reading]}
+        group: {type: string}
+        instructions: {type: string}
+        passage: {type: string}
+        prompt: {type: string, description: 'Tested words wrapped in [[...]] are displayed underlined'}
+        options:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items:
+            type: object
+            properties:
+              id: {type: string, description: Opaque random ID with no correct-answer pattern}
+              text: {type: string}
+    SimulationSession:
+      type: object
+      required: [attempt, paperId, activeSection, sectionStartedAt, expiresAt, serverTime, sections, questions, answers, marked]
+      properties:
+        attempt:
+          type: object
+          properties:
+            id: {type: string}
+            examId: {type: string, description: "Simulation IDs include jlpt-n5-simulation-1 through jlpt-n5-simulation-10, jlpt-n4-simulation-1 through jlpt-n4-simulation-10, jlpt-n3-simulation-1, jft-a2-full-1 through jft-a2-full-5, and nat-5q-full-1"}
+            userId: {type: string}
+            status: {type: string, enum: [in_progress, completed]}
+            startedAt: {type: string, format: date-time}
+        paperId: {type: string}
+        activeSection: {type: string, enum: [vocabulary, grammar, conversation, reading, completed]}
+        sectionStartedAt: {type: string, format: date-time}
+        expiresAt: {type: string, format: date-time}
+        serverTime: {type: string, format: date-time}
+        sections: {type: array, items: {$ref: '#/components/schemas/SimulationSection'}}
+        questions: {type: array, items: {$ref: '#/components/schemas/SimulationQuestion'}}
+        answers: {type: object, additionalProperties: {type: string}}
+        marked: {type: array, items: {type: string}}
+        result: {$ref: '#/components/schemas/SimulationResult'}
+    SimulationResult:
+      type: object
+      required: [attemptId, paperId, score, correct, total, answered, durationSeconds, completedAt, sections, reviews, scoringNote]
+      properties:
+        attemptId: {type: string}
+        paperId: {type: string}
+        score: {type: integer, minimum: 0, maximum: 100, description: Raw accuracy percentage rounded down; not an official scaled score}
+        correct: {type: integer}
+        total: {type: integer, const: 38}
+        answered: {type: integer}
+        durationSeconds: {type: integer}
+        completedAt: {type: string, format: date-time}
+        scoringNote: {type: string}
+        sections:
+          type: array
+          items:
+            type: object
+            properties:
+              name: {type: string}
+              correct: {type: integer}
+              total: {type: integer}
+              score: {type: integer}
+        reviews:
+          type: array
+          items:
+            type: object
+            properties:
+              question: {$ref: '#/components/schemas/SimulationQuestion'}
+              selectedOptionId: {type: string}
+              correctOptionId: {type: string}
+              correct: {type: boolean}
+              explanation: {type: string}
+    Branding:
+      type: object
+      required: [appName, tagline, iconUrl, splashUrl, backgroundColor]
+      properties:
+        appName: {type: string, minLength: 1, maxLength: 50}
+        tagline: {type: string, maxLength: 120}
+        iconUrl: {type: string, description: Public HTTPS PNG/JPG URL or empty for default}
+        splashUrl: {type: string, description: Public HTTPS portrait PNG/JPG URL or empty for default}
+        backgroundColor: {type: string, pattern: '^#[0-9a-fA-F]{6}$', example: '#FAFAFA'}
+    DiagnosticQuestion:
+      type: object
+      required: [id, section, prompt, options]
+      properties:
+        id: {type: string}
+        section: {type: string, enum: [Kosakata, Kanji, Grammar, Reading]}
+        passage: {type: string}
+        prompt: {type: string}
+        options:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items:
+            type: object
+            required: [id, text]
+            properties:
+              id: {type: string}
+              text: {type: string}
+    DiagnosticSession:
+      type: object
+      required: [attempt, expiresAt, serverTime, questions, answers]
+      properties:
+        attempt:
+          type: object
+          properties:
+            id: {type: string}
+            examId: {type: string, description: "Simulation IDs include jlpt-n5-simulation-1 through jlpt-n5-simulation-10, jlpt-n4-simulation-1 through jlpt-n4-simulation-10, jlpt-n3-simulation-1, jft-a2-full-1 through jft-a2-full-5, and nat-5q-full-1"}
+            userId: {type: string}
+            status: {type: string, enum: [in_progress, completed]}
+            startedAt: {type: string, format: date-time}
+        expiresAt: {type: string, format: date-time}
+        serverTime: {type: string, format: date-time}
+        questions: {type: array, items: {$ref: '#/components/schemas/DiagnosticQuestion'}}
+        answers: {type: object, additionalProperties: {type: string}}
+        result: {$ref: '#/components/schemas/DiagnosticResult'}
+    DiagnosticResult:
+      type: object
+      required: [attemptId, score, correct, total, answered, completedAt, durationSeconds, sections, reviews]
+      properties:
+        attemptId: {type: string}
+        score: {type: integer, minimum: 0, maximum: 100}
+        correct: {type: integer}
+        total: {type: integer}
+        answered: {type: integer}
+        completedAt: {type: string, format: date-time}
+        durationSeconds: {type: integer, minimum: 0, maximum: 1800}
+        sections:
+          type: array
+          items:
+            type: object
+            properties:
+              name: {type: string}
+              correct: {type: integer}
+              total: {type: integer}
+              score: {type: integer, minimum: 0, maximum: 100}
+        reviews:
+          type: array
+          items:
+            type: object
+            properties:
+              question: {$ref: '#/components/schemas/DiagnosticQuestion'}
+              selectedOptionId: {type: string}
+              correctOptionId: {type: string}
+              correct: {type: boolean}
+              explanation: {type: string}
+    GrammarLessonSummary:
+      type: object
+      required: [id, order, chapter, title, pointCount, questionCount, bestScore, completed]
+      properties:
+        id: {type: string, example: grammar-n5-01}
+        level: {type: string, enum: [N5, N4, N3, N2, N1]}
+        patterns: {type: array, items: {type: string}}
+        order: {type: integer, minimum: 1}
+        chapter: {type: string}
+        title: {type: string}
+        pointCount: {type: integer, minimum: 1}
+        questionCount: {type: integer, minimum: 1}
+        bestScore: {type: integer, minimum: 0, maximum: 100}
+        completed: {type: boolean}
+    GrammarCourse:
+      type: object
+      required: [level, title, progress, completedLessons, lessons]
+      properties:
+        level: {type: string, enum: [N5, N4, N3, N2, N1]}
+        title: {type: string}
+        progress: {type: integer, minimum: 0, maximum: 100}
+        completedLessons: {type: integer, minimum: 0}
+        lessons:
+          type: array
+          items: {$ref: '#/components/schemas/GrammarLessonSummary'}
+    GrammarLesson:
+      allOf:
+        - {$ref: '#/components/schemas/GrammarLessonSummary'}
+        - type: object
+          required: [points]
+          properties:
+            points:
+              type: array
+              items: {$ref: '#/components/schemas/GrammarPoint'}
+    GrammarPoint:
+      type: object
+      required: [pattern, meaning, formation, explanation, commonMistake, examples]
+      properties:
+        pattern: {type: string}
+        meaning: {type: string}
+        formation: {type: string}
+        explanation: {type: string}
+        commonMistake: {type: string}
+        examples:
+          type: array
+          items:
+            type: object
+            required: [japanese, reading, meaning]
+            properties:
+              japanese: {type: string}
+              reading: {type: string}
+              meaning: {type: string}
+    GrammarAttempt:
+      type: object
+      required: [id, lessonId, startedAt, questions]
+      properties:
+        id: {type: string}
+        lessonId: {type: string}
+        startedAt: {type: string, format: date-time}
+        questions:
+          type: array
+          items:
+            type: object
+            required: [id, prompt, options]
+            properties:
+              id: {type: string}
+              prompt: {type: string}
+              options:
+                type: array
+                items:
+                  type: object
+                  required: [id, text]
+                  properties:
+                    id: {type: string}
+                    text: {type: string}
+    GrammarFeedback:
+      type: object
+      required: [questionId, correct, correctOptionId, explanation]
+      properties:
+        questionId: {type: string}
+        correct: {type: boolean}
+        correctOptionId: {type: string}
+        explanation: {type: string}
+    GrammarResult:
+      type: object
+      required: [attemptId, lessonId, score, correctAnswers, totalQuestions, passed, bestScore, progress, canRetry]
+      properties:
+        attemptId: {type: string}
+        lessonId: {type: string}
+        score: {type: integer, minimum: 0, maximum: 100}
+        correctAnswers: {type: integer, minimum: 0}
+        totalQuestions: {type: integer, minimum: 1}
+        passed: {type: boolean}
+        bestScore: {type: integer, minimum: 0, maximum: 100}
+        progress: {type: integer, minimum: 0, maximum: 100}
+        canRetry: {type: boolean}
+    KanjiLessonSummary:
+      type: object
+      required: [id, order, chapter, title, characterCount, questionCount, bestScore, completed]
+      properties:
+        id: {type: string, example: kanji-n5-01}
+        order: {type: integer, minimum: 1}
+        chapter: {type: string}
+        title: {type: string}
+        characterCount: {type: integer, minimum: 1}
+        questionCount: {type: integer, minimum: 1}
+        bestScore: {type: integer, minimum: 0, maximum: 100}
+        completed: {type: boolean}
+    KanjiCourse:
+      type: object
+      required: [level, title, progress, completedLessons, lessons]
+      properties:
+        level: {type: string, enum: [N5, N4, N3, N2, N1]}
+        title: {type: string}
+        progress: {type: integer, minimum: 0, maximum: 100}
+        completedLessons: {type: integer, minimum: 0}
+        lessons:
+          type: array
+          items: {$ref: '#/components/schemas/KanjiLessonSummary'}
+    KanjiLesson:
+      allOf:
+        - {$ref: '#/components/schemas/KanjiLessonSummary'}
+        - type: object
+          required: [characters]
+          properties:
+            characters:
+              type: array
+              items: {$ref: '#/components/schemas/KanjiCharacter'}
+    KanjiCharacter:
+      type: object
+      required: [character, meaning, onReading, kunReading, strokes, mnemonic, note, examples]
+      properties:
+        character: {type: string, minLength: 1, maxLength: 1}
+        meaning: {type: string}
+        onReading: {type: string}
+        kunReading: {type: string}
+        strokes: {type: integer, minimum: 1}
+        mnemonic: {type: string}
+        note: {type: string}
+        examples:
+          type: array
+          items:
+            type: object
+            required: [japanese, reading, meaning]
+            properties:
+              japanese: {type: string}
+              reading: {type: string}
+              meaning: {type: string}
+    KanjiAttempt:
+      type: object
+      required: [id, lessonId, startedAt, questions]
+      properties:
+        id: {type: string}
+        lessonId: {type: string}
+        startedAt: {type: string, format: date-time}
+        questions:
+          type: array
+          items:
+            type: object
+            required: [id, prompt, options]
+            properties:
+              id: {type: string}
+              prompt: {type: string}
+              options:
+                type: array
+                items:
+                  type: object
+                  required: [id, text]
+                  properties:
+                    id: {type: string}
+                    text: {type: string}
+    KanjiFeedback:
+      type: object
+      required: [questionId, correct, correctOptionId, explanation]
+      properties:
+        questionId: {type: string}
+        correct: {type: boolean}
+        correctOptionId: {type: string}
+        explanation: {type: string}
+    KanjiResult:
+      type: object
+      required: [attemptId, lessonId, score, correctAnswers, totalQuestions, passed, bestScore, progress, canRetry]
+      properties:
+        attemptId: {type: string}
+        lessonId: {type: string}
+        score: {type: integer, minimum: 0, maximum: 100}
+        correctAnswers: {type: integer, minimum: 0}
+        totalQuestions: {type: integer, minimum: 1}
+        passed: {type: boolean}
+        bestScore: {type: integer, minimum: 0, maximum: 100}
+        progress: {type: integer, minimum: 0, maximum: 100}
+        canRetry: {type: boolean}
+    ReadingLessonSummary:
+      type: object
+      required: [id, order, chapter, title, japaneseTitle, description, minutes, imageAsset, imageUrl, pageCount, questionCount, bestScore, completed]
+      properties:
+        id: {type: string, example: reading-n5-01}
+        japaneseTitle: {type: string}
+        description: {type: string}
+        minutes: {type: integer, minimum: 1}
+        imageAsset: {type: string}
+        imageUrl: {type: string}
+        order: {type: integer, minimum: 1}
+        chapter: {type: string}
+        title: {type: string}
+        pageCount: {type: integer, minimum: 1}
+        questionCount: {type: integer, minimum: 1}
+        bestScore: {type: integer, minimum: 0, maximum: 100}
+        completed: {type: boolean}
+    ReadingCourse:
+      type: object
+      required: [level, title, progress, completedLessons, lessons]
+      properties:
+        level: {type: string, enum: [N5, N4, N3, N2, N1]}
+        title: {type: string}
+        progress: {type: integer, minimum: 0, maximum: 100}
+        completedLessons: {type: integer, minimum: 0}
+        lessons:
+          type: array
+          items: {$ref: '#/components/schemas/ReadingLessonSummary'}
+    ReadingLesson:
+      allOf:
+        - {$ref: '#/components/schemas/ReadingLessonSummary'}
+        - type: object
+          required: [pages]
+          properties:
+            pages:
+              type: array
+              items: {$ref: '#/components/schemas/ReadingPage'}
+    ReadingWord:
+      type: object
+      required: [japanese, reading, meaning]
+      properties:
+        japanese: {type: string}
+        reading: {type: string}
+        meaning: {type: string}
+    ReadingPage:
+      type: object
+      required: [title, japanese, reading, meaning, imageAsset, imageUrl, imagePanel, imageDescription, vocabulary]
+      properties:
+        title: {type: string}
+        japanese: {type: string}
+        reading: {type: string}
+        meaning: {type: string}
+        imageAsset: {type: string}
+        imageUrl: {type: string}
+        imagePanel: {type: integer, minimum: 0, maximum: 2}
+        imageDescription: {type: string}
+        vocabulary:
+          type: array
+          items: {$ref: '#/components/schemas/ReadingWord'}
+    ReadingAttempt:
+      type: object
+      required: [id, lessonId, startedAt, questions]
+      properties:
+        id: {type: string}
+        lessonId: {type: string}
+        startedAt: {type: string, format: date-time}
+        questions:
+          type: array
+          items:
+            type: object
+            required: [id, prompt, options]
+            properties:
+              id: {type: string}
+              prompt: {type: string}
+              options:
+                type: array
+                items:
+                  type: object
+                  required: [id, text]
+                  properties:
+                    id: {type: string}
+                    text: {type: string}
+    ReadingFeedback:
+      type: object
+      required: [questionId, correct, correctOptionId, explanation]
+      properties:
+        questionId: {type: string}
+        correct: {type: boolean}
+        correctOptionId: {type: string}
+        explanation: {type: string}
+    ReadingResult:
+      type: object
+      required: [attemptId, lessonId, score, correctAnswers, totalQuestions, passed, bestScore, progress, canRetry]
+      properties:
+        attemptId: {type: string}
+        lessonId: {type: string}
+        score: {type: integer, minimum: 0, maximum: 100}
+        correctAnswers: {type: integer, minimum: 0}
+        totalQuestions: {type: integer, minimum: 1}
+        passed: {type: boolean}
+        bestScore: {type: integer, minimum: 0, maximum: 100}
+        progress: {type: integer, minimum: 0, maximum: 100}
+        canRetry: {type: boolean}
+    VocabularyLevel:
+      type: object
+      required: [level, title, description, requiredTier, progress, lessons]
+      properties:
+        level: {type: string, enum: [N5, N4, N3, N2, N1]}
+        title: {type: string}
+        description: {type: string}
+        sourceName: {type: string, description: Attribution source when vocabulary data is adapted from an external dataset}
+        sourceUrl: {type: string, format: uri, description: Link to the original vocabulary dataset}
+        sourceLicense: {type: string, description: License and adaptation note for attributed vocabulary data}
+        requiredTier: {type: string, enum: [free, premium]}
+        progress: {type: integer, minimum: 0, maximum: 100}
+        lessons:
+          type: array
+          items: {$ref: '#/components/schemas/VocabularyLessonSummary'}
+    VocabularyLessonSummary:
+      type: object
+      required: [id, order, title, description, wordCount, bestScore, completed]
+      properties:
+        id: {type: string}
+        order: {type: integer, minimum: 1}
+        title: {type: string}
+        description: {type: string}
+        wordCount: {type: integer, minimum: 1}
+        questionCount: {type: integer, minimum: 1}
+        imageAsset: {type: string}
+        imageUrl: {type: string, description: Absolute CDN URL or path relative to API origin}
+        bestScore: {type: integer, minimum: 0, maximum: 100}
+        completed: {type: boolean}
+    VocabularyExample:
+      type: object
+      required: [japanese, reading, meaning]
+      properties:
+        japanese: {type: string}
+        reading: {type: string, description: Full kana reading of the sentence}
+        meaning: {type: string}
+    VocabularyWord:
+      type: object
+      required: [id, term, reading, meaning, example, exampleMeaning, note]
+      properties:
+        id: {type: string}
+        term: {type: string}
+        reading: {type: string}
+        meaning: {type: string}
+        example: {type: string, description: Legacy first example}
+        exampleMeaning: {type: string}
+        examples: {type: array, items: {$ref: '#/components/schemas/VocabularyExample'}}
+        note: {type: string}
+        imageAsset: {type: string}
+        imageUrl: {type: string}
+        imagePanel: {type: integer, minimum: 0, maximum: 7, description: Row-major panel in a 4-column by 2-row sheet}
+        imageDescription: {type: string}
+    VocabularyLesson:
+      type: object
+      required: [id, level, title, description, bestScore, completed, words]
+      properties:
+        id: {type: string}
+        level: {type: string}
+        title: {type: string}
+        description: {type: string}
+        bestScore: {type: integer}
+        completed: {type: boolean}
+        imageUrl: {type: string}
+        words: {type: array, items: {$ref: '#/components/schemas/VocabularyWord'}}
+    VocabularyQuestion:
+      type: object
+      required: [id, prompt, options]
+      properties:
+        id: {type: string}
+        prompt: {type: string}
+        kind: {type: string}
+        imageAsset: {type: string}
+        imageUrl: {type: string}
+        imagePanel: {type: integer, minimum: 0, maximum: 7}
+        imageDescription: {type: string}
+        options:
+          type: array
+          items:
+            type: object
+            required: [id, text]
+            properties:
+              id: {type: string}
+              text: {type: string}
+    HomeBanner:
+      type: object
+      required: [id, title, description, imageUrl, action, buttonLabel, order, enabled]
+      properties:
+        id: {type: string, pattern: '^[a-z][a-z0-9-]{0,63}$'}
+        title: {type: string, minLength: 1, maxLength: 80}
+        description: {type: string, maxLength: 180}
+        imageUrl: {type: string, maxLength: 2048, description: HTTPS URL or root-relative bundled/uploaded image URL; empty uses the app illustration}
+        action: {type: string, enum: [learn, ssw, jobs]}
+        buttonLabel: {type: string, minLength: 1, maxLength: 40}
+        order: {type: integer, minimum: 0, maximum: 999}
+        enabled: {type: boolean}
+    HomeBannerConfig:
+      type: object
+      required: [banners]
+      properties:
+        banners: {type: array, maxItems: 12, items: {$ref: '#/components/schemas/HomeBanner'}}
+    Dashboard:
+      type: object
+      required: [isAuthenticated, dailyGoal, categories, tracks, exams, plans, achievements, banners]
+      properties:
+        banners: {type: array, items: {$ref: '#/components/schemas/HomeBanner'}, description: Enabled banners sorted by order}
+        isAuthenticated: {type: boolean}
+        profile: {$ref: '#/components/schemas/Profile'}
+        dailyGoal: {$ref: '#/components/schemas/DailyGoal'}
+        categories: {type: array, items: {$ref: '#/components/schemas/LearningCategory'}}
+        tracks: {type: array, items: {$ref: '#/components/schemas/LearningTrack'}}
+        exams: {type: array, items: {$ref: '#/components/schemas/Exam'}}
+        plans: {type: array, items: {$ref: '#/components/schemas/Plan'}}
+        achievements: {type: array, items: {$ref: '#/components/schemas/Achievement'}}
+    Profile:
+      type: object
+      required: [id, displayName, email, timezone, target, level, xp, streakDays, entitlement]
+      properties:
+        id: {type: string}
+        displayName: {type: string}
+        email: {type: string, format: email}
+        photoUrl: {type: string, format: uri}
+        timezone: {type: string, description: IANA timezone used for study-day boundaries, example: America/Los_Angeles}
+        target: {type: string}
+        level: {type: integer}
+        xp: {type: integer}
+        streakDays: {type: integer}
+        entitlement:
+          type: object
+          properties:
+            tier: {type: string, enum: [free, premium]}
+            isLifetime: {type: boolean}
+            expiresAt: {type: string, format: date-time}
+    DailyGoal:
+      type: object
+      required: [minutesLearned, targetMinutes, streakDays]
+      properties:
+        minutesLearned: {type: integer, minimum: 0}
+        targetMinutes: {type: integer, minimum: 0}
+        streakDays: {type: integer, minimum: 0}
+    LearningCategory:
+      type: object
+      required: [id, name, description, lessonCount, requiredTier]
+      properties:
+        id: {type: string}
+        name: {type: string}
+        description: {type: string}
+        lessonCount: {type: integer}
+        requiredTier: {type: string, enum: [free, premium]}
+    LearningTrack:
+      type: object
+      required: [id, system, level, title, description, progress, requiredTier]
+      properties:
+        id: {type: string}
+        system: {type: string}
+        level: {type: string}
+        title: {type: string}
+        description: {type: string}
+        progress: {type: integer, minimum: 0, maximum: 100}
+        requiredTier: {type: string, enum: [free, premium]}
+    Exam:
+      type: object
+      properties:
+        id: {type: string}
+        system: {type: string}
+        level: {type: string}
+        title: {type: string}
+        questionCount: {type: integer}
+        durationMinutes: {type: integer}
+        requiredTier: {type: string, enum: [free, premium]}
+    Plan:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        billingType: {type: string, enum: [free, monthly, yearly, lifetime]}
+        priceIdr: {type: integer}
+        features: {type: array, items: {type: string}}
+        recommended: {type: boolean}
+    PricingConfig:
+      type: object
+      required: [lifetimePriceIdr]
+      properties:
+        lifetimePriceIdr: {type: integer, minimum: 1000, maximum: 100000000, example: 149000}
+    GamificationSummary:
+      type: object
+      required: [xp, level, levelXp, nextLevelXp, streakDays, bestStreak, lessonsCompleted, examsCompleted, activeDays, minutesToday, timezone, achievements]
+      properties:
+        xp: {type: integer, minimum: 0}
+        level: {type: integer, minimum: 1}
+        levelXp: {type: integer, minimum: 0, maximum: 499}
+        nextLevelXp: {type: integer, const: 500}
+        streakDays: {type: integer, minimum: 0}
+        bestStreak: {type: integer, minimum: 0}
+        lessonsCompleted: {type: integer, minimum: 0}
+        examsCompleted: {type: integer, minimum: 0, description: Distinct exam IDs completed with at least one answer}
+        activeDays: {type: integer, minimum: 0}
+        minutesToday: {type: integer, minimum: 0, description: Capped server duration of completed quiz or exam sessions}
+        timezone: {type: string, description: IANA timezone used for study-day boundaries, example: Europe/Paris}
+        achievements: {type: array, items: {$ref: '#/components/schemas/Achievement'}}
+    Achievement:
+      type: object
+      properties:
+        id: {type: string}
+        name: {type: string}
+        description: {type: string}
+        icon: {type: string}
+        progress: {type: integer}
+        target: {type: integer}
+        unlockedAt: {type: string, format: date-time}
+    CategoriesResponse:
+      type: object
+      properties:
+        data: {type: array, items: {$ref: '#/components/schemas/LearningCategory'}}
+    TracksResponse:
+      type: object
+      properties:
+        data: {type: array, items: {$ref: '#/components/schemas/LearningTrack'}}
+    ExamsResponse:
+      type: object
+      properties:
+        data: {type: array, items: {$ref: '#/components/schemas/Exam'}}
+    PlansResponse:
+      type: object
+      properties:
+        data: {type: array, items: {$ref: '#/components/schemas/Plan'}}
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: {type: string}
+            message: {type: string}

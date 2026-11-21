@@ -1,0 +1,311 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nihongo_master/core/app_review/app_review_service.dart';
+import 'package:nihongo_master/core/localization/app_localizations.dart';
+import 'package:nihongo_master/core/routing/app_router.dart';
+import 'package:nihongo_master/features/learn/kanji/domain/kanji_models.dart';
+import 'package:nihongo_master/features/learn/kanji/presentation/controllers/kanji_controller.dart';
+import 'package:nihongo_master/features/learn/level_list/presentation/kanji_level_list.dart';
+import 'package:nihongo_master/features/anki/presentation/course_anki_button.dart';
+import 'package:nihongo_master/core/unlock/locked_content.dart';
+import 'package:nihongo_master/core/unlock/unlock_repository.dart';
+
+class KanjiCourseScreen extends ConsumerStatefulWidget {
+  const KanjiCourseScreen({this.level = 'N5', super.key});
+  final String level;
+  @override
+  ConsumerState<KanjiCourseScreen> createState() => _KanjiCourseScreenState();
+}
+
+class _KanjiCourseScreenState extends ConsumerState<KanjiCourseScreen> {
+  String query = '';
+  String chapter = 'Semua';
+  Future<void> open(KanjiLessonSummary lesson) async {
+    await context.push(AppRoutes.kanjiLessonPath(lesson.id));
+    if (!mounted) return;
+    ref.invalidate(kanjiCourseProvider(widget.level));
+    requestAppReviewIfEligible(ref);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = kanjiCourseProvider(widget.level);
+    final course = ref.watch(provider);
+    final lessonTab = course.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, s) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.cloud_off_rounded, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                e.toString().localized(context),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => ref.invalidate(provider),
+                child: Text('Muat ulang'.localized(context)),
+              ),
+            ],
+          ),
+        ),
+      ),
+      data: (data) {
+        final colors = Theme.of(context).colorScheme;
+        final chapters = [
+          'Semua',
+          ...data.lessons.map((l) => l.chapter).toSet(),
+        ];
+        final visible = data.lessons
+            .where(
+              (l) =>
+                  (chapter == 'Semua' || chapter == l.chapter) &&
+                  '${l.title} ${l.chapter}'.toLowerCase().contains(
+                    query.toLowerCase(),
+                  ),
+            )
+            .toList();
+        final resume = data.lessons.where((l) => !l.completed).firstOrNull;
+        return RefreshIndicator(
+          onRefresh: () => ref.refresh(provider.future),
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    colors: [colors.secondary, colors.primary],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.translate_rounded,
+                      color: Colors.white,
+                      size: 36,
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      widget.level == 'N3'
+                          ? 'Kenali kanji N3 dalam kalimat sehari-hari'
+                                .localized(context)
+                          : widget.level == 'N4'
+                          ? 'Perluas kemampuan kanji N4'.localized(context)
+                          : widget.level == 'N2'
+                          ? 'Pelajari kanji dan kosakata tingkat N2'.localized(
+                              context,
+                            )
+                          : widget.level == 'N1'
+                          ? 'Perluas penguasaan kanji tingkat lanjut'.localized(
+                              context,
+                            )
+                          : 'Kenali dan baca kanji dasar'.localized(context),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${data.lessons.length} lesson • ${data.lessons.fold<int>(0, (n, l) => n + l.characterCount)} kanji • ${data.lessons.fold<int>(0, (n, l) => n + l.questionCount)} soal'
+                          .localized(context),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Pahami kanji, baca contoh, lalu kerjakan kuis. Lulus dengan nilai minimal 80% untuk menyelesaikan lesson.'
+                          .localized(context),
+                      style: const TextStyle(color: Colors.white, height: 1.5),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '${data.completedLessons}/${data.lessons.length} lesson selesai • ${data.progress}%'
+                            .localized(context),
+                        key: const Key('kanji-course-progress'),
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 12),
+                      LinearProgressIndicator(
+                        value: data.progress / 100,
+                        backgroundColor: colors.primary.withValues(alpha: 0.1),
+                        minHeight: 8,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      const SizedBox(height: 16),
+                      if (resume != null)
+                        FilledButton.icon(
+                          key: const Key('kanji-resume'),
+                          onPressed: () => open(resume),
+                          icon: const Icon(Icons.play_arrow_rounded),
+                          label: Text(
+                            data.completedLessons == 0
+                                ? 'Mulai belajar'.localized(context)
+                                : 'Lanjutkan belajar'.localized(context),
+                          ),
+                        )
+                      else
+                        Text(
+                          'Semua lesson selesai! Anda tetap dapat mengulang materi dan kuis.'
+                              .localized(context),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                key: const Key('kanji-search'),
+                onChanged: (v) => setState(() => query = v),
+                decoration: InputDecoration(
+                  hintText: 'Cari judul lesson'.localized(context),
+                  prefixIcon: Icon(Icons.search_rounded),
+                ),
+              ),
+              const SizedBox(height: 14),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (final c in chapters)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(c == 'Semua' ? c.localized(context) : c),
+                          selected: chapter == c,
+                          onSelected: (_) => setState(() => chapter = c),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              if (visible.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    'Tidak ada lesson yang cocok. Coba judul atau bab lain.'
+                        .localized(context),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              for (final lesson in visible) ...[
+                Card(
+                  child: ListTile(
+                    key: Key('kanji-lesson-${lesson.id}'),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    onTap: () => open(lesson),
+                    leading: CircleAvatar(
+                      backgroundColor: colors.primary.withValues(alpha: 0.1),
+                      child: lesson.completed
+                          ? Icon(Icons.check_rounded, color: colors.primary)
+                          : Text(
+                              '${lesson.order}',
+                              style: TextStyle(
+                                color: colors.primary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                    ),
+                    title: Text(
+                      lesson.title,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    subtitle: Text(
+                      '${lesson.chapter}\n${lesson.characterCount} kanji • ${lesson.questionCount} ${'soal'.localized(context)} • ${'Terbaik'.localized(context)} ${lesson.bestScore}%',
+                    ),
+                    isThreeLine: true,
+                    trailing: UnlockLockIcon(
+                      target: UnlockTarget('kanji', lesson.id),
+                      lockable: isLockableLevel(widget.level),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+              if (widget.level == 'N4' ||
+                  widget.level == 'N3' ||
+                  widget.level == 'N2' ||
+                  widget.level == 'N1')
+                Card(
+                  child: ExpansionTile(
+                    key: Key('kanji-${widget.level.toLowerCase()}-sources'),
+                    title: Text('Tentang materi dan sumber'.localized(context)),
+                    childrenPadding: const EdgeInsets.all(16),
+                    children: [
+                      SelectableText(
+                        '${(widget.level == 'N3'
+                            ? '367 kanji dari daftar rujukan N3, dengan contoh kosakata dan kalimat.'
+                            : widget.level == 'N2'
+                            ? '367 kanji dari pemetaan JLPT N2 yang dirujuk; kartu memakai contoh kosakata dari korpus latihan.'
+                            : widget.level == 'N1'
+                            ? '1.232 kanji dari pemetaan JLPT N1 yang dirujuk, dengan contoh kosakata kamus.'
+                            : '166 kanji dari daftar rujukan N4, termasuk 21 kanji pengulangan N5.').localized(context)} '
+                        '${'Bacaan pada kartu merupakan pilihan bacaan kamus.'.localized(context)} '
+                        '${'Petunjuk mengingat dibuat sebagai bantuan belajar.'.localized(context)}\n\n'
+                        '${'Jumlah goresan dan data bacaan menggunakan KANJIDIC oleh James William Breen dan EDRDG,'.localized(context)} '
+                        '${'melalui kanji-data oleh David Gouveia.'.localized(context)} '
+                        '${(widget.level == 'N2' || widget.level == 'N1' ? 'Gloss kamus dan contoh ' + widget.level + ' mengikuti sumber berbahasa Inggris; belum diterjemahkan ke Bahasa Indonesia.' : 'Materi data ' + widget.level + ' diadaptasi dengan arti, contoh, dan kuis Indonesia; CC BY-SA 4.0.').localized(context)}\n'
+                        '${'Sumber:'.localized(context)} https://github.com/davidluzgouveia/kanji-data\n'
+                        '${'Lisensi kamus:'.localized(context)} https://www.edrdg.org/edrdg/licence.html\n'
+                        'CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/\n\n'
+                        '${'JLPT tidak menerbitkan daftar kanji resmi yang tertutup:'.localized(context)} '
+                        'https://www.jlpt.jp/e/faq/',
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Kanji JLPT ${widget.level}'),
+          actions: [
+            CourseAnkiButton(type: 'kanji', level: widget.level),
+          ],
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'Lesson'.localized(context)),
+              Tab(
+                key: const ValueKey('kanji-tab-list'),
+                text: 'Daftar Kanji'.localized(context),
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            lessonTab,
+            KanjiLevelList(level: widget.level),
+          ],
+        ),
+      ),
+    );
+  }
+}

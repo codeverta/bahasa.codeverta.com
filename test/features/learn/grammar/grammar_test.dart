@@ -1,0 +1,488 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:nihongo_master/core/ads/ads_config.dart';
+import 'package:nihongo_master/core/ads/ads_controller.dart';
+import 'package:nihongo_master/core/offline/network_status.dart';
+import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
+import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
+import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:nihongo_master/features/learn/activity/learning_history.dart';
+import 'package:nihongo_master/features/learn/grammar/data/grammar_repository.dart';
+import 'package:nihongo_master/features/learn/grammar/domain/grammar_models.dart';
+import 'package:nihongo_master/features/learn/grammar/presentation/controllers/grammar_controller.dart';
+import 'package:nihongo_master/features/learn/grammar/presentation/screens/grammar_course_screen.dart';
+import 'package:nihongo_master/features/learn/grammar/presentation/screens/grammar_lesson_screen.dart';
+import 'package:nihongo_master/features/learn/vocabulary/domain/vocabulary_models.dart'
+    show QuizOption;
+import 'package:nihongo_master/features/profile/data/gamification_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+late SharedPreferences _preferences;
+
+void main() {
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    _preferences = await SharedPreferences.getInstance();
+  });
+  test('lesson reopens at the last studied grammar point', () async {
+    final history = LearningHistoryController(
+      _preferences,
+      _HistoryRepository(),
+      'user',
+    );
+    addTearDown(history.dispose);
+    final first = GrammarController(
+      _UnfinishedRepository(),
+      'grammar-n5-02',
+      onProgress: () {},
+      history: history,
+    );
+    await first.load();
+    first.movePoint(1);
+    expect(history.state.single.position, 1);
+    first.dispose();
+    final reopened = GrammarController(
+      _UnfinishedRepository(),
+      'grammar-n5-02',
+      onProgress: () {},
+      history: history,
+    );
+    addTearDown(reopened.dispose);
+    await reopened.load();
+    expect(reopened.state.valueOrNull!.pointIndex, 1);
+    expect(history.state.length, 1);
+  });
+  testWidgets('N2 opens its full catalog and searches Japanese patterns', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final content =
+        jsonDecode(File('backend/data/grammar/n2.json').readAsStringSync())
+            as List<dynamic>;
+    final lessons = content.indexed.map((entry) {
+      final data = entry.$2 as Map<String, dynamic>;
+      return GrammarLessonSummary(
+        id: 'grammar-n2-${(entry.$1 + 1).toString().padLeft(2, '0')}',
+        level: 'N2',
+        order: entry.$1 + 1,
+        chapter: data['chapter'] as String,
+        title: data['title'] as String,
+        pointCount: (data['points'] as List<dynamic>).length,
+        questionCount: (data['questions'] as List<dynamic>).length,
+        patterns: (data['points'] as List<dynamic>)
+            .map((p) => (p as Map<String, dynamic>)['pattern'] as String)
+            .toList(),
+        bestScore: 0,
+        completed: false,
+      );
+    }).toList();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(_preferences),
+          authControllerProvider.overrideWith(
+            (ref) => AuthController.test(const AuthenticationState.guest()),
+          ),
+          offlineProvider.overrideWithValue(true),
+          grammarCourseLevelProvider('N2').overrideWith(
+            (ref) async => GrammarCourse(
+              level: 'N2',
+              title: 'Grammar JLPT N2',
+              progress: 0,
+              completedLessons: 0,
+              lessons: lessons,
+            ),
+          ),
+        ],
+        child: const MaterialApp(home: GrammarCourseScreen(initialLevel: 'N2')),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Grammar JLPT N2'), findsOneWidget);
+    expect(find.text('60 lesson • 120 pola • 300 soal'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    final search = find.byKey(const ValueKey('grammar-search-N2'));
+    await tester.scrollUntilVisible(
+      search,
+      100,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.enterText(search, 'に先立って');
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('grammar-lesson-grammar-n2-59')),
+      100,
+      scrollable: find.byType(Scrollable).last,
+    );
+    expect(find.text('Seolah-olah dan sebelum tahap penting'), findsOneWidget);
+    expect(find.byKey(const Key('grammar-lesson-grammar-n2-01')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('course displays saved progress and searches lesson titles', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(_preferences),
+          authControllerProvider.overrideWith(
+            (ref) => AuthController.test(const AuthenticationState.guest()),
+          ),
+          offlineProvider.overrideWithValue(true),
+          grammarCourseProvider.overrideWith((ref) async => _course),
+        ],
+        child: const MaterialApp(home: GrammarCourseScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('1/2 lesson selesai • 50%'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('grammar-search-N5')),
+      100,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('grammar-search-N5')),
+      'Waktu',
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('grammar-lesson-grammar-n5-01')), findsNothing);
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('grammar-lesson-grammar-n5-02')),
+      100,
+      scrollable: find.byType(Scrollable).last,
+    );
+    expect(find.text('Waktu lampau'), findsOneWidget);
+  });
+
+  testWidgets(
+    'small phone reads two patterns and completes five-question quiz',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final repository = _Repository();
+      await tester.pumpWidget(_app(repository));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Nです'), findsOneWidget);
+      final furiganaToggle = find.byKey(const Key('grammar-furigana-toggle'));
+      expect(tester.widget<FilterChip>(furiganaToggle).selected, isTrue);
+      final example = find.byKey(const Key('grammar-example-0-0'));
+      await tester.scrollUntilVisible(
+        example,
+        120,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('わたし'), findsOneWidget);
+      await tester.ensureVisible(furiganaToggle);
+      await tester.tap(furiganaToggle);
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        example,
+        120,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('わたし'), findsNothing);
+      await tester.ensureVisible(furiganaToggle);
+      await tester.tap(furiganaToggle);
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        example,
+        120,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('わたし'), findsOneWidget);
+      await tester.ensureVisible(find.text('Hindari kesalahan ini'));
+      await tester.scrollUntilVisible(find.text('Hindari kesalahan ini'), 200);
+      expect(find.text('Hindari kesalahan ini').hitTestable(), findsOneWidget);
+      expect(
+        find.byKey(const Key('grammar-next-point')).hitTestable(),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const Key('grammar-next-point')));
+      await tester.pumpAndSettle();
+      expect(find.text('Nではありません'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('grammar-start-quiz')));
+      await tester.pumpAndSettle();
+      for (var i = 1; i <= 5; i++) {
+        await tester.tap(find.byKey(Key('grammar-option-q$i-a')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('grammar-submit')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const Key('grammar-feedback')), findsOneWidget);
+        await tester.tap(find.byKey(const Key('grammar-submit')));
+        await tester.pumpAndSettle();
+      }
+      expect(find.text('Lesson dikuasai!'), findsOneWidget);
+      expect(find.text('100%'), findsOneWidget);
+      expect(repository.completed, 1);
+      expect(tester.takeException(), isNull);
+      await tester.ensureVisible(find.byKey(const Key('grammar-retry')));
+      await tester.tap(find.byKey(const Key('grammar-retry')));
+      await tester.pumpAndSettle();
+      expect(find.text('Pertanyaan 1/5'), findsOneWidget);
+      expect(repository.started, 2);
+    },
+  );
+
+  test('network errors preserve answer selection and can be retried', () async {
+    final repository = _Repository()..failAnswer = true;
+    final controller = GrammarController(
+      repository,
+      'grammar-n5-01',
+      onProgress: () {},
+    );
+    addTearDown(controller.dispose);
+    await controller.load();
+    await controller.startQuiz();
+    controller.select('q1-a');
+    await controller.submit();
+    expect(controller.state.value!.selection, 'q1-a');
+    expect(controller.state.value!.stage, GrammarStage.quiz);
+    expect(controller.state.value!.busy, isFalse);
+    expect(controller.state.value!.error, isNotNull);
+    await controller.submit();
+    expect(controller.state.value!.feedback!.correct, isTrue);
+    expect(controller.state.value!.error, isNull);
+    await controller.nextQuestion();
+    expect(controller.state.value!.questionIndex, 1);
+    expect(controller.state.value!.selection, isNull);
+    expect(controller.state.value!.feedback, isNull);
+  });
+
+  test('late lesson response after disposal does not write state', () async {
+    final repository = _DelayedRepository();
+    final controller = GrammarController(
+      repository,
+      'grammar-n5-01',
+      onProgress: () {},
+    );
+    final loading = controller.load();
+    controller.dispose();
+    repository.response.complete(_lesson);
+    await expectLater(loading, completes);
+  });
+}
+
+Widget _app(_Repository repository) => ProviderScope(
+  overrides: [
+    sharedPreferencesProvider.overrideWithValue(_preferences),
+    // Finishing a quiz refreshes ads, Beranda and XP; keep them off the
+    // network (debug-mode invalidate mounts the providers).
+    adsConfigProvider.overrideWith((ref) async => AdsConfig.off),
+    homeDashboardProvider.overrideWith(
+      (ref) => Completer<HomeDashboard>().future,
+    ),
+    gamificationRepositoryProvider.overrideWithValue(_Gamification()),
+    learningHistoryRepositoryProvider.overrideWith(
+      (ref) => _HistoryRepository(),
+    ),
+    grammarRepositoryProvider.overrideWithValue(repository),
+    authControllerProvider.overrideWith(
+      (ref) => AuthController.test(
+        const AuthenticationState.authenticated(
+          AuthenticatedUser(
+            id: 'user',
+            displayName: 'Learner',
+            email: 'demo@example.com',
+          ),
+        ),
+      ),
+    ),
+  ],
+  child: MaterialApp(
+    theme: ThemeData(
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+      ),
+    ),
+    home: const GrammarLessonScreen(lessonId: 'grammar-n5-01'),
+  ),
+);
+
+class _Gamification extends GamificationRepository {
+  _Gamification() : super(Dio());
+  @override
+  Future<GamificationSummary> fetch() async => const GamificationSummary(
+    xp: 0,
+    level: 1,
+    levelXp: 0,
+    nextLevelXp: 500,
+    streakDays: 0,
+    bestStreak: 0,
+    lessonsCompleted: 0,
+    examsCompleted: 0,
+    activeDays: 0,
+    minutesToday: 0,
+    achievements: [],
+  );
+}
+
+class _Repository extends GrammarRepository {
+  _Repository() : super(Dio());
+  int started = 0;
+  int completed = 0;
+  bool failAnswer = false;
+  @override
+  Future<GrammarLesson> getLesson(String id) async => _lesson;
+  @override
+  Future<GrammarAttempt> startAttempt(String id) async {
+    started++;
+    return GrammarAttempt(
+      id: 'attempt-$started',
+      questions: [
+        for (var i = 1; i <= 5; i++)
+          GrammarQuestion(
+            id: 'q$i',
+            prompt: '私は学生（　）。',
+            options: [
+              QuizOption(id: 'q$i-a', text: 'です'),
+              QuizOption(id: 'q$i-b', text: 'ます'),
+            ],
+          ),
+      ],
+    );
+  }
+
+  @override
+  Future<GrammarFeedback> answer(
+    String attempt,
+    String question,
+    String option,
+  ) async {
+    if (failAnswer) {
+      failAnswer = false;
+      throw const GrammarException('Koneksi terputus. Coba lagi.');
+    }
+    return GrammarFeedback(
+      questionId: question,
+      correct: option.endsWith('-a'),
+      correctOptionId: '$question-a',
+      explanation: '学生 adalah kata benda, sehingga gunakan です.',
+    );
+  }
+
+  @override
+  Future<GrammarResult> complete(String id) async {
+    completed++;
+    return const GrammarResult(
+      score: 100,
+      correct: 5,
+      total: 5,
+      passed: true,
+      bestScore: 100,
+      progress: 50,
+    );
+  }
+}
+
+class _DelayedRepository extends _Repository {
+  final response = Completer<GrammarLesson>();
+  @override
+  Future<GrammarLesson> getLesson(String id) => response.future;
+}
+
+const _summary = GrammarLessonSummary(
+  id: 'grammar-n5-01',
+  order: 1,
+  chapter: 'Kalimat dasar',
+  title: 'Identitas',
+  pointCount: 2,
+  questionCount: 5,
+  bestScore: 100,
+  completed: true,
+);
+const _course = GrammarCourse(
+  level: 'N5',
+  title: 'Grammar JLPT N5',
+  progress: 50,
+  completedLessons: 1,
+  lessons: [
+    _summary,
+    GrammarLessonSummary(
+      id: 'grammar-n5-02',
+      order: 2,
+      chapter: 'Kalimat dasar',
+      title: 'Waktu lampau',
+      pointCount: 2,
+      questionCount: 5,
+      bestScore: 0,
+      completed: false,
+    ),
+  ],
+);
+const _lesson = GrammarLesson(
+  summary: _summary,
+  points: [
+    GrammarPoint(
+      pattern: 'Nです',
+      meaning: 'adalah …',
+      formation: 'Kata benda + です',
+      explanation: 'です menutup pernyataan sopan tentang identitas.',
+      commonMistake: 'Jangan menambahkan です setelah kata kerja ます.',
+      examples: [
+        GrammarExample(
+          japanese: '私は学生です。',
+          reading: 'わたしは がくせいです。',
+          meaning: 'Saya pelajar.',
+        ),
+        GrammarExample(
+          japanese: 'これは本です。',
+          reading: 'これは ほんです。',
+          meaning: 'Ini buku.',
+        ),
+      ],
+    ),
+    GrammarPoint(
+      pattern: 'Nではありません',
+      meaning: 'bukan …',
+      formation: 'Kata benda + ではありません',
+      explanation: 'Negatif sopan untuk kata benda.',
+      commonMistake: 'Jangan memakai ない langsung setelah kata benda.',
+      examples: [
+        GrammarExample(
+          japanese: '私は先生ではありません。',
+          reading: 'わたしは せんせいではありません。',
+          meaning: 'Saya bukan guru.',
+        ),
+        GrammarExample(
+          japanese: 'これは本ではありません。',
+          reading: 'これは ほんではありません。',
+          meaning: 'Ini bukan buku.',
+        ),
+      ],
+    ),
+  ],
+);
+
+class _HistoryRepository extends LearningHistoryRepository {
+  _HistoryRepository() : super(Dio());
+  final items = <String, LearningActivity>{};
+  @override
+  Future<List<LearningActivity>> fetch() async => items.values.toList();
+  @override
+  Future<LearningActivity> save(LearningActivity item) async {
+    final saved = item.copy(pending: false);
+    items[item.key] = saved;
+    return saved;
+  }
+}
+
+class _UnfinishedRepository extends _Repository {
+  @override
+  Future<GrammarLesson> getLesson(String id) async =>
+      GrammarLesson(summary: _course.lessons[1], points: _lesson.points);
+}

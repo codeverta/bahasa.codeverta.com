@@ -1,0 +1,277 @@
+name: Android release build
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: Build only, or choose the version increment and create a GitHub Release.
+        required: true
+        type: choice
+        default: build
+        options:
+          - build
+          - patch
+          - minor
+          - major
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: android-release-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build signed AAB and APK
+    runs-on: ubuntu-latest
+    env:
+      API_BASE_URL: ${{ vars.API_BASE_URL }}
+      GOOGLE_SERVER_CLIENT_ID: ${{ vars.GOOGLE_SERVER_CLIENT_ID }}
+      OFFLINE_ACCESS_PUBLIC_KEY: ${{ vars.OFFLINE_ACCESS_PUBLIC_KEY }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Prepare app version
+        id: version
+        env:
+          RELEASE_TYPE: ${{ inputs.release_type || 'build' }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import re
+          import subprocess
+          from pathlib import Path
+
+          pubspec = Path("pubspec.yaml")
+          source = pubspec.read_text(encoding="utf-8")
+          match = re.search(r"(?m)^version:[ \t]*(\d+)\.(\d+)\.(\d+)\+(\d+)[ \t]*$", source)
+          if match is None:
+              raise SystemExit("pubspec.yaml must use version: MAJOR.MINOR.PATCH+BUILD.")
+
+          major, minor, patch, build = map(int, match.groups())
+          version_name = f"{major}.{minor}.{patch}"
+          build_number = build
+          release_tag = ""
+          should_commit = "false"
+
+          event_name = os.environ["EVENT_NAME"]
+          ref_name = os.environ["REF_NAME"]
+          ref_type = os.environ["REF_TYPE"]
+          release_type = os.environ["RELEASE_TYPE"]
+
+          if event_name == "workflow_dispatch" and ref_type == "branch":
+              if release_type == "build":
+                  pass
+              elif release_type in {"patch", "minor", "major"}:
+                  if ref_name != os.environ["DEFAULT_BRANCH"]:
+                      raise SystemExit("Run versioned releases from the repository's default branch.")
+
+                  if release_type == "major":
+                      major, minor, patch = major + 1, 0, 0
+                  elif release_type == "minor":
+                      minor, patch = minor + 1, 0
+                  else:
+                      patch += 1
+
+                  version_name = f"{major}.{minor}.{patch}"
+                  build_number += 1
+                  release_tag = f"v{version_name}"
+                  should_commit = "true"
+
+                  existing = subprocess.run(
+                      ["git", "ls-remote", "--tags", "origin", f"refs/tags/{release_tag}"],
+                      check=True,
+                      capture_output=True,
+                      text=True,
+                  )
+                  if existing.stdout.strip():
+                      raise SystemExit(f"Release tag {release_tag} already exists; choose the next version.")
+
+                  replacement = f"version: {version_name}+{build_number}"
+                  source = source[:match.start()] + replacement + source[match.end():]
+                  pubspec.write_text(source, encoding="utf-8")
+              else:
+                  raise SystemExit(f"Unsupported release type: {release_type}")
+          elif ref_type == "tag":
+              tag_match = re.fullmatch(r"v(\d+\.\d+\.\d+)", ref_name)
+              if tag_match is None:
+                  raise SystemExit("Release tags must use the form vMAJOR.MINOR.PATCH.")
+              if tag_match.group(1) != version_name:
+                  raise SystemExit(
+                      f"Tag {ref_name} does not match pubspec.yaml version {version_name}."
+                  )
+              release_tag = ref_name
+          else:
+              raise SystemExit("Run this workflow from a branch or a vMAJOR.MINOR.PATCH tag.")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"build_name={version_name}\n")
+              output.write(f"build_number={build_number}\n")
+              output.write(f"release_tag={release_tag}\n")
+              output.write(f"should_commit={should_commit}\n")
+
+          print(f"App version: {version_name}+{build_number}")
+          print(f"GitHub Release: {release_tag or 'artifact only'}")
+          PY
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.6'
+          channel: stable
+          cache: true
+
+      - name: Validate release configuration
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${ANDROID_KEYSTORE_BASE64:?Add the Android upload keystore as an Actions secret.}"
+          : "${ANDROID_KEYSTORE_PASSWORD:?Add the upload keystore password as an Actions secret.}"
+          : "${ANDROID_KEY_ALIAS:?Add the upload key alias as an Actions secret.}"
+          : "${ANDROID_KEY_PASSWORD:?Add the upload key password as an Actions secret.}"
+          : "${GOOGLE_SERVER_CLIENT_ID:?Add the Web OAuth Client ID as an Actions variable.}"
+          : "${API_BASE_URL:?Add the production API URL as an Actions variable.}"
+          : "${OFFLINE_ACCESS_PUBLIC_KEY:?Add the offline entitlement public key as an Actions variable.}"
+          python3 - <<'PY'
+          import base64, os
+          try:
+              key = base64.b64decode(os.environ['OFFLINE_ACCESS_PUBLIC_KEY'], validate=True)
+          except Exception:
+              raise SystemExit('OFFLINE_ACCESS_PUBLIC_KEY must be a base64 Ed25519 public key.')
+          if len(key) != 32:
+              raise SystemExit('OFFLINE_ACCESS_PUBLIC_KEY must decode to exactly 32 bytes.')
+          PY
+          [[ "$GOOGLE_SERVER_CLIENT_ID" == *.apps.googleusercontent.com ]]
+          [[ "$API_BASE_URL" == https://* ]]
+
+      - name: Configure upload signing key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload-key.jks"
+          test -s "$RUNNER_TEMP/upload-key.jks"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload-key.jks" >> "$GITHUB_ENV"
+
+      - name: Get Flutter packages
+        run: flutter pub get
+
+      - name: Build Play Store app bundle
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          BUILD_NAME: ${{ steps.version.outputs.build_name }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+        run: >-
+          flutter build appbundle --release
+          --build-name="$BUILD_NAME"
+          --build-number="$BUILD_NUMBER"
+          --dart-define=API_BASE_URL="$API_BASE_URL"
+          --dart-define=GOOGLE_SERVER_CLIENT_ID="$GOOGLE_SERVER_CLIENT_ID"
+          --dart-define=OFFLINE_ACCESS_PUBLIC_KEY="$OFFLINE_ACCESS_PUBLIC_KEY"
+
+      - name: Build installable APK
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          BUILD_NAME: ${{ steps.version.outputs.build_name }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+        run: >-
+          flutter build apk --release
+          --build-name="$BUILD_NAME"
+          --build-number="$BUILD_NUMBER"
+          --dart-define=API_BASE_URL="$API_BASE_URL"
+          --dart-define=GOOGLE_SERVER_CLIENT_ID="$GOOGLE_SERVER_CLIENT_ID"
+          --dart-define=OFFLINE_ACCESS_PUBLIC_KEY="$OFFLINE_ACCESS_PUBLIC_KEY"
+
+      - name: Prepare release files
+        run: |
+          set -euo pipefail
+          mkdir -p release-output
+          cp build/app/outputs/bundle/release/app-release.aab release-output/nihongo-master.aab
+          cp build/app/outputs/flutter-apk/app-release.apk release-output/nihongo-master.apk
+          (cd release-output && sha256sum nihongo-master.aab nihongo-master.apk > SHA256SUMS)
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nihongo-master-android-${{ steps.version.outputs.release_tag || github.ref_name }}
+          path: release-output/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit bumped version and publish tag
+        if: steps.version.outputs.should_commit == 'true'
+        env:
+          RELEASE_TAG: ${{ steps.version.outputs.release_tag }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pubspec.yaml
+          git commit -m "chore(release): $RELEASE_TAG"
+          git tag -a "$RELEASE_TAG" -m "Release $RELEASE_TAG"
+          git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
+          git push origin "refs/tags/$RELEASE_TAG"
+
+      - name: Create GitHub Release and attach Android builds
+        if: steps.version.outputs.release_tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.release_tag }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" release-output/* --clobber
+          else
+            gh release create "$RELEASE_TAG" release-output/* \
+              --title "Nihongo Master $RELEASE_TAG" \
+              --generate-notes
+          fi
+
+      - name: Start iOS release build when signing is configured
+        if: github.event_name == 'workflow_dispatch' && steps.version.outputs.should_commit == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.release_tag }}
+          IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID }}
+          IOS_TEAM_ID: ${{ vars.IOS_TEAM_ID }}
+          IOS_CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+          IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$IOS_BUNDLE_ID" || -z "$IOS_TEAM_ID" || \
+                -z "$IOS_CERTIFICATE_BASE64" || -z "$IOS_CERTIFICATE_PASSWORD" || \
+                -z "$IOS_PROVISIONING_PROFILE_BASE64" ]]; then
+            echo "iOS signing is not configured; skipping the iOS build."
+            exit 0
+          fi
+          gh workflow run ios-release.yml --repo "$GITHUB_REPOSITORY" --ref "$RELEASE_TAG"
+          echo "iOS release build was started for $RELEASE_TAG."

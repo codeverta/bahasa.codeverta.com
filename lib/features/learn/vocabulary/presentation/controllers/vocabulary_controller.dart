@@ -1,0 +1,323 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nihongo_master/core/network/dio_client.dart';
+import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:nihongo_master/features/learn/activity/learning_history.dart';
+import 'package:nihongo_master/features/learn/offline/offline_practice.dart';
+import 'package:nihongo_master/features/learn/vocabulary/data/vocabulary_repository.dart';
+import 'package:nihongo_master/features/learn/vocabulary/domain/vocabulary_models.dart';
+import 'package:nihongo_master/features/profile/data/gamification_repository.dart';
+
+final vocabularyRepositoryProvider = Provider<VocabularyRepository>((ref) {
+  return VocabularyRepository(
+    ref.watch(dioProvider),
+    offlinePractice: ref.watch(offlinePracticeServiceProvider),
+  );
+});
+
+final vocabularyLevelsProvider =
+    FutureProvider.autoDispose<List<VocabularyLevel>>((ref) {
+      ref.watch(authControllerProvider.select((state) => state.status));
+      return ref.watch(vocabularyRepositoryProvider).getLevels();
+    });
+
+enum VocabularyStage { study, quiz, result }
+
+@immutable
+class VocabularyLessonState {
+  const VocabularyLessonState({
+    required this.lesson,
+    this.stage = VocabularyStage.study,
+    this.wordIndex = 0,
+    this.questionIndex = 0,
+    this.attempt,
+    this.selectedOptionId,
+    this.feedback,
+    this.result,
+    this.submitting = false,
+    this.meaningRevealed = false,
+    this.error,
+  });
+
+  final VocabularyLesson lesson;
+  final VocabularyStage stage;
+  final int wordIndex;
+  final int questionIndex;
+  final VocabularyAttempt? attempt;
+  final String? selectedOptionId;
+  final AnswerFeedback? feedback;
+  final VocabularyResult? result;
+  final bool submitting;
+  final bool meaningRevealed;
+  final String? error;
+
+  VocabularyLessonState copyWith({
+    VocabularyStage? stage,
+    int? wordIndex,
+    int? questionIndex,
+    VocabularyAttempt? attempt,
+    String? selectedOptionId,
+    bool clearSelection = false,
+    AnswerFeedback? feedback,
+    bool clearFeedback = false,
+    VocabularyResult? result,
+    bool clearResult = false,
+    bool? submitting,
+    bool? meaningRevealed,
+    String? error,
+  }) {
+    return VocabularyLessonState(
+      error: error,
+      lesson: lesson,
+      stage: stage ?? this.stage,
+      wordIndex: wordIndex ?? this.wordIndex,
+      questionIndex: questionIndex ?? this.questionIndex,
+      attempt: attempt ?? this.attempt,
+      selectedOptionId: clearSelection
+          ? null
+          : selectedOptionId ?? this.selectedOptionId,
+      feedback: clearFeedback ? null : feedback ?? this.feedback,
+      result: clearResult ? null : result ?? this.result,
+      submitting: submitting ?? this.submitting,
+      meaningRevealed: meaningRevealed ?? this.meaningRevealed,
+    );
+  }
+}
+
+final vocabularyLessonControllerProvider = StateNotifierProvider.autoDispose
+    .family<
+      VocabularyLessonController,
+      AsyncValue<VocabularyLessonState>,
+      String
+    >((ref, lessonId) {
+      final userId = ref.watch(
+        authControllerProvider.select((s) => s.user?.id),
+      );
+      final controller = VocabularyLessonController(
+        ref.watch(vocabularyRepositoryProvider),
+        lessonId,
+        history: userId == null
+            ? null
+            : ref.watch(learningHistoryProvider.notifier),
+        onProgressChanged: () {
+          ref
+            ..invalidate(vocabularyLevelsProvider)
+            ..invalidate(homeDashboardProvider)
+            ..invalidate(gamificationProvider);
+        },
+      );
+      unawaited(controller.load());
+      return controller;
+    });
+
+class VocabularyLessonController
+    extends StateNotifier<AsyncValue<VocabularyLessonState>> {
+  VocabularyLessonController(
+    this._repository,
+    this._lessonId, {
+    required this.onProgressChanged,
+    this.history,
+  }) : super(const AsyncValue.loading()) {
+    _syncSubscription = _repository.syncEvents.listen(_onPracticeSync);
+  }
+
+  final VocabularyRepository _repository;
+  final String _lessonId;
+  final VoidCallback onProgressChanged;
+
+  final LearningHistoryController? history;
+  StreamSubscription<OfflinePracticeSyncEvent>? _syncSubscription;
+
+  void _onPracticeSync(OfflinePracticeSyncEvent event) {
+    final current = state.valueOrNull;
+    if (!mounted ||
+        current?.attempt?.id != event.attemptId ||
+        current?.result == null) {
+      return;
+    }
+    final result = VocabularyResult.fromJson(event.result);
+    if (result.verified && result.passed) {
+      history?.complete('vocabulary', _lessonId);
+    }
+    onProgressChanged();
+    state = AsyncValue.data(current!.copyWith(result: result));
+  }
+
+  Future<void> load() async {
+    final loaded = await AsyncValue.guard(() async {
+      final lesson = await _repository.getLesson(_lessonId);
+      if (lesson.words.isEmpty) {
+        throw const VocabularyException('Lesson ini belum memiliki kosakata.');
+      }
+      final savedPosition = mounted
+          ? await history?.open(
+              kind: 'vocabulary',
+              isActive: () => mounted,
+              lessonId: lesson.id,
+              title: lesson.title,
+              level: lesson.level,
+              total: lesson.words.length,
+              completed: lesson.completed,
+            )
+          : null;
+      return VocabularyLessonState(
+        lesson: lesson,
+        wordIndex: savedPosition ?? 0,
+      );
+    });
+    if (mounted) state = loaded;
+  }
+
+  void previousWord() {
+    final current = state.valueOrNull;
+    if (current == null || current.wordIndex == 0) return;
+    state = AsyncValue.data(
+      current.copyWith(
+        wordIndex: current.wordIndex - 1,
+        meaningRevealed: false,
+      ),
+    );
+    history?.position('vocabulary', _lessonId, current.wordIndex + (-1));
+  }
+
+  void nextWord() {
+    final current = state.valueOrNull;
+    if (current == null ||
+        current.wordIndex >= current.lesson.words.length - 1) {
+      return;
+    }
+    state = AsyncValue.data(
+      current.copyWith(
+        wordIndex: current.wordIndex + 1,
+        meaningRevealed: false,
+      ),
+    );
+    history?.position('vocabulary', _lessonId, current.wordIndex + 1);
+  }
+
+  void revealMeaning() {
+    final current = state.valueOrNull;
+    if (current == null || current.meaningRevealed) return;
+    state = AsyncValue.data(current.copyWith(meaningRevealed: true));
+  }
+
+  Future<void> startQuiz() async {
+    final current = state.valueOrNull;
+    if (current == null || current.submitting) return;
+    state = AsyncValue.data(current.copyWith(submitting: true));
+    try {
+      final attempt = await _repository.startAttempt(_lessonId);
+      if (!mounted) return;
+      state = AsyncValue.data(
+        current.copyWith(
+          stage: VocabularyStage.quiz,
+          attempt: attempt,
+          questionIndex: 0,
+          clearSelection: true,
+          clearFeedback: true,
+          clearResult: true,
+          submitting: false,
+        ),
+      );
+    } on Object catch (error) {
+      if (mounted) {
+        state = AsyncValue.data(
+          current.copyWith(submitting: false, error: error.toString()),
+        );
+      }
+    }
+  }
+
+  void selectOption(String optionId) {
+    final current = state.valueOrNull;
+    if (current == null || current.feedback != null || current.submitting) {
+      return;
+    }
+    state = AsyncValue.data(current.copyWith(selectedOptionId: optionId));
+  }
+
+  Future<void> submitAnswer() async {
+    final current = state.valueOrNull;
+    final attempt = current?.attempt;
+    final option = current?.selectedOptionId;
+    if (current == null ||
+        attempt == null ||
+        option == null ||
+        current.submitting) {
+      return;
+    }
+    final question = attempt.questions[current.questionIndex];
+    state = AsyncValue.data(current.copyWith(submitting: true));
+    try {
+      final feedback = await _repository.answer(
+        attemptId: attempt.id,
+        questionId: question.id,
+        optionId: option,
+      );
+      if (!mounted) return;
+      state = AsyncValue.data(
+        current.copyWith(feedback: feedback, submitting: false),
+      );
+    } on Object catch (error) {
+      if (mounted) {
+        state = AsyncValue.data(
+          current.copyWith(submitting: false, error: error.toString()),
+        );
+      }
+    }
+  }
+
+  Future<void> continueQuiz() async {
+    final current = state.valueOrNull;
+    final attempt = current?.attempt;
+    if (current == null ||
+        attempt == null ||
+        current.feedback == null ||
+        current.submitting) {
+      return;
+    }
+    if (current.questionIndex < attempt.questions.length - 1) {
+      state = AsyncValue.data(
+        current.copyWith(
+          questionIndex: current.questionIndex + 1,
+          clearSelection: true,
+          clearFeedback: true,
+        ),
+      );
+      return;
+    }
+    state = AsyncValue.data(current.copyWith(submitting: true));
+    try {
+      final result = await _repository.complete(attempt.id);
+      if (mounted && result.verified && result.passed) {
+        history?.complete('vocabulary', _lessonId);
+      }
+      if (!mounted) return;
+      if (result.verified) onProgressChanged();
+      state = AsyncValue.data(
+        current.copyWith(
+          stage: VocabularyStage.result,
+          result: result,
+          submitting: false,
+        ),
+      );
+    } on Object catch (error) {
+      if (mounted) {
+        state = AsyncValue.data(
+          current.copyWith(submitting: false, error: error.toString()),
+        );
+      }
+    }
+  }
+
+  Future<void> retry() => startQuiz();
+
+  @override
+  void dispose() {
+    unawaited(_syncSubscription?.cancel());
+    super.dispose();
+  }
+}

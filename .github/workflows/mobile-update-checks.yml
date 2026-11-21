@@ -1,0 +1,35 @@
+name: Mobile update checks
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.6'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze lib/core/app_update lib/core/auth lib/core/network lib/core/notifications lib/core/routing lib/features/auth lib/main.dart test/core/app_update test/core/network test/core/notifications test/features/auth
+      - run: flutter test test/core/app_update test/core/network test/core/notifications test/features/auth test/widget_test.dart test/core/branding_test.dart
+  ios-host:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.6'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Compile iOS host without signing
+        run: flutter build ios --simulator --debug --no-codesign

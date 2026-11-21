@@ -1,0 +1,291 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
+import 'package:nihongo_master/features/exam/presentation/screens/exam_hub_screen.dart';
+
+void main() {
+  for (final premium in [false, true]) {
+    testWidgets('compact hub supports narrow phones and N4 access: $premium', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(320, 740);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, __) =>
+                const Scaffold(body: SafeArea(child: ExamHubScreen())),
+          ),
+          GoRoute(
+            path: '/premium',
+            builder: (_, __) =>
+                const Scaffold(body: Text('Upgrade destination')),
+          ),
+          GoRoute(
+            path: '/exams/n4/simulation',
+            builder: (_, __) => const Scaffold(body: Text('N4 destination')),
+          ),
+          GoRoute(
+            path: '/exams/jft/exam-1',
+            builder: (_, __) => const Scaffold(body: Text('JFT destination')),
+          ),
+          GoRoute(
+            path: '/exams/nat/simulation',
+            builder: (_, __) => const Scaffold(body: Text('NAT destination')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authControllerProvider.overrideWith(
+              (ref) => AuthController.test(
+                AuthenticationState.authenticated(
+                  AuthenticatedUser(
+                    id: 'test',
+                    displayName: 'Test',
+                    email: 'test@example.com',
+                    isPremium: premium,
+                  ),
+                ),
+              ),
+            ),
+            diagnosticOverviewProvider.overrideWith(
+              (ref) async => {'activeAttemptId': '', 'history': <Json>[]},
+            ),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+      // The level filter shows only the selected JLPT level.
+      expect(find.text('Simulasi N5').hitTestable(), findsOneWidget);
+      expect(find.text('Simulasi N4'), findsNothing);
+      await tester.tap(find.byKey(const Key('exam-level-N4')));
+      await tester.pumpAndSettle();
+      expect(find.text('Simulasi N4').hitTestable(), findsOneWidget);
+      expect(find.text('Simulasi N5'), findsNothing);
+      await tester.tap(find.byKey(const Key('exam-level-N5')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('NAT Test'));
+      await tester.pumpAndSettle();
+      expect(find.text('NAT 5Q Exam 1'), findsOneWidget);
+      await tester.tap(find.text('NAT 5Q Exam 1'));
+      await tester.pumpAndSettle();
+      expect(
+        // Every signed-in account opens every exam; Lifetime is not required.
+        find.text('NAT destination'),
+        findsOneWidget,
+      );
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Simulasi N5'), findsNothing);
+      await tester.tap(find.text('JFT Test'));
+      await tester.pumpAndSettle();
+      expect(find.text('JFT Exam 1'), findsOneWidget);
+      expect(find.text('NAT 5Q Exam 1'), findsNothing);
+      await tester.tap(find.text('JFT Exam 1'));
+      await tester.pumpAndSettle();
+      expect(
+        // Every signed-in account opens every exam; Lifetime is not required.
+        find.text('JFT destination'),
+        findsOneWidget,
+      );
+      router.pop();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('JLPT'));
+      await tester.pumpAndSettle();
+      expect(find.text('Simulasi N5'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Diagnostic N5'),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Diagnostic N5').hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      // Larger accessibility text may scroll but must still lay out safely.
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authControllerProvider.overrideWith(
+              (ref) => AuthController.test(
+                AuthenticationState.authenticated(
+                  AuthenticatedUser(
+                    id: 'test',
+                    displayName: 'Test',
+                    email: 'test@example.com',
+                    isPremium: premium,
+                  ),
+                ),
+              ),
+            ),
+            diagnosticOverviewProvider.overrideWith(
+              (ref) async => {'activeAttemptId': '', 'history': <Json>[]},
+            ),
+          ],
+          child: MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(1.5)),
+              child: child!,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('exam-level-N4')),
+        -100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('exam-level-N4')));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Simulasi N4'),
+        -100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Simulasi N4'));
+      await tester.pumpAndSettle();
+      expect(find.text('N4 destination'), findsOneWidget);
+    });
+  }
+  for (final premium in [false, true]) {
+    testWidgets('compact hub supports narrow phones and N3 access: $premium', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(320, 740);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, __) =>
+                const Scaffold(body: SafeArea(child: ExamHubScreen())),
+          ),
+          GoRoute(
+            path: '/premium',
+            builder: (_, __) =>
+                const Scaffold(body: Text('Upgrade destination')),
+          ),
+          GoRoute(
+            path: '/exams/n3/simulation',
+            builder: (_, __) => const Scaffold(body: Text('N3 destination')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authControllerProvider.overrideWith(
+              (ref) => AuthController.test(
+                AuthenticationState.authenticated(
+                  AuthenticatedUser(
+                    id: 'test',
+                    displayName: 'Test',
+                    email: 'test@example.com',
+                    isPremium: premium,
+                  ),
+                ),
+              ),
+            ),
+            diagnosticOverviewProvider.overrideWith(
+              (ref) async => {'activeAttemptId': '', 'history': <Json>[]},
+            ),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Simulasi N5').hitTestable(), findsOneWidget);
+      await tester.tap(find.byKey(const Key('exam-level-N3')));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Simulasi N3'),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Simulasi N3').hitTestable(), findsOneWidget);
+      expect(find.byType(Image), findsWidgets);
+      await tester.scrollUntilVisible(
+        find.text('Diagnostic N5'),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Diagnostic N5').hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      // Larger accessibility text may scroll but must still lay out safely.
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            authControllerProvider.overrideWith(
+              (ref) => AuthController.test(
+                AuthenticationState.authenticated(
+                  AuthenticatedUser(
+                    id: 'test',
+                    displayName: 'Test',
+                    email: 'test@example.com',
+                    isPremium: premium,
+                  ),
+                ),
+              ),
+            ),
+            diagnosticOverviewProvider.overrideWith(
+              (ref) async => {'activeAttemptId': '', 'history': <Json>[]},
+            ),
+          ],
+          child: MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(1.5)),
+              child: child!,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('exam-level-N3')),
+        -100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('exam-level-N3')));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Simulasi N3'),
+        -100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Simulasi N3'));
+      await tester.pumpAndSettle();
+      expect(
+        // Every signed-in account opens every exam; Lifetime is not required.
+        find.text('N3 destination'),
+        findsOneWidget,
+      );
+    });
+  }
+}
