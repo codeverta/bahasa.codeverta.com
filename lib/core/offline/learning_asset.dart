@@ -54,7 +54,7 @@ final learningAssetProvider = FutureProvider.autoDispose.family<Uint8List?, Stri
         cancelToken: cancel,
         onReceiveProgress: (received, total) {
           if (received > maxBytes || total > maxBytes) {
-            cancel.cancel('Menunggu Wi-Fi untuk gambar besar.');
+            cancel.cancel('Waiting for Wi-Fi to download a large image.');
           }
         },
       );

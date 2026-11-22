@@ -60,7 +60,7 @@ final dioProvider = Provider<Dio>((ref) {
             DioException(
               requestOptions: options,
               type: DioExceptionType.cancel,
-              error: 'Akun sudah berubah.',
+              error: appL10n().networkAccountChanged,
             ),
           );
           return;
@@ -80,7 +80,7 @@ final dioProvider = Provider<Dio>((ref) {
             DioException(
               requestOptions: options,
               type: DioExceptionType.cancel,
-              error: 'Akun sudah berubah.',
+              error: appL10n().networkAccountChanged,
             ),
           );
           return;

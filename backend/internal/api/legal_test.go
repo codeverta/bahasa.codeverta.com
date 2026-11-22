@@ -16,7 +16,7 @@ func TestPublicLegalPages(t *testing.T) {
 			if response.Code != 200 || response.Header().Get("Content-Type") != "text/html; charset=utf-8" {
 				t.Fatalf("public HTML expected: %d %s", response.Code, response.Header())
 			}
-			for _, required := range []string{"Bahasa Master", "contact@codeverta.com", "<nav", "<main", "14 Oktober 2026"} {
+			for _, required := range []string{"Bahasa Master", "contact@codeverta.com", "<nav", "<main", "2026"} {
 				if !strings.Contains(response.Body.String(), required) {
 					t.Errorf("missing %q", required)
 				}

@@ -1,3 +1,4 @@
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/features/learn/grammar/domain/grammar_models.dart';
 import 'package:bahasa_master/features/learn/offline/offline_practice.dart';
@@ -88,16 +89,14 @@ class GrammarRepository {
           : await _dio.get<Map<String, dynamic>>(path);
       final data = response.data?['data'];
       if (data is! Map<String, dynamic>) {
-        throw const GrammarException(
-          'Respons grammar tidak valid. Coba muat ulang.',
-        );
+        throw GrammarException(appL10n().grammarInvalidResponse);
       }
       return data;
     } on DioException catch (error) {
       final locked = LockedContentException.from(error);
       if (locked != null) throw locked;
       if (error.response?.statusCode == 401) {
-        throw const GrammarException('Sesi berakhir. Silakan masuk kembali.');
+        throw GrammarException(appL10n().grammarSessionExpired);
       }
       final payload = error.response?.data;
       final message =
@@ -106,9 +105,7 @@ class GrammarRepository {
           ? (payload['error'] as Map<String, dynamic>)['message']
           : null;
       throw GrammarException(
-        message is String
-            ? message
-            : 'Materi grammar tidak dapat dimuat. Periksa koneksi dan backend.',
+        message is String ? message : appL10n().grammarLoadFailed,
       );
     }
   }

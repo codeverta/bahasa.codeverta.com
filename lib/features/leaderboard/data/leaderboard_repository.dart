@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
@@ -206,7 +207,7 @@ class Cached<T> {
 class LeaderboardOffline implements Exception {
   const LeaderboardOffline();
   @override
-  String toString() => 'Butuh koneksi internet';
+  String toString() => appL10n().leaderboardInternetConnection;
 }
 
 class LeaderboardRepository {

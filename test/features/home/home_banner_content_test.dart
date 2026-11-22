@@ -1,13 +1,18 @@
+import 'dart:ui' show Locale;
+
 import 'package:bahasa_master/features/home/domain/home_banner_content.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('English home offer does not present the Indonesian-only price', () {
+  final l10n = lookupAppLocalizations(const Locale('en'));
+
+  test('home offer does not present a fixed price', () {
     final banner = homeBannersFor(
       _dashboard(),
       lifetime: false,
-      english: true,
+      l10n: l10n,
     ).first;
 
     expect(banner.id, 'lifetime-offer');
@@ -18,16 +23,14 @@ void main() {
     expect(banner.description, isNot(contains('Rp')));
   });
 
-  test('Indonesian home offer keeps its configured price', () {
-    final banner = homeBannersFor(_dashboard(), lifetime: false).first;
-
-    expect(banner.description, 'All lessons • Rp1.499.000');
-  });
-
   test('banners only point at destinations that still exist', () {
     const destinations = {'premium', 'learn', 'anki'};
     for (final lifetime in [true, false]) {
-      final banners = homeBannersFor(_dashboard(), lifetime: lifetime);
+      final banners = homeBannersFor(
+        _dashboard(),
+        lifetime: lifetime,
+        l10n: l10n,
+      );
       expect(banners, isNotEmpty);
       for (final banner in banners) {
         expect(destinations, contains(banner.action));

@@ -1,3 +1,5 @@
+import 'package:bahasa_master/core/localization/app_language.dart';
+
 class AnkiCard {
   AnkiCard.fromJson(Map<String, dynamic> json)
     : index = json['index'] as int,
@@ -27,8 +29,7 @@ class AnkiDeck {
       description = json['description'] as String,
       instructions = json['instructions'] as String,
       originalName = json['originalName'] as String,
-      sourceUrl =
-          json['sourceUrl'] as String? ?? 'https://github.com/mistval/kotoba',
+      sourceUrl = json['sourceUrl'] as String? ?? '',
       originalDescription = json['originalDescription'] as String? ?? '',
       meaningLanguage = json['meaningLanguage'] as String? ?? '',
       cardCount = json['cardCount'] as int,
@@ -76,7 +77,7 @@ class AnkiDeck {
 
 class AnkiSession {
   AnkiSession.fromJson(Map<String, dynamic> json)
-    : title = json['title'] as String? ?? 'Belajar flashcard',
+    : title = json['title'] as String? ?? appL10n().ankiFlashcardStudy,
       instructions = json['instructions'] as String? ?? '',
       cards = (json['cards'] as List<dynamic>)
           .map((c) => AnkiCard.fromJson(c as Map<String, dynamic>))

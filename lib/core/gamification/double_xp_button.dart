@@ -2,12 +2,12 @@ import 'package:bahasa_master/core/ads/ads_config.dart';
 import 'package:bahasa_master/core/ads/ads_controller.dart';
 import 'package:bahasa_master/core/ads/interstitial_ads.dart';
 import 'package:bahasa_master/core/gamification/xp_gain.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/core/unlock/unlock_flow.dart';
 import 'package:bahasa_master/core/unlock/unlock_repository.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
 import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -64,18 +64,12 @@ class _DoubleXpButtonState extends ConsumerState<DoubleXpButton> {
     } on UnlockException catch (error) {
       if (mounted) {
         _message(
-          error.message.isNotEmpty
-              ? error.message
-              : 'Belum dapat mengklaim 2× XP. Periksa koneksi lalu coba lagi.'
-                    .localized(context),
+          error.message.isNotEmpty ? error.message : context.l10n.xpCouldNot,
         );
       }
     } on Object {
       if (mounted) {
-        _message(
-          'Belum dapat mengklaim 2× XP. Periksa koneksi lalu coba lagi.'
-              .localized(context),
-        );
+        _message(context.l10n.xpCouldNot);
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -106,20 +100,12 @@ class _DoubleXpButtonState extends ConsumerState<DoubleXpButton> {
         _pendingNonce = '';
         _claimed(widget.gain.awarded);
       case UnlockOutcome.cancelled:
-        _message(
-          'Iklan ditutup sebelum selesai. Tonton sampai habis untuk mendapat 2× XP.'
-              .localized(context),
-        );
+        _message(context.l10n.xpTheAd);
       case UnlockOutcome.adUnavailable:
-        _message(
-          'Iklan belum tersedia. Coba lagi sebentar lagi.'.localized(context),
-        );
+        _message(context.l10n.xpNoAd);
       case UnlockOutcome.pending:
         setState(() => _pendingNonce = attempt.nonce);
-        _message(
-          'Iklan sudah ditonton, tetapi konfirmasi dari Google belum sampai. Coba periksa lagi.'
-              .localized(context),
-        );
+        _message(context.l10n.xpYouWatched);
     }
   });
 
@@ -129,7 +115,7 @@ class _DoubleXpButtonState extends ConsumerState<DoubleXpButton> {
     final bonus = _bonus;
     if (bonus != null) {
       return Text(
-        '${'2× XP diterima'.localized(context)} (+$bonus XP)',
+        context.l10n.xpBoostClaimed(bonus),
         key: const Key('xp-boost-claimed'),
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -147,7 +133,7 @@ class _DoubleXpButtonState extends ConsumerState<DoubleXpButton> {
         key: const Key('xp-boost-free'),
         onPressed: _busy ? null : _claimFree,
         icon: const Icon(Icons.bolt_rounded),
-        label: Text('Klaim 2× XP'.localized(context)),
+        label: Text(context.l10n.xpClaim2),
       );
     }
     final config = ref.watch(xpBoostPlacementProvider).valueOrNull;
@@ -169,8 +155,8 @@ class _DoubleXpButtonState extends ConsumerState<DoubleXpButton> {
             ),
       label: Text(
         _pendingNonce.isEmpty
-            ? '${'Tonton iklan untuk 2× XP'.localized(context)} (+${gain.awarded} XP)'
-            : 'Periksa lagi'.localized(context),
+            ? context.l10n.xpWatchAd(gain.awarded)
+            : context.l10n.xpReviewAgain,
       ),
     );
   }

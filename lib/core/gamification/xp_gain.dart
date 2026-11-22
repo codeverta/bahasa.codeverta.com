@@ -1,5 +1,5 @@
 import 'package:bahasa_master/core/gamification/double_xp_button.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// What one finished activity earned, as the server reports it with the
@@ -85,13 +85,13 @@ class XpResultBadge extends StatelessWidget {
         if (gain.awarded > 0)
           pill(
             Icons.bolt_rounded,
-            '+${gain.awarded} XP',
+            context.l10n.xpAwarded(gain.awarded),
             const Key('xp-awarded'),
           ),
         if (gain.streak > 0)
           pill(
             Icons.local_fire_department_rounded,
-            '${gain.streak} ${'hari beruntun'.localized(context)}',
+            context.l10n.xpStreakDays(gain.streak),
             const Key('xp-streak'),
           ),
       ],

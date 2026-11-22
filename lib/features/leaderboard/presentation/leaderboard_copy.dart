@@ -1,74 +1,56 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/widgets.dart';
 
-/// Leaderboard copy that contains numbers. Static strings use `.localized()`;
-/// these build both languages directly because they are interpolated.
+/// Thin helpers over the leaderboard ARB strings: they only pick which
+/// message applies (for example the countdown unit) and format numbers.
 class LeaderboardCopy {
-  const LeaderboardCopy({required this.english});
+  const LeaderboardCopy(this.l10n);
 
-  LeaderboardCopy.of(BuildContext context)
-    : english = AppLocalizations.of(context).locale.languageCode == 'en';
+  LeaderboardCopy.of(BuildContext context) : l10n = context.l10n;
 
-  final bool english;
+  final AppLocalizations l10n;
 
-  /// "Pelajar #1234" when a person has no usable display name.
+  /// "Learner #1234" when a person has no usable display name.
   String name(String displayName, String tag) {
     final trimmed = displayName.trim();
     if (trimmed.isNotEmpty) return trimmed;
-    return english ? 'Learner #$tag' : 'Pelajar #$tag';
+    return l10n.leaderboardLearnerName(tag);
   }
 
   String rankOf(int rank, int participants) =>
-      english ? '#$rank of $participants' : '#$rank dari $participants';
+      l10n.leaderboardRankOf(rank, participants);
 
-  String xp(int value) => '$value XP';
+  String xp(int value) => l10n.leaderboardXpValue(value);
 
-  /// "Berakhir dalam 2 hari 5 jam".
+  /// "Ends in 2 days 5 hours".
   String endsIn(Duration remaining) {
     final left = remaining.isNegative ? Duration.zero : remaining;
     final days = left.inDays;
     final hours = left.inHours % 24;
     final minutes = left.inMinutes % 60;
-    if (english) {
-      String unit(int n, String one) => '$n $one${n == 1 ? '' : 's'}';
-      if (days > 0) {
-        return 'Ends in ${unit(days, 'day')} ${unit(hours, 'hour')}';
-      }
-      if (hours > 0) {
-        return 'Ends in ${unit(hours, 'hour')} ${unit(minutes, 'minute')}';
-      }
-      return 'Ends in ${unit(minutes, 'minute')}';
-    }
-    if (days > 0) return 'Berakhir dalam $days hari $hours jam';
-    if (hours > 0) return 'Berakhir dalam $hours jam $minutes menit';
-    return 'Berakhir dalam $minutes menit';
+    if (days > 0) return l10n.leaderboardEndsInDaysHours(days, hours);
+    if (hours > 0) return l10n.leaderboardEndsInHoursMinutes(hours, minutes);
+    return l10n.leaderboardEndsInMinutes(minutes);
   }
 
-  /// "Terakhir diperbarui 14.05".
+  /// "Last updated 14:05".
   String lastUpdated(DateTime at) {
     final local = at.toLocal();
     final h = local.hour.toString().padLeft(2, '0');
     final m = local.minute.toString().padLeft(2, '0');
-    return english ? 'Last updated $h:$m' : 'Terakhir diperbarui $h.$m';
+    return l10n.leaderboardLastUpdated('$h:$m');
   }
 
-  /// Home row: "#12 minggu ini · 20 XP lagi ke #11".
+  /// Home row: "#12 this week · 20 XP more to reach #11".
   String homeRank(int rank, int gap) {
-    if (rank <= 1) {
-      return english
-          ? "#1 this week · You're in the lead!"
-          : '#1 minggu ini · Kamu memimpin!';
-    }
-    return english
-        ? '#$rank this week · $gap XP more to reach #${rank - 1}'
-        : '#$rank minggu ini · $gap XP lagi ke #${rank - 1}';
+    if (rank <= 1) return l10n.leaderboardHomeLead;
+    return l10n.leaderboardHomeRank(rank, gap, rank - 1);
   }
 
-  String hiddenRank(int rank) => english
-      ? 'Your position if shown: #$rank'
-      : 'Posisimu jika ditampilkan: #$rank';
+  String hiddenRank(int rank) => l10n.leaderboardHiddenRank(rank);
 
-  String lastWeek(int rank, int xp) => english
-      ? 'Last week you finished #$rank · $xp XP. A new week has started!'
-      : 'Minggu lalu kamu finis #$rank · $xp XP. Minggu baru dimulai!';
+  String lastWeek(int rank, int xp) => l10n.leaderboardLastWeek(rank, xp);
+
+  String showingTop(int shown, int total) =>
+      l10n.leaderboardShowingTop(shown, total);
 }

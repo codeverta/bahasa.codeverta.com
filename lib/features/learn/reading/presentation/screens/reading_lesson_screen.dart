@@ -2,7 +2,6 @@ import 'package:bahasa_master/core/ads/ad_widgets.dart';
 import 'package:bahasa_master/core/ads/ads_config.dart';
 import 'package:bahasa_master/core/ads/completion_ads.dart';
 import 'package:bahasa_master/core/gamification/xp_gain.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/settings/display_preferences.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
@@ -10,6 +9,7 @@ import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_sheet.dart';
 import 'package:bahasa_master/features/learn/reading/domain/reading_models.dart';
 import 'package:bahasa_master/features/learn/reading/presentation/controllers/reading_controller.dart';
 import 'package:bahasa_master/features/learn/reading/presentation/widgets/reading_illustration.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +26,7 @@ class ReadingLessonScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           lesson.valueOrNull?.lesson.summary.title ??
-              'Cerita Reading'.localized(context),
+              context.l10n.readingReadingStory,
         ),
         actions: [
           AskAiButton(lessonType: AiLessonType.reading, lessonId: lessonId),
@@ -42,14 +42,11 @@ class ReadingLessonScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      e.toString().localized(context),
-                      textAlign: TextAlign.center,
-                    ),
+                    Text(e.toString(), textAlign: TextAlign.center),
                     const SizedBox(height: 16),
                     FilledButton(
                       onPressed: controller.load,
-                      child: Text('Muat ulang'.localized(context)),
+                      child: Text(context.l10n.commonRefresh),
                     ),
                   ],
                 ),
@@ -107,7 +104,11 @@ class _StudyState extends ConsumerState<_Study> {
             padding: const EdgeInsets.all(20),
             children: [
               Text(
-                '${state.lesson.summary.chapter} • ${'Adegan'.localized(context)} ${state.pageIndex + 1}/${state.lesson.pages.length}',
+                context.l10n.readingSceneCounter(
+                  state.lesson.summary.chapter,
+                  state.pageIndex + 1,
+                  state.lesson.pages.length,
+                ),
                 key: const Key('reading-page-counter'),
                 style: TextStyle(
                   color: colors.primary,
@@ -138,7 +139,7 @@ class _StudyState extends ConsumerState<_Study> {
                 runSpacing: 6,
                 children: [
                   FilterChip(
-                    label: Text('Terjemahan'.localized(context)),
+                    label: Text(context.l10n.commonTranslation),
                     selected: translation,
                     showCheckmark: false,
                     selectedColor: colors.secondary,
@@ -180,7 +181,7 @@ class _StudyState extends ConsumerState<_Study> {
                     if (translation) ...[
                       const SizedBox(height: 16),
                       Text(
-                        'Arti cerita'.localized(context),
+                        context.l10n.readingStoryMeaning,
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                       const SizedBox(height: 6),
@@ -195,7 +196,7 @@ class _StudyState extends ConsumerState<_Study> {
               ),
               const SizedBox(height: 22),
               Text(
-                'Kata untuk diingat'.localized(context),
+                context.l10n.readingWordsTo,
                 style: const TextStyle(
                   fontWeight: FontWeight.w800,
                   fontSize: 18,
@@ -262,8 +263,8 @@ class _StudyState extends ConsumerState<_Study> {
                         ),
                   label: Text(
                     last
-                        ? 'Uji pemahaman'.localized(context)
-                        : 'Lanjutkan cerita'.localized(context),
+                        ? context.l10n.readingCheckUnderstanding
+                        : context.l10n.readingContinueStory,
                   ),
                 ),
               ),
@@ -298,7 +299,10 @@ class _Quiz extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             children: [
               Text(
-                '${'Pertanyaan'.localized(context)} ${state.questionIndex + 1}/${attempt.questions.length}',
+                context.l10n.readingQuestionCounter(
+                  state.questionIndex + 1,
+                  attempt.questions.length,
+                ),
                 key: const Key('reading-question-counter'),
                 style: TextStyle(
                   color: colors.primary,
@@ -317,7 +321,7 @@ class _Quiz extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ExpansionTile(
-                title: Text('Baca cerita lagi'.localized(context)),
+                title: Text(context.l10n.readingReadThe),
                 leading: const Icon(Icons.menu_book_rounded),
                 childrenPadding: const EdgeInsets.all(16),
                 children: [
@@ -405,8 +409,8 @@ class _Quiz extends StatelessWidget {
                       children: [
                         Text(
                           feedback.correct
-                              ? 'Benar!'.localized(context)
-                              : 'Belum tepat'.localized(context),
+                              ? context.l10n.commonCorrect
+                              : context.l10n.commonNotQuite,
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 19,
@@ -445,10 +449,10 @@ class _Quiz extends StatelessWidget {
                   ? const _Spinner()
                   : Text(
                       feedback == null
-                          ? 'Periksa jawaban'.localized(context)
+                          ? context.l10n.commonCheckAnswer
                           : state.questionIndex == attempt.questions.length - 1
-                          ? 'Lihat hasil'.localized(context)
-                          : 'Soal berikutnya'.localized(context),
+                          ? context.l10n.commonViewResults
+                          : context.l10n.commonNextQuestion,
                     ),
             ),
           ),
@@ -487,10 +491,10 @@ class _Result extends StatelessWidget {
         const SizedBox(height: 20),
         Text(
           result.pendingSync
-              ? 'Hasil sementara'.localized(context)
+              ? context.l10n.commonProvisionalResult
               : result.passed
-              ? 'Lesson dikuasai!'.localized(context)
-              : 'Terus berlatih!'.localized(context),
+              ? context.l10n.commonLessonMastered
+              : context.l10n.readingKeepPracticing,
           key: const Key('reading-result'),
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
@@ -498,13 +502,10 @@ class _Result extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           result.pendingSync
-              ? 'Jawaban tersimpan di perangkat. Kelulusan, XP, dan achievement menunggu verifikasi saat terhubung kembali.'
-                    .localized(context)
+              ? context.l10n.commonAnswersAre
               : result.passed
-              ? 'Progres cerita sudah tersimpan. Lanjutkan membaca cerita berikutnya.'
-                    .localized(context)
-              : 'Nilai minimum adalah 80%. Pelajari penjelasan dan coba kuis kembali.'
-                    .localized(context),
+              ? context.l10n.readingStoryProgress
+              : context.l10n.readingThePassing,
           textAlign: TextAlign.center,
         ),
         if (result.xp != null) ...[
@@ -527,46 +528,44 @@ class _Result extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${result.correct}/${result.total} jawaban benar'.localized(
-                    context,
+                  context.l10n.readingResultCorrectCount(
+                    result.correct,
+                    result.total,
                   ),
                 ),
                 const SizedBox(height: 12),
                 if (!result.pendingSync) ...[
-                  Text('Nilai terbaik ${result.bestScore}%'.localized(context)),
+                  Text(context.l10n.readingResultBestScore(result.bestScore)),
                   Text(
-                    'Progress kursus ${result.progress}%'.localized(context),
+                    context.l10n.readingResultCourseProgress(result.progress),
                   ),
                 ] else
-                  Text('Menunggu sinkronisasi'.localized(context)),
+                  Text(context.l10n.commonWaitingTo),
               ],
             ),
           ),
         ),
         const SizedBox(height: 24),
         if (error != null) ...[
-          Text(
-            error!.localized(context),
-            style: TextStyle(color: colors.error),
-          ),
+          Text(error!, style: TextStyle(color: colors.error)),
           const SizedBox(height: 12),
         ],
         FilledButton.icon(
           key: const Key('reading-retry'),
           onPressed: busy ? null : retry,
           icon: busy ? const _Spinner() : const Icon(Icons.refresh_rounded),
-          label: Text('Ulangi kuis'.localized(context)),
+          label: Text(context.l10n.readingRetryQuiz),
         ),
         const SizedBox(height: 12),
         OutlinedButton(
           onPressed: busy ? null : study,
-          child: Text('Baca cerita lagi'.localized(context)),
+          child: Text(context.l10n.readingReadThe),
         ),
         const SizedBox(height: 12),
         TextButton(
           key: const Key('reading-finish'),
           onPressed: busy ? null : finish,
-          child: Text('Kembali ke daftar cerita'.localized(context)),
+          child: Text(context.l10n.readingBackTo),
         ),
         const SizedBox(height: 16),
         const Center(
@@ -592,7 +591,7 @@ class _Footer extends StatelessWidget {
         children: [
           if (error != null) ...[
             Text(
-              error!.localized(context),
+              error!,
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
             const SizedBox(height: 8),

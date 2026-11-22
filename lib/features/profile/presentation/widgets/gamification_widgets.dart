@@ -1,7 +1,7 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/localization/region_formatters.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 class GamificationStats extends StatelessWidget {
@@ -20,36 +20,35 @@ class GamificationStats extends StatelessWidget {
             spacing: 20,
             runSpacing: 12,
             children: [
-              _stat(
-                '🔥',
-                '${data.streakDays}',
-                'Streak hari'.localized(context),
-              ),
+              _stat('🔥', '${data.streakDays}', context.l10n.profileDayStreak),
               _stat('⚡', '${data.xp}', 'XP'),
-              _stat('🏆', '${data.unlockedCount}', 'Badge'.localized(context)),
+              _stat('🏆', '${data.unlockedCount}', context.l10n.profileBadges),
             ],
           ),
           const SizedBox(height: 20),
           Text(
-            'Level ${data.level} · ${data.levelXp}/${data.nextLevelXp} XP'
-                .localized(context),
+            context.l10n.profileStatsLevel(
+              data.level,
+              data.levelXp,
+              data.nextLevelXp,
+            ),
           ),
           const SizedBox(height: 8),
           LinearProgressIndicator(value: data.levelXp / data.nextLevelXp),
           const SizedBox(height: 12),
           Text(
-            '${data.lessonsCompleted} lesson lulus · ${data.examsCompleted} jenis ujian dikerjakan'
-                .localized(context),
+            context.l10n.profileStatsCompleted(
+              data.lessonsCompleted,
+              data.examsCompleted,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
-            'Streak terbaik ${data.bestStreak} hari · ${data.activeDays} hari aktif'
-                .localized(context),
+            context.l10n.profileStatsStreak(data.bestStreak, data.activeDays),
           ),
           const SizedBox(height: 12),
           Text(
-            '50 XP saat pertama lulus lesson. 100 XP saat pertama mendapat ≥80% pada tiap jenis ujian. Lulus ulang lesson atau ujian: +10 XP (maks. 3 kali sehari). Target belajar harian tercapai: +20 XP. Review kartu Anki: +1 XP per kartu (maks. 30 XP sehari). Streak dihitung dari kuis atau ujian yang selesai, zona waktu belajar yang dipilih.'
-                .localized(context),
+            context.l10n.profileEarn50,
             style: const TextStyle(fontSize: 12, height: 1.6),
           ),
         ],
@@ -97,22 +96,35 @@ class AchievementTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    a.name.localized(context),
+                    a.name,
                     style: const TextStyle(fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 4),
-                  Text(a.description.localized(context)),
+                  Text(a.description),
                   const SizedBox(height: 10),
                   LinearProgressIndicator(value: progress),
                   const SizedBox(height: 6),
                   Text(
-                    '${a.progress}/${a.target} · ${a.isUnlocked ? 'Terbuka' : 'Terkunci'}'
-                        .localized(context),
+                    a.isUnlocked
+                        ? context.l10n.profileAchievementUnlocked(
+                            a.progress,
+                            a.target,
+                          )
+                        : context.l10n.profileAchievementLocked(
+                            a.progress,
+                            a.target,
+                          ),
                   ),
                   if (a.unlockedAt != null)
                     Text(
-                      'Diperoleh ${regionalDate(a.unlockedAt!, localeName: Localizations.localeOf(context).toString())}'
-                          .localized(context),
+                      context.l10n.profileAchievementEarned(
+                        regionalDate(
+                          a.unlockedAt!,
+                          localeName: Localizations.localeOf(
+                            context,
+                          ).toString(),
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -133,13 +145,10 @@ class GamificationError extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Text(
-            'Progres belum bisa dimuat. Periksa koneksi atau masuk kembali jika sesi berakhir.'
-                .localized(context),
-          ),
+          Text(context.l10n.profileProgressCould),
           TextButton(
             onPressed: retry,
-            child: Text('Coba lagi'.localized(context)),
+            child: Text(context.l10n.commonTryAgain),
           ),
         ],
       ),

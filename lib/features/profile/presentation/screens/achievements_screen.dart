@@ -1,8 +1,8 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
 import 'package:bahasa_master/features/profile/presentation/widgets/gamification_widgets.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -38,17 +38,17 @@ class _AchievementsState extends ConsumerState<AchievementsScreen> {
   Widget build(BuildContext context) {
     if (!ref.watch(authControllerProvider).isAuthenticated) {
       return Scaffold(
-        appBar: AppBar(title: Text('Achievements'.localized(context))),
+        appBar: AppBar(title: Text(context.l10n.profileAchievements)),
         body: Center(
           child: FilledButton(
             onPressed: () => context.push('/login'),
-            child: Text('Masuk untuk melihat achievements'.localized(context)),
+            child: Text(context.l10n.profileSignIn),
           ),
         ),
       );
     }
     return Scaffold(
-      appBar: AppBar(title: Text('Achievements'.localized(context))),
+      appBar: AppBar(title: Text(context.l10n.profileAchievements)),
       body: ref
           .watch(gamificationProvider)
           .when(
@@ -80,20 +80,22 @@ class _AchievementsState extends ConsumerState<AchievementsScreen> {
           GamificationStats(data: data),
           const SizedBox(height: 16),
           Text(
-            '${data.unlockedCount}/${achievements.length} achievement terbuka'
-                .localized(context),
+            context.l10n.profileAchievementsUnlockedCount(
+              data.unlockedCount,
+              achievements.length,
+            ),
           ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
             children: [
               for (final (index, label) in [
-                'Semua',
-                'Terbuka',
-                'Terkunci',
+                context.l10n.profileFilterAll,
+                context.l10n.profileFilterUnlocked,
+                context.l10n.profileFilterLocked,
               ].indexed)
                 ChoiceChip(
-                  label: Text(label.localized(context)),
+                  label: Text(label),
                   selected: filter == index,
                   onSelected: (_) => setState(() => filter = index),
                 ),
@@ -111,10 +113,8 @@ class _AchievementsState extends ConsumerState<AchievementsScreen> {
               )
               .isEmpty)
             Padding(
-              padding: EdgeInsets.all(20),
-              child: Text(
-                'Belum ada achievement dalam kategori ini.'.localized(context),
-              ),
+              padding: const EdgeInsets.all(20),
+              child: Text(context.l10n.profileThereAre),
             ),
         ],
       ),

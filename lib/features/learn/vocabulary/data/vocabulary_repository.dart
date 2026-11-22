@@ -1,3 +1,4 @@
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/features/learn/offline/offline_practice.dart';
 import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
@@ -91,7 +92,7 @@ class VocabularyRepository {
     try {
       final response = await _dio.get<Map<String, dynamic>>(path);
       final data = response.data?['data'];
-      if (data is! List<dynamic>) throw const VocabularyException();
+      if (data is! List<dynamic>) throw VocabularyException();
       return data.whereType<Map<String, dynamic>>().toList(growable: false);
     } on DioException catch (error) {
       throw LockedContentException.from(error) ??
@@ -114,7 +115,7 @@ class VocabularyRepository {
 
   Map<String, dynamic> _data(Map<String, dynamic>? body) {
     final data = body?['data'];
-    if (data is! Map<String, dynamic>) throw const VocabularyException();
+    if (data is! Map<String, dynamic>) throw VocabularyException();
     return data;
   }
 
@@ -124,14 +125,13 @@ class VocabularyRepository {
       final message = (body['error'] as Map<String, dynamic>)['message'];
       if (message is String) return message;
     }
-    return 'Materi vocabulary tidak dapat dimuat. Periksa koneksi Anda.';
+    return appL10n().vocabLoadFailed;
   }
 }
 
 class VocabularyException implements Exception {
-  const VocabularyException([
-    this.message = 'Respons vocabulary dari server tidak valid.',
-  ]);
+  VocabularyException([String? message])
+    : message = message ?? appL10n().vocabInvalidResponse;
 
   final String message;
 

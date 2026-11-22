@@ -3,6 +3,7 @@ import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +11,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final _l10n = lookupAppLocalizations(const Locale('en'));
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('email login redirects to Beranda after success', (tester) async {
+  testWidgets('email login redirects to Home after success', (tester) async {
     final harness = await _createContainer();
     final container = harness.container;
     final repository = harness.repository;
@@ -27,17 +30,19 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Belajar'));
+    await tester.tap(find.text(_l10n.navLearn));
     await tester.pumpAndSettle();
-    expect(find.text('Masuk untuk mulai belajar'), findsOneWidget);
+    expect(find.text(_l10n.authSignIn), findsOneWidget);
 
     await tester.enterText(
       find.byType(TextFormField).at(0),
       'user@example.com',
     );
     await tester.enterText(find.byType(TextFormField).at(1), 'password123');
-    await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Masuk'));
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Masuk'));
+    await tester.ensureVisible(
+      find.widgetWithText(ElevatedButton, _l10n.commonSignIn),
+    );
+    await tester.tap(find.widgetWithText(ElevatedButton, _l10n.commonSignIn));
     await tester.pumpAndSettle();
 
     expect(repository.email, 'user@example.com');
@@ -47,7 +52,7 @@ void main() {
     expect(find.byKey(const Key('lifetime-offer-close')), findsOneWidget);
     await tester.tap(find.byKey(const Key('lifetime-offer-close')));
     await tester.pumpAndSettle();
-    expect(find.text('Masuk untuk mulai belajar'), findsNothing);
+    expect(find.text(_l10n.authSignIn), findsNothing);
     expect(find.byKey(const Key('home-greeting')), findsOneWidget);
   });
 
@@ -55,7 +60,7 @@ void main() {
     tester,
   ) async {
     final harness = await _createContainer(
-      failure: const AuthException('Email atau password salah.'),
+      failure: const AuthException('Incorrect email or password.'),
     );
     final container = harness.container;
     addTearDown(container.dispose);
@@ -68,19 +73,21 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Belajar'));
+    await tester.tap(find.text(_l10n.navLearn));
     await tester.pumpAndSettle();
     await tester.enterText(
       find.byType(TextFormField).at(0),
       'user@example.com',
     );
     await tester.enterText(find.byType(TextFormField).at(1), 'wrongpass');
-    await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Masuk'));
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Masuk'));
+    await tester.ensureVisible(
+      find.widgetWithText(ElevatedButton, _l10n.commonSignIn),
+    );
+    await tester.tap(find.widgetWithText(ElevatedButton, _l10n.commonSignIn));
     await tester.pumpAndSettle();
 
-    expect(find.text('Masuk untuk mulai belajar'), findsOneWidget);
-    expect(find.text('Email atau password salah.'), findsOneWidget);
+    expect(find.text(_l10n.authSignIn), findsOneWidget);
+    expect(find.text('Incorrect email or password.'), findsOneWidget);
     expect(container.read(authControllerProvider).isAuthenticated, isFalse);
   });
 }

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bahasa_master/core/ads/interstitial_ads.dart';
 import 'package:bahasa_master/core/analytics/analytics_service.dart';
 import 'package:bahasa_master/core/auth/session_expiration.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/notifications/notification_prompt.dart';
 import 'package:bahasa_master/core/notifications/notification_settings_screen.dart';
 import 'package:bahasa_master/core/settings/display_settings_screen.dart';
@@ -26,6 +25,7 @@ import 'package:bahasa_master/features/learn/vocabulary/presentation/screens/voc
 import 'package:bahasa_master/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:bahasa_master/features/profile/presentation/screens/achievements_screen.dart';
 import 'package:bahasa_master/features/profile/presentation/screens/attributions_screen.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/main_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -262,11 +262,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     errorBuilder: (context, state) => Scaffold(
-      body: Center(
-        child: Text(
-          '${'Halaman tidak ditemukan'.localized(context)}: ${state.error}',
-        ),
-      ),
+      body: Center(child: Text(context.l10n.appPageNotFound('${state.error}'))),
     ),
   );
 

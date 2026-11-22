@@ -1,12 +1,13 @@
 import 'package:bahasa_master/core/app_review/app_review_service.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/core/unlock/unlock_repository.dart';
 import 'package:bahasa_master/features/anki/presentation/course_anki_button.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_label.dart';
 import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -39,7 +40,7 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
         levels.firstOrNull;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vocabulary JLPT'),
+        title: Text(context.l10n.vocabCourseTitle),
         actions: [
           if (current != null) ...[
             CourseAnkiButton(type: 'vocabulary', level: current.level),
@@ -56,13 +57,10 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
               children: [
                 const Icon(Icons.cloud_off_rounded, size: 40),
                 const SizedBox(height: 12),
-                Text(
-                  e.toString().localized(context),
-                  textAlign: TextAlign.center,
-                ),
+                Text(e.toString(), textAlign: TextAlign.center),
                 TextButton(
                   onPressed: () => ref.invalidate(vocabularyLevelsProvider),
-                  child: Text('Muat ulang'.localized(context)),
+                  child: Text(context.l10n.commonRefresh),
                 ),
               ],
             ),
@@ -70,9 +68,7 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
         ),
         data: (levels) {
           if (levels.isEmpty) {
-            return Center(
-              child: Text('Materi belum tersedia.'.localized(context)),
-            );
+            return Center(child: Text(context.l10n.vocabNoMaterial));
           }
           final level =
               levels.where((l) => l.level == selected).firstOrNull ??
@@ -100,7 +96,7 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                         Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: ChoiceChip(
-                            label: Text(item.level),
+                            label: Text(levelLabel(context, item.level)),
                             selected: level.level == item.level,
                             showCheckmark: false,
                             selectedColor: colors.secondary,
@@ -134,7 +130,9 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'VOCABULARY / ${level.level}',
+                        context.l10n.vocabLevelEyebrow(
+                          levelLabel(context, level.level).toUpperCase(),
+                        ),
                         style: const TextStyle(
                           color: Color(0xFFFFD997),
                           fontWeight: FontWeight.w800,
@@ -144,9 +142,7 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                       const SizedBox(height: 14),
                       Text(
                         level.level == 'N5'
-                            ? 'Lihat gambarnya.\nIngat kata-katanya.'.localized(
-                                context,
-                              )
+                            ? context.l10n.vocabSeeThe
                             : level.title,
                         style: const TextStyle(
                           color: Colors.white,
@@ -157,8 +153,10 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        '${level.lessons.length} lesson • $count entri kosakata'
-                            .localized(context),
+                        context.l10n.vocabCourseSummary(
+                          level.lessons.length,
+                          count,
+                        ),
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
@@ -184,11 +182,7 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                                 if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(
-                                      'Sumber tidak dapat dibuka.'.localized(
-                                        context,
-                                      ),
-                                    ),
+                                    content: Text(context.l10n.vocabTheSource),
                                   ),
                                 );
                               }
@@ -202,7 +196,10 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                               size: 16,
                             ),
                             label: Text(
-                              '${'Sumber:'.localized(context)} ${level.sourceName} • ${level.sourceLicense}',
+                              context.l10n.vocabSourceCredit(
+                                level.sourceName,
+                                level.sourceLicense,
+                              ),
                               style: const TextStyle(fontSize: 12),
                             ),
                           ),
@@ -222,8 +219,10 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        '${level.lessons.where((l) => l.completed).length}/${level.lessons.length} lesson dikuasai'
-                            .localized(context),
+                        context.l10n.vocabLessonsMastered(
+                          level.lessons.where((l) => l.completed).length,
+                          level.lessons.length,
+                        ),
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                       const SizedBox(height: 10),
@@ -237,8 +236,7 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        'Progres latihan ${level.progress}% • lulus lesson minimal 80%'
-                            .localized(context),
+                        context.l10n.vocabPracticeProgress(level.progress),
                         style: const TextStyle(fontSize: 12),
                       ),
                       if (resume != null) ...[
@@ -248,8 +246,8 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                           icon: const Icon(Icons.play_arrow_rounded),
                           label: Text(
                             resume.bestScore > 0
-                                ? 'Lanjutkan belajar'.localized(context)
-                                : 'Mulai belajar'.localized(context),
+                                ? context.l10n.commonContinueLearning
+                                : context.l10n.commonStartLearning,
                           ),
                         ),
                       ],
@@ -258,7 +256,9 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Jelajahi tema ${level.level}'.localized(context),
+                  context.l10n.vocabExploreTopics(
+                    levelLabel(context, level.level),
+                  ),
                   style: const TextStyle(
                     fontSize: 21,
                     fontWeight: FontWeight.w800,
@@ -270,19 +270,15 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                   initialValue: query,
                   onChanged: (v) => setState(() => query = v),
                   decoration: InputDecoration(
-                    hintText: 'Cari tema, misalnya makanan'.localized(context),
-                    prefixIcon: Icon(Icons.search_rounded),
+                    hintText: context.l10n.vocabSearchTopics,
+                    prefixIcon: const Icon(Icons.search_rounded),
                   ),
                 ),
                 const SizedBox(height: 18),
                 if (lessons.isEmpty)
                   Padding(
                     padding: const EdgeInsets.all(20),
-                    child: Text(
-                      'Tema belum ditemukan. Coba kata lain.'.localized(
-                        context,
-                      ),
-                    ),
+                    child: Text(context.l10n.vocabNoTopics),
                   ),
                 for (final lesson in lessons)
                   Padding(
@@ -315,9 +311,10 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                                       ? VocabularyArt(
                                           asset: lesson.imageAsset,
                                           url: lesson.imageUrl,
-                                          description:
-                                              'Ilustrasi tema ${lesson.title}'
-                                                  .localized(context),
+                                          description: context.l10n
+                                              .vocabTopicIllustration(
+                                                lesson.title,
+                                              ),
                                         )
                                       : ColoredBox(
                                           color: colors.secondary.withValues(
@@ -337,7 +334,9 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '${'LESSON'.localized(context)} ${lesson.order.toString().padLeft(2, '0')}',
+                                      context.l10n.vocabLessonNumber(
+                                        lesson.order.toString().padLeft(2, '0'),
+                                      ),
                                       style: TextStyle(
                                         color: colors.secondary,
                                         fontSize: 10,
@@ -355,21 +354,25 @@ class _CourseState extends ConsumerState<VocabularyCourseScreen> {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      '${lesson.wordCount} kata • ${lesson.questionCount > 0 ? lesson.questionCount : lesson.wordCount} soal'
-                                          .localized(context),
+                                      context.l10n.vocabLessonStats(
+                                        lesson.wordCount,
+                                        lesson.questionCount > 0
+                                            ? lesson.questionCount
+                                            : lesson.wordCount,
+                                      ),
                                       style: const TextStyle(fontSize: 12),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       lesson.completed
-                                          ? 'Dikuasai • ${lesson.bestScore}%'
-                                                .localized(context)
+                                          ? context.l10n.vocabMasteredScore(
+                                              lesson.bestScore,
+                                            )
                                           : lesson.bestScore > 0
-                                          ? 'Terbaik ${lesson.bestScore}%'
-                                                .localized(context)
-                                          : 'Siap dipelajari'.localized(
-                                              context,
-                                            ),
+                                          ? context.l10n.vocabBestScoreShort(
+                                              lesson.bestScore,
+                                            )
+                                          : context.l10n.vocabReadyTo,
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: lesson.completed

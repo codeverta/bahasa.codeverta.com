@@ -35,15 +35,6 @@ class BillingRepository {
   final Dio dio;
   final OfflineAccessStore? offlineAccess;
 
-  Future<int> displayPrice() async {
-    final response = await dio.get<Map<String, dynamic>>('/pricing');
-    final data = response.data?['data'];
-    if (data is! Map<String, dynamic> || data['lifetimePriceIdr'] is! int) {
-      throw const FormatException('Format harga Lifetime tidak valid.');
-    }
-    return data['lifetimePriceIdr'] as int;
-  }
-
   Future<BillingAccount> status({String? userId}) async {
     final response = await dio.get<Map<String, dynamic>>(
       '/billing',

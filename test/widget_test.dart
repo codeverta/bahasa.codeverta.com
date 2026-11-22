@@ -1,5 +1,4 @@
 import 'package:bahasa_master/core/analytics/analytics_service.dart';
-import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
@@ -7,12 +6,15 @@ import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
 import 'package:bahasa_master/features/home/presentation/widgets/home_banner_carousel.dart';
 import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/main.dart';
 import 'package:bahasa_master/shared/presentation/widgets/main_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final _l10n = lookupAppLocalizations(const Locale('en'));
 
 void main() {
   testWidgets('first launch redirects to onboarding', (tester) async {
@@ -23,8 +25,6 @@ void main() {
       ProviderScope(
         overrides: [
           sharedPreferencesProvider.overrideWithValue(preferences),
-          // A fresh install follows the device language; use Indonesian.
-          deviceLocaleProvider.overrideWithValue(const Locale('id', 'ID')),
           analyticsBootstrapProvider.overrideWith((ref) {}),
         ],
         child: const BahasaMasterApp(),
@@ -32,7 +32,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Kuasai Bahasa Jepang'), findsOneWidget);
+    expect(find.text(_l10n.onboardingJourneyTitle), findsOneWidget);
   });
 
   testWidgets('main navigation changes the active tab', (tester) async {
@@ -56,6 +56,8 @@ void main() {
           homeDashboardProvider.overrideWith((ref) async => _dashboard),
         ],
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: AppTheme.lightTheme,
           home: const MainScaffold(),
         ),
@@ -87,16 +89,16 @@ void main() {
     expect(find.byKey(const Key('home-quick-anki')), findsOneWidget);
     expect(find.byKey(const Key('home-quick-jobs')), findsNothing);
 
-    await tester.tap(find.text('Belajar'));
+    await tester.tap(find.text(_l10n.navLearn));
     await tester.pumpAndSettle();
 
-    expect(find.text('Pilih level JLPT'), findsOneWidget);
+    expect(find.text(_l10n.learnChooseA), findsOneWidget);
     expect(find.text('Anki · Flashcards'), findsNothing);
 
-    await tester.tap(find.text('Profil'));
+    await tester.tap(find.text(_l10n.navProfile));
     await tester.pumpAndSettle();
 
-    expect(find.text('Gamification'), findsOneWidget);
+    expect(find.text(_l10n.profileGamification), findsOneWidget);
   });
 
   testWidgets('home premium offer is hidden for lifetime subscribers', (
@@ -123,6 +125,8 @@ void main() {
           homeDashboardProvider.overrideWith((ref) async => _dashboard),
         ],
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: AppTheme.lightTheme,
           home: const MainScaffold(),
         ),
@@ -131,7 +135,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('BAHASA PREMIUM'), findsNothing);
-    expect(find.text('Lihat paket'), findsNothing);
+    expect(find.text(_l10n.learnViewPlans), findsNothing);
   });
 
   testWidgets(
@@ -149,6 +153,8 @@ void main() {
             gamificationProvider.overrideWith((ref) async => _gamification),
           ],
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             theme: AppTheme.lightTheme,
             home: const MainScaffold(),
           ),
@@ -162,8 +168,11 @@ void main() {
         carousel.banners.where((banner) => banner.action == 'premium'),
         hasLength(1),
       );
-      expect(carousel.banners.first.description, contains('Rp1.499.000'));
-      await tester.tap(find.text('Profil'));
+      expect(
+        carousel.banners.first.description,
+        _l10n.homeBannerOfferDescription,
+      );
+      await tester.tap(find.text(_l10n.navProfile));
       await tester.pumpAndSettle();
       final profileScroll = find
           .descendant(
@@ -172,16 +181,16 @@ void main() {
           )
           .first;
       await tester.scrollUntilVisible(
-        find.text('Lifetime Access'),
+        find.text(_l10n.commonLifetimeAccess),
         150,
         scrollable: profileScroll,
       );
-      expect(find.text('Lifetime Access'), findsOneWidget);
+      expect(find.text(_l10n.commonLifetimeAccess), findsOneWidget);
 
       auth.subscribe();
       await tester.pumpAndSettle();
-      expect(find.text('Lifetime Access'), findsNothing);
-      await tester.tap(find.text('Beranda'));
+      expect(find.text(_l10n.commonLifetimeAccess), findsNothing);
+      await tester.tap(find.text(_l10n.navHome));
       await tester.pumpAndSettle();
       carousel = tester.widget<HomeBannerCarousel>(
         find.byType(HomeBannerCarousel),
@@ -215,10 +224,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('home-greeting')), findsOneWidget);
-    await tester.tap(find.text('Belajar'));
+    await tester.tap(find.text(_l10n.navLearn));
     await tester.pumpAndSettle();
 
-    expect(find.text('Masuk untuk mulai belajar'), findsOneWidget);
+    expect(find.text(_l10n.authSignIn), findsOneWidget);
   });
 }
 

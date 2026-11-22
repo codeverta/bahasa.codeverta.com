@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/core/offline/network_status.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
@@ -43,8 +44,7 @@ class OfflinePracticeUnavailableException implements Exception {
   const OfflinePracticeUnavailableException();
 
   @override
-  String toString() =>
-      'Kuis belum disiapkan untuk offline. Hubungkan internet dan buka kuis saat online untuk menyimpannya.';
+  String toString() => appL10n().learnOfflineQuizNotPrepared;
 }
 
 /// Uses server-issued lesson banks for both online and offline lesson quizzes.
@@ -102,7 +102,7 @@ class OfflinePracticeService {
   ) async {
     final user = currentUserId();
     if (user == null || user.isEmpty) {
-      throw StateError('Masuk untuk menyimpan latihan.');
+      throw StateError(appL10n().learnOfflineSignInRequired);
     }
     if (!_supportedKind(kind)) {
       throw ArgumentError.value(kind, 'kind');
@@ -118,7 +118,7 @@ class OfflinePracticeService {
   Future<Map<String, dynamic>> start(String kind, String lessonId) async {
     final user = currentUserId();
     if (user == null || user.isEmpty) {
-      throw StateError('Masuk untuk menyimpan latihan.');
+      throw StateError(appL10n().learnOfflineSignInRequired);
     }
     if (!_supportedKind(kind)) throw ArgumentError.value(kind, 'kind');
     final generation = _generations[user] ?? 0;
@@ -150,7 +150,7 @@ class OfflinePracticeService {
       if (attempts.length > 500) {
         attempts.removeWhere((entry) => entry['status'] == 'synced');
         if (attempts.length > 500) {
-          throw StateError('Ada terlalu banyak latihan yang belum tersinkron.');
+          throw StateError(appL10n().learnOfflineTooManyUnsynced);
         }
       }
     });
@@ -205,7 +205,7 @@ class OfflinePracticeService {
           manifest['lessonId'] != lessonId ||
           questions is! List ||
           questions.isEmpty) {
-        throw const FormatException('Paket kuis offline tidak valid.');
+        throw FormatException(appL10n().learnOfflinePackageInvalid);
       }
       if (_isPremiumManifest(manifest) && !await canReadPremium(user)) {
         // Premium content fetched over the network remains usable through the
@@ -236,14 +236,16 @@ class OfflinePracticeService {
     String optionId,
   ) async {
     final user = currentUserId();
-    if (user == null) throw StateError('Akun tidak tersedia.');
+    if (user == null) {
+      throw StateError(appL10n().learnOfflineAccountUnavailable);
+    }
     final generation = _generations[user] ?? 0;
     await _authorizeStoredAttempt(user, attemptId);
     var feedback = <String, dynamic>{};
     await _mutate(user, (attempts) {
       final row = _attempt(attempts, attemptId);
       if (row == null || row['status'] != 'inProgress') {
-        throw StateError('Latihan tidak lagi menerima jawaban.');
+        throw StateError(appL10n().learnOfflineNoLongerAccepting);
       }
       final package = row['package'] as Map<String, dynamic>;
       final questions = package['questions'] as List<dynamic>;
@@ -263,7 +265,7 @@ class OfflinePracticeService {
           .toList();
       final prior = answers.where((value) => value['questionId'] == questionId);
       if (prior.isNotEmpty && prior.first['optionId'] != optionId) {
-        throw StateError('Jawaban untuk soal ini sudah disimpan.');
+        throw StateError(appL10n().learnOfflineAnswerAlreadySaved);
       }
       if (prior.isEmpty) {
         answers.add({'questionId': questionId, 'optionId': optionId});
@@ -282,13 +284,15 @@ class OfflinePracticeService {
 
   Future<Map<String, dynamic>> complete(String attemptId) async {
     final user = currentUserId();
-    if (user == null) throw StateError('Akun tidak tersedia.');
+    if (user == null) {
+      throw StateError(appL10n().learnOfflineAccountUnavailable);
+    }
     final generation = _generations[user] ?? 0;
     await _authorizeStoredAttempt(user, attemptId);
     Map<String, dynamic>? localResult;
     await _mutate(user, (attempts) {
       final row = _attempt(attempts, attemptId);
-      if (row == null) throw StateError('Latihan tidak ditemukan.');
+      if (row == null) throw StateError(appL10n().learnOfflinePracticeNotFound);
       if (row['status'] == 'synced') {
         localResult = Map<String, dynamic>.from(row['serverResult'] as Map);
         return;
@@ -299,7 +303,7 @@ class OfflinePracticeService {
           .toList();
       final questions = package['questions'] as List<dynamic>;
       if (answers.isEmpty || answers.length != questions.length) {
-        throw StateError('Jawab semua soal sebelum menyelesaikan latihan.');
+        throw StateError(appL10n().learnOfflineAnswerAll);
       }
       localResult = _provisionalResult(attemptId, package, answers);
       row['status'] = 'pending';
@@ -401,7 +405,7 @@ class OfflinePracticeService {
       _checkAccount(user, generation);
       final result = _unwrap(response.data);
       if (result['verified'] != true || result['attemptId'] != attemptId) {
-        throw const FormatException('Hasil latihan server tidak valid.');
+        throw FormatException(appL10n().learnOfflineServerResultInvalid);
       }
       await _mutate(user, (currentAttempts) {
         final current = _attempt(currentAttempts, attemptId);
@@ -437,11 +441,13 @@ class OfflinePracticeService {
   }
 
   Future<void> _authorizeStoredAttempt(String userId, String attemptId) async {
-    if (currentUserId() != userId) throw StateError('Akun berubah.');
+    if (currentUserId() != userId) {
+      throw StateError(appL10n().learnOfflineAccountChanged);
+    }
     final attempts = await store.read(userId);
     final row = _attempt(attempts, attemptId);
     if (row == null || !await _isAuthorizedRow(userId, row)) {
-      throw StateError('Akses offline ke latihan ini sudah tidak tersedia.');
+      throw StateError(appL10n().learnOfflineAccessGone);
     }
     _checkAccount(userId, _generations[userId] ?? 0);
   }
@@ -473,9 +479,7 @@ class OfflinePracticeService {
       if (_disposed || (_generations[user] ?? 0) != generation) return;
       if (utf8.encode(jsonEncode(attempts)).length >
           maxOfflinePracticeOutboxBytes) {
-        throw StateError(
-          'Antrean latihan terlalu besar. Hubungkan internet untuk menyinkronkan latihan yang tertunda.',
-        );
+        throw StateError(appL10n().learnOfflineQueueTooLarge);
       }
       await store.write(user, attempts);
     });
@@ -487,7 +491,7 @@ class OfflinePracticeService {
     if (_disposed ||
         currentUserId() != user ||
         (_generations[user] ?? 0) != generation) {
-      throw StateError('Akun berubah selama latihan berlangsung.');
+      throw StateError(appL10n().learnOfflineAccountChangedDuring);
     }
   }
 
@@ -513,7 +517,7 @@ class OfflinePracticeService {
   static Map<String, dynamic> _unwrap(Map<String, dynamic>? body) {
     final value = body?['data'];
     if (value is Map<String, dynamic>) return value;
-    throw const FormatException('Respons latihan offline tidak valid.');
+    throw FormatException(appL10n().learnOfflineResponseInvalid);
   }
 
   static Map<String, dynamic> _learnerQuestion(Map<String, dynamic> value) => {

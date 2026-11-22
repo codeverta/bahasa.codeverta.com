@@ -107,7 +107,7 @@ class LoginArtwork extends StatelessWidget {
               top: 28,
               child: Transform.rotate(
                 angle: -.16,
-                child: const _KanaTile(text: 'あ', color: Color(0xFFCD344D)),
+                child: const _LetterTile(text: 'A', color: Color(0xFFCD344D)),
               ),
             ),
             Positioned(
@@ -115,7 +115,7 @@ class LoginArtwork extends StatelessWidget {
               bottom: 24,
               child: Transform.rotate(
                 angle: .14,
-                child: const _KanaTile(text: '学', color: Color(0xFF35378D)),
+                child: const _LetterTile(text: 'B', color: Color(0xFF35378D)),
               ),
             ),
             Transform.rotate(angle: -.05, child: const BrandEmblem(size: 104)),
@@ -139,8 +139,8 @@ class _ArtCircle extends StatelessWidget {
   );
 }
 
-class _KanaTile extends StatelessWidget {
-  const _KanaTile({required this.text, required this.color});
+class _LetterTile extends StatelessWidget {
+  const _LetterTile({required this.text, required this.color});
   final String text;
   final Color color;
 

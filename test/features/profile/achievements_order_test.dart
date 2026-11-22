@@ -1,8 +1,8 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
 import 'package:bahasa_master/features/profile/presentation/screens/achievements_screen.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

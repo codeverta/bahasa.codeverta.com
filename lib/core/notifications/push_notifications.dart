@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:ui' show Locale;
 
 import 'package:bahasa_master/core/localization/app_language.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -16,10 +16,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 const announcementTopic = 'bahasa_announcements';
 const announcementTopicEnglish = 'bahasa_announcements_en';
 
-/// Indonesian stays on the original topic so existing installs keep working;
-/// English readers get their own topic with English text.
+/// English is the default announcement language. The original topic is kept
+/// for Indonesian so existing installs keep working; every other language
+/// falls back to English.
 String announcementTopicFor(String languageCode) =>
-    languageCode == 'en' ? announcementTopicEnglish : announcementTopic;
+    languageCode == 'id' ? announcementTopic : announcementTopicEnglish;
 
 const notificationRoutes = <String>{
   '/home',
@@ -77,7 +78,7 @@ final pushNotificationsProvider =
 enum PushToggleResult { on, off, denied, failed }
 
 class PushNotificationController extends StateNotifier<PushNotificationState> {
-  PushNotificationController(this._preferences, {String languageCode = 'id'})
+  PushNotificationController(this._preferences, {String languageCode = 'en'})
     : _languageCode = languageCode,
       super(
         PushNotificationState(
@@ -91,10 +92,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
         (_preferences.getBool('announcement_sync_pending') ?? false)) {
       unawaited(initialize());
     } else if (!supported) {
-      _set(
-        message:
-            'Notifikasi push tersedia untuk Android. Dukungan iPhone/iPad sedang disiapkan.',
-      );
+      _set(message: _strings.notificationsPushAndroidOnly);
     }
   }
   static const _preferenceKey = 'announcement_notifications_enabled';
@@ -102,16 +100,14 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
   String _languageCode;
   String get _topic => announcementTopicFor(_languageCode);
   String get _otherTopic =>
-      _languageCode == 'en' ? announcementTopic : announcementTopicEnglish;
+      _languageCode == 'id' ? announcementTopicEnglish : announcementTopic;
 
-  AppLocalizations get _strings => AppLocalizations(Locale(_languageCode));
+  AppLocalizations get _strings => appL10n(Locale(_languageCode));
 
   AndroidNotificationChannel get _channel => AndroidNotificationChannel(
     announcementTopic,
-    _strings.text('Pengumuman Bahasa Master'),
-    description: _strings.text(
-      'Berita aplikasi dan informasi belajar yang Anda aktifkan.',
-    ),
+    _strings.notificationsBahasaMaster,
+    description: _strings.notificationsChannelDescription,
   );
 
   /// Moves the device to the topic for the new language and renames the
@@ -181,11 +177,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
   Future<void> _initialize() async {
     _set(busy: true);
     if (!supported) {
-      _set(
-        busy: false,
-        message:
-            'Notifikasi push tersedia untuk Android. Dukungan iPhone/iPad sedang disiapkan.',
-      );
+      _set(busy: false, message: _strings.notificationsPushAndroidOnly);
       return;
     }
     try {
@@ -243,8 +235,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
       _set(
         available: false,
         busy: false,
-        message:
-            'Notifikasi belum dapat dihubungkan. Aplikasi tetap bisa digunakan. Tutup lalu buka lagi untuk mencoba kembali.',
+        message: _strings.notificationsConnectFailed,
       );
     }
   }
@@ -256,10 +247,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
       await _applyTopics();
       _set(pendingSync: false);
     } on Object {
-      _set(
-        pendingSync: true,
-        message: 'Langganan akan dicoba lagi saat aplikasi kembali aktif.',
-      );
+      _set(pendingSync: true, message: _strings.notificationsSubscribeRetry);
     } finally {
       if (mounted) {
         _set(
@@ -305,7 +293,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
         busy: false,
         pendingSync: false,
         message: state.enabled && !granted
-            ? 'Izin notifikasi di Android belum aktif. Buka pengaturan Android untuk mengizinkannya.'
+            ? _strings.notificationsPermissionOff
             : null,
       );
     } on Object {
@@ -314,8 +302,8 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
         busy: false,
         pendingSync: true,
         message: state.enabled
-            ? 'Menunggu koneksi untuk mengaktifkan langganan. Akan dicoba lagi saat aplikasi kembali aktif.'
-            : 'Menunggu koneksi untuk menghentikan langganan. Anda juga bisa mematikan izin notifikasi melalui pengaturan Android.',
+            ? _strings.notificationsWaitingToSubscribe
+            : _strings.notificationsWaitingToUnsubscribe,
       );
     }
   }
@@ -334,8 +322,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
           _set(
             busy: false,
             granted: false,
-            message:
-                'Izin belum diberikan. Aktifkan melalui pengaturan Android jika Anda ingin menerima pengumuman.',
+            message: _strings.notificationsPermissionDenied,
           );
           return PushToggleResult.denied;
         }
@@ -354,10 +341,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
       await refresh();
       return enabled ? PushToggleResult.on : PushToggleResult.off;
     } on Object {
-      _set(
-        busy: false,
-        message: 'Pengaturan belum dapat diperbarui. Silakan coba lagi.',
-      );
+      _set(busy: false, message: _strings.notificationsUpdateFailed);
       return PushToggleResult.failed;
     }
   }
@@ -382,7 +366,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             announcementTopic,
-            _strings.text('Pengumuman Bahasa Master'),
+            _strings.notificationsBahasaMaster,
             icon: 'ic_notification',
           ),
         ),
@@ -423,10 +407,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
         'com.codeverta.bahasa/app_info',
       ).invokeMethod<void>('openNotificationSettings');
     } on Object {
-      _set(
-        message:
-            'Buka Pengaturan Android → Aplikasi → Bahasa Master → Notifikasi.',
-      );
+      _set(message: _strings.notificationsOpenSettingsHint);
     }
   }
 

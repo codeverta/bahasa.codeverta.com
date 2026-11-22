@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/brand_artwork.dart';
 import 'package:flutter/material.dart';
 
@@ -182,7 +182,7 @@ class _HomeBannerCarouselState extends State<HomeBannerCarousel>
                   : textWidth;
               final headingHeight =
                   measure(
-                    _eyebrow(banner.action).localized(context),
+                    _eyebrow(context.l10n, banner.action),
                     _eyebrowStyle,
                     1,
                     headingWidth,
@@ -266,8 +266,11 @@ class _HomeBannerCarouselState extends State<HomeBannerCarousel>
                       Semantics(
                         button: true,
                         selected: i == _index,
-                        label:
-                            'Banner ${i + 1} ${'dari'.localized(context)} ${widget.banners.length}: ${widget.banners[i].title}',
+                        label: context.l10n.homeBannerSemantics(
+                          i + 1,
+                          widget.banners.length,
+                          widget.banners[i].title,
+                        ),
                         child: InkWell(
                           key: Key('home-banner-dot-$i'),
                           onTap: () => _select(i),
@@ -320,10 +323,10 @@ const _buttonStyle = TextStyle(
   fontWeight: FontWeight.w700,
 );
 
-String _eyebrow(String action) => switch (action) {
-  'premium' => 'BAHASA PREMIUM',
-  'anki' => 'REVIEW SEDIKIT, INGAT LEBIH LAMA',
-  _ => 'BELAJAR BAHASA JEPANG',
+String _eyebrow(AppLocalizations l10n, String action) => switch (action) {
+  'premium' => l10n.homeBannerEyebrowPremium,
+  'anki' => l10n.homeBannerEyebrowAnki,
+  _ => l10n.homeBannerEyebrowLearn,
 };
 
 class _BannerCard extends StatelessWidget {
@@ -456,7 +459,7 @@ class _BannerCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    _eyebrow(banner.action).localized(context),
+                                    _eyebrow(context.l10n, banner.action),
                                     style: banner.action == 'premium'
                                         ? _eyebrowStyle.copyWith(
                                             color: const Color(0xFFFFD784),
@@ -467,7 +470,7 @@ class _BannerCard extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    banner.title.localized(context),
+                                    banner.title,
                                     style: _titleStyle,
                                     maxLines: 3,
                                     overflow: TextOverflow.ellipsis,
@@ -486,7 +489,7 @@ class _BannerCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          banner.description.localized(context),
+                          banner.description,
                           style: _descriptionStyle,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
@@ -515,7 +518,7 @@ class _BannerCard extends StatelessWidget {
                             size: 18,
                           ),
                           label: Text(
-                            banner.buttonLabel.localized(context),
+                            banner.buttonLabel,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),

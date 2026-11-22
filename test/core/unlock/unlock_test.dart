@@ -5,6 +5,7 @@ import 'package:bahasa_master/core/unlock/unlock_flow.dart';
 import 'package:bahasa_master/core/unlock/unlock_repository.dart';
 import 'package:bahasa_master/core/unlock/unlock_sheet.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -248,7 +249,11 @@ void main() {
               ),
             ),
           ],
-          child: MaterialApp.router(routerConfig: router),
+          child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: router,
+          ),
         ),
       );
       await tester.tap(find.text('open'));
@@ -262,7 +267,7 @@ void main() {
         shower: _FakeShower([RewardedAdOutcome.watched]),
         repository: _FakeRepository(),
       );
-      expect(find.text('Sisa buka gratis hari ini: 5'), findsOneWidget);
+      expect(find.text('Free unlocks left today: 5'), findsOneWidget);
       await tester.tap(find.byKey(const Key('unlock-watch-ad')));
       await tester.pumpAndSettle();
       expect(results, [true]);
@@ -345,6 +350,8 @@ void main() {
             ),
           ],
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(
               body: UnlockLockIcon(target: _target, lockable: lockable),
             ),

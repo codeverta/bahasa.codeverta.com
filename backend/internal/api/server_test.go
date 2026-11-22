@@ -228,11 +228,11 @@ func TestVocabularyAttemptEvaluatesAnswersPersistsProgressAndRetries(t *testing.
 		word := lesson.Data.Words[index%len(lesson.Data.Words)]
 		text := word.Meaning
 		switch question.Kind {
-		case "Cara baca":
+		case "Cara baca", "Reading":
 			text = word.Reading
-		case "Penulisan kata":
+		case "Penulisan kata", "Word spelling":
 			text = word.Term
-		case "Pemakaian kalimat":
+		case "Pemakaian kalimat", "Sentence usage":
 			text = word.Example
 		}
 		for _, option := range question.Options {

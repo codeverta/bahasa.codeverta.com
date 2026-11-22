@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:bahasa_master/core/ads/ad_widgets.dart';
 import 'package:bahasa_master/core/analytics/analytics_service.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/billing/presentation/lifetime_offer.dart';
 import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
 import 'package:bahasa_master/features/learn/presentation/screens/learn_hub_screen.dart';
 import 'package:bahasa_master/features/profile/presentation/screens/profile_screen.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -119,17 +119,17 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
           NavigationDestination(
             icon: const Icon(Icons.home_outlined),
             selectedIcon: const Icon(Icons.home_rounded),
-            label: 'Beranda'.localized(context),
+            label: context.l10n.navHome,
           ),
           NavigationDestination(
             icon: const Icon(Icons.local_library_outlined),
             selectedIcon: const Icon(Icons.local_library_rounded),
-            label: 'Belajar'.localized(context),
+            label: context.l10n.navLearn,
           ),
           NavigationDestination(
             icon: const Icon(Icons.person_outline_rounded),
             selectedIcon: const Icon(Icons.person_rounded),
-            label: 'Profil'.localized(context),
+            label: context.l10n.navProfile,
           ),
         ],
       ),

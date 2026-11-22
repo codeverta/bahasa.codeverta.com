@@ -5,6 +5,7 @@ import 'package:bahasa_master/core/ads/ads_config.dart';
 import 'package:bahasa_master/core/ads/interstitial_ads.dart';
 import 'package:bahasa_master/core/ads/rewarded_ads.dart';
 import 'package:bahasa_master/core/analytics/analytics_service.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -222,9 +223,9 @@ class AiChatController extends StateNotifier<AiChatState> {
   void _fail(Object error, List<AiChatMessage> before) {
     final exception = error is AiChatException
         ? error
-        : const AiChatException(
+        : AiChatException(
             AiChatException.network,
-            'Butuh koneksi internet',
+            appL10n().aiChatInternetConnection,
           );
     switch (exception.code) {
       case AiChatException.adRequired:
@@ -348,7 +349,7 @@ class AiChatController extends StateNotifier<AiChatState> {
     if (lifetime && outcome == RewardedAdOutcome.unavailable) {
       // Several messages per ad are only paid for a watched ad.
       state = state.copyWith(
-        error: () => 'Iklan belum tersedia. Coba lagi sebentar lagi.',
+        error: () => appL10n().aiChatAdUnavailable,
         retryable: true,
       );
       return false;

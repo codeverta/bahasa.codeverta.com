@@ -1,12 +1,12 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-/// Beranda quick menu: an icon grid so every feature is reachable without
-/// scrolling. Belajar and Profil stay in the bottom navigation.
+/// Home quick menu: an icon grid so every feature is reachable without
+/// scrolling. Learn and Profile stay in the bottom navigation.
 class HomeQuickMenu extends StatelessWidget {
   const HomeQuickMenu({super.key});
 
@@ -88,14 +88,14 @@ class _QuickMenuTile extends StatelessWidget {
         ? (item.accentDark ?? const Color(0xFFFF8593))
         : (item.accentLight ?? const Color(0xFFD7263D));
     final surface = theme.colorScheme.surface;
-    final label = item.label.localized(context);
+    final label = item.label;
     return Pressable(
       key: Key('home-quick-${item.id}'),
       onTap: item.onTap,
       scale: 0.9,
       borderRadius: BorderRadius.circular(18),
       semanticsLabel: item.premium
-          ? '$label · ${'Premium'.localized(context)}'
+          ? context.l10n.homeQuickMenuPremiumLabel(label)
           : label,
       child: Column(
         mainAxisSize: MainAxisSize.min,

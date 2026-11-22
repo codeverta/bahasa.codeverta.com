@@ -1,3 +1,4 @@
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/features/learn/offline/offline_practice.dart';
 import 'package:bahasa_master/features/learn/reading/domain/reading_models.dart';
@@ -90,16 +91,14 @@ class ReadingRepository {
           : await _dio.get<Map<String, dynamic>>(path);
       final data = response.data?['data'];
       if (data is! Map<String, dynamic>) {
-        throw const ReadingException(
-          'Respons reading tidak valid. Coba muat ulang.',
-        );
+        throw ReadingException(appL10n().readingInvalidResponse);
       }
       return data;
     } on DioException catch (error) {
       final locked = LockedContentException.from(error);
       if (locked != null) throw locked;
       if (error.response?.statusCode == 401) {
-        throw const ReadingException('Sesi berakhir. Silakan masuk kembali.');
+        throw ReadingException(appL10n().readingSessionExpired);
       }
       final payload = error.response?.data;
       final message =
@@ -108,9 +107,7 @@ class ReadingRepository {
           ? (payload['error'] as Map<String, dynamic>)['message']
           : null;
       throw ReadingException(
-        message is String
-            ? message
-            : 'Materi reading tidak dapat dimuat. Periksa koneksi dan backend.',
+        message is String ? message : appL10n().readingLoadFailed,
       );
     }
   }

@@ -1,13 +1,13 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/notifications/notification_prompt.dart';
 import 'package:bahasa_master/core/notifications/push_notifications.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// One-time card for people who never saw the onboarding page (existing
-/// installs, or onboarding skipped): "Aktifkan notifikasi?". Any answer hides
+/// installs, or onboarding skipped): "Turn on notifications?". Any answer hides
 /// it for good; Settings keeps the switch.
 class HomeNotificationCard extends ConsumerStatefulWidget {
   const HomeNotificationCard({super.key});
@@ -30,16 +30,14 @@ class _HomeNotificationCardState extends ConsumerState<HomeNotificationCard> {
     if (!mounted) return;
     setState(() => _busy = false);
     final message = switch (result) {
-      PushToggleResult.denied =>
-        'Izin belum diberikan. Kamu bisa mengaktifkannya nanti lewat pengaturan Android.',
-      PushToggleResult.failed =>
-        'Notifikasi belum dapat diaktifkan sekarang. Coba lagi nanti di Pengaturan.',
+      PushToggleResult.denied => context.l10n.homeNotificationPermissionDenied,
+      PushToggleResult.failed => context.l10n.homeNotificationEnableFailed,
       _ => null,
     };
     if (message != null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(message.localized(context))));
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -63,8 +61,7 @@ class _HomeNotificationCardState extends ConsumerState<HomeNotificationCard> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Aktifkan notifikasi untuk pengumuman dan materi baru'
-                        .localized(context),
+                    context.l10n.homeTurnOn,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
@@ -85,12 +82,12 @@ class _HomeNotificationCardState extends ConsumerState<HomeNotificationCard> {
                           ref.read,
                           NotificationPromptPlace.home,
                         ),
-                  child: Text('Nanti saja'.localized(context)),
+                  child: Text(context.l10n.homeMaybeLater),
                 ),
                 FilledButton(
                   key: const Key('home-notification-enable'),
                   onPressed: _busy ? null : _enable,
-                  child: Text('Aktifkan'.localized(context)),
+                  child: Text(context.l10n.homeTurnOn2),
                 ),
               ],
             ),

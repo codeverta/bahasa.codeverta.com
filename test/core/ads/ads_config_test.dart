@@ -17,13 +17,13 @@ void main() {
     expect(AdsConfig.fromJson(null).enabled, isFalse);
     expect(AdsConfig.fromJson('x').banner.usable, isFalse);
     expect(
-      AdsConfig.fromJson(<String, dynamic>{}).quizResultBanner.usable,
+      AdsConfig.fromJson(const <String, dynamic>{}).quizResultBanner.usable,
       isFalse,
     );
   });
 
   test('parses server payload', () {
-    final config = AdsConfig.fromJson({
+    final config = AdsConfig.fromJson(const {
       'enabled': true,
       'banner': {'enabled': true, 'unitId': testBannerAdUnitId},
       'quizResultBanner': {'enabled': false, 'unitId': testBannerAdUnitId},
@@ -34,7 +34,7 @@ void main() {
   });
 
   test('debug builds swap real units for Google test units', () {
-    final config = AdsConfig.fromJson({
+    final config = AdsConfig.fromJson(const {
       'enabled': true,
       'banner': {
         'enabled': true,

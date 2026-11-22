@@ -7,6 +7,7 @@ import 'package:bahasa_master/features/auth/presentation/controllers/auth_contro
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
 import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -39,13 +40,11 @@ Future<void> _pumpLoadingDashboard(
           disableAnimations: disableAnimations,
         ),
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: AppTheme.lightTheme,
           home: Scaffold(
-            body: DashboardScreen(
-              active: true,
-              openLearn: () {},
-              openProfile: () {},
-            ),
+            body: DashboardScreen(openLearn: () {}, openProfile: () {}),
           ),
         ),
       ),

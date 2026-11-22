@@ -1,7 +1,8 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/unlock/unlock_repository.dart';
 import 'package:bahasa_master/core/unlock/unlock_sheet.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +33,7 @@ class LockedContentException implements Exception {
 
   @override
   String toString() =>
-      message.isEmpty ? 'Konten ini memerlukan Lifetime Access.' : message;
+      message.isEmpty ? appL10n().unlockThisContentRequires : message;
 }
 
 /// The locked-content view for [error], or null when [error] is not a lock.
@@ -84,16 +85,15 @@ class LockedContentView extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              title ?? 'Konten ini terkunci'.localized(context),
+              title ?? context.l10n.unlockThisContent,
               style: theme.textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               target == null
-                  ? 'Konten ini memerlukan Lifetime Access.'.localized(context)
-                  : 'Buka dengan menonton satu iklan, atau beli Lifetime untuk membuka semuanya.'
-                        .localized(context),
+                  ? context.l10n.unlockThisContentRequires
+                  : context.l10n.unlockUnlockIt,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
@@ -114,8 +114,8 @@ class LockedContentView extends ConsumerWidget {
               ),
               label: Text(
                 target == null
-                    ? 'Lihat Lifetime'.localized(context)
-                    : 'Buka konten ini'.localized(context),
+                    ? context.l10n.unlockSeeLifetime
+                    : context.l10n.unlockUnlockThis,
               ),
             ),
           ],
@@ -172,7 +172,7 @@ class UnlockLockIcon extends ConsumerWidget {
     return Icon(
       Icons.lock_outline_rounded,
       key: Key('locked-${target.key}'),
-      semanticLabel: 'Terkunci'.localized(context),
+      semanticLabel: context.l10n.unlockLocked,
     );
   }
 }

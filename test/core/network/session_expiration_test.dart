@@ -63,10 +63,7 @@ void main() {
       expect(preferences.getString(authTokenStorageKey), isNull);
       expect(adapter.authorizationHeaders, contains('Bearer expired-token'));
       expect(responseError['message'], sessionExpiredMessage);
-      expect(
-        responseError['message'],
-        isNot(contains('Bearer token tidak valid')),
-      );
+      expect(responseError['message'], isNot(contains('Bearer invalid token')));
       expect(
         container.read(authControllerProvider).errorMessage,
         sessionExpiredMessage,
@@ -86,7 +83,7 @@ void main() {
       redirectToLoginIfSessionExpired('/login', sessionExpiredMessage),
       isNull,
     );
-    expect(redirectToLoginIfSessionExpired('/home', 'Login gagal.'), isNull);
+    expect(redirectToLoginIfSessionExpired('/home', 'Login failed.'), isNull);
   });
 }
 
@@ -125,7 +122,7 @@ class _RevokedSessionAdapter implements HttpClientAdapter {
       jsonEncode({
         'error': {
           'code': 'unauthorized',
-          'message': 'Bearer token tidak valid. Akses dicabut.',
+          'message': 'Bearer invalid token. Access revoked.',
         },
       }),
       401,

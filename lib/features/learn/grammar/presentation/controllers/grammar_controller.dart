@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
@@ -137,7 +138,7 @@ class GrammarController extends StateNotifier<AsyncValue<GrammarState>> {
     final loaded = await AsyncValue.guard(() async {
       final lesson = await repository.getLesson(lessonId);
       if (lesson.points.isEmpty) {
-        throw const GrammarException('Lesson ini belum memiliki materi.');
+        throw GrammarException(appL10n().grammarEmptyLesson);
       }
       final savedPosition = mounted
           ? await history?.open(
@@ -183,7 +184,7 @@ class GrammarController extends StateNotifier<AsyncValue<GrammarState>> {
     try {
       final attempt = await repository.startAttempt(lessonId);
       if (attempt.questions.isEmpty) {
-        throw const GrammarException('Kuis lesson belum tersedia.');
+        throw GrammarException(appL10n().grammarQuizUnavailable);
       }
       if (mounted) {
         state = AsyncValue.data(

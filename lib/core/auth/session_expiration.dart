@@ -1,7 +1,8 @@
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-const sessionExpiredMessage =
-    'Sesi Anda berakhir. Silakan masuk kembali atau lanjut sebagai tamu.';
+/// Message shown when the stored session is no longer valid.
+String get sessionExpiredMessage => appL10n().authSessionExpired;
 
 String? redirectToLoginIfSessionExpired(String currentPath, String? message) {
   if (message == sessionExpiredMessage && currentPath != '/login') {

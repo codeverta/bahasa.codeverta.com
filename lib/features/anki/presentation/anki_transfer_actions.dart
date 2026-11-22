@@ -1,7 +1,7 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/features/anki/data/anki_repository.dart';
 import 'package:bahasa_master/features/anki/data/anki_transfer_repository.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
@@ -42,26 +42,23 @@ class _ExportState extends ConsumerState<AnkiExportButton> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
               child: Text(
-                'Export deck'.localized(context),
+                context.l10n.ankiExportDeck,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
             for (final entry in {
-              'apkg': 'APKG · untuk Anki, dengan media',
-              'csv': 'CSV · teks dan tautan eksternal',
-              'json': 'JSON · backup kartu dan media',
+              'apkg': context.l10n.ankiExportFormatApkg,
+              'csv': context.l10n.ankiExportFormatCsv,
+              'json': context.l10n.ankiExportFormatJson,
             }.entries)
               ListTile(
                 leading: const Icon(Icons.file_download_outlined),
-                title: Text(entry.value.localized(context)),
+                title: Text(entry.value),
                 onTap: () => Navigator.pop(context, entry.key),
               ),
             Padding(
               padding: const EdgeInsets.all(20),
-              child: Text(
-                'Export berisi semua kartu, bukan hanya sesi 20 kartu. Jadwal review tidak disertakan. Gambar/audio yang dibundel ikut APKG/JSON; media eksternal tetap berupa tautan. Maksimal 10.000 kartu.'
-                    .localized(context),
-              ),
+              child: Text(context.l10n.ankiExportIncludes),
             ),
           ],
         ),
@@ -87,10 +84,9 @@ class _ExportState extends ConsumerState<AnkiExportButton> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              (error is AnkiTransferFailure
-                      ? error.message
-                      : 'File belum dapat disimpan atau dibagikan. Coba lagi.')
-                  .localized(context),
+              error is AnkiTransferFailure
+                  ? error.message
+                  : context.l10n.ankiExportFailed,
             ),
           ),
         );
@@ -111,7 +107,7 @@ class _ExportState extends ConsumerState<AnkiExportButton> {
           )
         : const Icon(Icons.file_download_outlined),
     label: Text(
-      (_busy ? 'Menyiapkan file…' : 'Export deck').localized(context),
+      _busy ? context.l10n.ankiExportPreparing : context.l10n.ankiExportDeck,
     ),
   );
 }
@@ -122,6 +118,7 @@ Future<void> saveAnkiExport(
   String name,
   String format,
 ) async {
+  final fileTypeLabel = context.l10n.ankiDeckFileLabel;
   final mime = switch (format) {
     'csv' => 'text/csv',
     'json' => 'application/json',
@@ -137,7 +134,7 @@ Future<void> saveAnkiExport(
     final result = await getSaveLocation(
       suggestedName: name,
       acceptedTypeGroups: [
-        XTypeGroup(label: 'Deck Anki', extensions: [format]),
+        XTypeGroup(label: fileTypeLabel, extensions: [format]),
       ],
     );
     if (result != null) await file.saveTo(result.path);
@@ -165,19 +162,16 @@ Future<void> deleteAnkiDeck(
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text('Hapus deck pribadi?'.localized(context)),
-      content: Text(
-        'Kartu, media, dan jadwal review deck ini akan dihapus dari akunmu. Simpan export terlebih dahulu jika masih diperlukan.'
-            .localized(context),
-      ),
+      title: Text(context.l10n.ankiDeletePersonalDeck),
+      content: Text(context.l10n.ankiThisDeck),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: Text('Batal'.localized(context)),
+          child: Text(context.l10n.commonCancel),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, true),
-          child: Text('Hapus'.localized(context)),
+          child: Text(context.l10n.ankiClear),
         ),
       ],
     ),
@@ -198,10 +192,9 @@ Future<void> deleteAnkiDeck(
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            (error is AnkiTransferFailure
-                    ? error.message
-                    : 'Deck belum dapat dihapus. Coba lagi.')
-                .localized(context),
+            error is AnkiTransferFailure
+                ? error.message
+                : context.l10n.ankiDeleteFailed,
           ),
         ),
       );

@@ -1,4 +1,4 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,7 +9,7 @@ class AttributionsLink extends StatelessWidget {
     key: const Key('open-attributions'),
     leading: const Icon(Icons.source_outlined, size: 21),
     title: Text(
-      'Sumber data & atribusi'.localized(context),
+      context.l10n.profileDataSources,
       style: const TextStyle(fontSize: 13),
     ),
     trailing: const Icon(Icons.chevron_right_rounded, size: 20),
@@ -21,21 +21,18 @@ class AttributionsScreen extends StatelessWidget {
   const AttributionsScreen({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text('Sumber data & atribusi'.localized(context))),
+    appBar: AppBar(title: Text(context.l10n.profileDataSources)),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [
         Text(
-          'Dibangun bersama banyak sumber'.localized(context),
+          context.l10n.profileBuiltWith,
           style: Theme.of(
             context,
           ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 10),
-        Text(
-          'Terima kasih kepada penerbit, pembuat dataset, dan komunitas yang menjadi sumber konten Bahasa Master. Hak cipta tetap milik masing-masing pemilik.'
-              .localized(context),
-        ),
+        Text(context.l10n.profileThankYou),
         const SizedBox(height: 24),
         OutlinedButton.icon(
           onPressed: () => showLicensePage(
@@ -43,7 +40,7 @@ class AttributionsScreen extends StatelessWidget {
             applicationName: 'Bahasa Master',
           ),
           icon: const Icon(Icons.code_rounded),
-          label: Text('Lisensi perangkat lunak open source'.localized(context)),
+          label: Text(context.l10n.profileOpenSource),
         ),
       ],
     ),

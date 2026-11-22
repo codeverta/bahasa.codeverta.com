@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:bahasa_master/core/app_review/rate_app_link.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/widgets/legal_links.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
@@ -9,6 +8,7 @@ import 'package:bahasa_master/features/profile/data/gamification_repository.dart
 import 'package:bahasa_master/features/profile/presentation/screens/attributions_screen.dart';
 import 'package:bahasa_master/features/profile/presentation/widgets/gamification_widgets.dart';
 import 'package:bahasa_master/features/profile/presentation/widgets/profile_avatar.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,17 +39,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               OutlinedButton.icon(
                 onPressed: () => context.push('/settings/display'),
                 icon: const Icon(Icons.text_fields_rounded),
-                label: Text('Pengaturan tampilan'.localized(context)),
+                label: Text(context.l10n.profileDisplaySettings),
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 key: const Key('replay-onboarding'),
                 onPressed: () => context.push('/onboarding?preview=1'),
                 icon: const Icon(Icons.auto_stories_outlined),
-                label: Text('Panduan aplikasi'.localized(context)),
+                label: Text(context.l10n.profileAppGuide),
               ),
               const SizedBox(height: 12),
-              Text('Masuk untuk melihat profil.'.localized(context)),
+              Text(context.l10n.profileSignInTo),
               const LegalLinks(),
               const AttributionsLink(),
               const RateAppLink(),
@@ -79,7 +79,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Profil'.localized(context),
+                        context.l10n.profileProfile,
                         style: Theme.of(context).textTheme.headlineMedium
                             ?.copyWith(fontWeight: FontWeight.w900),
                       ),
@@ -87,7 +87,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     IconButton.filledTonal(
                       onPressed: () => context.push('/settings'),
                       icon: const Icon(Icons.settings_outlined),
-                      tooltip: 'Pengaturan'.localized(context),
+                      tooltip: context.l10n.profileSettings,
                     ),
                   ],
                 ),
@@ -99,8 +99,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Foto dikompres sebelum diunggah. Tautan foto dapat dibuka oleh siapa pun yang memilikinya.'
-                      .localized(context),
+                  context.l10n.profilePhotosAre,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 16),
@@ -118,7 +117,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ],
                 const SizedBox(height: 28),
                 Text(
-                  'Gamification'.localized(context),
+                  context.l10n.profileGamification,
                   style: Theme.of(
                     context,
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
@@ -136,11 +135,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           '🏆',
                           style: TextStyle(fontSize: 24),
                         ),
-                        title: const Text('Leaderboard'),
-                        subtitle: Text(
-                          'Lihat peringkat XP minggu ini dan sepanjang masa'
-                              .localized(context),
-                        ),
+                        title: Text(context.l10n.leaderboardTitle),
+                        subtitle: Text(context.l10n.profileSeeThis),
                         trailing: const Icon(Icons.chevron_right_rounded),
                         onTap: () => context.push('/leaderboard'),
                       ),
@@ -150,8 +146,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         onPressed: () => context.push('/achievements'),
                         icon: const Icon(Icons.emoji_events_outlined),
                         label: Text(
-                          'Lihat semua achievement (${data.unlockedCount}/${data.achievements.length})'
-                              .localized(context),
+                          context.l10n.profileViewAllAchievements(
+                            data.unlockedCount,
+                            data.achievements.length,
+                          ),
                         ),
                       ),
                     ],
@@ -180,12 +178,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: Text('Pilih dari galeri'.localized(context)),
+              title: Text(context.l10n.profileChooseFrom),
               onTap: () => Navigator.pop(context, ImageSource.gallery),
             ),
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: Text('Ambil foto'.localized(context)),
+              title: Text(context.l10n.profileTakeA),
               onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
           ],
@@ -193,6 +191,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
     if (source == null || !mounted) return;
+    final l10n = context.l10n;
 
     setState(() => _uploadingPhoto = true);
     try {
@@ -208,24 +207,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         quality: 82,
       );
       if (compressed == null || compressed.isEmpty) {
-        throw const AuthException(
-          'Foto tidak dapat diproses. Pilih foto lain.',
-        );
+        throw AuthException(l10n.profilePhotoUnprocessable);
       }
       if (compressed.length > 8 * 1024 * 1024) {
-        throw const AuthException('Foto masih terlalu besar. Pilih foto lain.');
+        throw AuthException(l10n.profilePhotoTooLarge);
       }
       await ref
           .read(authControllerProvider.notifier)
           .uploadProfilePhoto(Uint8List.fromList(compressed));
       ref.invalidate(homeDashboardProvider);
-      _showPhotoMessage('Foto profil berhasil diperbarui.');
+      _showPhotoMessage(l10n.profilePhotoUpdated);
     } on AuthException catch (error) {
       _showPhotoMessage(error.message);
     } on Object {
-      _showPhotoMessage(
-        'Foto gagal diproses atau diunggah. Periksa koneksi lalu coba lagi.',
-      );
+      _showPhotoMessage(l10n.profilePhotoFailed);
     } finally {
       if (mounted) setState(() => _uploadingPhoto = false);
     }
@@ -235,7 +230,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message.localized(context))));
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }
 
@@ -258,7 +253,7 @@ class _ProfileHeader extends StatelessWidget {
       children: [
         Semantics(
           button: onChangePhoto != null,
-          label: 'Ubah foto profil'.localized(context),
+          label: context.l10n.profileChangeProfile,
           child: InkWell(
             onTap: onChangePhoto,
             customBorder: const CircleBorder(),
@@ -303,14 +298,14 @@ class _ProfileHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                user?.displayName ?? 'Bahasa Learner',
+                user?.displayName ?? context.l10n.profileDefaultName,
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 4),
               Text(
-                user?.email ?? 'Memuat profil...'.localized(context),
+                user?.email ?? context.l10n.profileLoadingProfile,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 7),
@@ -339,7 +334,9 @@ class _PlanBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(99),
       ),
       child: Text(
-        premium ? 'LIFETIME MEMBER' : 'FREE MEMBER',
+        premium
+            ? context.l10n.profilePlanLifetime
+            : context.l10n.profilePlanFree,
         style: const TextStyle(
           color: Color(0xFFB87500),
           fontWeight: FontWeight.w800,
@@ -387,8 +384,8 @@ class _LifetimeCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Lifetime Access'.localized(context),
-                  style: TextStyle(
+                  context.l10n.commonLifetimeAccess,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w900,
                     fontSize: 17,
@@ -396,7 +393,7 @@ class _LifetimeCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'Sekali bayar, belajar selamanya.'.localized(context),
+                  context.l10n.profileOnePayment,
                   style: TextStyle(color: Colors.white.withValues(alpha: 0.72)),
                 ),
               ],
@@ -405,7 +402,7 @@ class _LifetimeCard extends StatelessWidget {
           TextButton(
             onPressed: () => context.push('/premium'),
             style: TextButton.styleFrom(foregroundColor: Colors.white),
-            child: Text('Lihat'.localized(context)),
+            child: Text(context.l10n.profileView),
           ),
         ],
       ),
@@ -423,31 +420,31 @@ class _ProfileMenu extends StatelessWidget {
         children: [
           _ProfileMenuTile(
             icon: Icons.auto_stories_outlined,
-            title: 'Panduan aplikasi'.localized(context),
+            title: context.l10n.profileAppGuide,
             onTap: () => context.push('/onboarding?preview=1'),
           ),
           const Divider(height: 1, indent: 68),
           _ProfileMenuTile(
             icon: Icons.settings_outlined,
-            title: 'Pengaturan'.localized(context),
+            title: context.l10n.profileSettings,
             onTap: () => context.push('/settings'),
           ),
           const Divider(height: 1, indent: 68),
           _ProfileMenuTile(
             icon: Icons.bar_chart_rounded,
-            title: 'Statistik pembelajaran'.localized(context),
+            title: context.l10n.profileLearningStatistics,
             onTap: () => context.push('/achievements'),
           ),
           const Divider(height: 1, indent: 68),
           _ProfileMenuTile(
             icon: Icons.credit_card_rounded,
-            title: 'Paket & pembayaran'.localized(context),
+            title: context.l10n.profilePlansPayments,
             onTap: () => context.push('/premium'),
           ),
           const Divider(height: 1, indent: 68),
           _ProfileMenuTile(
             icon: Icons.help_outline_rounded,
-            title: 'Bantuan'.localized(context),
+            title: context.l10n.profileHelp,
             onTap: () => openLegalPage(context, '/support'),
           ),
         ],
@@ -461,8 +458,7 @@ class _ProfileMenuTile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.onTap,
-    this.iconColor,
-  });
+  }) : iconColor = null;
 
   final IconData icon;
   final String title;
@@ -478,10 +474,7 @@ class _ProfileMenuTile extends StatelessWidget {
         icon,
         color: iconColor ?? Theme.of(context).colorScheme.primary,
       ),
-      title: Text(
-        title.localized(context),
-        style: const TextStyle(fontWeight: FontWeight.w600),
-      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
       trailing: const Icon(Icons.chevron_right_rounded),
     );
   }

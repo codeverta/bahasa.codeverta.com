@@ -1,6 +1,7 @@
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/anki/presentation/course_anki_button.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -39,6 +40,9 @@ Future<void> _pump(WidgetTester tester, List<Widget> actions) async {
         ),
       ],
       child: MaterialApp.router(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+
         theme: AppTheme.lightTheme,
         routerConfig: router,
       ),

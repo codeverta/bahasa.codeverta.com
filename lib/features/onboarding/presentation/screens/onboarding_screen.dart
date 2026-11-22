@@ -1,40 +1,45 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/notifications/push_notifications.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 const _ink = Color(0xFF24285C);
 const _red = Color(0xFFD84942);
-const _pages = [
+final _pages = <_Page>[
   _Page(
     asset: 'journey.webp',
-    eyebrow: 'PERJALANAN BARU',
-    title: 'Kuasai Bahasa Jepang',
-    description:
-        'Dari kata pertama sampai percakapan yang lebih percaya diri. Temukan ritme belajarmu, dari N5 hingga N1.',
-    features: ['N5 → N1', 'Kosakata & kanji', 'Grammar & reading'],
-    semanticLabel:
-        'Ilustrasi buku belajar, sakura, dan perjalanan menuju Gunung Fuji',
+    eyebrow: (l10n) => l10n.onboardingJourneyEyebrow,
+    title: (l10n) => l10n.onboardingJourneyTitle,
+    description: (l10n) => l10n.onboardingJourneyDescription,
+    features: (l10n) => [
+      l10n.onboardingJourneyFeatureLevels,
+      l10n.onboardingJourneyFeatureVocabulary,
+      l10n.onboardingJourneyFeatureGrammar,
+    ],
+    semanticLabel: (l10n) => l10n.onboardingJourneyImageLabel,
   ),
   _Page(
     asset: 'exams.webp',
-    eyebrow: 'LANGKAH YANG TERARAH',
-    title: 'Siap untuk\nujian berikutnya.',
-    description:
-        'Pahami materinya, coba latihan soalnya, lalu ukur kemampuanmu lewat simulasi ujian.',
-    features: ['JLPT', 'NAT', 'JFT-Basic'],
-    semanticLabel:
-        'Ilustrasi meja belajar, lembar ujian, dan medali pencapaian',
+    eyebrow: (l10n) => l10n.onboardingPathEyebrow,
+    title: (l10n) => l10n.onboardingPathTitle,
+    description: (l10n) => l10n.onboardingPathDescription,
+    features: (l10n) => [
+      l10n.onboardingPathFeaturePractice,
+      l10n.onboardingPathFeatureQuizzes,
+      l10n.onboardingPathFeatureMockTests,
+    ],
+    semanticLabel: (l10n) => l10n.onboardingPathImageLabel,
   ),
   _Page(
     asset: 'anywhere.webp',
-    eyebrow: 'SEDIKIT, SETIAP HARI',
-    title: 'Belajarmu ikut\nke mana pun.',
-    description:
-        'Buka lagi materi yang sudah tersimpan, bahkan saat offline. Lanjutkan perjalananmu, satu langkah setiap hari.',
-    features: ['Materi tersimpan', 'Progres belajar'],
-    semanticLabel:
-        'Ilustrasi buku dan kartu belajar di perjalanan kereta Jepang',
+    eyebrow: (l10n) => l10n.onboardingAnywhereEyebrow,
+    title: (l10n) => l10n.onboardingAnywhereTitle,
+    description: (l10n) => l10n.onboardingAnywhereDescription,
+    features: (l10n) => [
+      l10n.onboardingAnywhereFeatureSaved,
+      l10n.onboardingAnywhereFeatureProgress,
+    ],
+    semanticLabel: (l10n) => l10n.onboardingAnywhereImageLabel,
   ),
 ];
 
@@ -47,7 +52,7 @@ class OnboardingNotificationOptIn {
   /// Shows the system permission dialog and subscribes to announcements.
   final Future<PushToggleResult> Function() enable;
 
-  /// Records "Nanti saja" without any system dialog.
+  /// Records "Maybe later" without any system dialog.
   final Future<void> Function() skip;
 }
 
@@ -132,7 +137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       return;
     }
     // Reaching the notification page and leaving without choosing counts as
-    // "Nanti saja", so the person is never asked twice.
+    // "Maybe later", so the person is never asked twice.
     if (_notificationSeen && _notificationResult == null) {
       await _skipNotifications();
     }
@@ -144,13 +149,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } on Object {
       if (!mounted) return;
       setState(() => _busy = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Panduan belum dapat diselesaikan. Coba lagi.'.localized(context),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.onboardingCouldNot)));
     }
   }
 
@@ -186,7 +187,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'Bahasa\nMaster',
+                          context.l10n.onboardingBrandName,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.titleSmall
@@ -200,7 +201,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       if (widget.isPreview)
                         IconButton(
                           key: const Key('onboarding-close'),
-                          tooltip: 'Tutup panduan'.localized(context),
+                          tooltip: context.l10n.onboardingCloseGuide,
                           onPressed: _finish,
                           icon: const Icon(Icons.close_rounded),
                         )
@@ -211,7 +212,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           style: TextButton.styleFrom(
                             foregroundColor: foreground,
                           ),
-                          child: Text('Lewati'.localized(context)),
+                          child: Text(context.l10n.onboardingSkip),
                         ),
                     ],
                   ),
@@ -252,8 +253,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           for (var i = 0; i < _pageCount; i++)
                             Semantics(
                               selected: i == _current,
-                              label: 'Halaman ${i + 1} dari $_pageCount'
-                                  .localized(context),
+                              label: context.l10n.onboardingPageLabel(
+                                i + 1,
+                                _pageCount,
+                              ),
                               child: InkWell(
                                 key: Key('onboarding-page-$i'),
                                 onTap: () => _move(i),
@@ -285,7 +288,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           if (_current > 0) ...[
                             IconButton.outlined(
                               key: const Key('onboarding-back'),
-                              tooltip: 'Kembali'.localized(context),
+                              tooltip: context.l10n.onboardingBack,
                               onPressed: _busy
                                   ? null
                                   : () => _move(_current - 1),
@@ -332,12 +335,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   if (_busy) const SizedBox(width: 10),
                                   Flexible(
                                     child: Text(
-                                      (_last
-                                              ? widget.isPreview
-                                                    ? 'Kembali ke aplikasi'
-                                                    : 'Mulai Belajar'
-                                              : 'Selanjutnya')
-                                          .localized(context),
+                                      _last
+                                          ? widget.isPreview
+                                                ? context
+                                                      .l10n
+                                                      .onboardingBackToApp
+                                                : context.l10n.onboardingStart
+                                          : context.l10n.onboardingNext,
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -376,11 +380,11 @@ class _Page {
     required this.semanticLabel,
   });
   final String asset;
-  final String eyebrow;
-  final String title;
-  final String description;
-  final List<String> features;
-  final String semanticLabel;
+  final String Function(AppLocalizations l10n) eyebrow;
+  final String Function(AppLocalizations l10n) title;
+  final String Function(AppLocalizations l10n) description;
+  final List<String> Function(AppLocalizations l10n) features;
+  final String Function(AppLocalizations l10n) semanticLabel;
 }
 
 class _PageBody extends StatelessWidget {
@@ -415,12 +419,16 @@ class _PageBody extends StatelessWidget {
                   width: double.infinity,
                   height: imageHeight,
                   fit: BoxFit.cover,
-                  semanticLabel: page.semanticLabel.localized(context),
+                  semanticLabel: page.semanticLabel(context.l10n),
                 ),
               ),
               const SizedBox(height: 24),
               Text(
-                '0${index + 1} / 0$total  ·  ${page.eyebrow.localized(context)}',
+                context.l10n.onboardingPageCounter(
+                  index + 1,
+                  total,
+                  page.eyebrow(context.l10n),
+                ),
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: colors.brightness == Brightness.dark
                       ? colors.primary
@@ -431,7 +439,7 @@ class _PageBody extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                page.title.localized(context),
+                page.title(context.l10n),
                 style: theme.textTheme.headlineMedium?.copyWith(
                   color: ink,
                   fontSize: 32,
@@ -442,7 +450,7 @@ class _PageBody extends StatelessWidget {
               ),
               const SizedBox(height: 14),
               Text(
-                page.description.localized(context),
+                page.description(context.l10n),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   height: 1.65,
                   color: ink.withValues(alpha: 0.7),
@@ -453,7 +461,7 @@ class _PageBody extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  for (final feature in page.features)
+                  for (final feature in page.features(context.l10n))
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -465,7 +473,7 @@ class _PageBody extends StatelessWidget {
                         border: Border.all(color: ink.withValues(alpha: 0.08)),
                       ),
                       child: Text(
-                        feature.localized(context),
+                        feature,
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: ink,
                           fontWeight: FontWeight.w600,
@@ -483,7 +491,7 @@ class _PageBody extends StatelessWidget {
 }
 
 /// Last page: explains what notifications are for, then asks. The system
-/// permission dialog only appears after "Aktifkan notifikasi" is tapped.
+/// permission dialog only appears after "Turn on notifications" is tapped.
 class _NotificationPage extends StatelessWidget {
   const _NotificationPage({
     required this.index,
@@ -508,14 +516,12 @@ class _NotificationPage extends StatelessWidget {
     final dark = colors.brightness == Brightness.dark;
     final ink = dark ? colors.onSurface : _ink;
     final message = switch (result) {
-      PushToggleResult.on => 'Notifikasi aktif. Terima kasih!',
-      PushToggleResult.denied =>
-        'Izin belum diberikan. Kamu bisa mengaktifkannya nanti lewat pengaturan Android.',
-      PushToggleResult.failed =>
-        'Notifikasi belum dapat diaktifkan sekarang. Coba lagi nanti di Pengaturan.',
+      PushToggleResult.on => context.l10n.onboardingNotificationOn,
+      PushToggleResult.denied => context.l10n.onboardingNotificationDenied,
+      PushToggleResult.failed => context.l10n.onboardingNotificationFailed,
       _ => null,
     };
-    // "off" means the person chose "Nanti saja": nothing more to say or ask.
+    // "off" means the person chose "Maybe later": nothing more to say or ask.
     final answered = result != null && result != PushToggleResult.failed;
     return LayoutBuilder(
       builder: (context, constraints) => SingleChildScrollView(
@@ -541,7 +547,11 @@ class _NotificationPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              '0${index + 1} / 0$total  ·  ${'TETAP TERHUBUNG'.localized(context)}',
+              context.l10n.onboardingPageCounter(
+                index + 1,
+                total,
+                context.l10n.onboardingStayIn,
+              ),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: dark ? colors.primary : _red,
                 fontWeight: FontWeight.w800,
@@ -550,7 +560,7 @@ class _NotificationPage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Jangan ketinggalan kabar penting'.localized(context),
+              context.l10n.onboardingNeverMiss,
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: ink,
                 fontSize: 32,
@@ -561,8 +571,7 @@ class _NotificationPage extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              'Aktifkan notifikasi untuk menerima pengumuman, materi baru, dan info penting dari Bahasa Master. Tanpa spam, dan bisa dimatikan kapan saja di Pengaturan.'
-                  .localized(context),
+              context.l10n.onboardingTurnOn,
               style: theme.textTheme.bodyMedium?.copyWith(
                 height: 1.65,
                 color: ink.withValues(alpha: 0.7),
@@ -573,10 +582,10 @@ class _NotificationPage extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                for (final feature in const [
-                  'Pengumuman',
-                  'Materi baru',
-                  'Info penting',
+                for (final feature in [
+                  context.l10n.onboardingNotificationAnnouncements,
+                  context.l10n.onboardingNotificationNewLessons,
+                  context.l10n.onboardingNotificationImportant,
                 ])
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -589,7 +598,7 @@ class _NotificationPage extends StatelessWidget {
                       border: Border.all(color: ink.withValues(alpha: 0.08)),
                     ),
                     child: Text(
-                      feature.localized(context),
+                      feature,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: ink,
                         fontWeight: FontWeight.w600,
@@ -601,7 +610,7 @@ class _NotificationPage extends StatelessWidget {
             const SizedBox(height: 20),
             if (message != null)
               Text(
-                message.localized(context),
+                message,
                 key: const Key('onboarding-notification-result'),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w700,
@@ -621,7 +630,7 @@ class _NotificationPage extends StatelessWidget {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.notifications_active_outlined),
-                  label: Text('Aktifkan notifikasi'.localized(context)),
+                  label: Text(context.l10n.onboardingTurnOnNotifications),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(52),
                     foregroundColor: ink,
@@ -632,7 +641,7 @@ class _NotificationPage extends StatelessWidget {
                 child: TextButton(
                   key: const Key('onboarding-notification-skip'),
                   onPressed: enabling ? null : onSkip,
-                  child: Text('Nanti saja'.localized(context)),
+                  child: Text(context.l10n.onboardingMaybeLater),
                 ),
               ),
             ],

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bahasa_master/core/app_update/app_update_controller.dart';
 import 'package:bahasa_master/core/app_update/app_update_gate.dart';
 import 'package:bahasa_master/core/app_update/app_update_policy.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -59,6 +60,8 @@ void main() {
           ),
         ],
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: AppUpdateGate(
             child: Scaffold(
               body: TextButton(
@@ -108,6 +111,8 @@ void main() {
             appUpdateControllerProvider.overrideWith((ref) => controller),
           ],
           child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             routeInformationProvider: router.routeInformationProvider,
             routeInformationParser: router.routeInformationParser,
             routerDelegate: router.routerDelegate,
@@ -122,7 +127,7 @@ void main() {
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       expect(router.routeInformationProvider.value.uri.path, '/details');
-      expect(find.text('Update sekarang'), findsOneWidget);
+      expect(find.text('Update now'), findsOneWidget);
       json = policy(minimum: 0);
       await controller.check();
       await tester.pumpAndSettle();
@@ -274,6 +279,8 @@ void main() {
             appUpdateControllerProvider.overrideWith((ref) => controller),
           ],
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: AppUpdateGate(
               child: TextButton(
                 onPressed: () => taps++,
@@ -284,7 +291,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Update sekarang'), findsOneWidget);
+      expect(find.text('Update now'), findsOneWidget);
       final dispatcher = AppUpdateBackDispatcher(
         () => controller.state.interceptBack,
       );
@@ -292,11 +299,11 @@ void main() {
       await tester.tapAt(const Offset(10, 10));
       await tester.pump();
       expect(taps, 0);
-      expect(find.text('Update sekarang'), findsOneWidget);
+      expect(find.text('Update now'), findsOneWidget);
       json = policy(minimum: 0);
-      await tester.tap(find.text('Periksa lagi'));
+      await tester.tap(find.text('Check again'));
       await tester.pumpAndSettle();
-      expect(find.text('Update sekarang'), findsNothing);
+      expect(find.text('Update now'), findsNothing);
       await tester.tap(find.text('Beranda'));
       expect(taps, 1);
       await tester.pumpWidget(const SizedBox());
@@ -316,15 +323,19 @@ void main() {
               ),
             ),
           ],
-          child: const MaterialApp(home: AppUpdateGate(child: Text('Beranda'))),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: AppUpdateGate(child: Text('Beranda')),
+          ),
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Update sekarang'), findsNothing);
-      expect(find.text('Lanjutkan versi ini'), findsOneWidget);
-      await tester.tap(find.text('Lanjutkan versi ini'));
+      expect(find.text('Update now'), findsNothing);
+      expect(find.text('Continue with this version'), findsOneWidget);
+      await tester.tap(find.text('Continue with this version'));
       await tester.pumpAndSettle();
-      expect(find.text('Lanjutkan versi ini'), findsNothing);
+      expect(find.text('Continue with this version'), findsNothing);
       await tester.pumpWidget(const SizedBox());
     },
   );

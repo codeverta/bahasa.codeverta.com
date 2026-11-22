@@ -5,5 +5,5 @@ const authTokenStorageKey = 'auth_session_token';
 
 /// Di-override pada root [ProviderScope] setelah storage diinisialisasi.
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw StateError('sharedPreferencesProvider belum diinisialisasi');
+  throw StateError('sharedPreferencesProvider has not been initialized');
 });

@@ -1,10 +1,10 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
 import 'package:bahasa_master/features/profile/presentation/screens/achievements_screen.dart';
 import 'package:bahasa_master/features/profile/presentation/screens/profile_screen.dart';
 import 'package:bahasa_master/features/profile/presentation/widgets/gamification_widgets.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -180,7 +180,11 @@ void main() {
             ),
             gamificationRepositoryProvider.overrideWithValue(repository),
           ],
-          child: MaterialApp.router(routerConfig: router),
+          child: MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
         ),
       );
       await tester.pumpAndSettle();
@@ -188,25 +192,25 @@ void main() {
       expect(find.text('Level 2 · 50/500 XP'), findsOneWidget);
       expect(find.text('2.480'), findsNothing);
       await tester.scrollUntilVisible(
-        find.text('Lihat semua achievement (1/2)'),
+        find.text('View all achievements (1/2)'),
         180,
       );
-      await tester.ensureVisible(find.text('Lihat semua achievement (1/2)'));
+      await tester.ensureVisible(find.text('View all achievements (1/2)'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Lihat semua achievement (1/2)'));
+      await tester.tap(find.text('View all achievements (1/2)'));
       await tester.pumpAndSettle();
       expect(find.text('Achievements'), findsOneWidget);
       await tester.scrollUntilVisible(
-        find.widgetWithText(ChoiceChip, 'Terkunci'),
+        find.widgetWithText(ChoiceChip, 'Locked'),
         100,
       );
-      await tester.ensureVisible(find.widgetWithText(ChoiceChip, 'Terkunci'));
+      await tester.ensureVisible(find.widgetWithText(ChoiceChip, 'Locked'));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Terkunci'));
+      await tester.tap(find.widgetWithText(ChoiceChip, 'Locked'));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(find.text('Pelajar Tekun'), 100);
       expect(find.text('First Step'), findsNothing);
-      expect(find.text('9/10 · Terkunci'), findsOneWidget);
+      expect(find.text('9/10 · Locked'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     },
@@ -224,14 +228,18 @@ void main() {
           ),
           gamificationRepositoryProvider.overrideWithValue(repository),
         ],
-        child: const MaterialApp(home: AchievementsScreen()),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: AchievementsScreen(),
+        ),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.textContaining('Progres belum bisa dimuat'), findsOneWidget);
+    expect(find.textContaining('Progress could not be loaded'), findsOneWidget);
     expect(find.text('Level 1 · 0/500 XP'), findsNothing);
     repository.fail = false;
-    await tester.tap(find.text('Coba lagi'));
+    await tester.tap(find.text('Try again'));
     await tester.pumpAndSettle();
     expect(repository.calls, 2);
     expect(find.text('550'), findsOneWidget);
@@ -249,12 +257,16 @@ void main() {
           ),
           gamificationRepositoryProvider.overrideWithValue(repository),
         ],
-        child: const MaterialApp(home: AchievementsScreen()),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: AchievementsScreen(),
+        ),
       ),
     );
     await tester.pumpAndSettle();
     expect(repository.calls, 0);
-    expect(find.text('Masuk untuk melihat achievements'), findsOneWidget);
+    expect(find.text('Sign in to view achievements'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
   });
 }

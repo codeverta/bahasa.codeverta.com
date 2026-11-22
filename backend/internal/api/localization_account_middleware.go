@@ -37,9 +37,6 @@ func localizedAccountResponses(next http.Handler) http.Handler {
 			return
 		}
 		locale := requestContentLanguage(r.Header.Get("Accept-Language"))
-		if locale == localeEnglish && !englishLearningContentEnabled() {
-			locale = localeIndonesian
-		}
 		addVaryHeader(w.Header(), "Accept-Language")
 		if locale != localeEnglish {
 			next.ServeHTTP(w, r)

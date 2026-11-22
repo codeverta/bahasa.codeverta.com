@@ -75,12 +75,15 @@ Repo:
 
 ## Fase 3 — Lokalisasi (UI bahasa Inggris, ARB)
 
-- [ ] Aktifkan `flutter gen-l10n` (`l10n.yaml`, `lib/l10n/app_en.arb` sebagai template)
-- [ ] Pindahkan teks UI yang sekarang hard-coded dalam bahasa Indonesia ke key ARB berbahasa Inggris
-- [ ] Hapus peta `_englishCopy`, `ui_english_*.dart`, `anki_english_part_*.dart`, `.localized(context)`, dan gate `ENGLISH_PUBLIC_RELEASE`
+- [x] Aktifkan `flutter gen-l10n` (`l10n.yaml`, `lib/l10n/app_en.arb` sebagai template)
+- [x] Pindahkan teks UI yang sekarang hard-coded dalam bahasa Indonesia ke key ARB berbahasa Inggris
+- [x] Hapus peta terjemahan lama, semua `ui_english_*`/`anki_english_part_*`, mekanisme `.localized(context)`, dan gate rilis bahasa Inggris
 - [ ] Pisahkan dengan tegas: **teks UI** (ARB, bisa diterjemahkan) vs **konten pelajaran** (Bahasa Indonesia + terjemahan/penjelasan per bahasa UI)
 - [ ] Siapkan skema konten agar field terjemahan bisa multi-bahasa (`translations: {en: ..., ja: ...}`), walau MVP hanya `en`
-- [ ] Teks error dan notifikasi dari backend juga berbahasa Inggris, atau pakai key
+- [x] Teks error dan notifikasi dari backend juga berbahasa Inggris, atau pakai key
+- [ ] Sisa: handler Go dan tabel terjemahan backend masih memakai string sumber berbahasa Indonesia (output ke klien sudah selalu Inggris); ganti sumbernya ke Inggris
+- [ ] Sisa: pass rename key ARB yang namanya kurang tepat (hasil generate otomatis, mis. `settingsYourAccount` untuk pesan gagal hapus akun)
+- [ ] Sisa untuk Fase 4/6: identifier era Jepang di model (`japaneseTitle`, kode N1–N5 yang ditampilkan sebagai BIPA), `premium => ['N1','N2','N3']` di model Anki, `isLockableLevel` di unlock, glyph kanji di tile learn hub, artwork onboarding, system prompt AI chat, teks privacy/refund
 
 ## Fase 4 — Model kurikulum dan data
 

@@ -35,8 +35,7 @@ void main() {
             ),
           ),
           apiBaseUrlProvider.overrideWithValue('https://api.example.com/v1'),
-          deviceLocaleProvider.overrideWithValue(const Locale('en')),
-          englishAvailabilityProvider.overrideWithValue(true),
+          deviceLocaleProvider.overrideWithValue(const Locale('id', 'ID')),
           deviceTimeZoneIdentifierProvider.overrideWith(
             (ref) async => 'America/Los_Angeles',
           ),
@@ -51,8 +50,6 @@ void main() {
 
       await dio.get<void>('/catalog');
       await dio.post<void>('/auth/google', data: {'idToken': 'test'});
-      await container.read(appLanguageProvider.notifier).selectLanguage('id');
-      await dio.get<void>('/catalog');
 
       expect(_header(adapter.requests[0], 'Accept-Language'), 'en');
       expect(_header(adapter.requests[1], 'Accept-Language'), 'en');
@@ -60,8 +57,6 @@ void main() {
         _header(adapter.requests[1], 'X-Device-Timezone'),
         'America/Los_Angeles',
       );
-      expect(_header(adapter.requests[2], 'Accept-Language'), 'id');
-      expect(_header(adapter.requests[2], 'X-Device-Timezone'), isNull);
     },
   );
 }

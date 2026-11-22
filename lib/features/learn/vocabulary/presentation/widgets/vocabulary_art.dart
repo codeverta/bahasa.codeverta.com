@@ -1,5 +1,5 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/network/remote_asset_image.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// A generated 4 x 2 sheet supplies eight independent word illustrations.
@@ -8,7 +8,7 @@ class VocabularyArt extends StatelessWidget {
     required this.asset,
     this.url = '',
     this.panel = 0,
-    this.description = 'Ilustrasi kosakata',
+    this.description = '',
     this.aspectRatio = 1,
     super.key,
   });
@@ -23,9 +23,7 @@ class VocabularyArt extends StatelessWidget {
     final cell = panel.clamp(0, 7);
     return Semantics(
       image: true,
-      label: description == 'Ilustrasi kosakata'
-          ? description.localized(context)
-          : description,
+      label: description.isEmpty ? context.l10n.vocabIllustration : description,
       child: AspectRatio(
         aspectRatio: aspectRatio,
         child: LayoutBuilder(

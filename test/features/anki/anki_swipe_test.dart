@@ -1,9 +1,9 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/anki/data/anki_repository.dart';
 import 'package:bahasa_master/features/anki/domain/anki_models.dart';
 import 'package:bahasa_master/features/anki/presentation/anki_screens.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,15 +20,15 @@ class _SwipeRepository extends AnkiRepository {
     'cards': [
       {
         'index': 0,
-        'front': '猫',
-        'answers': ['ねこ'],
-        'meaning': 'kucing',
+        'front': 'kucing',
+        'answers': ['cat'],
+        'meaning': 'a small pet',
       },
       {
         'index': 1,
-        'front': '犬',
-        'answers': ['いぬ'],
-        'meaning': 'anjing',
+        'front': 'anjing',
+        'answers': ['dog'],
+        'meaning': 'a loyal pet',
       },
     ],
     'stats': {'due': 2},
@@ -42,7 +42,7 @@ class _SwipeRepository extends AnkiRepository {
     String requestId,
   ) async {
     ratings.add(rating);
-    if (fail) throw const AnkiFailure('Penilaian belum tersimpan.', null);
+    if (fail) throw const AnkiFailure('Your rating was not saved.', null);
     return {'saved': true, 'version': 1};
   }
 }
@@ -116,7 +116,7 @@ void main() {
     await tester.tap(find.byKey(_card));
     await tester.pumpAndSettle();
     expect(find.byKey(_back), findsOneWidget);
-    expect(find.text('ねこ'), findsOneWidget);
+    expect(find.text('cat'), findsOneWidget);
     expect(find.byKey(const Key('anki-rate-good')), findsOneWidget);
 
     await tester.tap(find.byKey(_card));
@@ -132,7 +132,7 @@ void main() {
     await tester.drag(find.byKey(_card), const Offset(300, 0));
     await tester.pumpAndSettle();
     expect(repository.ratings, isEmpty);
-    expect(_topFront(tester), '猫');
+    expect(_topFront(tester), 'kucing');
     expect(_cardOffset(tester), 0);
   });
 
@@ -142,7 +142,7 @@ void main() {
     final repository = _SwipeRepository();
     await _pumpStudy(tester, repository);
     // The next card peeks out from behind the top card.
-    expect(find.text('犬'), findsOneWidget);
+    expect(find.text('anjing'), findsOneWidget);
     await tester.tap(find.byKey(_card));
     await tester.pumpAndSettle();
 
@@ -158,7 +158,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.ratings, ['good']);
-    expect(_topFront(tester), '犬');
+    expect(_topFront(tester), 'anjing');
     expect(find.byKey(_back), findsNothing);
     expect(_cardOffset(tester), 0);
     expect(tester.takeException(), isNull);
@@ -172,7 +172,7 @@ void main() {
     await tester.drag(find.byKey(_card), const Offset(-260, 0));
     await tester.pumpAndSettle();
     expect(repository.ratings, ['again']);
-    expect(_topFront(tester), '犬');
+    expect(_topFront(tester), 'anjing');
   });
 
   testWidgets('a fast fling past the slop counts as a swipe', (tester) async {
@@ -205,7 +205,7 @@ void main() {
 
     expect(repository.ratings, isEmpty);
     expect(_cardOffset(tester), closeTo(0, .5));
-    expect(_topFront(tester), '猫');
+    expect(_topFront(tester), 'kucing');
     // Still revealed: the swipe did not flip or advance the card.
     expect(find.byKey(_back), findsOneWidget);
   });
@@ -221,12 +221,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.ratings, ['good']);
-    expect(_topFront(tester), '猫');
+    expect(_topFront(tester), 'kucing');
     expect(_cardOffset(tester), closeTo(0, .5));
-    expect(
-      find.textContaining(RegExp('Coba simpan kembali|Try saving again')),
-      findsOneWidget,
-    );
+    expect(find.text('Try saving again'), findsOneWidget);
     // Swiping the other way must not change the pending rating.
     await tester.drag(find.byKey(_card), const Offset(-260, 0));
     await tester.pumpAndSettle();
@@ -245,7 +242,7 @@ void main() {
     await tester.pump();
     expect(repository.ratings, ['good']);
     await tester.pumpAndSettle();
-    expect(_topFront(tester), '犬');
+    expect(_topFront(tester), 'anjing');
     expect(tester.takeException(), isNull);
   });
 }

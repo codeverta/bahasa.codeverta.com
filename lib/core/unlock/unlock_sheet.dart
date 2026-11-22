@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bahasa_master/core/ads/interstitial_ads.dart';
 import 'package:bahasa_master/core/ads/rewarded_ads.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/unlock/unlock_flow.dart';
 import 'package:bahasa_master/core/unlock/unlock_repository.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -89,31 +89,22 @@ class _UnlockSheetState extends ConsumerState<UnlockSheet> {
           Navigator.of(context).pop(UnlockSheetResult.opened);
           return;
         case UnlockOutcome.cancelled:
-          _message =
-              'Iklan ditutup sebelum selesai. Tonton sampai habis untuk membuka.'
-                  .localized(context);
+          _message = context.l10n.unlockTheAd;
         case UnlockOutcome.adUnavailable:
           _adFailures++;
-          _message = 'Iklan belum tersedia. Coba lagi sebentar lagi.'.localized(
-            context,
-          );
+          _message = context.l10n.unlockNoAd;
         case UnlockOutcome.pending:
           _pendingNonce = attempt.nonce;
-          _message =
-              'Iklan sudah ditonton, tetapi konfirmasi dari Google belum sampai. Coba periksa lagi.'
-                  .localized(context);
+          _message = context.l10n.unlockYouWatched;
       }
     } on UnlockException catch (error) {
       if (!mounted) return;
       _message = error.message.isNotEmpty
           ? error.message
-          : 'Belum dapat membuka. Periksa koneksi lalu coba lagi.'.localized(
-              context,
-            );
+          : context.l10n.unlockCouldNot;
     } on Object {
       if (!mounted) return;
-      _message = 'Belum dapat membuka. Periksa koneksi lalu coba lagi.'
-          .localized(context);
+      _message = context.l10n.unlockCouldNot;
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -150,23 +141,22 @@ class _UnlockSheetState extends ConsumerState<UnlockSheet> {
             ),
             const SizedBox(height: 12),
             Text(
-              widget.title ?? 'Buka konten ini'.localized(context),
+              widget.title ?? context.l10n.unlockUnlockThis,
               style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               adOffered
-                  ? 'Tonton satu iklan singkat untuk membuka konten ini, atau beli Lifetime untuk membuka semuanya tanpa iklan.'
-                        .localized(context)
-                  : 'Konten ini memerlukan Lifetime Access.'.localized(context),
+                  ? context.l10n.unlockWatchOne
+                  : context.l10n.unlockThisContentRequires,
               style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             if (adOffered && status.dailyCap > 0) ...[
               const SizedBox(height: 6),
               Text(
-                '${'Sisa buka gratis hari ini'.localized(context)}: ${status.remaining}',
+                context.l10n.unlockFreeUnlocksLeft(status.remaining),
                 style: theme.textTheme.bodySmall,
                 textAlign: TextAlign.center,
               ),
@@ -190,7 +180,7 @@ class _UnlockSheetState extends ConsumerState<UnlockSheet> {
                     ? null
                     : () => _run(() => flow.claim(_pendingNonce)),
                 icon: const Icon(Icons.refresh_rounded),
-                label: Text('Periksa lagi'.localized(context)),
+                label: Text(context.l10n.unlockReviewAgain),
               )
             else if (adOffered)
               FilledButton.icon(
@@ -209,7 +199,7 @@ class _UnlockSheetState extends ConsumerState<UnlockSheet> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.play_circle_outline_rounded),
-                label: Text('Tonton iklan (gratis)'.localized(context)),
+                label: Text(context.l10n.unlockWatchAn),
               ),
             if (fallbackOffered) ...[
               const SizedBox(height: 8),
@@ -222,7 +212,7 @@ class _UnlockSheetState extends ConsumerState<UnlockSheet> {
                         return const UnlockAttempt(UnlockOutcome.unlocked);
                       }),
                 child: Text(
-                  '${'Buka tanpa iklan'.localized(context)} (${status.fallbackRemaining})',
+                  context.l10n.unlockWithoutAd(status.fallbackRemaining),
                 ),
               ),
             ],
@@ -233,13 +223,13 @@ class _UnlockSheetState extends ConsumerState<UnlockSheet> {
                   ? null
                   : () => Navigator.of(context).pop(UnlockSheetResult.lifetime),
               icon: const Icon(Icons.workspace_premium_rounded),
-              label: Text('Beli Lifetime'.localized(context)),
+              label: Text(context.l10n.unlockGetLifetime),
             ),
             TextButton(
               onPressed: _busy
                   ? null
                   : () => Navigator.of(context).pop(UnlockSheetResult.closed),
-              child: Text('Batal'.localized(context)),
+              child: Text(context.l10n.commonCancel),
             ),
           ],
         ),

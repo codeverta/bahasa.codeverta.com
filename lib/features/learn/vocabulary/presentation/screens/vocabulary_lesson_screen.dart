@@ -2,7 +2,6 @@ import 'package:bahasa_master/core/ads/ad_widgets.dart';
 import 'package:bahasa_master/core/ads/ads_config.dart';
 import 'package:bahasa_master/core/ads/completion_ads.dart';
 import 'package:bahasa_master/core/gamification/xp_gain.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
 import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_sheet.dart';
@@ -10,6 +9,7 @@ import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models
 import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/screens/vocabulary_study_view.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -125,12 +125,13 @@ class _QuizStage extends ConsumerWidget {
                       url: question.imageUrl,
                       panel: question.imagePanel,
                       description: question.imageDescription,
-                      aspectRatio: 1,
                     ),
                   ),
                 const SizedBox(height: 14),
                 Text(
-                  question.kind.localized(context),
+                  question.kind.isEmpty
+                      ? context.l10n.vocabQuestionKindMeaning
+                      : question.kind,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.secondary,
                     fontWeight: FontWeight.w800,
@@ -138,7 +139,10 @@ class _QuizStage extends ConsumerWidget {
                 ),
                 const SizedBox(height: 18),
                 Text(
-                  '${'Pertanyaan'.localized(context)} ${state.questionIndex + 1} ${'dari'.localized(context)} ${attempt.questions.length}',
+                  context.l10n.vocabQuestionProgress(
+                    state.questionIndex + 1,
+                    attempt.questions.length,
+                  ),
                   style: Theme.of(context).textTheme.labelLarge,
                 ),
                 const SizedBox(height: 12),
@@ -161,7 +165,7 @@ class _QuizStage extends ConsumerWidget {
                 ],
                 if (state.error != null)
                   Text(
-                    state.error!.localized(context),
+                    state.error!,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.error,
                     ),
@@ -196,11 +200,11 @@ class _QuizStage extends ConsumerWidget {
                       )
                     : Text(
                         feedback == null
-                            ? 'Periksa jawaban'.localized(context)
+                            ? context.l10n.commonCheckAnswer
                             : state.questionIndex ==
                                   attempt.questions.length - 1
-                            ? 'Lihat hasil'.localized(context)
-                            : 'Pertanyaan berikutnya'.localized(context),
+                            ? context.l10n.commonViewResults
+                            : context.l10n.commonNextQuestion,
                       ),
               ),
             ),
@@ -300,8 +304,8 @@ class _FeedbackCard extends StatelessWidget {
           children: [
             Text(
               feedback.correct
-                  ? 'Benar!'.localized(context)
-                  : 'Belum tepat'.localized(context),
+                  ? context.l10n.commonCorrect
+                  : context.l10n.commonNotQuite,
               style: TextStyle(
                 color: color,
                 fontSize: 18,
@@ -347,10 +351,10 @@ class _ResultStage extends StatelessWidget {
           const SizedBox(height: 18),
           Text(
             result.pendingSync
-                ? 'Hasil sementara'.localized(context)
+                ? context.l10n.commonProvisionalResult
                 : result.passed
-                ? 'Lesson dikuasai!'.localized(context)
-                : 'Sedikit lagi!'.localized(context),
+                ? context.l10n.commonLessonMastered
+                : context.l10n.vocabAlmostThere,
             style: Theme.of(
               context,
             ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900),
@@ -358,14 +362,10 @@ class _ResultStage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             result.pendingSync
-                ? 'Jawaban tersimpan di perangkat. Kelulusan, XP, dan achievement menunggu verifikasi saat terhubung kembali.'
-                      .localized(context)
+                ? context.l10n.commonAnswersAre
                 : result.passed
-                ? 'Anda sudah memahami kosakata pada lesson ini.'.localized(
-                    context,
-                  )
-                : 'Nilai minimum kelulusan adalah 80%. Pelajari feedback lalu coba kembali.'
-                      .localized(context),
+                ? context.l10n.vocabYouHave
+                : context.l10n.vocabTheMinimum,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 28),
@@ -388,15 +388,21 @@ class _ResultStage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${result.correctAnswers} ${'dari'.localized(context)} ${result.totalQuestions} ${'jawaban benar'.localized(context)}',
+                  context.l10n.vocabCorrectCount(
+                    result.correctAnswers,
+                    result.totalQuestions,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 if (!result.pendingSync)
                   Text(
-                    '${'Nilai terbaik:'.localized(context)} ${result.bestScore}% • ${'Progress total:'.localized(context)} ${result.progress}%',
+                    context.l10n.vocabScoreSummary(
+                      result.bestScore,
+                      result.progress,
+                    ),
                   )
                 else
-                  Text('Menunggu sinkronisasi'.localized(context)),
+                  Text(context.l10n.commonWaitingTo),
               ],
             ),
           ),
@@ -409,24 +415,21 @@ class _ResultStage extends StatelessWidget {
               icon: const Icon(Icons.replay_rounded),
               label: Text(
                 busy
-                    ? 'Menyiapkan kuis…'.localized(context)
-                    : 'Ulangi lesson'.localized(context),
+                    ? context.l10n.vocabPreparingQuiz
+                    : context.l10n.vocabRetryLesson,
               ),
             ),
           ),
           const SizedBox(height: 10),
           if (error != null) ...[
-            Text(
-              error!.localized(context),
-              style: TextStyle(color: colors.error),
-            ),
+            Text(error!, style: TextStyle(color: colors.error)),
             const SizedBox(height: 10),
           ],
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
               onPressed: finish,
-              child: Text('Kembali ke daftar lesson'.localized(context)),
+              child: Text(context.l10n.vocabBackTo),
             ),
           ),
           if (result.xp != null) ...[
@@ -459,11 +462,11 @@ class _LessonError extends StatelessWidget {
           children: [
             const Icon(Icons.error_outline_rounded, size: 52),
             const SizedBox(height: 12),
-            Text(message.localized(context), textAlign: TextAlign.center),
+            Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 16),
             FilledButton(
               onPressed: retry,
-              child: Text('Muat ulang'.localized(context)),
+              child: Text(context.l10n.commonRefresh),
             ),
           ],
         ),

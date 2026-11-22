@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,7 +12,7 @@ const _cacheKey = 'app_branding_v1';
 class AppBranding {
   const AppBranding({
     this.appName = 'Bahasa Master',
-    this.tagline = 'Selangkah lebih dekat dengan Jepang',
+    this.tagline = '',
     this.iconUrl = '',
     this.splashUrl = '',
     this.backgroundColor = const Color(0xFFFAFAFA),
@@ -32,7 +32,7 @@ class AppBranding {
     final hex = value('backgroundColor', '#FAFAFA');
     return AppBranding(
       appName: value('appName', 'Bahasa Master'),
-      tagline: value('tagline', 'Selangkah lebih dekat dengan Jepang'),
+      tagline: value('tagline', ''),
       iconUrl: imageUrl('iconUrl'),
       splashUrl: imageUrl('splashUrl'),
       backgroundColor: RegExp(r'^#[0-9a-fA-F]{6}$').hasMatch(hex)
@@ -42,6 +42,8 @@ class AppBranding {
   }
 
   final String appName;
+
+  /// Empty means the localized default tagline is shown.
   final String tagline;
   final String iconUrl;
   final String splashUrl;
@@ -147,8 +149,7 @@ class _BrandStartupState extends ConsumerState<BrandStartup> {
         if (!_complete)
           Positioned.fill(
             child: Semantics(
-              label:
-                  '${branding.appName}, ${'membuka aplikasi'.localized(context)}',
+              label: context.l10n.brandingOpening(branding.appName),
               child: Material(
                 color: branding.backgroundColor,
                 child: Stack(
@@ -215,7 +216,9 @@ class AppSplashArtwork extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            branding.tagline,
+            branding.tagline.isEmpty
+                ? context.l10n.brandingTagline
+                : branding.tagline,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
           ),

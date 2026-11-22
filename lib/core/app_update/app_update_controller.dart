@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bahasa_master/core/app_update/app_update_policy.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -109,8 +110,7 @@ class AppUpdateController extends StateNotifier<AppUpdateState> {
       state = _copy(
         initialized: true,
         checking: false,
-        error:
-            'Belum dapat memeriksa versi terbaru. Periksa koneksi lalu coba lagi.',
+        error: appL10n().appUpdateCheckFailed,
       );
     }
   }

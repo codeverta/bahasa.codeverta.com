@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/features/anki/domain/anki_models.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
@@ -28,14 +29,10 @@ class AnkiTransferRepository {
   );
   String _owner() =>
       currentUserId() ??
-      (throw const AnkiTransferFailure(
-        'Masuk untuk mengimpor atau mengekspor deck.',
-      ));
+      (throw AnkiTransferFailure(appL10n().ankiTransferSignIn));
   void _checkOwner(String owner) {
     if (currentUserId() != owner) {
-      throw const AnkiTransferFailure(
-        'Akun sudah berubah. Buka kembali halaman ini.',
-      );
+      throw AnkiTransferFailure(appL10n().ankiTransferAccountChanged);
     }
   }
 
@@ -50,9 +47,7 @@ class AnkiTransferRepository {
   }) async {
     final owner = _owner();
     if (bytes.isEmpty || bytes.length > maxFileBytes) {
-      throw const AnkiTransferFailure(
-        'Pilih file dengan ukuran maksimal 20 MB.',
-      );
+      throw AnkiTransferFailure(appL10n().ankiTransferFileSize);
     }
     try {
       final result = await dio.post<Map<String, dynamic>>(
@@ -136,14 +131,14 @@ AnkiTransferFailure _failure(DioException error) {
   if (serverMessage is String && serverMessage.isNotEmpty) {
     return AnkiTransferFailure(serverMessage);
   }
+  final l10n = appL10n();
   return AnkiTransferFailure(switch (error.response?.statusCode) {
-    401 => 'Masuk untuk mengelola deck pribadi.',
-    402 => 'Deck ini memerlukan Lifetime Access.',
-    404 =>
-      'Fitur transfer belum tersedia di server, atau deck tidak ditemukan.',
-    413 => 'File terlalu besar. Batas unggahan 20 MB.',
-    422 => 'Format file deck tidak didukung atau isinya tidak valid.',
-    429 => 'Pemrosesan deck sedang penuh. Coba lagi beberapa detik.',
-    _ => 'Transfer belum selesai. Periksa koneksi dan coba lagi.',
+    401 => l10n.ankiTransferSignInManage,
+    402 => l10n.ankiErrorLifetimeRequired,
+    404 => l10n.ankiTransferUnavailable,
+    413 => l10n.ankiTransferTooLarge,
+    422 => l10n.ankiTransferInvalidFormat,
+    429 => l10n.ankiTransferBusy,
+    _ => l10n.ankiTransferIncomplete,
   });
 }

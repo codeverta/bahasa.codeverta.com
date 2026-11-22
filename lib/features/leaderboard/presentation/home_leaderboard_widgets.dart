@@ -1,7 +1,7 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/leaderboard/data/leaderboard_repository.dart';
 import 'package:bahasa_master/features/leaderboard/presentation/leaderboard_copy.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,11 +19,9 @@ class HomeLeaderboardRankRow extends ConsumerWidget {
     final me = ref.watch(myLeaderboardProvider).valueOrNull?.data;
     final String text;
     if (me == null) {
-      text = 'Lihat leaderboard minggu ini'.localized(context);
+      text = context.l10n.leaderboardSeeThis;
     } else if (!me.week.ranked) {
-      text =
-          'Belum masuk peringkat minggu ini — selesaikan 1 lesson untuk ikut bersaing'
-              .localized(context);
+      text = context.l10n.leaderboardNotRanked;
     } else if (me.hidden) {
       text = copy.hiddenRank(me.week.rank);
     } else {
@@ -47,7 +45,7 @@ class HomeLeaderboardGuestRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: _LeaderboardLine(
         key: const Key('home-leaderboard-guest-row'),
-        text: 'Lihat leaderboard minggu ini'.localized(context),
+        text: context.l10n.leaderboardSeeThis,
         onTap: () => context.push(leaderboardPath),
       ),
     );
@@ -133,7 +131,7 @@ class HomeLastWeekCard extends ConsumerWidget {
             ),
             IconButton(
               key: const Key('home-last-week-dismiss'),
-              tooltip: 'Tutup'.localized(context),
+              tooltip: context.l10n.leaderboardClose,
               icon: const Icon(Icons.close_rounded),
               onPressed: () => ref
                   .read(dismissedLastWeekProvider.notifier)

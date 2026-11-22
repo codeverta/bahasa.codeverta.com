@@ -1,8 +1,8 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/localization/device_timezone.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,13 +77,13 @@ class _StudyTimezoneSettingsScreenState
     final deviceTimezone = ref.watch(deviceTimeZoneIdentifierProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Zona waktu belajar'.localized(context))),
+      appBar: AppBar(title: Text(context.l10n.settingsStudyTime)),
       body: gamification.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => _TimezoneError(
           message: user == null
-              ? 'Masuk untuk mengatur zona waktu belajar.'.localized(context)
-              : 'Zona waktu belajar belum dapat dimuat.'.localized(context),
+              ? context.l10n.settingsSignIn
+              : context.l10n.settingsStudyTimeZone,
           onRetry: () => ref.invalidate(gamificationProvider),
         ),
         data: (summary) {
@@ -97,8 +97,7 @@ class _StudyTimezoneSettingsScreenState
             padding: const EdgeInsets.all(20),
             children: [
               Text(
-                'Zona waktu ini menentukan pergantian hari untuk streak dan progress belajar.'
-                    .localized(context),
+                context.l10n.settingsThisTime,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 16),
@@ -109,7 +108,7 @@ class _StudyTimezoneSettingsScreenState
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'Zona waktu akun'.localized(context),
+                        context.l10n.settingsAccountTime,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 12),
@@ -118,7 +117,7 @@ class _StudyTimezoneSettingsScreenState
                         initialValue: selected,
                         isExpanded: true,
                         decoration: InputDecoration(
-                          labelText: 'Pilih zona waktu'.localized(context),
+                          labelText: context.l10n.settingsChooseTime,
                           border: const OutlineInputBorder(),
                         ),
                         items: [
@@ -148,8 +147,7 @@ class _StudyTimezoneSettingsScreenState
                                   ),
                             icon: const Icon(Icons.my_location_rounded),
                             label: Text(
-                              'Gunakan zona waktu perangkat ($timezone)'
-                                  .localized(context),
+                              context.l10n.settingsUseDeviceTimeZone(timezone),
                             ),
                           ),
                         ),
@@ -166,7 +164,7 @@ class _StudyTimezoneSettingsScreenState
                                   strokeWidth: 2,
                                 ),
                               )
-                            : Text('Simpan zona waktu'.localized(context)),
+                            : Text(context.l10n.settingsSaveTime),
                       ),
                     ],
                   ),
@@ -174,8 +172,7 @@ class _StudyTimezoneSettingsScreenState
               ),
               const SizedBox(height: 8),
               Text(
-                'Perubahan zona waktu hanya berlaku setelah kamu menyimpannya.'
-                    .localized(context),
+                context.l10n.settingsATime,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
@@ -193,21 +190,13 @@ class _StudyTimezoneSettingsScreenState
       ref.invalidate(gamificationProvider);
       setState(() => _selectedTimezone = null);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Zona waktu belajar berhasil diperbarui.'.localized(context),
-          ),
-        ),
+        SnackBar(content: Text(context.l10n.settingsStudyTimeZoneUpdated)),
       );
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Zona waktu belajar gagal diperbarui.'.localized(context),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.settingsCouldNot)));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -231,7 +220,7 @@ class _TimezoneError extends StatelessWidget {
           const SizedBox(height: 12),
           OutlinedButton(
             onPressed: onRetry,
-            child: Text('Coba lagi'.localized(context)),
+            child: Text(context.l10n.commonTryAgain),
           ),
         ],
       ),

@@ -208,7 +208,7 @@ class VocabularyQuestion {
     required this.id,
     required this.prompt,
     required this.options,
-    this.kind = 'Arti kata',
+    this.kind = '',
     this.imageAsset = '',
     this.imageUrl = '',
     this.imagePanel = 0,
@@ -217,7 +217,7 @@ class VocabularyQuestion {
 
   factory VocabularyQuestion.fromJson(Map<String, dynamic> json) =>
       VocabularyQuestion(
-        kind: json['kind'] as String? ?? 'Arti kata',
+        kind: json['kind'] as String? ?? '',
         imageAsset: json['imageAsset'] as String? ?? '',
         imageUrl: json['imageUrl'] as String? ?? '',
         imagePanel: json['imagePanel'] as int? ?? 0,

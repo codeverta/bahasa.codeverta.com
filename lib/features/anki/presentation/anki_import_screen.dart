@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/features/anki/data/anki_repository.dart';
 import 'package:bahasa_master/features/anki/data/anki_transfer_repository.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +37,7 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
 
   Future<void> _pick() async {
     if (_busy) return;
+    final l10n = context.l10n;
     final owner = ref.read(authControllerProvider).user?.id;
     if (owner == null) {
       await context.push('/login');
@@ -52,17 +53,17 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
     try {
       final file = await openFile(
         acceptedTypeGroups: [
-          const XTypeGroup(
-            label: 'Deck Anki',
-            extensions: ['apkg', 'csv', 'json'],
-            mimeTypes: [
+          XTypeGroup(
+            label: l10n.ankiDeckFileLabel,
+            extensions: const ['apkg', 'csv', 'json'],
+            mimeTypes: const [
               'application/zip',
               'application/octet-stream',
               'text/csv',
               'application/json',
               'text/plain',
             ],
-            uniformTypeIdentifiers: ['public.data'],
+            uniformTypeIdentifiers: const ['public.data'],
           ),
         ],
       );
@@ -71,7 +72,7 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
         return;
       }
       if (await file.length() > AnkiTransferRepository.maxFileBytes) {
-        throw const AnkiTransferFailure('Ukuran file maksimal 20 MB.');
+        throw AnkiTransferFailure(l10n.ankiTransferFileSize);
       }
       final bytes = await file.readAsBytes();
       if (!mounted || ref.read(authControllerProvider).user?.id != owner) {
@@ -100,7 +101,7 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
         setState(
           () => _error = error is AnkiTransferFailure
               ? error.message
-              : 'File belum dapat dibuka. Coba pilih ulang.',
+              : context.l10n.ankiImportOpenFailed,
         );
       }
     } finally {
@@ -111,7 +112,7 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
   Future<void> _import() async {
     if (_busy || _preview == null || _bytes == null) return;
     if (_title.text.trim().isEmpty) {
-      setState(() => _error = 'Isi nama deck terlebih dahulu.');
+      setState(() => _error = context.l10n.ankiImportNameRequired);
       return;
     }
     final owner = ref.read(authControllerProvider).user?.id;
@@ -146,7 +147,7 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
         setState(
           () => _error = error is AnkiTransferFailure
               ? error.message
-              : 'Impor belum selesai. Coba lagi dengan file yang sama.',
+              : context.l10n.ankiImportFailed,
         );
       }
     } finally {
@@ -161,7 +162,7 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
       next,
     ) {
       if (previous != next) {
-        _cancel.cancel('Akun berubah');
+        _cancel.cancel('Account changed');
         if (context.mounted) {
           if (context.canPop()) {
             context.pop();
@@ -175,7 +176,7 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
     return PopScope(
       canPop: !_busy || !_committing,
       child: Scaffold(
-        appBar: AppBar(title: Text('Import deck'.localized(context))),
+        appBar: AppBar(title: Text(context.l10n.ankiImportDeck)),
         body: ListView(
           padding: const EdgeInsets.all(20),
           children: [
@@ -186,21 +187,18 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Bawa kartu belajarmu ke sini'.localized(context),
+              context.l10n.ankiBringYour,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 10),
-            Text(
-              'Pilih APKG dari Anki, CSV, atau JSON Bahasa Master. Maksimal 20 MB dan 10.000 kartu per deck. File dipratinjau dahulu sebelum disimpan.'
-                  .localized(context),
-            ),
+            Text(context.l10n.ankiChooseAn),
             const SizedBox(height: 18),
             OutlinedButton.icon(
               key: const Key('anki-import-pick'),
               onPressed: _busy ? null : _pick,
               icon: const Icon(Icons.folder_open_outlined),
               label: Text(
-                (_filename ?? 'Pilih file deck').localized(context),
+                _filename ?? context.l10n.ankiImportChooseFile,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -209,17 +207,16 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
               const LinearProgressIndicator(),
               const SizedBox(height: 8),
               Text(
-                (_committing
-                        ? 'Menyimpan deck…'
-                        : 'Membaca dan memeriksa file…')
-                    .localized(context),
+                _committing
+                    ? context.l10n.ankiImportSaving
+                    : context.l10n.ankiImportReading,
               ),
             ],
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
-                  _error!.localized(context),
+                  _error!,
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
               ),
@@ -230,19 +227,18 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
                 enabled: !_busy && !_committing,
                 maxLength: 140,
                 decoration: InputDecoration(
-                  labelText: 'Nama deck'.localized(context),
+                  labelText: context.l10n.ankiDeckName,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
-                '${preview['cardCount']} kartu · ${preview['mediaCount']} media'
-                    .localized(context),
+                context.l10n.ankiImportSummary(
+                  (preview['cardCount'] as num).toInt(),
+                  (preview['mediaCount'] as num).toInt(),
+                ),
               ),
               const SizedBox(height: 12),
-              Text(
-                'Deck pribadi disimpan pada akunmu. Deck bawaan tidak ditimpa. Jadwal review dimulai baru; progres dari Anki tidak dipindahkan.'
-                    .localized(context),
-              ),
+              Text(context.l10n.ankiPersonalDecks),
               const SizedBox(height: 16),
               for (final raw in preview['preview'] as List)
                 Card(
@@ -268,19 +264,16 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
                 key: const Key('anki-import-confirm'),
                 onPressed: _busy ? null : _import,
                 icon: const Icon(Icons.add_rounded),
-                label: Text('Import sebagai deck pribadi'.localized(context)),
+                label: Text(context.l10n.ankiImportAs),
               ),
             ],
             const SizedBox(height: 24),
             ExpansionTile(
-              title: Text('Format file & media'.localized(context)),
+              title: Text(context.l10n.ankiFileFormats),
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text(
-                    'CSV memakai kolom front, answers, meaning, imageUrl, audio. Answers dapat berupa teks atau array JSON. APKG/JSON membawa media yang dibundel; URL media eksternal tetap berupa tautan. Template HTML diubah menjadi teks. Deck cloze atau template yang tidak didukung akan ditolak dengan penjelasan.'
-                        .localized(context),
-                  ),
+                  child: Text(context.l10n.ankiCsvColumns),
                 ),
               ],
             ),

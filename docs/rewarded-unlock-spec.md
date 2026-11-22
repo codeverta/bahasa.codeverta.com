@@ -109,7 +109,7 @@ Sudah ada:
 - **Lowongan**: bila `applyLocked`, tombol lamar meminta tautan lewat `POST /v1/jobs/{id}/apply-link`, menawarkan sheet unlock saat 402, lalu membuka tautan. Tamu diarahkan login. Selama gerbang mati, perilaku lama (Lifetime saja) tetap berlaku.
 - **Backend**: `GET /v1/unlocks` kini juga mengirim `gates` (lessons, news, jobs) dan `offered` per jenis, supaya aplikasi tidak menggambar gembok palsu selama konten masih terbuka.
 - Halaman Lifetime kini bisa kembali ke `/news/...` dan `/anki/...` setelah pembelian.
-- Terjemahan Inggris ada di `lib/core/localization/ui_english_unlock.dart`.
+- Teks UI ada di `lib/l10n/app_en.arb` (key berawalan `unlock`).
 
 Perilaku penting:
 - **Build debug** memakai unit uji Google, yang tidak pernah memanggil backend ini. Karena itu iklan uji yang ditonton dicatat lewat jalur cadangan, yang terbatas 2 per hari. Untuk pengujian lokal, naikkan jatah cadangan di admin. SSV yang sebenarnya hanya bisa diuji dengan build rilis dan unit asli (Play internal testing).

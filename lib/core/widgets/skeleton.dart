@@ -1,4 +1,4 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Animates a soft shimmer across every [SkeletonBox] below it. Uses one
@@ -42,7 +42,7 @@ class _SkeletonShimmerState extends State<SkeletonShimmer>
     final highlight = scheme.surface.withValues(alpha: 0.55);
     return Semantics(
       // Announce one loading state instead of many empty shapes.
-      label: 'Memuat…'.localized(context),
+      label: context.l10n.commonLoading,
       excludeSemantics: true,
       child: AnimatedBuilder(
         animation: _controller,

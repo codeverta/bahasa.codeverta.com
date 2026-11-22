@@ -1,9 +1,9 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/offline/network_status.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/learn/level_list/data/level_list_repository.dart';
 import 'package:bahasa_master/features/learn/level_list/presentation/grammar_level_list.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -91,7 +91,6 @@ Future<void> _pump(
         ),
       ],
       child: MaterialApp.router(
-        locale: const Locale('id'),
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         // The real theme: its full-width button defaults once blanked the
@@ -111,7 +110,7 @@ void main() {
       const GrammarLevelList(level: 'N5'),
       repository: _FakeRepository(),
     );
-    expect(find.text('2 pola grammar N5'), findsOneWidget);
+    expect(find.text('2 grammar patterns • BIPA 1'), findsOneWidget);
     expect(
       find.byKey(const ValueKey('grammar-list-item-g1-は')),
       findsOneWidget,
@@ -137,7 +136,7 @@ void main() {
       'zzz',
     );
     await tester.pumpAndSettle();
-    expect(find.text('Tidak ada hasil.'), findsOneWidget);
+    expect(find.text('No results.'), findsOneWidget);
   });
 
   testWidgets('grammar item opens a sheet with formation and lesson button', (
@@ -150,9 +149,9 @@ void main() {
     );
     await tester.tap(find.byKey(const ValueKey('grammar-list-item-g1-は')));
     await tester.pumpAndSettle();
-    expect(find.text('Pembentukan'), findsOneWidget);
+    expect(find.text('Formation'), findsOneWidget);
     expect(find.text('Nomina + は'), findsOneWidget);
-    expect(find.text('Kesalahan umum'), findsOneWidget);
+    expect(find.text('Common mistake'), findsOneWidget);
     expect(find.text('私は学生です。'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('level-list-open-lesson')));

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:bahasa_master/core/auth/offline_access.dart';
 import 'package:bahasa_master/core/auth/session_expiration.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:dio/dio.dart';
@@ -160,9 +161,7 @@ class AuthController extends StateNotifier<AuthenticationState> {
     } on AuthException catch (error) {
       if (error.statusCode == 401) {
         await repository.clearSession();
-        state = const AuthenticationState.guest(
-          errorMessage: sessionExpiredMessage,
-        );
+        state = AuthenticationState.guest(errorMessage: sessionExpiredMessage);
       } else if (cachedUser == null) {
         state = AuthenticationState.guest(errorMessage: error.message);
       }
@@ -202,8 +201,8 @@ class AuthController extends StateNotifier<AuthenticationState> {
       return false;
     } on GoogleSignInException catch (error) {
       final message = error.code == GoogleSignInExceptionCode.canceled
-          ? 'Login Google dibatalkan.'
-          : 'Google Sign-In gagal. Periksa konfigurasi OAuth.';
+          ? appL10n().authGoogleCanceled
+          : appL10n().authGoogleFailed;
       state = AuthenticationState.guest(errorMessage: message);
       return false;
     }
@@ -241,9 +240,7 @@ class AuthController extends StateNotifier<AuthenticationState> {
   void expireSession() {
     if (!mounted) return;
     unawaited(_repository?.clearSession());
-    state = const AuthenticationState.guest(
-      errorMessage: sessionExpiredMessage,
-    );
+    state = AuthenticationState.guest(errorMessage: sessionExpiredMessage);
   }
 
   void continueAsGuest() {
@@ -293,7 +290,7 @@ class AuthController extends StateNotifier<AuthenticationState> {
     final repository = _repository;
     final currentUser = state.user;
     if (repository == null || currentUser == null) {
-      throw const AuthException('Masuk ke akun untuk mengubah foto profil.');
+      throw AuthException(appL10n().authSignInToChangePhoto);
     }
     final updatedUser = await repository.uploadProfilePhoto(compressedPhoto);
     if (mounted && state.user?.id == currentUser.id) {
@@ -495,7 +492,7 @@ class AuthRepository {
 
   Map<String, dynamic> _data(Map<String, dynamic>? response) {
     if (response == null || response['data'] is! Map<String, dynamic>) {
-      throw const AuthException('Response autentikasi tidak valid.');
+      throw AuthException(appL10n().authInvalidResponse);
     }
     return response['data'] as Map<String, dynamic>;
   }
@@ -508,7 +505,7 @@ class AuthRepository {
         return details['message'] as String;
       }
     }
-    return 'Tidak dapat terhubung ke server. Pastikan backend aktif.';
+    return appL10n().authServerUnreachable;
   }
 
   Map<String, dynamic>? _cachedProfileFromPreferences() {
@@ -532,7 +529,7 @@ class GoogleAuthenticationService {
 
   Future<String> authenticate() async {
     if (_serverClientId.isEmpty) {
-      throw const AuthException('GOOGLE_SERVER_CLIENT_ID belum dikonfigurasi.');
+      throw AuthException(appL10n().authGoogleClientIdMissing);
     }
     final signIn = GoogleSignIn.instance;
     if (!_initialized) {
@@ -540,14 +537,12 @@ class GoogleAuthenticationService {
       _initialized = true;
     }
     if (!signIn.supportsAuthenticate()) {
-      throw const AuthException(
-        'Google Sign-In interaktif belum didukung pada platform ini.',
-      );
+      throw AuthException(appL10n().authGoogleUnsupported);
     }
     final account = await signIn.authenticate();
     final idToken = account.authentication.idToken;
     if (idToken == null || idToken.isEmpty) {
-      throw const AuthException('Google tidak mengembalikan ID token.');
+      throw AuthException(appL10n().authGoogleNoIdToken);
     }
     return idToken;
   }

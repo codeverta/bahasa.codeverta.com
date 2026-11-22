@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
@@ -8,6 +7,7 @@ import 'package:bahasa_master/features/leaderboard/data/leaderboard_repository.d
 import 'package:bahasa_master/features/leaderboard/presentation/home_leaderboard_widgets.dart';
 import 'package:bahasa_master/features/leaderboard/presentation/leaderboard_copy.dart';
 import 'package:bahasa_master/features/leaderboard/presentation/leaderboard_screen.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,7 +73,7 @@ Future<void> _pump(
   Cached<LeaderboardPage>? page,
   Exception? pageError,
   Cached<MyLeaderboard>? me,
-  Locale locale = const Locale('id'),
+  Locale locale = const Locale('en'),
   Size size = const Size(390, 844),
   double textScale = 1,
   Map<String, Object> prefs = const {},
@@ -124,15 +124,15 @@ void main() {
       const LeaderboardScreen(),
       me: Cached(_me(), DateTime.now()),
     );
-    expect(find.text('Minggu ini'), findsOneWidget);
-    expect(find.text('Sepanjang masa'), findsOneWidget);
+    expect(find.text('This week'), findsOneWidget);
+    expect(find.text('All time'), findsOneWidget);
     expect(find.byKey(const Key('leaderboard-podium')), findsOneWidget);
-    expect(find.textContaining('Berakhir dalam 2 hari 5 jam'), findsOneWidget);
-    expect(find.text('Pelajar #1005'), findsOneWidget);
+    expect(find.textContaining('Ends in 2 days 5 hours'), findsOneWidget);
+    expect(find.text('Learner #1005'), findsOneWidget);
     final own = find.byKey(const Key('leaderboard-own-row'));
     expect(own, findsOneWidget);
     expect(
-      find.descendant(of: own, matching: find.text('#58 dari 60')),
+      find.descendant(of: own, matching: find.text('#58 of 60')),
       findsOneWidget,
     );
     expect(tester.takeException(), isNull);
@@ -164,7 +164,7 @@ void main() {
       const LeaderboardScreen(),
       me: Cached(_me(rank: 7, hidden: true), DateTime.now()),
     );
-    expect(find.text('Posisimu jika ditampilkan: #7'), findsOneWidget);
+    expect(find.text('Your position if shown: #7'), findsOneWidget);
     expect(find.byKey(const Key('leaderboard-hidden-note')), findsOneWidget);
   });
 
@@ -175,7 +175,7 @@ void main() {
       auth: const AuthenticationState.guest(),
     );
     expect(find.byKey(const Key('leaderboard-guest-prompt')), findsOneWidget);
-    expect(find.text('Masuk untuk ikut peringkat'), findsOneWidget);
+    expect(find.text('Sign in to get ranked'), findsOneWidget);
     expect(find.byKey(const Key('leaderboard-own-row')), findsNothing);
   });
 
@@ -192,8 +192,8 @@ void main() {
       ),
       me: Cached(_me(rank: 2), DateTime.now(), fromCache: true),
     );
-    expect(find.text('Terakhir diperbarui 14.05'), findsOneWidget);
-    expect(find.textContaining('Berakhir dalam'), findsNothing);
+    expect(find.text('Last updated 14:05'), findsOneWidget);
+    expect(find.textContaining('Ends in'), findsNothing);
   });
 
   testWidgets('never loaded and offline asks for a connection', (tester) async {
@@ -202,7 +202,7 @@ void main() {
       const LeaderboardScreen(),
       pageError: const LeaderboardOffline(),
     );
-    expect(find.text('Butuh koneksi internet'), findsOneWidget);
+    expect(find.text('Internet connection required'), findsOneWidget);
   });
 
   testWidgets('fits a 320 px phone at 1.5x text, in English', (tester) async {
@@ -210,7 +210,6 @@ void main() {
       tester,
       const LeaderboardScreen(),
       me: Cached(_me(), DateTime.now()),
-      locale: const Locale('en'),
       size: const Size(320, 640),
       textScale: 1.5,
     );
@@ -247,7 +246,10 @@ void main() {
         size: const Size(320, 640),
         textScale: 1.5,
       );
-      expect(find.text('#12 minggu ini · 20 XP lagi ke #11'), findsOneWidget);
+      expect(
+        find.text('#12 this week · 20 XP more to reach #11'),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
 
@@ -259,7 +261,7 @@ void main() {
       );
       expect(
         find.text(
-          'Belum masuk peringkat minggu ini — selesaikan 1 lesson untuk ikut bersaing',
+          'Not ranked this week yet — finish 1 lesson to join the competition',
         ),
         findsOneWidget,
       );
@@ -271,7 +273,7 @@ void main() {
         card(const HomeLeaderboardGuestRow()),
         auth: const AuthenticationState.guest(),
       );
-      expect(find.text('Lihat leaderboard minggu ini'), findsOneWidget);
+      expect(find.text("See this week's leaderboard"), findsOneWidget);
     });
 
     testWidgets('last week card shows once and can be dismissed', (
@@ -284,7 +286,9 @@ void main() {
         me: Cached(_me(lastWeek: result), DateTime.now()),
       );
       expect(
-        find.text('Minggu lalu kamu finis #4 · 310 XP. Minggu baru dimulai!'),
+        find.text(
+          'Last week you finished #4 · 310 XP. A new week has started!',
+        ),
         findsOneWidget,
       );
       await tester.tap(find.byKey(const Key('home-last-week-dismiss')));
@@ -306,18 +310,17 @@ void main() {
     });
   });
 
-  test('copy covers both languages', () {
-    const id = LeaderboardCopy(english: false);
-    const en = LeaderboardCopy(english: true);
-    expect(id.homeRank(1, 0), '#1 minggu ini · Kamu memimpin!');
+  test('copy builds the English messages', () {
+    final en = LeaderboardCopy(lookupAppLocalizations(const Locale('en')));
+    expect(en.homeRank(1, 0), "#1 this week · You're in the lead!");
     expect(en.homeRank(3, 15), '#3 this week · 15 XP more to reach #2');
-    expect(id.endsIn(const Duration(minutes: 35)), 'Berakhir dalam 35 menit');
+    expect(en.endsIn(const Duration(minutes: 35)), 'Ends in 35 minutes');
     expect(
       en.endsIn(const Duration(days: 1, hours: 1)),
       'Ends in 1 day 1 hour',
     );
     expect(en.endsIn(const Duration(seconds: -5)), 'Ends in 0 minutes');
-    expect(id.name('', '0042'), 'Pelajar #0042');
+    expect(en.name('', '0042'), 'Learner #0042');
     expect(en.lastWeek(1, 900), contains('Last week you finished #1'));
   });
 

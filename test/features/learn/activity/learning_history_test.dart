@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/learn/activity/continue_learning_section.dart';
 import 'package:bahasa_master/features/learn/activity/learning_history.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -288,14 +289,18 @@ void main() {
               ),
             ),
           ],
-          child: MaterialApp.router(routerConfig: router),
+          child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: router,
+          ),
         ),
       );
       await tester.pumpAndSettle();
       expect(find.text('Materi 4'), findsOneWidget);
       expect(find.text('Materi 0'), findsNothing);
       expect(find.byType(ListTile), findsNWidgets(3));
-      await tester.tap(find.widgetWithText(FilledButton, 'Lanjutkan belajar'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Continue learning'));
       await tester.pumpAndSettle();
       expect(find.text('Opened grammar-n5-4'), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -351,6 +356,9 @@ void main() {
             ),
           ],
           child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+
             routerConfig: router,
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(
@@ -362,20 +370,20 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Lanjutkan belajar'), findsNothing);
+      expect(find.text('Continue learning'), findsNothing);
       repository.items = [activity(1, completed: true)];
       await history.refresh();
       await tester.pumpAndSettle();
-      expect(find.text('Pelajari lagi'), findsOneWidget);
+      expect(find.text('Study again'), findsOneWidget);
       repository.items = [activity(2, level: 'N3')];
       await history.refresh();
       await tester.pumpAndSettle();
       // Every signed-in account studies N3–N1 without Lifetime Access.
-      expect(find.textContaining('Akses Lifetime diperlukan'), findsNothing);
-      expect(find.text('Buka akses belajar'), findsNothing);
-      await tester.ensureVisible(find.text('Lanjutkan belajar').last);
+      expect(find.textContaining('Lifetime Access required'), findsNothing);
+      expect(find.text('Unlock learning access'), findsNothing);
+      await tester.ensureVisible(find.text('Continue learning').last);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Lanjutkan belajar').last);
+      await tester.tap(find.text('Continue learning').last);
       await tester.pumpAndSettle();
       expect(find.text('Lesson grammar-n3-2'), findsOneWidget);
       expect(find.text('Lifetime destination'), findsNothing);

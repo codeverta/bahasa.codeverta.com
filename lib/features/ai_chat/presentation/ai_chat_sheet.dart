@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/offline/network_status.dart';
 import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
 import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_controller.dart';
 import 'package:bahasa_master/features/ai_chat/presentation/ai_markdown.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +28,7 @@ class AskAiButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       key: const ValueKey('ask-ai-button'),
-      tooltip: 'Tanya AI'.localized(context),
+      tooltip: context.l10n.aiChatAskAi,
       icon: const Icon(Icons.auto_awesome_outlined),
       onPressed: lessonId.isEmpty
           ? null
@@ -123,20 +123,17 @@ class _AiChatSheetState extends ConsumerState<AiChatSheet> {
         final upgrade = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Kuota Tanya AI hari ini habis'.localized(context)),
-            content: Text(
-              'Coba lagi besok, atau buka Lifetime Access untuk lebih banyak pertanyaan setiap hari.'
-                  .localized(context),
-            ),
+            title: Text(context.l10n.aiChatTodaysAsk),
+            content: Text(context.l10n.aiChatTryAgain),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: Text('Nanti'.localized(context)),
+                child: Text(context.l10n.aiChatLater),
               ),
               FilledButton(
                 key: const ValueKey('ai-upsell-lifetime'),
                 onPressed: () => Navigator.pop(context, true),
-                child: Text('Lihat Lifetime'.localized(context)),
+                child: Text(context.l10n.aiChatSeeLifetime),
               ),
             ],
           ),
@@ -165,14 +162,12 @@ class _AiChatSheetState extends ConsumerState<AiChatSheet> {
         await showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Batas harian tercapai'.localized(context)),
-            content: Text(
-              'Batas harian tercapai, coba lagi besok.'.localized(context),
-            ),
+            title: Text(context.l10n.aiChatDailyLimit),
+            content: Text(context.l10n.aiChatDailyLimitReached),
             actions: [
               FilledButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'.localized(context)),
+                child: Text(context.l10n.aiChatOk),
               ),
             ],
           ),
@@ -184,20 +179,16 @@ class _AiChatSheetState extends ConsumerState<AiChatSheet> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Hapus percakapan?'.localized(context)),
-        content: Text(
-          'Percakapan di pelajaran ini akan hilang dari aplikasi.'.localized(
-            context,
-          ),
-        ),
+        title: Text(context.l10n.aiChatDeleteConversation),
+        content: Text(context.l10n.aiChatTheConversation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Batal'.localized(context)),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Hapus'.localized(context)),
+            child: Text(context.l10n.aiChatClear),
           ),
         ],
       ),
@@ -207,11 +198,9 @@ class _AiChatSheetState extends ConsumerState<AiChatSheet> {
         await _controller.clearConversation();
       } on Object {
         if (mounted) {
-          ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-            SnackBar(
-              content: Text('Gagal menghapus percakapan.'.localized(context)),
-            ),
-          );
+          ScaffoldMessenger.maybeOf(
+            context,
+          )?.showSnackBar(SnackBar(content: Text(context.l10n.aiChatCouldNot)));
         }
       }
     }
@@ -245,18 +234,18 @@ class _AiChatSheetState extends ConsumerState<AiChatSheet> {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Tanya AI'.localized(context),
+                  context.l10n.aiChatAskAi,
                   style: theme.textTheme.titleLarge,
                 ),
               ),
               PopupMenuButton<String>(
-                tooltip: 'Opsi'.localized(context),
+                tooltip: context.l10n.aiChatOptions,
                 enabled: state.messages.isNotEmpty && !state.sending,
                 onSelected: (_) => _confirmClear(),
                 itemBuilder: (context) => [
                   PopupMenuItem(
                     value: 'clear',
-                    child: Text('Hapus percakapan'.localized(context)),
+                    child: Text(context.l10n.aiChatDeleteConversation2),
                   ),
                 ],
               ),
@@ -266,7 +255,7 @@ class _AiChatSheetState extends ConsumerState<AiChatSheet> {
         if (offline)
           MaterialBanner(
             key: const ValueKey('ai-offline'),
-            content: Text('Butuh koneksi internet'.localized(context)),
+            content: Text(context.l10n.aiChatInternetConnection),
             leading: const Icon(Icons.wifi_off),
             actions: const [SizedBox.shrink()],
           ),
@@ -321,14 +310,14 @@ class _Messages extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                state.error!.localized(context),
+                state.error!,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
               if (state.retryable)
                 TextButton(
                   onPressed: onRetry,
-                  child: Text('Coba lagi'.localized(context)),
+                  child: Text(context.l10n.commonTryAgain),
                 ),
             ],
           ),
@@ -339,8 +328,7 @@ class _Messages extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Text(
-            'Tanya apa saja tentang pelajaran ini, atau pilih aksi cepat di bawah.'
-                .localized(context),
+            context.l10n.aiChatAskAnything,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
@@ -376,7 +364,7 @@ class _Bubble extends StatelessWidget {
         child: LinearProgressIndicator(),
       );
     } else if (user) {
-      final label = chip?.label.localized(context);
+      final label = chip?.label(context.l10n);
       final text = message.content;
       content = Text(
         label == null ? text : (text.isEmpty ? label : '$label:\n$text'),
@@ -422,7 +410,7 @@ class _ChipRow extends StatelessWidget {
           final chip = AiChip.values[index];
           return ActionChip(
             key: ValueKey('ai-chip-${chip.wire}'),
-            label: Text(chip.label.localized(context)),
+            label: Text(chip.label(context.l10n)),
             onPressed: enabled ? () => onTap(chip) : null,
           );
         },
@@ -464,7 +452,7 @@ class _Composer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 4, bottom: 4),
               child: InputChip(
-                label: Text(AiChip.correct.label.localized(context)),
+                label: Text(AiChip.correct.label(context.l10n)),
                 onDeleted: onCancelCorrection,
               ),
             ),
@@ -483,11 +471,9 @@ class _Composer extends StatelessWidget {
                     LengthLimitingTextInputFormatter(aiMaxMessageLength),
                   ],
                   decoration: InputDecoration(
-                    hintText:
-                        (correctionMode
-                                ? 'Tulis kalimat Jepang yang mau dikoreksi'
-                                : 'Tulis pertanyaanmu…')
-                            .localized(context),
+                    hintText: correctionMode
+                        ? context.l10n.aiChatCorrectionHint
+                        : context.l10n.aiChatQuestionHint,
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(24)),
                     ),
@@ -501,7 +487,7 @@ class _Composer extends StatelessWidget {
               const SizedBox(width: 4),
               IconButton.filled(
                 key: const ValueKey('ai-send'),
-                tooltip: 'Kirim'.localized(context),
+                tooltip: context.l10n.aiChatSend,
                 onPressed: enabled ? onSend : null,
                 icon: sending
                     ? const SizedBox.square(
@@ -542,17 +528,16 @@ class _AdOfferSheet extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               lifetimeMessages > 0
-                  ? 'Pesan Tanya AI hari ini sudah terpakai'.localized(context)
-                  : 'Kuota gratis hari ini sudah habis'.localized(context),
+                  ? context.l10n.aiChatTodaysAskAi
+                  : context.l10n.aiChatTodaysFree,
               style: theme.textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               lifetimeMessages > 0
-                  ? '${'Tonton iklan singkat untuk menambah'.localized(context)} $lifetimeMessages ${'pesan. Pertanyaan ini langsung dikirim.'.localized(context)}'
-                  : 'Tonton iklan singkat untuk mengirim pertanyaan ini.'
-                        .localized(context),
+                  ? context.l10n.aiChatWatchAdForMessages(lifetimeMessages)
+                  : context.l10n.aiChatWatchAShort,
               key: const ValueKey('ai-ad-offer-text'),
               textAlign: TextAlign.center,
             ),
@@ -560,12 +545,12 @@ class _AdOfferSheet extends StatelessWidget {
             FilledButton(
               key: const ValueKey('ai-ad-watch'),
               onPressed: () => Navigator.pop(context, true),
-              child: Text('Tonton'.localized(context)),
+              child: Text(context.l10n.aiChatWatch),
             ),
             TextButton(
               key: const ValueKey('ai-ad-cancel'),
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Batal'.localized(context)),
+              child: Text(context.l10n.commonCancel),
             ),
           ],
         ),

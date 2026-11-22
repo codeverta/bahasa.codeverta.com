@@ -3,6 +3,7 @@ import 'package:bahasa_master/core/notifications/notification_settings_screen.da
 import 'package:bahasa_master/core/notifications/push_notifications.dart';
 import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,7 +39,12 @@ void main() {
         expect(safeNotificationRoute(route), '/home');
       }
       expect(safeNotificationRoute('/anki'), '/anki');
-      for (final removed in ['/dictionary', '/ssw', '/learn/kanji', '/exams/n5']) {
+      for (final removed in [
+        '/dictionary',
+        '/ssw',
+        '/learn/kanji',
+        '/exams/n5',
+      ]) {
         expect(safeNotificationRoute(removed), '/home');
       }
     },
@@ -54,10 +60,7 @@ void main() {
         initialLocation: '/home',
         routes: [
           GoRoute(path: '/home', builder: (_, __) => const Text('home-view')),
-          GoRoute(
-            path: '/anki',
-            builder: (_, __) => const Text('anki-view'),
-          ),
+          GoRoute(path: '/anki', builder: (_, __) => const Text('anki-view')),
         ],
       );
       final container = ProviderContainer(
@@ -73,6 +76,8 @@ void main() {
         UncontrolledProviderScope(
           container: container,
           child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             routerConfig: router,
             builder: (_, child) => NotificationLifecycle(child: child!),
           ),
@@ -97,12 +102,16 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
-          child: const MaterialApp(home: NotificationSettingsScreen()),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: NotificationSettingsScreen(),
+          ),
         ),
       );
       await tester.pumpAndSettle();
       expect(
-        find.textContaining('Dukungan iPhone/iPad sedang disiapkan'),
+        find.textContaining('iPhone and iPad support is coming soon'),
         findsOneWidget,
       );
       expect(

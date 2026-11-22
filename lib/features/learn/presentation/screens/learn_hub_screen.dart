@@ -1,7 +1,8 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_label.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,12 +19,7 @@ class _LearnHubScreenState extends ConsumerState<LearnHubScreen> {
   int _selectedLevel = 0;
 
   static const _levels = ['N5', 'N4', 'N3', 'N2', 'N1'];
-  static const _numerals = ['五', '四', '三', '二', '一'];
-  static const _subjects = [
-    ('Vocabulary', 'Kosakata, contoh, kuis & progress', 'vocabulary'),
-    ('Grammar', 'Pola, contoh kalimat, kuis & progress', 'grammar'),
-    ('Reading', 'Cerita bergambar, kosakata & kuis', 'reading'),
-  ];
+  static const _numerals = ['1', '2', '3', '4', '5'];
 
   VoidCallback? _subjectAction(int index, {required bool locked}) {
     final level = _levels[_selectedLevel];
@@ -47,6 +43,23 @@ class _LearnHubScreenState extends ConsumerState<LearnHubScreen> {
     final premium = ref.watch(authControllerProvider).isAuthenticated;
     final locked = _selectedLevel >= 2 && !premium;
     final level = _levels[_selectedLevel];
+    final subjects = [
+      (
+        title: context.l10n.learnSubjectVocabularyTitle,
+        subtitle: context.l10n.learnSubjectVocabularySubtitle,
+        categoryId: 'vocabulary',
+      ),
+      (
+        title: context.l10n.learnSubjectGrammarTitle,
+        subtitle: context.l10n.learnSubjectGrammarSubtitle,
+        categoryId: 'grammar',
+      ),
+      (
+        title: context.l10n.learnSubjectReadingTitle,
+        subtitle: context.l10n.learnSubjectReadingSubtitle,
+        categoryId: 'reading',
+      ),
+    ];
     return CustomScrollView(
       key: const PageStorageKey('learn-scroll'),
       slivers: [
@@ -61,36 +74,23 @@ class _LearnHubScreenState extends ConsumerState<LearnHubScreen> {
                   children: [
                     Flexible(
                       child: Text(
-                        'Belajar'.localized(context),
+                        context.l10n.learnLearn,
                         style: theme.textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.8,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '勉強',
-                      style: AppTypography.japanese(
-                        fontSize: 14,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 6),
-              StaggeredEntrance(
-                child: Text(
-                  'Semua materi N5–N1 gratis. Masuk untuk mulai belajar.'
-                      .localized(context),
-                ),
-              ),
+              StaggeredEntrance(child: Text(context.l10n.learnStartLearning)),
               const SizedBox(height: 18),
               StaggeredEntrance(
                 index: 1,
                 child: Text(
-                  'Pilih level JLPT'.localized(context),
+                  context.l10n.learnChooseA,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w800,
                   ),
@@ -111,13 +111,16 @@ class _LearnHubScreenState extends ConsumerState<LearnHubScreen> {
                 index: 2,
                 child: AnimatedSwitcher(
                   duration: AppMotion.of(context, AppMotion.slow),
-                  // Kurva tanpa overshoot: FadeTransition tidak boleh > 1.
+                  // Curve without overshoot: FadeTransition must not exceed 1.
                   switchInCurve: AppMotion.standard,
                   switchOutCurve: AppMotion.exit,
                   transitionBuilder: (child, animation) => FadeTransition(
                     opacity: animation,
                     child: ScaleTransition(
-                      scale: Tween(begin: 0.96, end: 1.0).animate(animation),
+                      scale: Tween<double>(
+                        begin: 0.96,
+                        end: 1,
+                      ).animate(animation),
                       child: child,
                     ),
                   ),
@@ -139,24 +142,24 @@ class _LearnHubScreenState extends ConsumerState<LearnHubScreen> {
               ),
               const SizedBox(height: 22),
               Text(
-                '${'Materi'.localized(context)} $level',
+                context.l10n.learnMaterialsForLevel(levelLabel(context, level)),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: 12),
-              for (final (index, subject) in _subjects.indexed)
+              for (final (index, subject) in subjects.indexed)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: StaggeredEntrance(
                     index: index + 3,
                     replayKey: _selectedLevel,
                     child: _SubjectTile(
-                      title: subject.$1.localized(context),
+                      title: subject.title,
                       subtitle: locked
-                          ? 'Lifetime Access diperlukan'.localized(context)
-                          : subject.$2.localized(context),
-                      categoryId: subject.$3,
+                          ? context.l10n.learnLifetimeAccessIs
+                          : subject.subtitle,
+                      categoryId: subject.categoryId,
                       locked: locked,
                       onTap: _subjectAction(index, locked: locked),
                     ),
@@ -170,7 +173,7 @@ class _LearnHubScreenState extends ConsumerState<LearnHubScreen> {
   }
 }
 
-/// Pemilih level bersegmen dengan knob merah yang bergeser.
+/// Segmented level picker with a sliding red knob.
 class _LevelSelector extends StatelessWidget {
   const _LevelSelector({
     required this.levels,
@@ -257,7 +260,7 @@ class _LevelSelector extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 2),
                                   ],
-                                  Text(levels[i]),
+                                  Text(levelLabel(context, levels[i])),
                                 ],
                               ),
                             ),
@@ -311,7 +314,7 @@ class _VocabularyCallout extends StatelessWidget {
               top: -22,
               child: Text(
                 numeral,
-                style: AppTypography.japanese(
+                style: TextStyle(
                   fontSize: 104,
                   fontWeight: FontWeight.w700,
                   color: Colors.white.withValues(alpha: 0.08),
@@ -331,10 +334,10 @@ class _VocabularyCallout extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Text(
-                      '語',
-                      style: AppTypography.japanese(
-                        fontSize: 26,
+                    child: const Text(
+                      'Aa',
+                      style: TextStyle(
+                        fontSize: 22,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
                         height: 1,
@@ -347,7 +350,7 @@ class _VocabularyCallout extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'JLPT $level',
+                          levelLabel(context, level).toUpperCase(),
                           style: TextStyle(
                             color: sakura.gold,
                             fontWeight: FontWeight.w800,
@@ -357,7 +360,9 @@ class _VocabularyCallout extends StatelessWidget {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          'Vocabulary JLPT $level',
+                          context.l10n.learnVocabularyForLevel(
+                            levelLabel(context, level),
+                          ),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w800,
@@ -366,8 +371,7 @@ class _VocabularyCallout extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Pelajari kata, contoh, lalu uji pemahamanmu'
-                              .localized(context),
+                          context.l10n.learnStudyWords,
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.78),
                             fontSize: 12.5,
@@ -396,7 +400,7 @@ class _VocabularyCallout extends StatelessWidget {
   }
 }
 
-/// Kartu ajakan Lifetime Access saat level N3–N1 dipilih tanpa akses.
+/// Lifetime Access prompt shown when a locked level is selected.
 class _LockedLevelCard extends StatelessWidget {
   const _LockedLevelCard({
     required this.level,
@@ -433,15 +437,14 @@ class _LockedLevelCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            '${'Buka materi'.localized(context)} $level',
+            context.l10n.learnOpenLevelLessons(levelLabel(context, level)),
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            'Materi N3–N1 memerlukan Lifetime Access. Sekali bayar, belajar selamanya.'
-                .localized(context),
+            context.l10n.learnAdvancedLessons,
             style: theme.textTheme.bodySmall,
           ),
           const SizedBox(height: 14),
@@ -455,7 +458,7 @@ class _LockedLevelCard extends StatelessWidget {
                 foregroundColor: sakura.onGold,
                 minimumSize: const Size.fromHeight(46),
               ),
-              child: Text('Lihat paket'.localized(context)),
+              child: Text(context.l10n.learnViewPlans),
             ),
           ),
         ],
@@ -505,16 +508,13 @@ class _SubjectTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title.localized(context),
+                    title,
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    subtitle.localized(context),
-                    style: theme.textTheme.bodySmall,
-                  ),
+                  Text(subtitle, style: theme.textTheme.bodySmall),
                 ],
               ),
             ),
@@ -522,7 +522,7 @@ class _SubjectTile extends StatelessWidget {
             if (locked)
               Icon(Icons.lock_outline, color: SakuraColors.of(context).goldText)
             else if (onTap == null)
-              Chip(label: Text('Segera'.localized(context)))
+              Chip(label: Text(context.l10n.learnComingSoon))
             else
               Icon(
                 Icons.chevron_right_rounded,

@@ -2,7 +2,7 @@ import 'package:bahasa_master/core/widgets/skeleton.dart';
 import 'package:bahasa_master/features/learn/activity/continue_learning_section.dart';
 import 'package:flutter/material.dart';
 
-/// Placeholder shaped like the real Beranda (greeting, banner, progress,
+/// Placeholder shaped like the real home screen (greeting, banner, progress,
 /// quick menu) so a slow API feels like content arriving instead of
 /// an empty screen with a spinner. "Lanjutkan belajar" comes from local
 /// history, so it is shown for real even while the dashboard loads.

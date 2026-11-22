@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,12 +14,12 @@ bool _privateMedia(String url) =>
 final _ankiMediaBytesProvider = FutureProvider.autoDispose
     .family<({Uint8List bytes, String mime}), String>((ref, path) async {
       if (!_privateMedia(path)) {
-        throw const FormatException('Media deck tidak valid.');
+        throw const FormatException('Invalid deck media.');
       }
       final owner = ref.watch(
         authControllerProvider.select((state) => state.user?.id),
       );
-      if (owner == null) throw StateError('Masuk untuk membuka media deck.');
+      if (owner == null) throw StateError('Not signed in.');
       final cancel = CancelToken();
       ref.onDispose(cancel.cancel);
       final result = await ref
@@ -33,12 +33,12 @@ final _ankiMediaBytesProvider = FutureProvider.autoDispose
             cancelToken: cancel,
             onReceiveProgress: (received, total) {
               if (received > 10 * 1024 * 1024 || total > 10 * 1024 * 1024) {
-                cancel.cancel('Media terlalu besar.');
+                cancel.cancel('Media exceeds 10 MB.');
               }
             },
           );
       if (ref.read(authControllerProvider).user?.id != owner) {
-        throw StateError('Akun sudah berubah.');
+        throw StateError('Account changed.');
       }
       return (
         bytes: Uint8List.fromList(result.data!),
@@ -93,7 +93,7 @@ class _MediaUnavailable extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
     height: 100,
-    child: Center(child: Text('Media belum dapat dimuat.'.localized(context))),
+    child: Center(child: Text(context.l10n.ankiCouldNot)),
   );
 }
 
@@ -156,18 +156,13 @@ class _AudioState extends ConsumerState<AnkiDeckAudio> {
       } else if (const ['http', 'https'].contains(Uri.tryParse(url)?.scheme)) {
         await player.play(UrlSource(url));
       } else {
-        throw const FormatException('Audio tidak valid.');
+        throw const FormatException('Invalid audio.');
       }
     } on Object {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Audio belum dapat diputar. Periksa koneksi lalu coba lagi.'
-                  .localized(context),
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.ankiCouldNotPlay)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -186,12 +181,11 @@ class _AudioState extends ConsumerState<AnkiDeckAudio> {
       onPressed: _busy ? null : _play,
       icon: Icon(_playing ? Icons.stop_rounded : Icons.volume_up_outlined),
       label: Text(
-        (_playing
-                ? 'Hentikan audio'
-                : _busy
-                ? 'Memuat audio…'
-                : 'Putar audio')
-            .localized(context),
+        _playing
+            ? context.l10n.ankiAudioStop
+            : _busy
+            ? context.l10n.ankiAudioLoading
+            : context.l10n.ankiAudioPlay,
       ),
     );
   }

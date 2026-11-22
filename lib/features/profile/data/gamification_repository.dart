@@ -1,3 +1,4 @@
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
@@ -72,6 +73,6 @@ final gamificationProvider = FutureProvider.autoDispose<GamificationSummary>((
   ref,
 ) {
   final userId = ref.watch(authControllerProvider.select((s) => s.user?.id));
-  if (userId == null) throw StateError('Silakan masuk untuk melihat progres.');
+  if (userId == null) throw StateError(appL10n().profileSignInToViewProgress);
   return ref.watch(gamificationRepositoryProvider).fetch();
 });

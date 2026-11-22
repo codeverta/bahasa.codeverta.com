@@ -1,0 +1,2227 @@
+{
+  "@@locale": "en",
+  "adsAd": "Ad",
+  "@adsAd": {
+    "description": "Short label used in ad widgets."
+  },
+  "reviewRateThis": "Rate this app",
+  "appUpdateANewer": "a newer version of Android",
+  "appUpdateOpenSettings": "Open Settings > System > System update. Menu names may differ by brand.",
+  "appUpdateOpenSettingsGeneral": "Open Settings > General > Software Update.",
+  "appUpdateUpdateBahasa": "Update Bahasa Master",
+  "appUpdateYourDevice": "Your device does not support the new version",
+  "appUpdateYouCan": "You can keep using the installed version. Update your OS before installing a new app version.",
+  "appUpdateIfNo": "If no OS update is available, use another compatible device. For help: rabih@codeverta.com.",
+  "appUpdateIfThe": "If the update does not appear in the store, check your store account and whether the release is available for your device. Contact rabih@codeverta.com if your device is reported as incompatible.",
+  "appUpdateChecking": "Checking…",
+  "@appUpdateChecking": {
+    "description": "Short label used in app update gate."
+  },
+  "appUpdateContinueWith": "Continue with this version",
+  "appUpdateOpeningStore": "Opening store…",
+  "@appUpdateOpeningStore": {
+    "description": "Short label used in app update gate."
+  },
+  "appUpdateUpdateNow": "Update now",
+  "@appUpdateUpdateNow": {
+    "description": "Short label used in app update gate."
+  },
+  "xpCouldNot": "Could not claim 2× XP. Check your connection and try again.",
+  "xpTheAd": "The ad was closed early. Watch it to the end to get 2× XP.",
+  "xpNoAd": "No ad is available right now. Try again in a moment.",
+  "xpYouWatched": "You watched the ad, but Google's confirmation hasn't arrived yet. Check again.",
+  "xpClaim2": "Claim 2× XP",
+  "xpReviewAgain": "Review again",
+  "@xpReviewAgain": {
+    "description": "Short label used in double xp button."
+  },
+  "notificationsNotifications": "Notifications",
+  "@notificationsNotifications": {
+    "description": "Short label used in notification settings screen."
+  },
+  "notificationsBahasaMaster": "Bahasa Master announcements",
+  "notificationsReceiveApp": "Receive app news and study information. You can change this choice at any time. Announcements never include your personal account data.",
+  "notificationsReceiveAnnouncements": "Receive announcements",
+  "@notificationsReceiveAnnouncements": {
+    "description": "Short label used in notification settings screen."
+  },
+  "notificationsEnabledOn": "Enabled on this device",
+  "notificationsTurnedOn": "Turned on; check device permission and connection",
+  "notificationsOff": "Off",
+  "@notificationsOff": {
+    "description": "Short label used in notification settings screen."
+  },
+  "notificationsAndroidNotification": "Android notification settings",
+  "notificationsTryConnecting": "Try connecting again",
+  "settingsDisplaySettings": "Display settings",
+  "@settingsDisplaySettings": {
+    "description": "Short label used in display settings screen."
+  },
+  "settingsAdjustReading": "Adjust reading aids throughout the app.",
+  "settingsTheme": "Theme",
+  "@settingsTheme": {
+    "description": "Short label used in display settings screen."
+  },
+  "settingsChooseLight": "Choose light, dark, or follow your phone setting.",
+  "settingsSystem": "System",
+  "@settingsSystem": {
+    "description": "Short label used in display settings screen."
+  },
+  "settingsLight": "Light",
+  "@settingsLight": {
+    "description": "Short label used in display settings screen."
+  },
+  "settingsDark": "Dark",
+  "@settingsDark": {
+    "description": "Short label used in display settings screen."
+  },
+  "settingsStudyTime": "Study time zone",
+  "settingsThisTime": "This time zone sets the day boundary for streaks and study progress.",
+  "commonTranslation": "Translation",
+  "@commonTranslation": {
+    "description": "Short label used in display settings screen."
+  },
+  "settingsShowMeanings": "Show meanings for examples and reading passages.",
+  "settingsSettings": "Settings",
+  "@settingsSettings": {
+    "description": "Short label used in settings screen."
+  },
+  "settingsNotificationSettings": "Notification settings",
+  "@settingsNotificationSettings": {
+    "description": "Short label used in settings screen."
+  },
+  "settingsAccount": "Account",
+  "@settingsAccount": {
+    "description": "Short label used in settings screen."
+  },
+  "settingsSignOut": "Sign out",
+  "@settingsSignOut": {
+    "description": "Short label used in settings screen."
+  },
+  "settingsDeleteAccount": "Delete account",
+  "@settingsDeleteAccount": {
+    "description": "Short label used in settings screen."
+  },
+  "settingsSignOutOf": "Sign out of your account?",
+  "settingsPersonalData": "Personal data on this device will be deleted. Unsynced progress and offline ratings will also be lost. Connect to the internet before signing out to sync them.",
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Short label used in settings screen."
+  },
+  "settingsPermanentlyDelete": "Permanently delete your account?",
+  "settingsYourProfile": "Your profile, progress, achievements, and login session will be deleted. Store payments are not automatically refunded. A minimum transaction record is retained to support restores and prevent abuse. After creating a new account, use Restore with the purchasing store account.",
+  "settingsYourAccount": "Your account has not been deleted. Check your connection and try again.",
+  "settingsHelpImprove": "Help improve the app",
+  "settingsShareAnonymous": "Share anonymous usage data (which features you open). No personal data is included.",
+  "settingsYourLeaderboard": "Your leaderboard setting was not saved. Check your connection and try again.",
+  "settingsHideMe": "Hide me from the leaderboard",
+  "settingsYourName": "Your name and XP are not shown on the leaderboard. XP and level still count.",
+  "settingsAdPrivacy": "Ad privacy choices",
+  "settingsSignIn": "Sign in to manage your study time zone.",
+  "settingsStudyTimeZone": "Study time zone could not be loaded.",
+  "settingsAccountTime": "Account time zone",
+  "settingsChooseTime": "Choose time zone",
+  "settingsSaveTime": "Save time zone",
+  "settingsATime": "A time zone change takes effect only after you save it.",
+  "settingsStudyTimeZoneUpdated": "Study time zone updated.",
+  "settingsCouldNot": "Could not update study time zone.",
+  "commonTryAgain": "Try again",
+  "@commonTryAgain": {
+    "description": "Short label used in study timezone settings screen."
+  },
+  "unlockThisContent": "This content is locked",
+  "unlockThisContentRequires": "This content requires Lifetime Access.",
+  "unlockUnlockIt": "Unlock it by watching one ad, or get Lifetime Access to unlock everything.",
+  "unlockSeeLifetime": "See Lifetime",
+  "@unlockSeeLifetime": {
+    "description": "Short label used in locked content."
+  },
+  "unlockUnlockThis": "Unlock this content",
+  "unlockLocked": "Locked",
+  "@unlockLocked": {
+    "description": "Short label used in locked content."
+  },
+  "unlockTheAd": "The ad was closed early. Watch it to the end to unlock.",
+  "unlockNoAd": "No ad is available right now. Try again in a moment.",
+  "unlockYouWatched": "You watched the ad, but Google's confirmation hasn't arrived yet. Check again.",
+  "unlockCouldNot": "Could not unlock. Check your connection and try again.",
+  "unlockWatchOne": "Watch one short ad to unlock this, or get Lifetime Access to unlock everything without ads.",
+  "unlockReviewAgain": "Review again",
+  "@unlockReviewAgain": {
+    "description": "Short label used in unlock sheet."
+  },
+  "unlockWatchAn": "Watch an ad (free)",
+  "unlockGetLifetime": "Get Lifetime",
+  "@unlockGetLifetime": {
+    "description": "Short label used in unlock sheet."
+  },
+  "legalThePage": "The page could not be opened. Try again.",
+  "commonLoading": "Loading…",
+  "@commonLoading": {
+    "description": "Short label used in skeleton."
+  },
+  "aiChatAskAi": "Ask AI",
+  "@aiChatAskAi": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "aiChatTodaysAsk": "Today's Ask AI limit is reached",
+  "aiChatTryAgain": "Try again tomorrow, or get Lifetime Access for more questions every day.",
+  "aiChatLater": "Later",
+  "@aiChatLater": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "aiChatSeeLifetime": "See Lifetime",
+  "@aiChatSeeLifetime": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "aiChatDailyLimit": "Daily limit reached",
+  "aiChatDailyLimitReached": "Daily limit reached, please try again tomorrow.",
+  "aiChatOk": "OK",
+  "@aiChatOk": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "aiChatDeleteConversation": "Delete conversation?",
+  "@aiChatDeleteConversation": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "aiChatTheConversation": "The conversation for this lesson will be removed from the app.",
+  "aiChatClear": "Clear",
+  "@aiChatClear": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "aiChatCouldNot": "Could not delete the conversation.",
+  "aiChatOptions": "Options",
+  "@aiChatOptions": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "aiChatDeleteConversation2": "Delete conversation",
+  "@aiChatDeleteConversation2": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "aiChatInternetConnection": "Internet connection required",
+  "aiChatAskAnything": "Ask anything about this lesson, or pick a quick action below.",
+  "aiChatSend": "Send",
+  "@aiChatSend": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "aiChatTodaysAskAi": "Today's Ask AI messages are used",
+  "aiChatTodaysFree": "Today's free questions are used up",
+  "aiChatWatchAShort": "Watch a short ad to send this question.",
+  "aiChatWatch": "Watch",
+  "@aiChatWatch": {
+    "description": "Short label used in ai chat sheet."
+  },
+  "ankiCouldNot": "Could not load media.",
+  "ankiCouldNotPlay": "Could not play audio. Check your connection and try again.",
+  "ankiImportDeck": "Import deck",
+  "@ankiImportDeck": {
+    "description": "Short label used in anki import screen."
+  },
+  "ankiBringYour": "Bring your flashcards here",
+  "ankiChooseAn": "Choose an Anki APKG, CSV, or Bahasa Master JSON file. Maximum 20 MB and 10,000 cards per deck. Preview the file before saving.",
+  "ankiDeckName": "Deck name",
+  "@ankiDeckName": {
+    "description": "Short label used in anki import screen."
+  },
+  "ankiPersonalDecks": "Personal decks are saved to your account without replacing built-in decks. Review schedules start fresh; Anki progress is not transferred.",
+  "ankiImportAs": "Import as a personal deck",
+  "ankiFileFormats": "File formats & media",
+  "ankiCsvColumns": "CSV columns: front, answers, meaning, imageUrl, audio. Answers accepts text or a JSON array. APKG/JSON includes bundled media; external media URLs remain links. HTML is converted to text. Cloze or unsupported card templates are rejected with an explanation.",
+  "ankiReviewA": "REVIEW A LITTLE, REMEMBER MORE",
+  "ankiChooseA": "Choose a deck and build a vocabulary review habit",
+  "ankiDataSources": "Data sources & licenses",
+  "ankiALittle": "A little today.\nRemember more tomorrow.",
+  "ankiChooseADeck": "Choose a deck topic, flip each card to reveal the answer, then rate how easily you remembered it.",
+  "ankiSearchDecks": "Search decks",
+  "@ankiSearchDecks": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiGreetingsFood": "Greetings, food, numbers...",
+  "ankiNoDecks": "No decks found. Try another name or category.",
+  "ankiSavedData": "Saved data · Not available yet",
+  "ankiReadyTo": "Ready to study",
+  "ankiAboutThis": "About this deck",
+  "ankiPersonalDeck": "Personal deck",
+  "@ankiPersonalDeck": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiDeletePersonal": "Delete personal deck",
+  "ankiHowTo": "How to study",
+  "ankiEachSession": "Each session has up to 20 cards. Due reviews come first, followed by new cards. Your ratings determine the next review schedule.",
+  "ankiYourStudy": "Your study progress",
+  "ankiStudied": "Studied",
+  "@ankiStudied": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiDueFor": "Due for review",
+  "ankiNewCards": "New cards",
+  "@ankiNewCards": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiYourSchedule": "Your schedule and progress are saved to your account.",
+  "ankiSignIn": "Sign in to save your progress and review schedule.",
+  "ankiDeckAvailability": "Deck availability",
+  "@ankiDeckAvailability": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiSignInTo": "Sign in to study",
+  "ankiUnlockWith": "Unlock with Lifetime Access",
+  "ankiStartReview": "Start review",
+  "@ankiStartReview": {
+    "description": "Short label used in anki screens."
+  },
+  "commonStartLearning": "Start learning",
+  "@commonStartLearning": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiDeckPreview": "Deck preview",
+  "@ankiDeckPreview": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiThePreview": "The preview shows sample questions and answers.",
+  "ankiDataSource": "Data source",
+  "@ankiDataSource": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiCouldNotOpen": "Could not open the source link.",
+  "ankiViewDeck": "View deck source data",
+  "ankiFlashcardStudy": "Flashcard study",
+  "@ankiFlashcardStudy": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiStudySession": "Study session is unavailable.",
+  "ankiNoCards": "No cards are due to study.",
+  "ankiSessionComplete": "Session complete!",
+  "@ankiSessionComplete": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiCheckThe": "Check the next card",
+  "ankiBackTo": "Back to deck details",
+  "ankiRatingsSaved": "Ratings saved on this device · waiting to sync",
+  "ankiGood": "Good",
+  "@ankiGood": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiAgain": "Again",
+  "@ankiAgain": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiSwipeRight": "Swipe right if you remembered it, left to study it again.",
+  "ankiTapThe": "Tap the card to flip it.",
+  "ankiShowAnswer": "Show answer",
+  "@ankiShowAnswer": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiHowEasily": "How easily did you remember it?",
+  "ankiTrySaving": "Try saving again",
+  "ankiHard": "Hard",
+  "@ankiHard": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiEasy": "Easy",
+  "@ankiEasy": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiRateEach": "Rate each card based on what you remembered before revealing the answer. You can leave at any time; each successful rating is saved.",
+  "ankiCouldNotLoad": "Could not load the deck. Try again.",
+  "commonSignIn": "Sign in",
+  "@commonSignIn": {
+    "description": "Short label used in anki screens."
+  },
+  "commonLifetimeAccess": "Lifetime Access",
+  "@commonLifetimeAccess": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiReloadSession": "Reload session",
+  "@ankiReloadSession": {
+    "description": "Short label used in anki screens."
+  },
+  "commonRefresh": "Refresh",
+  "@commonRefresh": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiQuestionAnswer": "QUESTION & ANSWER",
+  "ankiTryTo": "TRY TO REMEMBER FIRST",
+  "ankiContentLicense": "Content license",
+  "@ankiContentLicense": {
+    "description": "Short label used in anki screens."
+  },
+  "ankiExportDeck": "Export deck",
+  "@ankiExportDeck": {
+    "description": "Short label used in anki transfer actions."
+  },
+  "ankiExportIncludes": "Export includes all cards, up to 10,000 per deck, without review schedules. APKG/JSON includes bundled images/audio; external media remains linked.",
+  "ankiDeletePersonalDeck": "Delete personal deck?",
+  "ankiThisDeck": "This deck’s cards, media, and review schedules will be deleted from your account. Export a backup first if needed.",
+  "ankiClear": "Clear",
+  "@ankiClear": {
+    "description": "Short label used in anki transfer actions."
+  },
+  "ankiChooseAnAnki": "Choose an Anki deck",
+  "ankiPracticeWith": "Practice with Anki cards",
+  "authClose": "Close",
+  "@authClose": {
+    "description": "Short label used in login screen."
+  },
+  "authSignIn": "Sign in to start learning",
+  "authSaveYour": "Save your progress, take exams, and unlock achievements.",
+  "authContinueWith": "Continue with Google",
+  "authOrWith": "or with email",
+  "authEnterA": "Enter a valid email address.",
+  "authPasswordMust": "Password must be at least 8 characters.",
+  "authContinueAs": "Continue as guest",
+  "billingLifetimeAccess": "Lifetime Access is active.",
+  "billingCheckingStore": "Checking store price…",
+  "billingStorePrice": "Store price unavailable",
+  "billingContinueFor": "Continue for free",
+  "billingAboutYour": "About your purchase",
+  "billingCanceledOr": "Canceled or pending payments do not activate access. A refund or revocation by the store locks premium access again. Deleting your account does not issue a refund; you can restore a purchase with the purchasing store account after signing into a new app account.",
+  "billingGooglePlay": "Google Play refund help",
+  "billingAppStore": "App Store refund help",
+  "billingSignIn": "Sign in to continue",
+  "billingExploreMy": "Explore my access",
+  "billingAccessActive": "Access active",
+  "@billingAccessActive": {
+    "description": "Short label used in premium screen."
+  },
+  "billingPaymentPending": "Payment pending",
+  "@billingPaymentPending": {
+    "description": "Short label used in premium screen."
+  },
+  "billingGetLifetime": "Get Lifetime Access",
+  "billingRestorePurchases": "Restore purchases",
+  "@billingRestorePurchases": {
+    "description": "Short label used in premium screen."
+  },
+  "billingTryVerification": "Try verification again",
+  "billingCouldNot": "Could not open the help link.",
+  "billingOnePayment": "One payment. No monthly fees.",
+  "billingSignInWithAnother": "Sign in with another account",
+  "billingLearnIndonesian": "Learn Indonesian for daily life, work and travel",
+  "billingLifetimeActive": "LIFETIME ACTIVE",
+  "@billingLifetimeActive": {
+    "description": "Short label used in premium screen."
+  },
+  "billingOnePaymentLifetime": "ONE PAYMENT · LIFETIME ACCESS",
+  "billingLifetimeAccessIs": "Lifetime Access is active",
+  "billingUnlockMore": "Unlock more.\nGo further.",
+  "billingStudyRead": "Study, read, and practise Indonesian in one place.",
+  "homeOfflineShowing": "Offline · showing saved data. Prepared lessons are still available.",
+  "homeWelcome": "Welcome!",
+  "@homeWelcome": {
+    "description": "Short label used in dashboard screen."
+  },
+  "homeExploreFree": "Explore free lessons, then sign in to save your progress.",
+  "homeNotificationSettings": "Notification settings",
+  "@homeNotificationSettings": {
+    "description": "Short label used in dashboard screen."
+  },
+  "homeDayStreak": "Day streak",
+  "@homeDayStreak": {
+    "description": "Short label used in dashboard screen."
+  },
+  "homeKeepYour": "Keep your streak by finishing a quiz today.",
+  "homeFinish1": "Finish 1 quiz or exam today to start a streak.",
+  "homeHomeCould": "Home could not be loaded",
+  "homeTurnOn": "Turn on notifications for announcements and new lessons",
+  "homeMaybeLater": "Maybe later",
+  "@homeMaybeLater": {
+    "description": "Short label used in home notification card."
+  },
+  "homeTurnOn2": "Turn on",
+  "@homeTurnOn2": {
+    "description": "Short label used in home notification card."
+  },
+  "leaderboardSeeThis": "See this week's leaderboard",
+  "leaderboardNotRanked": "Not ranked this week yet — finish 1 lesson to join the competition",
+  "leaderboardClose": "Close",
+  "@leaderboardClose": {
+    "description": "Short label used in home leaderboard widgets."
+  },
+  "leaderboardThisWeek": "This week",
+  "@leaderboardThisWeek": {
+    "description": "Short label used in leaderboard screen."
+  },
+  "leaderboardAllTime": "All time",
+  "@leaderboardAllTime": {
+    "description": "Short label used in leaderboard screen."
+  },
+  "leaderboardInternetConnection": "Internet connection required",
+  "leaderboardTheLeaderboard": "The leaderboard could not be loaded",
+  "leaderboardYouAre": "You are hidden from the leaderboard. Change this in Settings.",
+  "leaderboardNobodyHas": "Nobody has earned XP this week yet. Be the first!",
+  "leaderboardNoRankings": "No rankings yet.",
+  "leaderboardTotalXp": "Total XP since joining",
+  "leaderboardEarnXp": "Earn XP to get ranked",
+  "leaderboardSignIn": "Sign in to get ranked",
+  "learnThisLesson": "This lesson is no longer available. Choose another lesson in its course.",
+  "commonContinueLearning": "Continue learning",
+  "@commonContinueLearning": {
+    "description": "Short label used in continue learning section."
+  },
+  "learnReturnTo": "Return to the lesson you last opened.",
+  "learnOpenCourse": "Open course",
+  "@learnOpenCourse": {
+    "description": "Short label used in continue learning section."
+  },
+  "learnUnlockLearning": "Unlock learning access",
+  "learnStudyAgain": "Study again",
+  "@learnStudyAgain": {
+    "description": "Short label used in continue learning section."
+  },
+  "learnPreviouslyStudied": "Previously studied",
+  "@learnPreviouslyStudied": {
+    "description": "Short label used in continue learning section."
+  },
+  "learnLessonUnavailable": "Lesson unavailable",
+  "@learnLessonUnavailable": {
+    "description": "Short label used in continue learning section."
+  },
+  "learnLifetimeAccess": "Lifetime Access required",
+  "learnCompleted": "Completed",
+  "@learnCompleted": {
+    "description": "Short label used in continue learning section."
+  },
+  "learnToday": "Today",
+  "@learnToday": {
+    "description": "Short label used in continue learning section."
+  },
+  "learnYesterday": "Yesterday",
+  "@learnYesterday": {
+    "description": "Short label used in continue learning section."
+  },
+  "grammarLesson": "Lesson",
+  "@grammarLesson": {
+    "description": "Short label used in grammar course screen."
+  },
+  "grammarPatternList": "Pattern List",
+  "@grammarPatternList": {
+    "description": "Short label used in grammar course screen."
+  },
+  "grammarMasterAdvanced": "Master advanced patterns to grasp nuance and implied meaning",
+  "grammarMasterNuance": "Master nuance and complex relationships between ideas",
+  "grammarUnderstandNuance": "Understand nuance, relationships, and sentence intent",
+  "grammarExpressPlans": "Express plans, reasons, and opinions",
+  "grammarBuildIndonesian": "Build Indonesian sentences from the ground up",
+  "grammarStudyThe": "Study the patterns, read the examples, then take the quiz. Score at least 80% to complete the lesson.",
+  "grammarAllLessons": "All lessons are complete! You can still review the material and retake the quizzes.",
+  "grammarSearchFor": "Search for a topic or pattern, e.g. sudah",
+  "grammarNoMatching": "No matching lessons. Try another title or chapter.",
+  "grammarHowTo": "How to form it",
+  "grammarExplanation": "Explanation",
+  "@grammarExplanation": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "grammarExampleSentences": "Example sentences",
+  "@grammarExampleSentences": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "grammarAvoidThis": "Avoid this mistake",
+  "grammarStartQuiz": "Start quiz",
+  "@grammarStartQuiz": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "grammarNextPattern": "Next pattern",
+  "@grammarNextPattern": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "commonQuestion": "Question",
+  "@commonQuestion": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "commonCorrect": "Correct!",
+  "@commonCorrect": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "commonNotQuite": "Not quite",
+  "@commonNotQuite": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "commonCheckAnswer": "Check answer",
+  "@commonCheckAnswer": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "commonViewResults": "View results",
+  "@commonViewResults": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "commonNextQuestion": "Next question",
+  "@commonNextQuestion": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "commonProvisionalResult": "Provisional result",
+  "@commonProvisionalResult": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "commonLessonMastered": "Lesson mastered!",
+  "@commonLessonMastered": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "grammarKeepPracticing": "Keep practicing!",
+  "@grammarKeepPracticing": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "commonAnswersAre": "Answers are saved on this device. Completion, XP, and achievements will be verified when you reconnect.",
+  "grammarLessonProgress": "Lesson progress has been saved. Continue to the next pattern.",
+  "grammarThePassing": "The passing score is 80%. Review the explanations and try the quiz again.",
+  "commonWaitingTo": "Waiting to sync",
+  "grammarRetryQuiz": "Retry quiz",
+  "@grammarRetryQuiz": {
+    "description": "Short label used in grammar lesson screen."
+  },
+  "grammarReviewThe": "Review the material",
+  "grammarBackTo": "Back to lesson list",
+  "levelListSearchPatterns": "Search patterns or meanings",
+  "levelListNoResults": "No results.",
+  "@levelListNoResults": {
+    "description": "Short label used in grammar level list."
+  },
+  "levelListTheList": "The list could not be loaded. Check your connection and try again.",
+  "learnLearn": "Learn",
+  "@learnLearn": {
+    "description": "Short label used in learn hub screen."
+  },
+  "learnStartLearning": "Start learning for free. Sign in to begin.",
+  "learnChooseA": "Choose a level",
+  "learnLifetimeAccessIs": "Lifetime Access is required",
+  "learnStudyWords": "Study words and examples, then check your understanding",
+  "learnAdvancedLessons": "Advanced lessons need Lifetime Access. Pay once, learn forever.",
+  "learnViewPlans": "View plans",
+  "@learnViewPlans": {
+    "description": "Short label used in learn hub screen."
+  },
+  "learnComingSoon": "Coming soon",
+  "@learnComingSoon": {
+    "description": "Short label used in learn hub screen."
+  },
+  "readingSmallStories": "Small stories, new worlds",
+  "readingPracticeInference": "Practice inference, author intent, comparing opinions, and locating information. Use translation help when needed. Score at least 80% to complete the lesson.",
+  "readingPracticeReading": "Practice reading abstract arguments, judging the limits of evidence, understanding author intent, comparing opinions, and finding requirements in announcements. Use translation help when needed. Score at least 80% to complete the lesson.",
+  "readingUnderstandReasons": "Understand reasons, characters' intentions, and conclusions in the story. Open translation help when needed. Score at least 80% to complete the lesson.",
+  "readingFollowA": "Follow a character through illustrated stories. Open translation help when needed. Score at least 80% to complete the lesson.",
+  "readingOpenThe": "Open the first story",
+  "readingContinueReading": "Continue reading",
+  "@readingContinueReading": {
+    "description": "Short label used in reading course screen."
+  },
+  "readingAllStories": "All stories are complete! You can still review the material and retake the quizzes.",
+  "readingSearchFor": "Search for a story or title",
+  "readingNoStories": "No stories found. Try another word or topic.",
+  "readingReadingStory": "Reading Story",
+  "@readingReadingStory": {
+    "description": "Short label used in reading lesson screen."
+  },
+  "readingStoryMeaning": "Story meaning",
+  "@readingStoryMeaning": {
+    "description": "Short label used in reading lesson screen."
+  },
+  "readingWordsTo": "Words to remember",
+  "readingCheckUnderstanding": "Check understanding",
+  "@readingCheckUnderstanding": {
+    "description": "Short label used in reading lesson screen."
+  },
+  "readingContinueStory": "Continue story",
+  "@readingContinueStory": {
+    "description": "Short label used in reading lesson screen."
+  },
+  "readingReadThe": "Read the story again",
+  "readingKeepPracticing": "Keep practicing!",
+  "@readingKeepPracticing": {
+    "description": "Short label used in reading lesson screen."
+  },
+  "readingStoryProgress": "Story progress is saved. Continue reading the next story.",
+  "readingThePassing": "The passing score is 80%. Review the explanations and try the quiz again.",
+  "readingRetryQuiz": "Retry quiz",
+  "@readingRetryQuiz": {
+    "description": "Short label used in reading lesson screen."
+  },
+  "readingBackTo": "Back to story list",
+  "vocabNoMaterial": "No material is available yet.",
+  "vocabSeeThe": "See the picture.\nRemember the words.",
+  "vocabTheSource": "The source could not be opened.",
+  "vocabSearchTopics": "Search topics, such as food",
+  "vocabNoTopics": "No topics found yet. Try another word.",
+  "vocabReadyTo": "Ready to study",
+  "vocabAlmostThere": "Almost there!",
+  "@vocabAlmostThere": {
+    "description": "Short label used in vocabulary lesson screen."
+  },
+  "vocabYouHave": "You have mastered the vocabulary in this lesson.",
+  "vocabTheMinimum": "The minimum passing score is 80%. Review the feedback and try again.",
+  "vocabPreparingQuiz": "Preparing quiz…",
+  "@vocabPreparingQuiz": {
+    "description": "Short label used in vocabulary lesson screen."
+  },
+  "vocabRetryLesson": "Retry lesson",
+  "@vocabRetryLesson": {
+    "description": "Short label used in vocabulary lesson screen."
+  },
+  "vocabBackTo": "Back to lesson list",
+  "vocabUseIt": "Use it in a sentence",
+  "vocabNoticeHow": "Notice how this word is used in different situations.",
+  "vocabUsageNotes": "Usage notes",
+  "@vocabUsageNotes": {
+    "description": "Short label used in vocabulary study view."
+  },
+  "vocabComprehensionPractice": "Comprehension practice",
+  "@vocabComprehensionPractice": {
+    "description": "Short label used in vocabulary study view."
+  },
+  "vocabNextWord": "Next word",
+  "@vocabNextWord": {
+    "description": "Short label used in vocabulary study view."
+  },
+  "onboardingCouldNot": "Could not finish the guide. Try again.",
+  "onboardingCloseGuide": "Close guide",
+  "@onboardingCloseGuide": {
+    "description": "Short label used in onboarding screen."
+  },
+  "onboardingSkip": "Skip",
+  "@onboardingSkip": {
+    "description": "Short label used in onboarding screen."
+  },
+  "onboardingBack": "Back",
+  "@onboardingBack": {
+    "description": "Short label used in onboarding screen."
+  },
+  "onboardingStayIn": "STAY IN THE LOOP",
+  "onboardingNeverMiss": "Never miss important news",
+  "onboardingTurnOn": "Turn on notifications to get announcements, new lessons and important info from Bahasa Master. No spam, and you can turn them off any time in Settings.",
+  "onboardingTurnOnNotifications": "Turn on notifications",
+  "onboardingMaybeLater": "Maybe later",
+  "@onboardingMaybeLater": {
+    "description": "Short label used in onboarding screen."
+  },
+  "profileAchievements": "Achievements",
+  "@profileAchievements": {
+    "description": "Short label used in achievements screen."
+  },
+  "profileSignIn": "Sign in to view achievements",
+  "profileThereAre": "There are no achievements in this category yet.",
+  "profileDataSources": "Data sources & attributions",
+  "profileBuiltWith": "Built with many sources",
+  "profileThankYou": "Thank you to the publishers, dataset creators, and communities that provide content for Bahasa Master. Copyright remains with each respective owner.",
+  "profileOpenSource": "Open-source software licenses",
+  "profileDisplaySettings": "Display settings",
+  "@profileDisplaySettings": {
+    "description": "Short label used in profile screen."
+  },
+  "profileAppGuide": "App guide",
+  "@profileAppGuide": {
+    "description": "Short label used in profile screen."
+  },
+  "profileSignInTo": "Sign in to view your profile.",
+  "profileProfile": "Profile",
+  "@profileProfile": {
+    "description": "Short label used in profile screen."
+  },
+  "profileSettings": "Settings",
+  "@profileSettings": {
+    "description": "Short label used in profile screen."
+  },
+  "profilePhotosAre": "Photos are compressed before upload. Anyone with the photo link can view them.",
+  "profileGamification": "Gamification",
+  "@profileGamification": {
+    "description": "Short label used in profile screen."
+  },
+  "profileSeeThis": "See this week's and all-time XP rankings",
+  "profileChooseFrom": "Choose from gallery",
+  "profileTakeA": "Take a photo",
+  "profileChangeProfile": "Change profile photo",
+  "profileLoadingProfile": "Loading profile…",
+  "@profileLoadingProfile": {
+    "description": "Short label used in profile screen."
+  },
+  "profileOnePayment": "One payment, lifetime learning.",
+  "profileView": "View",
+  "@profileView": {
+    "description": "Short label used in profile screen."
+  },
+  "profileLearningStatistics": "Learning statistics",
+  "@profileLearningStatistics": {
+    "description": "Short label used in profile screen."
+  },
+  "profilePlansPayments": "Plans & payments",
+  "profileHelp": "Help",
+  "@profileHelp": {
+    "description": "Short label used in profile screen."
+  },
+  "profileDayStreak": "Day streak",
+  "@profileDayStreak": {
+    "description": "Short label used in gamification widgets."
+  },
+  "profileBadges": "Badges",
+  "@profileBadges": {
+    "description": "Short label used in gamification widgets."
+  },
+  "profileEarn50": "Earn 50 XP the first time you pass a lesson and 100 XP the first time you score at least 80% on each exam type. Passing a lesson or exam again: +10 XP (up to 3 times a day). Reaching your daily study goal: +20 XP. Reviewing Anki cards: +1 XP per card (up to 30 XP a day). Streaks count completed quizzes and exams using your selected study timezone.",
+  "profileProgressCould": "Progress could not be loaded. Check your connection or sign in again if your session has expired.",
+  "navHome": "Home",
+  "@navHome": {
+    "description": "Short label used in main scaffold."
+  },
+  "navLearn": "Learn",
+  "@navLearn": {
+    "description": "Short label used in main scaffold."
+  },
+  "navProfile": "Profile",
+  "@navProfile": {
+    "description": "Short label used in main scaffold."
+  },
+  "ankiCategoryAll": "All",
+  "@ankiCategoryAll": {
+    "description": "Filter chip that shows decks of every category"
+  },
+  "ankiDeckCount": "{count, plural, =1{1 deck} other{{count} decks}}",
+  "@ankiDeckCount": {
+    "description": "Number of Anki decks",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "ankiCardCount": "{count, plural, =1{1 card} other{{count} cards}}",
+  "@ankiCardCount": {
+    "description": "Total number of flashcards",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "ankiDeckListMeta": "{category} · {count, plural, =1{1 card} other{{count} cards}}",
+  "@ankiDeckListMeta": {
+    "description": "Deck category and card count under a deck title in the list",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "ankiCardsReady": "{count, plural, =1{1 card ready} other{{count} cards ready}}",
+  "@ankiCardsReady": {
+    "description": "Tag showing how many cards can be studied",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "ankiNextReview": "Next review: {date}",
+  "@ankiNextReview": {
+    "description": "Date of the next scheduled review",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ankiSourceEntries": "Source entries saved: {source}. Entries that cannot be used as flashcards (empty data or an extra engine is required): {skipped}.",
+  "@ankiSourceEntries": {
+    "description": "Import summary for a built-in deck; both values are formatted numbers",
+    "placeholders": {
+      "source": {
+        "type": "String"
+      },
+      "skipped": {
+        "type": "String"
+      }
+    }
+  },
+  "ankiOriginalDeck": "Original deck: {name}",
+  "@ankiOriginalDeck": {
+    "description": "Name of the deck this one was created from",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ankiSessionRatedPending": "You rated {count, plural, =1{1 card} other{{count} cards}}. Ratings are saved on this device and wait to sync. The official schedule updates once you are back online.",
+  "@ankiSessionRatedPending": {
+    "description": "Study session summary while ratings are queued offline",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ankiSessionRatedSaved": "You rated {count, plural, =1{1 card} other{{count} cards}}. Your next schedule is saved to your account. Cards you have not memorized yet come back in about 1 minute.",
+  "@ankiSessionRatedSaved": {
+    "description": "Study session summary after ratings are saved",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ankiCardPosition": "CARD {current} / {total}",
+  "@ankiCardPosition": {
+    "description": "Position of the current flashcard in the session",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "ankiMoreAnswers": "{count, plural, =1{See 1 more answer} other{See {count} more answers}}",
+  "@ankiMoreAnswers": {
+    "description": "Expands the remaining answers of a flashcard",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "ankiExportFormatApkg": "APKG · for Anki, with media",
+  "@ankiExportFormatApkg": {
+    "description": "Export format option"
+  },
+  "ankiExportFormatCsv": "CSV · text and external links",
+  "@ankiExportFormatCsv": {
+    "description": "Export format option"
+  },
+  "ankiExportFormatJson": "JSON · backup of cards and media",
+  "@ankiExportFormatJson": {
+    "description": "Export format option"
+  },
+  "ankiExportPreparing": "Preparing file…",
+  "@ankiExportPreparing": {
+    "description": "Shown on the export button while the file is prepared"
+  },
+  "ankiExportFailed": "Could not save or share the file. Try again.",
+  "ankiDeleteFailed": "Could not delete the deck. Try again.",
+  "ankiDeckFileLabel": "Anki deck",
+  "@ankiDeckFileLabel": {
+    "description": "Name of the file type group in the file picker"
+  },
+  "ankiAudioStop": "Stop audio",
+  "@ankiAudioStop": {
+    "description": "Button label"
+  },
+  "ankiAudioLoading": "Loading audio…",
+  "@ankiAudioLoading": {
+    "description": "Button label while the audio loads"
+  },
+  "ankiAudioPlay": "Play audio",
+  "@ankiAudioPlay": {
+    "description": "Button label"
+  },
+  "ankiImportChooseFile": "Choose deck file",
+  "@ankiImportChooseFile": {
+    "description": "Button that opens the file picker"
+  },
+  "ankiImportSaving": "Saving deck…",
+  "ankiImportReading": "Reading and checking the file…",
+  "ankiImportOpenFailed": "Could not open the file. Try choosing it again.",
+  "ankiImportNameRequired": "Enter a deck name first.",
+  "ankiImportFailed": "The import did not finish. Try again with the same file.",
+  "ankiImportSummary": "{cards, plural, =1{1 card} other{{cards} cards}} · {media} media",
+  "@ankiImportSummary": {
+    "description": "Preview summary of a file being imported",
+    "placeholders": {
+      "cards": {
+        "type": "int"
+      },
+      "media": {
+        "type": "int"
+      }
+    }
+  },
+  "ankiErrorSignInStudy": "Sign in to study and save your review schedule.",
+  "ankiErrorLifetimeRequired": "This deck requires Lifetime Access.",
+  "ankiErrorDeckNotFound": "Deck not found.",
+  "ankiErrorScheduleChanged": "The card schedule has changed. Reload the session to continue.",
+  "ankiErrorServerUnreachable": "Could not connect to the server. Try again.",
+  "ankiErrorScheduleChangedElsewhere": "The card schedule changed on another device. Reload the session to use the latest schedule.",
+  "ankiErrorLifetimeVerify": "Lifetime Access verification is required for this deck.",
+  "ankiErrorRatingNotSaved": "Your rating was not saved. Try again.",
+  "ankiErrorMaterialLoad": "Could not load the study material. Try again.",
+  "ankiErrorReviewUnconfirmed": "The review was not confirmed. Try saving again.",
+  "ankiErrorOfflineNotSaved": "Your offline rating was not saved. Try again.",
+  "ankiErrorSignInReview": "Sign in to save reviews.",
+  "ankiErrorAccountChanged": "The account has changed.",
+  "ankiErrorQueueFull": "The review queue is full. Connect to the internet to sync.",
+  "ankiTransferSignIn": "Sign in to import or export decks.",
+  "ankiTransferAccountChanged": "The account has changed. Open this page again.",
+  "ankiTransferFileSize": "Choose a file no larger than 20 MB.",
+  "ankiTransferSignInManage": "Sign in to manage personal decks.",
+  "ankiTransferUnavailable": "Transfers are not available on the server yet, or the deck was not found.",
+  "ankiTransferTooLarge": "The file is too large. The upload limit is 20 MB.",
+  "ankiTransferInvalidFormat": "The deck file format is not supported or its contents are invalid.",
+  "ankiTransferBusy": "Deck processing is busy. Try again in a few seconds.",
+  "ankiTransferIncomplete": "The transfer did not finish. Check your connection and try again.",
+  "billingStoreConnectionLost": "Store connection lost. Try again.",
+  "@billingStoreConnectionLost": {
+    "description": "Billing status message"
+  },
+  "billingCheckOldPurchasesFailed": "Could not check earlier purchases. Use Restore.",
+  "billingSignInToBuy": "Sign in to buy or restore.",
+  "billingCheckingAccess": "Checking access and store…",
+  "billingStoreUnavailable": "Store purchases are not available on this device.",
+  "billingProductUnavailable": "The product is not available yet. Try again later.",
+  "billingSharedDemoAccount": "Sign in with your own Google account to buy or restore. The demo account is shared.",
+  "billingSessionProblem": "There is a problem with your session or connection. Sign in again if your session has expired.",
+  "billingAccessCheckFailed": "Could not check access. Check your connection and try again.",
+  "billingCompletePayment": "Complete your payment in the store.",
+  "billingStoreNoResult": "The store has not returned a result. Use Restore or try verification again before buying again.",
+  "billingPlayDidNotContinue": "Google Play did not continue the payment. If you closed the dialog, you were not charged and your access is unchanged.",
+  "billingPaymentCouldNotStart": "The payment could not be started. Try Restore if you already bought it.",
+  "billingRestoring": "Restoring purchases…",
+  "billingRestoreNothingFound": "No purchase was restored. Make sure you are using the right store account.",
+  "billingRestoreFailed": "Restore failed. Check your store account and connection, then try again.",
+  "billingCheckingExistingLifetime": "Checking your existing Lifetime purchase…",
+  "billingPurchaseNotFinished": "The purchase is not finished. Try verification again or restore.",
+  "billingPaymentCanceledNoCharge": "Payment canceled. You were not charged and your access is unchanged.",
+  "billingPlayOwnedNotFound": "Google Play shows that this Play account already owns Lifetime, but the purchase was not found. Use Restore.",
+  "billingPlayCouldNotStart": "Google Play could not start the payment. Your access is unchanged; please try again.",
+  "billingPaymentAwaitingApproval": "Payment is waiting for approval. Access turns on once it is verified.",
+  "billingPaymentCanceledNoAccess": "Payment canceled. No new access was activated.",
+  "billingPaymentFailed": "Payment failed. Try again, or Restore if you already bought it.",
+  "billingVerifying": "Verifying purchase…",
+  "billingPaymentStillPending": "Payment is still pending in the store.",
+  "billingLifetimeActivated": "Lifetime Access is now active.",
+  "billingPurchaseRevoked": "The purchase was revoked or refunded by the store.",
+  "billingPurchaseOtherAccount": "This purchase belongs to another app account. Sign in to the buyer account, then Restore.",
+  "billingVerificationUnfinished": "Verification is not finished. Do not buy again; try verification or Restore.",
+  "billingOwnedElsewhereNamed": "Lifetime on this Google Play account is already used by {owner}. Sign in with that account, or switch accounts in the Play Store to buy again.",
+  "@billingOwnedElsewhereNamed": {
+    "description": "Shown when the Play account owns Lifetime for another app account; owner is a masked email",
+    "placeholders": {
+      "owner": {
+        "type": "String"
+      }
+    }
+  },
+  "billingOwnedElsewhereUnnamed": "Lifetime on this Google Play account is already used by another app account. Sign in with that account, or switch accounts in the Play Store to buy again.",
+  "billingNoteSameAccount": "Access works with the same app account on Android and iOS",
+  "billingNoteOneTime": "One-time purchase: pay once, learn forever. No subscription or auto-renewal.",
+  "billingNotePrice": "The final price follows the store and your account region",
+  "billingNoteFreeContent": "Free lessons stay free. Quizzes inside a lesson follow that lesson's access.",
+  "billingBenefitNoAdsTitle": "Ad-free learning",
+  "billingBenefitNoAdsBody": "No ads in lessons",
+  "billingBenefitAiTitle": "Ask AI 15 messages/day",
+  "billingBenefitAiBody": "Add more with an optional ad",
+  "billingBenefitOfflineTitle": "Download offline",
+  "billingBenefitOfflineBody": "Learn without internet",
+  "appUpdateStoreOpenFailed": "The store could not be opened. Try again or contact rabih@codeverta.com.",
+  "appUpdateCheckFailed": "Could not check for the latest version. Check your connection and try again.",
+  "appUpdateCheckAgain": "Check again",
+  "@appUpdateCheckAgain": {
+    "description": "Button in the app update dialog that re-checks the latest version."
+  },
+  "appUpdateRequirementAndroid": "Android {version} or later",
+  "@appUpdateRequirementAndroid": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "appUpdateRequirementIos": "iOS {version} or later",
+  "@appUpdateRequirementIos": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "appUpdateUnsupportedVersion": "This app version is no longer supported. Update through {store} to continue.",
+  "@appUpdateUnsupportedVersion": {
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "appUpdateRequirementNotMet": "The required app version needs {requirement}. Your device is running {platform} {osVersion}.",
+  "@appUpdateRequirementNotMet": {
+    "placeholders": {
+      "requirement": {
+        "type": "String"
+      },
+      "platform": {
+        "type": "String"
+      },
+      "osVersion": {
+        "type": "String"
+      }
+    }
+  },
+  "appUpdateVersions": "Installed version: {installed}\nLatest version: {latest}",
+  "@appUpdateVersions": {
+    "placeholders": {
+      "installed": {
+        "type": "String"
+      },
+      "latest": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsChannelDescription": "App news and study information you turned on.",
+  "@notificationsChannelDescription": {
+    "description": "Android notification channel description."
+  },
+  "notificationsPushAndroidOnly": "Push notifications are available on Android. iPhone and iPad support is coming soon.",
+  "notificationsConnectFailed": "Notifications could not be connected. You can still use the app. Close and reopen it to try again.",
+  "notificationsSubscribeRetry": "We will retry the subscription when the app is active again.",
+  "notificationsPermissionOff": "Android notification permission is off. Open Android settings to allow it.",
+  "notificationsWaitingToSubscribe": "Waiting for a connection to turn on the subscription. We will retry when the app is active again.",
+  "notificationsWaitingToUnsubscribe": "Waiting for a connection to turn off the subscription. You can also turn off notification permission in Android settings.",
+  "notificationsPermissionDenied": "Permission was not granted. Turn it on in Android settings if you want to receive announcements.",
+  "notificationsUpdateFailed": "Settings could not be updated. Please try again.",
+  "notificationsOpenSettingsHint": "Open Android Settings → Apps → Bahasa Master → Notifications.",
+  "authSessionExpired": "Your session has expired. Sign in again or continue as a guest.",
+  "networkAccountChanged": "The account has changed.",
+  "authGoogleCanceled": "Google sign-in was canceled.",
+  "authGoogleFailed": "Google sign-in failed. Check the OAuth configuration.",
+  "authSignInToChangePhoto": "Sign in to change your profile photo.",
+  "authInvalidResponse": "Invalid authentication response.",
+  "authServerUnreachable": "Could not connect to the server. Make sure the backend is running.",
+  "authGoogleClientIdMissing": "GOOGLE_SERVER_CLIENT_ID is not configured.",
+  "authGoogleUnsupported": "Interactive Google sign-in is not supported on this platform.",
+  "authGoogleNoIdToken": "Google did not return an ID token.",
+  "xpAwarded": "+{amount} XP",
+  "@xpAwarded": {
+    "description": "XP earned for a finished activity.",
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "xpStreakDays": "{count, plural, =1{1 day streak} other{{count} day streak}}",
+  "@xpStreakDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "xpBoostClaimed": "2× XP received (+{bonus} XP)",
+  "@xpBoostClaimed": {
+    "placeholders": {
+      "bonus": {
+        "type": "int"
+      }
+    }
+  },
+  "xpWatchAd": "Watch an ad for 2× XP (+{bonus} XP)",
+  "@xpWatchAd": {
+    "placeholders": {
+      "bonus": {
+        "type": "int"
+      }
+    }
+  },
+  "legalPrivacyPolicy": "Privacy Policy",
+  "legalTermsOfService": "Terms of Use",
+  "legalRefundPolicy": "Refunds",
+  "legalDataDeletion": "Data Deletion",
+  "legalSupport": "Help",
+  "brandingOpening": "{appName}, opening the app",
+  "@brandingOpening": {
+    "description": "Screen reader label of the startup splash screen.",
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+  "brandingTagline": "One step closer to fluent Indonesian",
+  "@brandingTagline": {
+    "description": "Tagline shown under the app name on the startup splash screen."
+  },
+  "appPageNotFound": "Page not found: {error}",
+  "@appPageNotFound": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "unlockFreeUnlocksLeft": "Free unlocks left today: {count}",
+  "@unlockFreeUnlocksLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "unlockWithoutAd": "Unlock without an ad ({count})",
+  "@unlockWithoutAd": {
+    "description": "Button; the number is how many ad-free unlocks remain.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsUseDeviceTimeZone": "Use device time zone ({timezone})",
+  "@settingsUseDeviceTimeZone": {
+    "placeholders": {
+      "timezone": {
+        "type": "String"
+      }
+    }
+  },
+  "learnLevelLabel": "BIPA {level}",
+  "@learnLevelLabel": {
+    "description": "Label of a course level (1 = beginner)",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "readingCourseTitle": "Reading {level}",
+  "@readingCourseTitle": {
+    "description": "App bar title of the reading course; level is a level label like BIPA 1",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "readingFilterAll": "All",
+  "@readingFilterAll": {
+    "description": "Filter chip that shows stories of every chapter"
+  },
+  "readingCourseSummary": "{lessons, plural, =1{1 lesson} other{{lessons} lessons}} • {scenes, plural, =1{1 illustrated scene} other{{scenes} illustrated scenes}} • {questions, plural, =1{1 question} other{{questions} questions}}",
+  "@readingCourseSummary": {
+    "description": "Summary line of the reading course header",
+    "placeholders": {
+      "lessons": {
+        "type": "int"
+      },
+      "scenes": {
+        "type": "int"
+      },
+      "questions": {
+        "type": "int"
+      }
+    }
+  },
+  "readingProgressSummary": "{done}/{total} stories complete • {percent}%",
+  "@readingProgressSummary": {
+    "description": "Progress of the reading course",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "readingIllustrationDescription": "Illustration for {title}",
+  "@readingIllustrationDescription": {
+    "description": "Screen reader label of a story picture",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "readingLessonDetails": "{minutes, plural, =1{1 min} other{{minutes} min}} • {scenes, plural, =1{1 scene} other{{scenes} scenes}} • Best {score}%",
+  "@readingLessonDetails": {
+    "description": "Details line of a story in the list",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "scenes": {
+        "type": "int"
+      },
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "readingResultCorrectCount": "{correct}/{total} correct answers",
+  "@readingResultCorrectCount": {
+    "placeholders": {
+      "correct": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "readingResultBestScore": "Best score {score}%",
+  "@readingResultBestScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "readingResultCourseProgress": "Course progress {percent}%",
+  "@readingResultCourseProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "readingInvalidResponse": "The reading response was invalid. Try reloading.",
+  "readingSessionExpired": "Your session has expired. Please sign in again.",
+  "readingLoadFailed": "Reading material could not be loaded. Check your connection and try again.",
+  "readingEmptyLesson": "This story has no material yet.",
+  "readingQuizUnavailable": "The quiz for this story is not available yet.",
+  "grammarCourseTitle": "Grammar {level}",
+  "@grammarCourseTitle": {
+    "description": "App bar title of the grammar course; level is a level label like BIPA 1",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "grammarFilterAll": "All",
+  "@grammarFilterAll": {
+    "description": "Filter chip that shows lessons of every chapter"
+  },
+  "grammarCourseSummary": "{lessons, plural, =1{1 lesson} other{{lessons} lessons}} • {patterns, plural, =1{1 pattern} other{{patterns} patterns}} • {questions, plural, =1{1 question} other{{questions} questions}}",
+  "@grammarCourseSummary": {
+    "description": "Summary line of the grammar course header",
+    "placeholders": {
+      "lessons": {
+        "type": "int"
+      },
+      "patterns": {
+        "type": "int"
+      },
+      "questions": {
+        "type": "int"
+      }
+    }
+  },
+  "grammarProgressSummary": "{done}/{total} lessons complete • {percent}%",
+  "@grammarProgressSummary": {
+    "description": "Progress of the grammar course",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "grammarLessonDetails": "{patterns, plural, =1{1 pattern} other{{patterns} patterns}} • {questions, plural, =1{1 question} other{{questions} questions}} • Best {score}%",
+  "@grammarLessonDetails": {
+    "description": "Details line of a grammar lesson in the list",
+    "placeholders": {
+      "patterns": {
+        "type": "int"
+      },
+      "questions": {
+        "type": "int"
+      },
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "grammarPointCounter": "{level} • {chapter} • Pattern {current}/{total}",
+  "@grammarPointCounter": {
+    "description": "Line above a grammar pattern; level is a level label like BIPA 1",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      },
+      "chapter": {
+        "type": "String"
+      },
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "grammarResultCorrectCount": "{correct}/{total} correct answers",
+  "@grammarResultCorrectCount": {
+    "placeholders": {
+      "correct": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "grammarResultBestScore": "Best score {score}%",
+  "@grammarResultBestScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "grammarResultCourseProgress": "Course progress {percent}%",
+  "@grammarResultCourseProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "grammarInvalidResponse": "The grammar response was invalid. Try reloading.",
+  "grammarSessionExpired": "Your session has expired. Please sign in again.",
+  "grammarLoadFailed": "Grammar material could not be loaded. Check your connection and try again.",
+  "grammarEmptyLesson": "This lesson has no material yet.",
+  "grammarQuizUnavailable": "The quiz for this lesson is not available yet.",
+  "levelListPatternCount": "{count, plural, =1{1 grammar pattern} other{{count} grammar patterns}} • {level}",
+  "@levelListPatternCount": {
+    "description": "Count above the grammar pattern list; level is a level label like BIPA 1",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "levelListItemLesson": "Lesson {number} · {title}",
+  "@levelListItemLesson": {
+    "description": "Which lesson a pattern belongs to",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "levelListOpenLessonNumber": "Open lesson {number}",
+  "@levelListOpenLessonNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "levelListFormation": "Formation",
+  "@levelListFormation": {
+    "description": "Section title: how the pattern is formed"
+  },
+  "levelListExplanation": "Explanation",
+  "levelListCommonMistake": "Common mistake",
+  "levelListExamples": "Examples",
+  "readingSceneCounter": "{chapter} • Scene {current}/{total}",
+  "@readingSceneCounter": {
+    "placeholders": {
+      "chapter": {
+        "type": "String"
+      },
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "readingQuestionCounter": "Question {current}/{total}",
+  "@readingQuestionCounter": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "grammarQuestionCounter": "Question {current}/{total}",
+  "@grammarQuestionCounter": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "homeBannerLearnTitle": "Learn Indonesian, every day",
+  "homeBannerLearnDescription": "Vocabulary, grammar and reading to help you reach your Indonesian goals.",
+  "homeBannerLearnButton": "Start learning",
+  "homeBannerAnkiTitle": "Remember more with Anki",
+  "homeBannerAnkiDescription": "Pick your favorite decks and build a habit of reviewing vocabulary.",
+  "homeBannerAnkiButton": "Explore decks",
+  "homeBannerOfferDescription": "Your app store shows the local price at checkout.",
+  "homeBannerOfferButton": "View plans",
+  "homeBannerEyebrowPremium": "BAHASA MASTER PREMIUM",
+  "@homeBannerEyebrowPremium": {
+    "description": "Small uppercase label above the premium banner title"
+  },
+  "homeBannerEyebrowAnki": "REVIEW A LITTLE, REMEMBER MORE",
+  "@homeBannerEyebrowAnki": {
+    "description": "Small uppercase label above the Anki banner title"
+  },
+  "homeBannerEyebrowLearn": "LEARN INDONESIAN",
+  "@homeBannerEyebrowLearn": {
+    "description": "Small uppercase label above the learn banner title"
+  },
+  "homeInvalidData": "The home data format is invalid.",
+  "homeNotSavedOffline": "Home is not saved on this device yet. Connect to the internet to set it up.",
+  "homeNotificationPermissionDenied": "Permission was not granted. You can turn notifications on later in Android settings.",
+  "homeNotificationEnableFailed": "Notifications could not be turned on right now. Try again later in Settings.",
+  "homeBannerSemantics": "Banner {index} of {total}: {title}",
+  "@homeBannerSemantics": {
+    "description": "Accessibility label for a banner page indicator",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "homeQuickMenuPremiumLabel": "{label} · Premium",
+  "@homeQuickMenuPremiumLabel": {
+    "description": "Accessibility label of a premium quick menu item",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "homeGreeting": "Good morning",
+  "@homeGreeting": {
+    "description": "Small greeting above the user's name on the home screen"
+  },
+  "learnSubjectVocabularyTitle": "Vocabulary",
+  "@learnSubjectVocabularyTitle": {
+    "description": "Subject tile title in the learn hub"
+  },
+  "learnSubjectVocabularySubtitle": "Words, examples, quizzes & progress",
+  "learnSubjectGrammarTitle": "Grammar",
+  "@learnSubjectGrammarTitle": {
+    "description": "Subject tile title in the learn hub"
+  },
+  "learnSubjectGrammarSubtitle": "Patterns, example sentences, quizzes & progress",
+  "learnSubjectReadingTitle": "Reading",
+  "@learnSubjectReadingTitle": {
+    "description": "Subject tile title in the learn hub"
+  },
+  "learnSubjectReadingSubtitle": "Illustrated stories, vocabulary & quizzes",
+  "learnMaterialsForLevel": "Materials for {level}",
+  "@learnMaterialsForLevel": {
+    "description": "Heading above the subject tiles; level is a level label like BIPA 1",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "learnVocabularyForLevel": "Vocabulary {level}",
+  "@learnVocabularyForLevel": {
+    "description": "Title of the vocabulary callout card; level is a level label like BIPA 1",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "learnOpenLevelLessons": "Open {level} lessons",
+  "@learnOpenLevelLessons": {
+    "description": "Title of the locked level card; level is a level label like BIPA 4",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "vocabCourseTitle": "Vocabulary",
+  "@vocabCourseTitle": {
+    "description": "App bar title of the vocabulary course"
+  },
+  "vocabLevelEyebrow": "VOCABULARY / {level}",
+  "@vocabLevelEyebrow": {
+    "description": "Small uppercase label on the vocabulary course header; level is an uppercase level label",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "vocabCourseSummary": "{lessons, plural, =1{1 lesson} other{{lessons} lessons}} • {entries, plural, =1{1 vocabulary entry} other{{entries} vocabulary entries}}",
+  "@vocabCourseSummary": {
+    "description": "Summary under the vocabulary course title",
+    "placeholders": {
+      "lessons": {
+        "type": "int"
+      },
+      "entries": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabSourceCredit": "Source: {name} • {license}",
+  "@vocabSourceCredit": {
+    "description": "Credit of the vocabulary data source",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "license": {
+        "type": "String"
+      }
+    }
+  },
+  "vocabLessonsMastered": "{done}/{total} lessons mastered",
+  "@vocabLessonsMastered": {
+    "description": "Progress label on the vocabulary course",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabPracticeProgress": "Practice progress {progress}% • pass a lesson with at least 80%",
+  "@vocabPracticeProgress": {
+    "description": "Progress hint on the vocabulary course",
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabExploreTopics": "Explore {level} topics",
+  "@vocabExploreTopics": {
+    "description": "Heading above the topic search; level is a level label",
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "vocabTopicIllustration": "Illustration for topic {title}",
+  "@vocabTopicIllustration": {
+    "description": "Accessibility label of a topic image",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "vocabIllustration": "Vocabulary illustration",
+  "@vocabIllustration": {
+    "description": "Accessibility label of a vocabulary image"
+  },
+  "vocabLessonNumber": "LESSON {number}",
+  "@vocabLessonNumber": {
+    "description": "Small uppercase label on a lesson card; number is zero-padded text",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "vocabLessonStats": "{words, plural, =1{1 word} other{{words} words}} • {questions, plural, =1{1 question} other{{questions} questions}}",
+  "@vocabLessonStats": {
+    "description": "Word and question counts of a lesson card",
+    "placeholders": {
+      "words": {
+        "type": "int"
+      },
+      "questions": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabMasteredScore": "Mastered • {score}%",
+  "@vocabMasteredScore": {
+    "description": "Status of a mastered lesson card",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabBestScoreShort": "Best {score}%",
+  "@vocabBestScoreShort": {
+    "description": "Status of a lesson card with a best score",
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabQuestionKindMeaning": "Word meaning",
+  "@vocabQuestionKindMeaning": {
+    "description": "Question type label shown when the server sends none"
+  },
+  "vocabQuestionProgress": "Question {current} of {total}",
+  "@vocabQuestionProgress": {
+    "description": "Position in the vocabulary quiz",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabCorrectCount": "{correct} of {total} correct answers",
+  "@vocabCorrectCount": {
+    "description": "Quiz result summary",
+    "placeholders": {
+      "correct": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabScoreSummary": "Best score: {best}% • Overall progress: {progress}%",
+  "@vocabScoreSummary": {
+    "description": "Quiz result summary line",
+    "placeholders": {
+      "best": {
+        "type": "int"
+      },
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabWordCounter": "WORD {current} / {total}",
+  "@vocabWordCounter": {
+    "description": "Position in the vocabulary study view",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabExampleNumber": "EXAMPLE {number}",
+  "@vocabExampleNumber": {
+    "description": "Label above an example sentence",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "vocabLoadFailed": "Vocabulary material could not be loaded. Check your connection.",
+  "vocabInvalidResponse": "The vocabulary response from the server is invalid.",
+  "vocabLessonEmpty": "This lesson has no vocabulary yet.",
+  "learnCategoryVocabulary": "Vocabulary",
+  "@learnCategoryVocabulary": {
+    "description": "Kind of learning activity"
+  },
+  "learnCategoryGrammar": "Grammar",
+  "@learnCategoryGrammar": {
+    "description": "Kind of learning activity"
+  },
+  "learnCategoryReading": "Reading",
+  "@learnCategoryReading": {
+    "description": "Kind of learning activity"
+  },
+  "learnActivityCategoryLevel": "{category} · {level}",
+  "@learnActivityCategoryLevel": {
+    "description": "Kind and level of a recent learning activity",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "learnActivityWordPosition": "Word {position} of {total}",
+  "@learnActivityWordPosition": {
+    "description": "Progress inside a vocabulary lesson",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "learnActivityPatternPosition": "Pattern {position} of {total}",
+  "@learnActivityPatternPosition": {
+    "description": "Progress inside a grammar lesson",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "learnActivityPagePosition": "Page {position} of {total}",
+  "@learnActivityPagePosition": {
+    "description": "Progress inside a reading lesson",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "learnActivityDetail": "{status} · {date}",
+  "@learnActivityDetail": {
+    "description": "Status and date line of a recent learning activity",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "learnOfflineQuizNotPrepared": "This quiz is not ready for offline use. Connect to the internet and open it while online to save it.",
+  "learnOfflineSignInRequired": "Sign in to save practice.",
+  "learnOfflineTooManyUnsynced": "There is too much practice waiting to sync.",
+  "learnOfflinePackageInvalid": "The offline quiz package is invalid.",
+  "learnOfflineAccountUnavailable": "Account unavailable.",
+  "learnOfflineNoLongerAccepting": "This practice no longer accepts answers.",
+  "learnOfflineAnswerAlreadySaved": "The answer for this question is already saved.",
+  "learnOfflinePracticeNotFound": "Practice not found.",
+  "learnOfflineAnswerAll": "Answer all questions before finishing the practice.",
+  "learnOfflineServerResultInvalid": "The practice result from the server is invalid.",
+  "learnOfflineAccountChanged": "The account changed.",
+  "learnOfflineAccessGone": "Offline access to this practice is no longer available.",
+  "learnOfflineQueueTooLarge": "The practice queue is too large. Connect to the internet to sync pending practice.",
+  "learnOfflineAccountChangedDuring": "The account changed during the practice.",
+  "learnOfflineResponseInvalid": "The offline practice response is invalid.",
+  "profileStatsLevel": "Level {level} · {levelXp}/{nextLevelXp} XP",
+  "@profileStatsLevel": {
+    "description": "Player level and XP progress toward the next level",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "levelXp": {
+        "type": "int"
+      },
+      "nextLevelXp": {
+        "type": "int"
+      }
+    }
+  },
+  "profileStatsCompleted": "{lessons, plural, =1{1 lesson passed} other{{lessons} lessons passed}} · {exams, plural, =1{1 exam type taken} other{{exams} exam types taken}}",
+  "@profileStatsCompleted": {
+    "description": "Profile statistics: passed lessons and exam types taken",
+    "placeholders": {
+      "lessons": {
+        "type": "int"
+      },
+      "exams": {
+        "type": "int"
+      }
+    }
+  },
+  "profileStatsStreak": "Best streak: {best, plural, =1{1 day} other{{best} days}} · {active, plural, =1{1 active day} other{{active} active days}}",
+  "@profileStatsStreak": {
+    "description": "Profile statistics: best streak and number of active days",
+    "placeholders": {
+      "best": {
+        "type": "int"
+      },
+      "active": {
+        "type": "int"
+      }
+    }
+  },
+  "profileAchievementUnlocked": "{progress}/{target} · Unlocked",
+  "@profileAchievementUnlocked": {
+    "description": "Achievement progress for an unlocked achievement",
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "profileAchievementLocked": "{progress}/{target} · Locked",
+  "@profileAchievementLocked": {
+    "description": "Achievement progress for a locked achievement",
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "profileAchievementEarned": "Earned {date}",
+  "@profileAchievementEarned": {
+    "description": "Date an achievement was earned",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "profileAchievementsUnlockedCount": "{unlocked}/{total} achievements unlocked",
+  "@profileAchievementsUnlockedCount": {
+    "placeholders": {
+      "unlocked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "profileFilterAll": "All",
+  "@profileFilterAll": {
+    "description": "Achievements filter chip"
+  },
+  "profileFilterUnlocked": "Unlocked",
+  "@profileFilterUnlocked": {
+    "description": "Achievements filter chip"
+  },
+  "profileFilterLocked": "Locked",
+  "@profileFilterLocked": {
+    "description": "Achievements filter chip"
+  },
+  "profileViewAllAchievements": "View all achievements ({unlocked}/{total})",
+  "@profileViewAllAchievements": {
+    "placeholders": {
+      "unlocked": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "profilePhotoUnprocessable": "The photo could not be processed. Choose another photo.",
+  "profilePhotoTooLarge": "The photo is still too large. Choose another photo.",
+  "profilePhotoUpdated": "Profile photo updated.",
+  "profilePhotoFailed": "The photo could not be processed or uploaded. Check your connection and try again.",
+  "profileDefaultName": "Bahasa Learner",
+  "@profileDefaultName": {
+    "description": "Fallback display name when the user has none"
+  },
+  "profilePlanLifetime": "LIFETIME MEMBER",
+  "@profilePlanLifetime": {
+    "description": "Plan badge, uppercase"
+  },
+  "profilePlanFree": "FREE MEMBER",
+  "@profilePlanFree": {
+    "description": "Plan badge, uppercase"
+  },
+  "profileSignInToViewProgress": "Please sign in to view your progress.",
+  "leaderboardTitle": "Leaderboard",
+  "@leaderboardTitle": {
+    "description": "Leaderboard screen title and profile list item"
+  },
+  "leaderboardLearnerName": "Learner #{tag}",
+  "@leaderboardLearnerName": {
+    "description": "Fallback name for a person without a display name",
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "leaderboardRankOf": "#{rank} of {participants}",
+  "@leaderboardRankOf": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "participants": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardXpValue": "{xp} XP",
+  "@leaderboardXpValue": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardEndsInDaysHours": "Ends in {days, plural, =1{1 day} other{{days} days}} {hours, plural, =1{1 hour} other{{hours} hours}}",
+  "@leaderboardEndsInDaysHours": {
+    "description": "Weekly competition countdown",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardEndsInHoursMinutes": "Ends in {hours, plural, =1{1 hour} other{{hours} hours}} {minutes, plural, =1{1 minute} other{{minutes} minutes}}",
+  "@leaderboardEndsInHoursMinutes": {
+    "description": "Weekly competition countdown",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardEndsInMinutes": "Ends in {minutes, plural, =1{1 minute} other{{minutes} minutes}}",
+  "@leaderboardEndsInMinutes": {
+    "description": "Weekly competition countdown",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardLastUpdated": "Last updated {time}",
+  "@leaderboardLastUpdated": {
+    "description": "Shown when the cached leaderboard is displayed; time is HH:mm",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "leaderboardHomeLead": "#1 this week · You're in the lead!",
+  "leaderboardHomeRank": "#{rank} this week · {gap} XP more to reach #{next}",
+  "@leaderboardHomeRank": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "gap": {
+        "type": "int"
+      },
+      "next": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardHiddenRank": "Your position if shown: #{rank}",
+  "@leaderboardHiddenRank": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardLastWeek": "Last week you finished #{rank} · {xp} XP. A new week has started!",
+  "@leaderboardLastWeek": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "leaderboardShowingTop": "Showing the top {shown} of {total} learners",
+  "@leaderboardShowingTop": {
+    "placeholders": {
+      "shown": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingBrandName": "Bahasa\nMaster",
+  "@onboardingBrandName": {
+    "description": "App name split over two lines in the onboarding header"
+  },
+  "onboardingJourneyEyebrow": "A NEW JOURNEY",
+  "@onboardingJourneyEyebrow": {
+    "description": "Onboarding page 1 eyebrow, uppercase"
+  },
+  "onboardingJourneyTitle": "Master Bahasa Indonesia",
+  "onboardingJourneyDescription": "From your first words to more confident conversations. Find your learning rhythm, from BIPA 1 to BIPA 7.",
+  "onboardingJourneyFeatureLevels": "BIPA 1 → BIPA 7",
+  "@onboardingJourneyFeatureLevels": {
+    "description": "Feature chip: level range"
+  },
+  "onboardingJourneyFeatureVocabulary": "Vocabulary",
+  "@onboardingJourneyFeatureVocabulary": {
+    "description": "Feature chip"
+  },
+  "onboardingJourneyFeatureGrammar": "Grammar & reading",
+  "@onboardingJourneyFeatureGrammar": {
+    "description": "Feature chip"
+  },
+  "onboardingJourneyImageLabel": "Illustration of a study book and a path leading toward a distant mountain",
+  "@onboardingJourneyImageLabel": {
+    "description": "Screen reader description of the onboarding image"
+  },
+  "onboardingPathEyebrow": "A CLEAR PATH",
+  "@onboardingPathEyebrow": {
+    "description": "Onboarding page 2 eyebrow, uppercase"
+  },
+  "onboardingPathTitle": "Ready for\nthe next test.",
+  "onboardingPathDescription": "Understand the material, try the practice questions, then measure your progress with mock tests.",
+  "onboardingPathFeaturePractice": "Practice",
+  "@onboardingPathFeaturePractice": {
+    "description": "Feature chip"
+  },
+  "onboardingPathFeatureQuizzes": "Quizzes",
+  "@onboardingPathFeatureQuizzes": {
+    "description": "Feature chip"
+  },
+  "onboardingPathFeatureMockTests": "Mock tests",
+  "@onboardingPathFeatureMockTests": {
+    "description": "Feature chip"
+  },
+  "onboardingPathImageLabel": "Illustration of a study desk, an exam sheet and an achievement medal",
+  "@onboardingPathImageLabel": {
+    "description": "Screen reader description of the onboarding image"
+  },
+  "onboardingAnywhereEyebrow": "A LITTLE, EVERY DAY",
+  "@onboardingAnywhereEyebrow": {
+    "description": "Onboarding page 3 eyebrow, uppercase"
+  },
+  "onboardingAnywhereTitle": "Your learning\ngoes with you.",
+  "onboardingAnywhereDescription": "Reopen saved lessons, even when you are offline. Keep going, one step at a time, every day.",
+  "onboardingAnywhereFeatureSaved": "Saved lessons",
+  "@onboardingAnywhereFeatureSaved": {
+    "description": "Feature chip"
+  },
+  "onboardingAnywhereFeatureProgress": "Learning progress",
+  "@onboardingAnywhereFeatureProgress": {
+    "description": "Feature chip"
+  },
+  "onboardingAnywhereImageLabel": "Illustration of a book and study cards on a train journey",
+  "@onboardingAnywhereImageLabel": {
+    "description": "Screen reader description of the onboarding image"
+  },
+  "onboardingPageCounter": "0{page} / 0{total}  ·  {eyebrow}",
+  "@onboardingPageCounter": {
+    "description": "Page counter with the page eyebrow, e.g. 01 / 03  ·  A NEW JOURNEY",
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "eyebrow": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingPageLabel": "Page {page} of {total}",
+  "@onboardingPageLabel": {
+    "description": "Screen reader label for a page dot",
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingNext": "Next",
+  "onboardingStart": "Start learning",
+  "onboardingBackToApp": "Back to the app",
+  "onboardingNotificationOn": "Notifications are on. Thank you!",
+  "onboardingNotificationDenied": "Permission was not granted. You can turn notifications on later in your device settings.",
+  "onboardingNotificationFailed": "Notifications could not be turned on right now. Try again later in Settings.",
+  "onboardingNotificationAnnouncements": "Announcements",
+  "@onboardingNotificationAnnouncements": {
+    "description": "Feature chip"
+  },
+  "onboardingNotificationNewLessons": "New lessons",
+  "@onboardingNotificationNewLessons": {
+    "description": "Feature chip"
+  },
+  "onboardingNotificationImportant": "Important info",
+  "@onboardingNotificationImportant": {
+    "description": "Feature chip"
+  },
+  "aiChatChipSummary": "Summarize",
+  "@aiChatChipSummary": {
+    "description": "Quick action chip"
+  },
+  "aiChatChipExplain": "Explain the grammar",
+  "@aiChatChipExplain": {
+    "description": "Quick action chip"
+  },
+  "aiChatChipExamples": "Give example sentences",
+  "@aiChatChipExamples": {
+    "description": "Quick action chip"
+  },
+  "aiChatChipQuiz": "Quiz me (5 questions)",
+  "@aiChatChipQuiz": {
+    "description": "Quick action chip"
+  },
+  "aiChatChipCorrect": "Correct my sentence",
+  "@aiChatChipCorrect": {
+    "description": "Quick action chip"
+  },
+  "aiChatGenericError": "Ask AI is having trouble. Please try again in a moment.",
+  "aiChatAdUnavailable": "The ad is not available. Please try again in a moment.",
+  "aiChatCorrectionHint": "Write the Indonesian sentence you want corrected",
+  "@aiChatCorrectionHint": {
+    "description": "Input hint in correction mode"
+  },
+  "aiChatQuestionHint": "Write your question…",
+  "@aiChatQuestionHint": {
+    "description": "Input hint"
+  },
+  "aiChatWatchAdForMessages": "{count, plural, =1{Watch a short ad to add 1 message. This question is sent right away.} other{Watch a short ad to add {count} messages. This question is sent right away.}}",
+  "@aiChatWatchAdForMessages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

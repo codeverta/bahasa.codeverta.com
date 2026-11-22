@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
@@ -150,7 +151,7 @@ class VocabularyLessonController
     final loaded = await AsyncValue.guard(() async {
       final lesson = await _repository.getLesson(_lessonId);
       if (lesson.words.isEmpty) {
-        throw const VocabularyException('Lesson ini belum memiliki kosakata.');
+        throw VocabularyException(appL10n().vocabLessonEmpty);
       }
       final savedPosition = mounted
           ? await history?.open(

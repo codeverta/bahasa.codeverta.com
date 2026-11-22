@@ -1,6 +1,7 @@
 import 'package:bahasa_master/core/gamification/double_xp_button.dart';
 import 'package:bahasa_master/core/gamification/xp_gain.dart';
 import 'package:bahasa_master/features/learn/grammar/domain/grammar_models.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,7 +21,7 @@ void main() {
     expect(XpGain.fromJson(null), isNull);
     expect(XpGain.fromJson('x'), isNull);
 
-    final result = GrammarResult.fromJson({
+    final result = GrammarResult.fromJson(const {
       'score': 90,
       'correctAnswers': 9,
       'totalQuestions': 10,
@@ -31,7 +32,7 @@ void main() {
     });
     expect(result.xp?.awarded, 50);
     expect(
-      GrammarResult.fromJson({
+      GrammarResult.fromJson(const {
         'score': 90,
         'correctAnswers': 9,
         'totalQuestions': 10,
@@ -47,6 +48,8 @@ void main() {
     ProviderScope(
       overrides: [xpBoostPlacementProvider.overrideWith((ref) async => null)],
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(body: XpResultBadge(gain: gain)),
       ),
     ),

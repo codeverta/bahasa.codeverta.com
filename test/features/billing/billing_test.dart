@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:bahasa_master/features/billing/data/billing_repository.dart';
 import 'package:bahasa_master/features/billing/presentation/billing_controller.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
@@ -36,10 +38,7 @@ void main() {
     ]) {
       expect(requiresPremium(Uri.parse(route)), isTrue);
     }
-    for (final route in [
-      '/learn/grammar?level=N4',
-      '/home',
-    ]) {
+    for (final route in ['/learn/grammar?level=N4', '/home']) {
       expect(requiresPremium(Uri.parse(route)), isFalse);
     }
   });
@@ -109,7 +108,10 @@ void main() {
     final paid = purchase(PurchaseStatus.restored)
       ..pendingCompletePurchase = true;
     await controller.handle([paid]);
-    expect(controller.state.message, contains('akun aplikasi lain'));
+    expect(
+      controller.state.message,
+      contains(appL10n(const Locale('en')).billingPurchaseOtherAccount),
+    );
     expect(controller.state.premium, isFalse);
     expect(gateway.finishes, 0);
   });
@@ -152,7 +154,10 @@ void main() {
       await controller.buy();
       expect(gateway.buys, 1);
       expect(controller.state.premium, isTrue);
-      expect(controller.state.message, 'Lifetime Access berhasil diaktifkan.');
+      expect(
+        controller.state.message,
+        appL10n(const Locale('en')).billingLifetimeActivated,
+      );
       expect(gateway.finishes, 1);
     },
   );
@@ -161,7 +166,7 @@ void main() {
     await controller.buy();
     expect(controller.state.busy, isFalse);
     expect(controller.state.premium, isFalse);
-    expect(controller.state.message, contains('tidak melanjutkan pembayaran'));
+    expect(controller.state.message, contains('did not continue the payment'));
   });
   test('the itemAlreadyOwned stream error also restores', () async {
     gateway.owned = [
@@ -208,7 +213,7 @@ void main() {
     await controller.restore();
     expect(controller.state.busy, isFalse);
     expect(controller.state.premium, isFalse);
-    expect(controller.state.message, contains('Belum ada pembelian'));
+    expect(controller.state.message, contains('No purchase was restored'));
   });
   test('transaction delivered before login is verified after login', () async {
     await controller.setUser(null);

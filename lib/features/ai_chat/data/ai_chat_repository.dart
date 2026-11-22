@@ -1,24 +1,32 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Quick actions offered above the input. Wire names match the backend.
 enum AiChip {
-  summary('summary', 'Ringkas'),
-  explain('explain', 'Jelaskan grammar'),
-  examples('examples', 'Beri contoh kalimat'),
-  quiz('quiz', 'Kuis aku (5 soal)'),
-  correct('correct', 'Koreksi kalimatku');
+  summary('summary'),
+  explain('explain'),
+  examples('examples'),
+  quiz('quiz'),
+  correct('correct');
 
-  const AiChip(this.wire, this.label);
+  const AiChip(this.wire);
 
   final String wire;
 
-  /// Indonesian source label; localized with `.localized(context)`.
-  final String label;
+  /// Localized chip label, resolved with the current [AppLocalizations].
+  String label(AppLocalizations l10n) => switch (this) {
+    summary => l10n.aiChatChipSummary,
+    explain => l10n.aiChatChipExplain,
+    examples => l10n.aiChatChipExamples,
+    quiz => l10n.aiChatChipQuiz,
+    correct => l10n.aiChatChipCorrect,
+  };
 
   /// Correction needs the student's sentence; other chips send no text.
   bool get needsText => this == AiChip.correct;
@@ -31,7 +39,7 @@ enum AiChip {
   }
 }
 
-/// The lesson types that offer Tanya AI.
+/// The lesson types that offer Ask AI.
 enum AiLessonType { grammar, vocabulary, reading }
 
 class AiChatMessage {
@@ -98,8 +106,8 @@ class AiDone extends AiStreamEvent {
   final bool truncated;
 }
 
-const _genericError = 'Tanya AI sedang bermasalah. Coba lagi sebentar lagi.';
-const _networkError = 'Butuh koneksi internet';
+String get _genericError => appL10n().aiChatGenericError;
+String get _networkError => appL10n().aiChatInternetConnection;
 
 class AiChatRepository {
   AiChatRepository(this._dio);
@@ -137,7 +145,7 @@ class AiChatRepository {
     }
     final body = response.data;
     if (body == null) {
-      throw const AiChatException(AiChatException.upstream, _genericError);
+      throw AiChatException(AiChatException.upstream, _genericError);
     }
     var finished = false;
     try {
@@ -162,11 +170,11 @@ class AiChatRepository {
     } on AiChatException {
       rethrow;
     } on Object {
-      throw const AiChatException(AiChatException.network, _networkError);
+      throw AiChatException(AiChatException.network, _networkError);
     }
     if (!finished) {
       // The connection dropped mid-answer; the server released the quota.
-      throw const AiChatException(AiChatException.network, _networkError);
+      throw AiChatException(AiChatException.network, _networkError);
     }
   }
 
@@ -215,7 +223,7 @@ class AiChatRepository {
   static Future<AiChatException> _toException(DioException error) async {
     final response = error.response;
     if (response == null) {
-      return const AiChatException(AiChatException.network, _networkError);
+      return AiChatException(AiChatException.network, _networkError);
     }
     Object? data = response.data;
     if (data is ResponseBody) {
@@ -241,7 +249,7 @@ class AiChatRepository {
         );
       }
     }
-    return const AiChatException(AiChatException.upstream, _genericError);
+    return AiChatException(AiChatException.upstream, _genericError);
   }
 }
 

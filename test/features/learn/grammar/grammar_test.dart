@@ -16,6 +16,7 @@ import 'package:bahasa_master/features/learn/grammar/presentation/screens/gramma
 import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart'
     show QuizOption;
 import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,11 +71,15 @@ void main() {
           offlineProvider.overrideWithValue(true),
           grammarCourseProvider.overrideWith((ref) async => _course),
         ],
-        child: const MaterialApp(home: GrammarCourseScreen()),
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: GrammarCourseScreen(),
+        ),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('1/2 lesson selesai • 50%'), findsOneWidget);
+    expect(find.text('1/2 lessons complete • 50%'), findsOneWidget);
     await tester.scrollUntilVisible(
       find.byKey(const ValueKey('grammar-search-N5')),
       100,
@@ -114,8 +119,8 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       expect(find.text('わたし'), findsNothing);
-      await tester.scrollUntilVisible(find.text('Hindari kesalahan ini'), 200);
-      expect(find.text('Hindari kesalahan ini').hitTestable(), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('Avoid this mistake'), 200);
+      expect(find.text('Avoid this mistake').hitTestable(), findsOneWidget);
       expect(
         find.byKey(const Key('grammar-next-point')).hitTestable(),
         findsOneWidget,
@@ -134,14 +139,14 @@ void main() {
         await tester.tap(find.byKey(const Key('grammar-submit')));
         await tester.pumpAndSettle();
       }
-      expect(find.text('Lesson dikuasai!'), findsOneWidget);
+      expect(find.text('Lesson mastered!'), findsOneWidget);
       expect(find.text('100%'), findsOneWidget);
       expect(repository.completed, 1);
       expect(tester.takeException(), isNull);
       await tester.ensureVisible(find.byKey(const Key('grammar-retry')));
       await tester.tap(find.byKey(const Key('grammar-retry')));
       await tester.pumpAndSettle();
-      expect(find.text('Pertanyaan 1/5'), findsOneWidget);
+      expect(find.text('Question 1/5'), findsOneWidget);
       expect(repository.started, 2);
     },
   );
@@ -212,6 +217,8 @@ Widget _app(_Repository repository) => ProviderScope(
     ),
   ],
   child: MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     theme: ThemeData(
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),

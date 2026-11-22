@@ -1,9 +1,9 @@
 import 'package:bahasa_master/core/analytics/analytics_service.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/billing/presentation/billing_controller.dart';
 import 'package:bahasa_master/features/billing/presentation/lifetime_offer.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +15,7 @@ class PremiumScreen extends ConsumerStatefulWidget {
 
   /// Set when opened as the skippable offer after login or periodically
   /// (lib/features/billing/presentation/lifetime_offer.dart): adds a close
-  /// button and "Lanjut gratis".
+  /// button and "Continue for free".
   final LifetimeOfferSource? offer;
 
   /// Where the offer continues to when skipped after login.
@@ -35,7 +35,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
         (user?.isPremium ?? false);
   }
 
-  /// Leaves the offer: back to Beranda for the periodic one, otherwise on
+  /// Leaves the offer: back to Home for the periodic one, otherwise on
   /// to the page the login was for.
   void _leaveOffer({required bool skipped}) {
     final offer = widget.offer;
@@ -55,7 +55,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   void _gainedAccess() {
     if (widget.offer == null || _left || !_hasAccess) return;
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-      SnackBar(content: Text('Lifetime Access aktif.'.localized(context))),
+      SnackBar(content: Text(context.l10n.billingLifetimeAccess)),
     );
     _leaveOffer(skipped: false);
   }
@@ -88,22 +88,13 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
       );
     final auth = ref.watch(authControllerProvider);
     final billing = ref.watch(billingControllerProvider);
-    final english = AppLocalizations.of(context).locale.languageCode == 'en';
-    final publicPrice = english
-        ? null
-        : ref.watch(lifetimeDisplayPriceProvider).valueOrNull;
-    final displayPriceIdr = billing.priceIdr ?? publicPrice;
     final controller = ref.read(billingControllerProvider.notifier);
     final theme = Theme.of(context);
     final price =
         billing.product?.price ??
-        (english
-            ? (billing.busy
-                  ? 'Memeriksa harga store…'.localized(context)
-                  : 'Harga store belum tersedia'.localized(context))
-            : displayPriceIdr == null
-            ? 'Harga belum tersedia'.localized(context)
-            : _rupiah(displayPriceIdr));
+        (billing.busy
+            ? context.l10n.billingCheckingStore
+            : context.l10n.billingStorePrice);
 
     return PopScope(
       canPop: offer == null,
@@ -112,13 +103,13 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Lifetime Access'.localized(context)),
+          title: Text(context.l10n.commonLifetimeAccess),
           automaticallyImplyLeading: offer == null,
           leading: offer == null
               ? null
               : IconButton(
                   key: const Key('lifetime-offer-close'),
-                  tooltip: 'Lanjut gratis'.localized(context),
+                  tooltip: context.l10n.billingContinueFor,
                   icon: const Icon(Icons.close_rounded),
                   onPressed: () => _leaveOffer(skipped: true),
                 ),
@@ -135,16 +126,10 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                   const SizedBox(height: 16),
                   const _BenefitGrid(),
                   const SizedBox(height: 14),
-                  const _PriceNote(
-                    'Akses dengan akun aplikasi yang sama di Android dan iOS',
-                  ),
-                  const _PriceNote('Tidak ada perpanjangan otomatis'),
-                  const _PriceNote(
-                    'Harga akhir mengikuti store dan wilayah akun Anda',
-                  ),
-                  const _PriceNote(
-                    'Materi N5–N4 dan tes N5 tetap gratis. Kuis di dalam lesson mengikuti akses materi.',
-                  ),
+                  _PriceNote(context.l10n.billingNoteSameAccount),
+                  _PriceNote(context.l10n.billingNoteOneTime),
+                  _PriceNote(context.l10n.billingNotePrice),
+                  _PriceNote(context.l10n.billingNoteFreeContent),
                   const SizedBox(height: 6),
                   Theme(
                     data: theme.copyWith(dividerColor: Colors.transparent),
@@ -153,15 +138,14 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                       childrenPadding: EdgeInsets.zero,
                       expandedCrossAxisAlignment: CrossAxisAlignment.start,
                       title: Text(
-                        'Tentang pembelianmu'.localized(context),
+                        context.l10n.billingAboutYour,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                       children: [
                         Text(
-                          'Pembayaran yang dibatalkan atau tertunda tidak mengaktifkan akses. Refund atau pencabutan oleh store mengunci premium kembali. Menghapus akun tidak mengembalikan uang; pembelian dapat dipulihkan dengan akun store pembeli setelah masuk ke akun aplikasi baru.'
-                              .localized(context),
+                          context.l10n.billingCanceledOr,
                           style: theme.textTheme.bodySmall,
                         ),
                         const SizedBox(height: 4),
@@ -172,18 +156,14 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                                 context,
                                 'https://support.google.com/googleplay/answer/2479637',
                               ),
-                              child: Text(
-                                'Bantuan refund Google Play'.localized(context),
-                              ),
+                              child: Text(context.l10n.billingGooglePlay),
                             ),
                             TextButton(
                               onPressed: () => _help(
                                 context,
                                 'https://support.apple.com/118223',
                               ),
-                              child: Text(
-                                'Bantuan refund App Store'.localized(context),
-                              ),
+                              child: Text(context.l10n.billingAppStore),
                             ),
                           ],
                         ),
@@ -193,7 +173,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                 ],
               ),
             ),
-            // Harga dan tombol beli selalu terlihat, tanpa perlu menggulir.
+            // Price and buy button stay visible without scrolling.
             _CheckoutBar(
               price: price,
               message: billing.message,
@@ -205,7 +185,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                     style: FilledButton.styleFrom(
                       minimumSize: const Size.fromHeight(52),
                     ),
-                    child: Text('Masuk untuk melanjutkan'.localized(context)),
+                    child: Text(context.l10n.billingSignIn),
                   )
                 else ...[
                   if (billing.premium) ...[
@@ -225,7 +205,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                               : '/home',
                         );
                       },
-                      child: Text('Jelajahi akses saya'.localized(context)),
+                      child: Text(context.l10n.billingExploreMy),
                     ),
                     const SizedBox(height: 8),
                   ],
@@ -266,10 +246,10 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                         : const Icon(Icons.lock_open),
                     label: Text(
                       billing.premium
-                          ? 'Akses aktif'.localized(context)
+                          ? context.l10n.billingAccessActive
                           : billing.pending
-                          ? 'Menunggu pembayaran'.localized(context)
-                          : 'Buka Lifetime Access'.localized(context),
+                          ? context.l10n.billingPaymentPending
+                          : context.l10n.billingGetLifetime,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -280,7 +260,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                         child: TextButton(
                           onPressed: billing.busy ? null : controller.restore,
                           child: Text(
-                            'Restore pembelian'.localized(context),
+                            context.l10n.billingRestorePurchases,
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -290,7 +270,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                         child: TextButton(
                           onPressed: billing.busy ? null : controller.retry,
                           child: Text(
-                            'Coba verifikasi lagi'.localized(context),
+                            context.l10n.billingTryVerification,
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -301,7 +281,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                     TextButton(
                       key: const Key('lifetime-offer-skip'),
                       onPressed: () => _leaveOffer(skipped: true),
-                      child: Text('Lanjut gratis'.localized(context)),
+                      child: Text(context.l10n.billingContinueFor),
                     ),
                 ],
               ],
@@ -323,28 +303,14 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
       opened = false;
     }
     if (!opened && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Tautan bantuan tidak dapat dibuka.'.localized(context),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.billingCouldNot)));
     }
   }
 }
 
-String _rupiah(int value) {
-  final digits = value.toString();
-  final result = StringBuffer();
-  for (var index = 0; index < digits.length; index++) {
-    if (index > 0 && (digits.length - index) % 3 == 0) result.write('.');
-    result.write(digits[index]);
-  }
-  return 'Rp$result';
-}
-
-/// Panel bawah yang menempel: harga + tombol beli.
+/// Sticky bottom panel: price and buy button.
 class _CheckoutBar extends StatelessWidget {
   const _CheckoutBar({
     required this.price,
@@ -403,9 +369,7 @@ class _CheckoutBar extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Sekali bayar. Tanpa biaya bulanan.'.localized(
-                            context,
-                          ),
+                          context.l10n.billingOnePayment,
                           style: theme.textTheme.bodySmall,
                         ),
                       ],
@@ -450,7 +414,7 @@ class _CheckoutBar extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    message!.localized(context),
+                    message!,
                     key: const Key('billing-message'),
                     style: theme.textTheme.bodySmall,
                   ),
@@ -476,9 +440,8 @@ class _OwnedElsewhere extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final who = owner.isEmpty
-        ? 'Lifetime untuk akun Google Play ini sudah dipakai oleh akun aplikasi lain.'
-              .localized(context)
-        : '${'Lifetime untuk akun Google Play ini sudah dipakai oleh akun'.localized(context)} $owner.';
+        ? context.l10n.billingOwnedElsewhereUnnamed
+        : context.l10n.billingOwnedElsewhereNamed(owner);
     return Container(
       key: const Key('billing-owned-elsewhere'),
       padding: const EdgeInsets.all(12),
@@ -490,7 +453,7 @@ class _OwnedElsewhere extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '$who ${'Masuk dengan akun itu, atau ganti akun di Play Store untuk membeli lagi.'.localized(context)}',
+            who,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSecondaryContainer,
             ),
@@ -502,7 +465,7 @@ class _OwnedElsewhere extends StatelessWidget {
               key: const Key('billing-switch-account'),
               onPressed: onSwitch,
               icon: const Icon(Icons.switch_account_rounded),
-              label: Text('Masuk dengan akun lain'.localized(context)),
+              label: Text(context.l10n.billingSignInWithAnother),
             ),
           ),
         ],
@@ -535,9 +498,7 @@ class _LifetimeHero extends StatelessWidget {
               fit: BoxFit.cover,
               alignment: Alignment.centerRight,
               cacheWidth: 1200,
-              semanticLabel:
-                  'Perjalanan belajar bahasa dan meraih peluang di Jepang'
-                      .localized(context),
+              semanticLabel: context.l10n.billingLearnIndonesian,
               errorBuilder: (_, __, ___) => Align(
                 alignment: Alignment.centerRight,
                 child: Padding(
@@ -597,10 +558,8 @@ class _LifetimeHero extends StatelessWidget {
                           Flexible(
                             child: Text(
                               active
-                                  ? 'LIFETIME AKTIF'.localized(context)
-                                  : 'SEKALI BAYAR · AKSES SELAMANYA'.localized(
-                                      context,
-                                    ),
+                                  ? context.l10n.billingLifetimeActive
+                                  : context.l10n.billingOnePaymentLifetime,
                               style: TextStyle(
                                 color: sakura.onGold,
                                 fontWeight: FontWeight.w800,
@@ -619,9 +578,8 @@ class _LifetimeHero extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       active
-                          ? 'Lifetime Access aktif'.localized(context)
-                          : 'Buka lebih banyak.\nMelangkah lebih jauh.'
-                                .localized(context),
+                          ? context.l10n.billingLifetimeAccessIs
+                          : context.l10n.billingUnlockMore,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 21,
@@ -636,8 +594,7 @@ class _LifetimeHero extends StatelessWidget {
                     widthFactor: 0.72,
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Belajar, baca, latihan, dan temukan peluang dalam satu akses.'
-                          .localized(context),
+                      context.l10n.billingStudyRead,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -657,30 +614,30 @@ class _LifetimeHero extends StatelessWidget {
   }
 }
 
-/// Manfaat Lifetime Access dalam grid ringkas dua kolom.
+/// Lifetime Access benefits in a compact two-column grid.
 class _BenefitGrid extends StatelessWidget {
   const _BenefitGrid();
 
-  static const _items = [
-    (
-      Icons.block_rounded,
-      'Belajar tanpa iklan',
-      'Tanpa iklan di materi belajar',
-    ),
-    (
-      Icons.auto_awesome_rounded,
-      'Tanya AI 15 pesan/hari',
-      'Bisa ditambah dengan iklan opsional',
-    ),
-    (
-      Icons.download_for_offline_rounded,
-      'Unduh offline',
-      'Belajar tanpa internet',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final items = [
+      (
+        Icons.block_rounded,
+        l10n.billingBenefitNoAdsTitle,
+        l10n.billingBenefitNoAdsBody,
+      ),
+      (
+        Icons.auto_awesome_rounded,
+        l10n.billingBenefitAiTitle,
+        l10n.billingBenefitAiBody,
+      ),
+      (
+        Icons.download_for_offline_rounded,
+        l10n.billingBenefitOfflineTitle,
+        l10n.billingBenefitOfflineBody,
+      ),
+    ];
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = (constraints.maxWidth - 10) / 2;
@@ -688,7 +645,7 @@ class _BenefitGrid extends StatelessWidget {
           spacing: 10,
           runSpacing: 10,
           children: [
-            for (final (index, item) in _items.indexed)
+            for (final (index, item) in items.indexed)
               SizedBox(
                 width: width,
                 child: StaggeredEntrance(
@@ -742,13 +699,13 @@ class _BenefitTile extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            title.localized(context),
+            title,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w800,
             ),
           ),
           Text(
-            subtitle.localized(context),
+            subtitle,
             maxLines: 2,
             style: theme.textTheme.bodySmall?.copyWith(fontSize: 11.5),
           ),
@@ -775,7 +732,7 @@ class _PriceNote extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            text.localized(context),
+            text,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(height: 1.4),
           ),
         ),

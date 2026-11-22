@@ -1,11 +1,12 @@
 import 'package:bahasa_master/core/app_review/app_review_service.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/core/unlock/unlock_repository.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_label.dart';
 import 'package:bahasa_master/features/learn/reading/domain/reading_models.dart';
 import 'package:bahasa_master/features/learn/reading/presentation/controllers/reading_controller.dart';
 import 'package:bahasa_master/features/learn/reading/presentation/widgets/reading_illustration.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,7 +21,7 @@ class ReadingCourseScreen extends ConsumerStatefulWidget {
 
 class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
   String query = '';
-  String chapter = 'Semua';
+  String? chapter;
   Future<void> open(ReadingLessonSummary lesson) async {
     await context.push(AppRoutes.readingLessonPath(lesson.id));
     if (!mounted) return;
@@ -33,7 +34,11 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
     final provider = readingCourseProvider(widget.level);
     final course = ref.watch(provider);
     return Scaffold(
-      appBar: AppBar(title: Text('Reading JLPT ${widget.level}')),
+      appBar: AppBar(
+        title: Text(
+          context.l10n.readingCourseTitle(levelLabel(context, widget.level)),
+        ),
+      ),
       body: course.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, s) => Center(
@@ -44,14 +49,11 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
               children: [
                 const Icon(Icons.cloud_off_rounded, size: 48),
                 const SizedBox(height: 16),
-                Text(
-                  e.toString().localized(context),
-                  textAlign: TextAlign.center,
-                ),
+                Text(e.toString(), textAlign: TextAlign.center),
                 const SizedBox(height: 16),
                 FilledButton(
                   onPressed: () => ref.invalidate(provider),
-                  child: Text('Muat ulang'.localized(context)),
+                  child: Text(context.l10n.commonRefresh),
                 ),
               ],
             ),
@@ -59,14 +61,11 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
         ),
         data: (data) {
           final colors = Theme.of(context).colorScheme;
-          final chapters = [
-            'Semua',
-            ...data.lessons.map((l) => l.chapter).toSet(),
-          ];
+          final chapters = data.lessons.map((l) => l.chapter).toSet();
           final visible = data.lessons
               .where(
                 (l) =>
-                    (chapter == 'Semua' || chapter == l.chapter) &&
+                    (chapter == null || chapter == l.chapter) &&
                     '${l.title} ${l.japaneseTitle} ${l.chapter} ${l.description}'
                         .toLowerCase()
                         .contains(query.trim().toLowerCase()),
@@ -97,7 +96,7 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        'Cerita kecil, dunia baru'.localized(context),
+                        context.l10n.readingSmallStories,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -106,23 +105,25 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        '${data.lessons.length} lesson • ${data.lessons.fold<int>(0, (n, l) => n + l.pageCount)} adegan bergambar • ${data.lessons.fold<int>(0, (n, l) => n + l.questionCount)} soal'
-                            .localized(context),
+                        context.l10n.readingCourseSummary(
+                          data.lessons.length,
+                          data.lessons.fold<int>(0, (n, l) => n + l.pageCount),
+                          data.lessons.fold<int>(
+                            0,
+                            (n, l) => n + l.questionCount,
+                          ),
+                        ),
                         style: const TextStyle(color: Colors.white),
                       ),
                       const SizedBox(height: 12),
                       Text(
                         widget.level == 'N2'
-                            ? 'Latih inferensi, maksud penulis, perbandingan pendapat, dan pencarian informasi. Gunakan bantuan kana dan terjemahan saat diperlukan. Lulus dengan nilai minimal 80% untuk menyelesaikan lesson.'
-                                  .localized(context)
+                            ? context.l10n.readingPracticeInference
                             : widget.level == 'N1'
-                            ? 'Latih membaca argumen abstrak, menilai batas bukti, memahami maksud penulis, membandingkan pendapat, dan mencari syarat dalam pengumuman. Gunakan bantuan kana dan terjemahan saat diperlukan. Lulus dengan nilai minimal 80% untuk menyelesaikan lesson.'
-                                  .localized(context)
+                            ? context.l10n.readingPracticeReading
                             : widget.level == 'N3'
-                            ? 'Pahami alasan, maksud tokoh, dan kesimpulan dalam cerita Hana. Buka bantuan kana dan terjemahan saat diperlukan. Lulus dengan nilai minimal 80% untuk menyelesaikan lesson.'
-                                  .localized(context)
-                            : 'Ikuti Hana dalam cerita bergambar. Buka bantuan kana dan terjemahan saat diperlukan. Lulus dengan nilai minimal 80% untuk menyelesaikan lesson.'
-                                  .localized(context),
+                            ? context.l10n.readingUnderstandReasons
+                            : context.l10n.readingFollowA,
                         style: const TextStyle(
                           color: Colors.white,
                           height: 1.5,
@@ -139,8 +140,11 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          '${data.completedLessons}/${data.lessons.length} cerita selesai • ${data.progress}%'
-                              .localized(context),
+                          context.l10n.readingProgressSummary(
+                            data.completedLessons,
+                            data.lessons.length,
+                            data.progress,
+                          ),
                           key: const Key('reading-course-progress'),
                           style: const TextStyle(fontWeight: FontWeight.w800),
                         ),
@@ -161,15 +165,12 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
                             icon: const Icon(Icons.play_arrow_rounded),
                             label: Text(
                               data.completedLessons == 0
-                                  ? 'Buka cerita pertama'.localized(context)
-                                  : 'Lanjutkan membaca'.localized(context),
+                                  ? context.l10n.readingOpenThe
+                                  : context.l10n.readingContinueReading,
                             ),
                           )
                         else
-                          Text(
-                            'Semua cerita selesai! Anda tetap dapat mengulang materi dan kuis.'
-                                .localized(context),
-                          ),
+                          Text(context.l10n.readingAllStories),
                       ],
                     ),
                   ),
@@ -179,10 +180,8 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
                   key: const Key('reading-search'),
                   onChanged: (v) => setState(() => query = v),
                   decoration: InputDecoration(
-                    hintText: 'Cari cerita atau judul Jepang'.localized(
-                      context,
-                    ),
-                    prefixIcon: Icon(Icons.search_rounded),
+                    hintText: context.l10n.readingSearchFor,
+                    prefixIcon: const Icon(Icons.search_rounded),
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -190,13 +189,11 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      for (final c in chapters)
+                      for (final c in <String?>[null, ...chapters])
                         Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: ChoiceChip(
-                            label: Text(
-                              c == 'Semua' ? c.localized(context) : c,
-                            ),
+                            label: Text(c ?? context.l10n.readingFilterAll),
                             selected: chapter == c,
                             onSelected: (_) => setState(() => chapter = c),
                           ),
@@ -209,8 +206,7 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Text(
-                      'Cerita tidak ditemukan. Coba kata atau tema lain.'
-                          .localized(context),
+                      context.l10n.readingNoStories,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -226,9 +222,8 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
                             asset: lesson.imageAsset,
                             url: lesson.imageUrl,
                             panel: 0,
-                            description: 'Ilustrasi ${lesson.title}'.localized(
-                              context,
-                            ),
+                            description: context.l10n
+                                .readingIllustrationDescription(lesson.title),
                             aspectRatio: 16 / 9,
                           ),
                         ),
@@ -261,8 +256,7 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
                             style: const TextStyle(fontWeight: FontWeight.w700),
                           ),
                           subtitle: Text(
-                            '${lesson.japaneseTitle}\n${lesson.minutes} menit • ${lesson.pageCount} adegan • Terbaik ${lesson.bestScore}%'
-                                .localized(context),
+                            '${lesson.japaneseTitle}\n${context.l10n.readingLessonDetails(lesson.minutes, lesson.pageCount, lesson.bestScore)}',
                           ),
                           isThreeLine: true,
                           trailing: UnlockLockIcon(

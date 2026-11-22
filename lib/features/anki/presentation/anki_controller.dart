@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/features/anki/data/anki_repository.dart';
 import 'package:bahasa_master/features/anki/domain/anki_models.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
@@ -64,8 +65,8 @@ class AnkiStudyController extends StateNotifier<AnkiStudyState> {
       if (mounted) state = AnkiStudyState(error: error);
     } on Object {
       if (mounted) {
-        state = const AnkiStudyState(
-          error: AnkiFailure('Materi belum dapat dimuat. Coba kembali.', null),
+        state = AnkiStudyState(
+          error: AnkiFailure(appL10n().ankiErrorMaterialLoad, null),
         );
       }
     }
@@ -143,10 +144,7 @@ class AnkiStudyController extends StateNotifier<AnkiStudyState> {
           xpEarned: state.xpEarned,
           position: state.position,
           revealed: true,
-          error: const AnkiFailure(
-            'Review belum terkonfirmasi. Coba simpan kembali.',
-            null,
-          ),
+          error: AnkiFailure(appL10n().ankiErrorReviewUnconfirmed, null),
           pendingRating: selected,
           requestId: id,
         );

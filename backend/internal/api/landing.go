@@ -1,7 +1,6 @@
 package api
 
 import (
-	"bytes"
 	"embed"
 	"io/fs"
 	"net/http"
@@ -13,7 +12,7 @@ import (
 // (HTML, CSS, JS, images, fonts) is embedded in the binary and served from
 // the same origin, so the CSP can stay at 'self'.
 //
-//go:embed site/index.html site/index.en.html site/static
+//go:embed site/index.html site/static
 var landingFiles embed.FS
 
 const landingCSP = "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
@@ -30,19 +29,6 @@ func (s *Server) registerLanding(mux *http.ServeMux) {
 	page, err := landingFiles.ReadFile("site/index.html")
 	if err != nil {
 		panic(err)
-	}
-	if publicEnglishContentEnabled() {
-		page = bytes.Replace(page, []byte("</nav>"), []byte(`<a href="/en/" lang="en">English</a></nav>`), 1)
-		englishPage, err := landingFiles.ReadFile("site/index.en.html")
-		if err != nil {
-			panic(err)
-		}
-		mux.HandleFunc("GET /en", func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "/en/", http.StatusPermanentRedirect)
-		})
-		mux.HandleFunc("GET /en/{$}", func(w http.ResponseWriter, r *http.Request) {
-			writeLandingPage(w, englishPage)
-		})
 	}
 	static, err := fs.Sub(landingFiles, "site/static")
 	if err != nil {

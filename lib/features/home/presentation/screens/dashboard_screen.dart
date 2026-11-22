@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/offline/network_status.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
@@ -16,6 +15,7 @@ import 'package:bahasa_master/features/leaderboard/presentation/home_leaderboard
 import 'package:bahasa_master/features/learn/activity/continue_learning_section.dart';
 import 'package:bahasa_master/features/learn/activity/learning_history.dart';
 import 'package:bahasa_master/features/profile/presentation/widgets/profile_avatar.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/auth_gate.dart';
 import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +52,7 @@ class DashboardScreen extends ConsumerWidget {
         children: [
           const ContinueLearningSection(),
           _ErrorView(
-            message: error.toString().localized(context),
+            message: error.toString(),
             retry: () {
               ref.invalidate(homeDashboardProvider);
               ref.read(learningHistoryProvider.notifier).refresh();
@@ -107,8 +107,7 @@ class _OfflineDashboardNotice extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Offline · data terakhir tersimpan. Materi yang sudah disiapkan tetap bisa dibuka.'
-                  .localized(context),
+              context.l10n.homeOfflineShowing,
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
@@ -142,7 +141,7 @@ class _DashboardContent extends StatelessWidget {
     final banners = homeBannersFor(
       data,
       lifetime: hasLifetimeAccess,
-      english: AppLocalizations.of(context).locale.languageCode == 'en',
+      l10n: context.l10n,
     );
     return CustomScrollView(
       key: const PageStorageKey('dashboard-scroll'),
@@ -230,15 +229,15 @@ class _DashboardHeader extends StatelessWidget {
             children: [
               if (hasName)
                 Text(
-                  'おはよう',
-                  style: AppTypography.japanese(
+                  context.l10n.homeGreeting,
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               Text(
-                hasName ? name! : 'Selamat datang!'.localized(context),
+                hasName ? name : context.l10n.homeWelcome,
                 key: const Key('home-greeting'),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -255,8 +254,7 @@ class _DashboardHeader extends StatelessWidget {
                         if ((profile?.target ?? '').isNotEmpty) profile!.target,
                         'Level ${profile?.level ?? 1}',
                       ].join(' • ')
-                    : 'Jelajahi materi gratis, lalu masuk untuk menyimpan progress.'
-                          .localized(context),
+                    : context.l10n.homeExploreFree,
                 style: theme.textTheme.bodySmall,
               ),
             ],
@@ -264,7 +262,7 @@ class _DashboardHeader extends StatelessWidget {
         ),
         _HeaderIconButton(
           onPressed: () => context.push('/notifications'),
-          tooltip: 'Pengaturan notifikasi'.localized(context),
+          tooltip: context.l10n.homeNotificationSettings,
           icon: Icons.notifications_none_rounded,
         ),
         if (profile != null) ...[
@@ -414,7 +412,7 @@ class _ProgressSummary extends StatelessWidget {
                   icon: Icons.local_fire_department_rounded,
                   color: scheme.primary,
                   value: AnimatedCount(value: profile.streakDays),
-                  label: 'Streak hari'.localized(context),
+                  label: context.l10n.homeDayStreak,
                 ),
                 stat(
                   icon: Icons.bolt_rounded,
@@ -433,10 +431,8 @@ class _ProgressSummary extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               profile.streakDays > 0
-                  ? 'Pertahankan streak dengan menyelesaikan kuis hari ini.'
-                        .localized(context)
-                  : 'Selesaikan 1 kuis atau ujian hari ini untuk memulai streak.'
-                        .localized(context),
+                  ? context.l10n.homeKeepYour
+                  : context.l10n.homeFinish1,
               style: theme.textTheme.bodySmall,
             ),
             const Divider(height: 18),
@@ -470,18 +466,18 @@ class _ErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              'Beranda belum dapat dimuat'.localized(context),
+              context.l10n.homeHomeCould,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 7),
-            Text(message.localized(context), textAlign: TextAlign.center),
+            Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 18),
             FilledButton.icon(
               onPressed: retry,
               icon: const Icon(Icons.refresh_rounded),
-              label: Text('Coba lagi'.localized(context)),
+              label: Text(context.l10n.commonTryAgain),
             ),
           ],
         ),

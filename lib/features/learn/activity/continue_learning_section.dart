@@ -1,6 +1,7 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/learn/activity/learning_history.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_label.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,14 +31,9 @@ class ContinueLearningSection extends ConsumerWidget {
         ? '${selected.lessonPath}?level=${selected.level}'
         : selected.coursePath;
     if (!selected.available) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Materi ini sudah tidak tersedia. Pilih materi lain di kursusnya.'
-                .localized(context),
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.learnThisLesson)));
     }
     await context.push<void>(
       selected.isLocked(premium: premium)
@@ -65,16 +61,13 @@ class ContinueLearningSection extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Lanjutkan belajar'.localized(context),
+            context.l10n.commonContinueLearning,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            'Kembali ke materi yang terakhir kamu buka.'.localized(context),
-            style: theme.textTheme.bodySmall,
-          ),
+          Text(context.l10n.learnReturnTo, style: theme.textTheme.bodySmall),
           const SizedBox(height: 12),
           DecoratedBox(
             decoration: BoxDecoration(
@@ -99,7 +92,10 @@ class ContinueLearningSection extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          '${latest.category.localized(context)} · JLPT ${latest.level}',
+                          context.l10n.learnActivityCategoryLevel(
+                            _category(context, latest.kind),
+                            levelLabel(context, latest.level),
+                          ),
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: colors.secondary,
                           ),
@@ -110,7 +106,7 @@ class ContinueLearningSection extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    latest.title.localized(context),
+                    latest.title,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
@@ -146,12 +142,12 @@ class ContinueLearningSection extends ConsumerWidget {
                     ),
                     label: Text(
                       !latest.available
-                          ? 'Buka kursus'.localized(context)
+                          ? context.l10n.learnOpenCourse
                           : locked
-                          ? 'Buka akses belajar'.localized(context)
+                          ? context.l10n.learnUnlockLearning
                           : latest.completed
-                          ? 'Pelajari lagi'.localized(context)
-                          : 'Lanjutkan belajar'.localized(context),
+                          ? context.l10n.learnStudyAgain
+                          : context.l10n.commonContinueLearning,
                     ),
                   ),
                 ],
@@ -161,7 +157,7 @@ class ContinueLearningSection extends ConsumerWidget {
           if (items.length > 1) ...[
             const SizedBox(height: 16),
             Text(
-              'Sebelumnya kamu belajar'.localized(context),
+              context.l10n.learnPreviouslyStudied,
               style: theme.textTheme.labelLarge,
             ),
             const SizedBox(height: 4),
@@ -170,7 +166,7 @@ class ContinueLearningSection extends ConsumerWidget {
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(_icon(item.kind), color: colors.secondary),
                 title: Text(
-                  item.title.localized(context),
+                  item.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -179,7 +175,7 @@ class ContinueLearningSection extends ConsumerWidget {
                   ),
                 ),
                 subtitle: Text(
-                  '${item.category.localized(context)} · ${item.level}\n${_detail(context, item, item.isLocked(premium: user.id.isNotEmpty))}',
+                  '${context.l10n.learnActivityCategoryLevel(_category(context, item.kind), levelLabel(context, item.level))}\n${_detail(context, item, item.isLocked(premium: user.id.isNotEmpty))}',
                   style: theme.textTheme.bodySmall,
                 ),
                 trailing: Icon(
@@ -198,26 +194,47 @@ class ContinueLearningSection extends ConsumerWidget {
 
   String _detail(BuildContext context, LearningActivity item, bool locked) {
     final status = !item.available
-        ? 'Materi tidak tersedia'.localized(context)
+        ? context.l10n.learnLessonUnavailable
         : locked
-        ? 'Akses Lifetime diperlukan'.localized(context)
+        ? context.l10n.learnLifetimeAccess
         : item.completed
-        ? 'Selesai'.localized(context)
-        : '${item.unit.localized(context)} ${item.position + 1} dari ${item.total}'
-              .localized(context);
+        ? context.l10n.learnCompleted
+        : _position(context, item);
     final at = item.accessedAt.toLocal();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final day = DateTime(at.year, at.month, at.day);
     final difference = today.difference(day).inDays;
     final date = difference == 0
-        ? 'Hari ini'.localized(context)
+        ? context.l10n.learnToday
         : difference == 1
-        ? 'Kemarin'.localized(context)
+        ? context.l10n.learnYesterday
         : '${at.day}/${at.month}/${at.year}';
-    return '$status · $date';
+    return context.l10n.learnActivityDetail(status, date);
   }
 }
+
+String _category(BuildContext context, String kind) => switch (kind) {
+  'vocabulary' => context.l10n.learnCategoryVocabulary,
+  'grammar' => context.l10n.learnCategoryGrammar,
+  _ => context.l10n.learnCategoryReading,
+};
+
+String _position(BuildContext context, LearningActivity item) =>
+    switch (item.kind) {
+      'vocabulary' => context.l10n.learnActivityWordPosition(
+        item.position + 1,
+        item.total,
+      ),
+      'grammar' => context.l10n.learnActivityPatternPosition(
+        item.position + 1,
+        item.total,
+      ),
+      _ => context.l10n.learnActivityPagePosition(
+        item.position + 1,
+        item.total,
+      ),
+    };
 
 IconData _icon(String kind) => switch (kind) {
   'vocabulary' => Icons.translate_rounded,

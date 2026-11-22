@@ -1,10 +1,10 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/features/anki/data/anki_repository.dart';
 import 'package:bahasa_master/features/anki/domain/anki_models.dart';
 import 'package:bahasa_master/features/anki/presentation/anki_controller.dart';
 import 'package:bahasa_master/features/anki/presentation/anki_screens.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -109,7 +109,7 @@ class StudyRepository extends AnkiRepository {
     });
     await Future<void>.value();
     if (failFirst && reviews.length == 1) {
-      throw const AnkiFailure('Review belum terkonfirmasi.', null);
+      throw const AnkiFailure('The review was not confirmed.', null);
     }
     return {'saved': true, 'version': 1, 'due': '2026-10-18T08:00:00Z'};
   }
@@ -222,8 +222,8 @@ void main() {
       final card = AnkiCard.fromJson({
         'index': 0,
         'version': 3,
-        'front': '和歌山市',
-        'answers': ['わかやまし'],
+        'front': 'terima kasih',
+        'answers': ['thank you'],
       });
       final result = await AnkiRepository(
         dio,
@@ -280,6 +280,8 @@ void main() {
           ],
           child: MaterialApp.router(
             routerConfig: router,
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(
                 context,
@@ -301,16 +303,16 @@ void main() {
       }
 
       await show(find.byKey(const Key('anki-search')));
-      await tester.enterText(find.byKey(const Key('anki-search')), 'basic_words');
+      await tester.enterText(
+        find.byKey(const Key('anki-search')),
+        'basic_words',
+      );
       tester.testTextInput.hide();
       await tester.pumpAndSettle();
       await show(find.byKey(const Key('anki-deck-basic_words')));
       await tester.tap(find.byKey(const Key('anki-deck-basic_words')));
       await tester.pumpAndSettle();
-      expect(
-        find.textContaining('Kata dan frasa dasar'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('Kata dan frasa dasar'), findsOneWidget);
       await show(find.byKey(const Key('anki-start')));
       await tester.tap(find.byKey(const Key('anki-start')));
       await tester.pumpAndSettle();
@@ -323,11 +325,11 @@ void main() {
       await tester.tap(find.byKey(const Key('anki-rate-good')));
       await tester.pumpAndSettle();
       expect(repository.reviews.length, 1);
-      expect(find.text('Sesi selesai!'), findsOneWidget);
+      expect(find.text('Session complete!'), findsOneWidget);
       expect(tester.takeException(), isNull);
       router.go('/anki/decks/unavailable_deck');
       await tester.pumpAndSettle();
-      await show(find.text('Ketersediaan deck'));
+      await show(find.text('Deck availability'));
       expect(find.byKey(const Key('anki-start')), findsNothing);
       expect(tester.takeException(), isNull);
     },

@@ -274,7 +274,7 @@ class SakuraCard extends StatelessWidget {
   }
 }
 
-/// Kotak ikon kanji untuk kategori materi (語 文 字 読).
+/// Icon tile showing a one-letter glyph for a learning category.
 class KanjiGlyphTile extends StatelessWidget {
   const KanjiGlyphTile({
     required this.glyph,
@@ -310,13 +310,12 @@ class KanjiGlyphTile extends StatelessWidget {
   }
 }
 
-/// Glyph kanji untuk id kategori materi.
+/// Single-letter glyph for a learning category id.
 String categoryGlyph(String id) => switch (id) {
-  'vocabulary' => '語',
-  'grammar' => '文',
-  'kanji' => '字',
-  'reading' => '読',
-  'listening' => '聴',
-  'speaking' => '話',
-  _ => '学',
+  'vocabulary' => 'V',
+  'grammar' => 'G',
+  'reading' => 'R',
+  'listening' => 'L',
+  'speaking' => 'S',
+  _ => 'B',
 };

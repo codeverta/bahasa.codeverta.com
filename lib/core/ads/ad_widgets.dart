@@ -1,5 +1,5 @@
 import 'package:bahasa_master/core/ads/ads_controller.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -85,7 +85,7 @@ class _AdBannerSlotState extends ConsumerState<AdBannerSlot> {
     final ad = _ad;
     if (ad == null || !_loaded) return const SizedBox.shrink();
     return Semantics(
-      label: 'Iklan'.localized(context),
+      label: context.l10n.adsAd,
       child: SizedBox(
         width: ad.size.width.toDouble(),
         height: ad.size.height.toDouble(),

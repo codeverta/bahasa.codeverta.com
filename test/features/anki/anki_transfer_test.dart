@@ -6,6 +6,7 @@ import 'package:bahasa_master/features/anki/data/anki_transfer_repository.dart';
 import 'package:bahasa_master/features/anki/domain/anki_models.dart';
 import 'package:bahasa_master/features/anki/presentation/anki_screens.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,13 +49,15 @@ void main() {
             ),
           ],
           child: const MaterialApp(
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: AnkiDeckDetailScreen(deckId: 'user-private'),
           ),
         ),
       );
       await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(find.text('Hapus deck pribadi'), 200);
-      expect(find.text('Hapus deck pribadi'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('Delete personal deck'), 200);
+      expect(find.text('Delete personal deck'), findsOneWidget);
       expect(find.byKey(const Key('anki-export')), findsNothing);
       expect(tester.takeException(), isNull);
     },

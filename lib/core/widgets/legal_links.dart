@@ -1,4 +1,4 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -7,12 +7,12 @@ const _legalBaseUrl = String.fromEnvironment(
   defaultValue: 'https://bahasa.codeverta.com',
 );
 
-const _legalPages = {
-  '/privacy-policy': 'Kebijakan Privasi',
-  '/terms-of-service': 'Ketentuan Penggunaan',
-  '/refund-policy': 'Refund',
-  '/delete-account': 'Penghapusan Data',
-  '/support': 'Bantuan',
+final _legalPages = <String, String Function(AppLocalizations)>{
+  '/privacy-policy': (l10n) => l10n.legalPrivacyPolicy,
+  '/terms-of-service': (l10n) => l10n.legalTermsOfService,
+  '/refund-policy': (l10n) => l10n.legalRefundPolicy,
+  '/delete-account': (l10n) => l10n.legalDataDeletion,
+  '/support': (l10n) => l10n.legalSupport,
 };
 
 Future<void> openLegalPage(BuildContext context, String path) async {
@@ -23,13 +23,9 @@ Future<void> openLegalPage(BuildContext context, String path) async {
     // The device may not have a browser capable of handling the URL.
   }
   if (context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Halaman tidak dapat dibuka. Coba lagi.'.localized(context),
-        ),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.legalThePage)));
   }
 }
 
@@ -44,7 +40,7 @@ class LegalLinks extends StatelessWidget {
         for (final page in _legalPages.entries)
           TextButton(
             onPressed: () => openLegalPage(context, page.key),
-            child: Text(page.value.localized(context)),
+            child: Text(page.value(context.l10n)),
           ),
       ],
     );

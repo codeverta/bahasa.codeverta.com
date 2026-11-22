@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/leaderboard/data/leaderboard_repository.dart';
 import 'package:bahasa_master/features/leaderboard/presentation/leaderboard_copy.dart';
 import 'package:bahasa_master/features/profile/presentation/widgets/profile_avatar.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,11 +20,11 @@ class LeaderboardScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Leaderboard'),
+          title: Text(context.l10n.leaderboardTitle),
           bottom: TabBar(
             tabs: [
-              Tab(text: 'Minggu ini'.localized(context)),
-              Tab(text: 'Sepanjang masa'.localized(context)),
+              Tab(text: context.l10n.leaderboardThisWeek),
+              Tab(text: context.l10n.leaderboardAllTime),
             ],
           ),
         ),
@@ -67,8 +67,8 @@ class _LeaderboardTab extends ConsumerWidget {
         key: const Key('leaderboard-error'),
         icon: Icons.cloud_off_rounded,
         text: error is LeaderboardOffline
-            ? 'Butuh koneksi internet'.localized(context)
-            : 'Leaderboard belum dapat dimuat'.localized(context),
+            ? context.l10n.leaderboardInternetConnection
+            : context.l10n.leaderboardTheLeaderboard,
         onRetry: refresh,
       ),
       data: (cached) {
@@ -128,8 +128,7 @@ class _Board extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Text(
-              'Kamu disembunyikan dari leaderboard. Ubah di Pengaturan.'
-                  .localized(context),
+              context.l10n.leaderboardYouAre,
               key: const Key('leaderboard-hidden-note'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall,
@@ -140,9 +139,8 @@ class _Board extends StatelessWidget {
             key: const Key('leaderboard-empty'),
             icon: Icons.emoji_events_outlined,
             text: period == LeaderboardPeriod.week
-                ? 'Belum ada yang mendapat XP minggu ini. Jadilah yang pertama!'
-                      .localized(context)
-                : 'Belum ada peringkat.'.localized(context),
+                ? context.l10n.leaderboardNobodyHas
+                : context.l10n.leaderboardNoRankings,
           )
         else ...[
           _Podium(entries: podium, myRank: myRank),
@@ -160,9 +158,7 @@ class _Board extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
-                copy.english
-                    ? 'Showing the top ${entries.length} of ${cached.data.participants} learners'
-                    : 'Menampilkan ${entries.length} teratas dari ${cached.data.participants} pelajar',
+                copy.showingTop(entries.length, cached.data.participants),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
@@ -216,7 +212,7 @@ class _StatusLineState extends State<_StatusLine> {
       );
       icon = Icons.timer_outlined;
     } else {
-      text = 'Total XP sejak bergabung'.localized(context);
+      text = context.l10n.leaderboardTotalXp;
       icon = Icons.all_inclusive_rounded;
     }
     return Row(
@@ -442,9 +438,8 @@ class _PinnedOwnRow extends StatelessWidget {
     final String label;
     if (!standing.ranked) {
       label = period == LeaderboardPeriod.week
-          ? 'Belum masuk peringkat minggu ini — selesaikan 1 lesson untuk ikut bersaing'
-                .localized(context)
-          : 'Kumpulkan XP untuk masuk peringkat'.localized(context);
+          ? context.l10n.leaderboardNotRanked
+          : context.l10n.leaderboardEarnXp;
     } else if (me.hidden) {
       label = copy.hiddenRank(standing.rank);
     } else {
@@ -486,7 +481,7 @@ class _GuestPrompt extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                'Masuk untuk ikut peringkat'.localized(context),
+                context.l10n.leaderboardSignIn,
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
@@ -495,7 +490,7 @@ class _GuestPrompt extends StatelessWidget {
             const SizedBox(width: 8),
             FilledButton(
               onPressed: () => context.push('/login'),
-              child: Text('Masuk'.localized(context)),
+              child: Text(context.l10n.commonSignIn),
             ),
           ],
         ),
@@ -532,7 +527,7 @@ class _Message extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh_rounded),
-                label: Text('Coba lagi'.localized(context)),
+                label: Text(context.l10n.commonTryAgain),
               ),
             ],
           ],

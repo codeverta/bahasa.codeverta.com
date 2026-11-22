@@ -1,8 +1,9 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/settings/display_preferences.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_label.dart';
 import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -57,7 +58,10 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                 children: [
                   Expanded(
                     child: Text(
-                      '${'KATA'.localized(context)} ${s.wordIndex + 1} / ${s.lesson.words.length}',
+                      context.l10n.vocabWordCounter(
+                        s.wordIndex + 1,
+                        s.lesson.words.length,
+                      ),
                       key: const Key('lesson-study-counter'),
                       style: TextStyle(
                         color: colors.secondary,
@@ -67,7 +71,7 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                     ),
                   ),
                   Text(
-                    'JLPT ${s.lesson.level}',
+                    levelLabel(context, s.lesson.level),
                     style: TextStyle(
                       color: colors.secondary,
                       fontWeight: FontWeight.w800,
@@ -93,7 +97,6 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                         url: w.imageUrl,
                         panel: w.imagePanel,
                         description: w.imageDescription,
-                        aspectRatio: 1,
                       ),
                     Padding(
                       padding: const EdgeInsets.all(22),
@@ -128,24 +131,21 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
               ),
               const SizedBox(height: 24),
               Text(
-                'Pakai dalam kalimat'.localized(context),
+                context.l10n.vocabUseIt,
                 style: const TextStyle(
                   fontSize: 21,
                   fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: 6),
-              Text(
-                'Perhatikan cara kata ini digunakan dalam situasi berbeda.'
-                    .localized(context),
-              ),
+              Text(context.l10n.vocabNoticeHow),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
                   FilterChip(
-                    label: Text('Terjemahan'.localized(context)),
+                    label: Text(context.l10n.commonTranslation),
                     selected: meaning,
                     showCheckmark: false,
                     selectedColor: colors.secondary,
@@ -172,7 +172,7 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          '${'CONTOH'.localized(context)} ${i + 1}',
+                          context.l10n.vocabExampleNumber(i + 1),
                           style: TextStyle(
                             color: colors.secondary,
                             fontSize: 11,
@@ -208,7 +208,7 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                   color: colors.primary,
                 ),
                 title: Text(
-                  'Catatan pemakaian'.localized(context),
+                  context.l10n.vocabUsageNotes,
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
                 children: [
@@ -219,10 +219,7 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                 ],
               ),
               if (s.error != null)
-                Text(
-                  s.error!.localized(context),
-                  style: TextStyle(color: colors.error),
-                ),
+                Text(s.error!, style: TextStyle(color: colors.error)),
             ],
           ),
         ),
@@ -269,8 +266,8 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                           ),
                     label: Text(
                       last
-                          ? 'Latihan pemahaman'.localized(context)
-                          : 'Kata berikutnya'.localized(context),
+                          ? context.l10n.vocabComprehensionPractice
+                          : context.l10n.vocabNextWord,
                     ),
                   ),
                 ),

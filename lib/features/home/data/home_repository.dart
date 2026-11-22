@@ -1,3 +1,4 @@
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:dio/dio.dart';
 
@@ -12,7 +13,7 @@ class HomeRepository {
       final body = response.data;
       final data = body?['data'];
       if (data is! Map<String, dynamic>) {
-        throw const HomeException('Format data Beranda tidak valid.');
+        throw HomeException(appL10n().homeInvalidData);
       }
       // Uploaded and bundled server images use root-relative URLs. Resolve them
       // against the actual API host (including Android emulator host rewriting).
@@ -53,7 +54,7 @@ class HomeRepository {
         return details['message'] as String;
       }
     }
-    return 'Beranda belum tersimpan di perangkat ini. Hubungkan internet untuk menyiapkannya.';
+    return appL10n().homeNotSavedOffline;
   }
 }
 

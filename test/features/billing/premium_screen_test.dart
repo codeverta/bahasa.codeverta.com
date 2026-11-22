@@ -1,9 +1,9 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/billing/data/billing_repository.dart';
 import 'package:bahasa_master/features/billing/presentation/billing_controller.dart';
 import 'package:bahasa_master/features/billing/presentation/premium_screen.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,9 +42,10 @@ void main() {
                 ),
               ),
             ),
-            lifetimeDisplayPriceProvider.overrideWith((_) async => 99000),
           ],
           child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             theme: AppTheme.lightTheme,
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(
@@ -68,7 +69,7 @@ void main() {
             .onPressed,
         isNull,
       );
-      expect(find.text('Menunggu pembayaran'), findsOneWidget);
+      expect(find.text('Payment pending'), findsOneWidget);
       expect(find.text('¥1,000'), findsOneWidget);
       expect(find.text('Rp149.000'), findsNothing);
       expect(tester.takeException(), isNull);
@@ -88,9 +89,10 @@ void main() {
               const BillingState(ready: true, ownedBy: 'ab***@gmail.com'),
             ),
           ),
-          lifetimeDisplayPriceProvider.overrideWith((_) async => 99000),
         ],
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: AppTheme.lightTheme,
           home: const PremiumScreen(),
         ),
@@ -131,60 +133,25 @@ void main() {
           billingControllerProvider.overrideWith(
             (_) => _StaticBilling(const BillingState(premium: true)),
           ),
-          lifetimeDisplayPriceProvider.overrideWith((_) async => 99000),
         ],
-        child: MaterialApp.router(routerConfig: router),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('Jelajahi akses saya'),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.tap(find.text('Jelajahi akses saya'));
-    await tester.pumpAndSettle();
-    expect(find.text('Lesson destination'), findsOneWidget);
-  });
-  testWidgets('premium page shows the public backend price to guests', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authControllerProvider.overrideWith(
-            (ref) => AuthController.test(const AuthenticationState.guest()),
-          ),
-          billingControllerProvider.overrideWith(
-            (ref) => BillingController(
-              repository: BillingRepository(Dio()),
-              gateway: null,
-              platform: '',
-              onChanged: () async {},
-            ),
-          ),
-          lifetimeDisplayPriceProvider.overrideWith((ref) async => 149000),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: const PremiumScreen(),
+        child: MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
         ),
       ),
     );
     await tester.pumpAndSettle();
-
     await tester.scrollUntilVisible(
-      find.byKey(const Key('lifetime-price-panel')),
-      250,
+      find.text('Explore my access'),
+      300,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.text('Rp149.000'), findsOneWidget);
-    expect(tester.takeException(), isNull);
+    await tester.tap(find.text('Explore my access'));
+    await tester.pumpAndSettle();
+    expect(find.text('Lesson destination'), findsOneWidget);
   });
-
-  testWidgets('English premium screen never shows an IDR-only price', (
-    tester,
-  ) async {
+  testWidgets('premium screen never shows an IDR-only price', (tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -192,17 +159,14 @@ void main() {
             (ref) => AuthController.test(const AuthenticationState.guest()),
           ),
           billingControllerProvider.overrideWith(
-            (_) => _StaticBilling(
-              const BillingState(priceIdr: 149000, ready: false),
-            ),
+            (_) => _StaticBilling(const BillingState(priceIdr: 149000)),
           ),
-          lifetimeDisplayPriceProvider.overrideWith((ref) async => 149000),
         ],
-        child: MaterialApp(
-          locale: const Locale('en'),
+        child: const MaterialApp(
+          locale: Locale('en'),
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
-          home: const PremiumScreen(),
+          home: PremiumScreen(),
         ),
       ),
     );
@@ -215,7 +179,6 @@ void main() {
 
     expect(find.text('Store price unavailable'), findsOneWidget);
     expect(find.text('Rp149.000'), findsNothing);
-    expect(find.text('Lebih jauh dari sekadar belajar'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }

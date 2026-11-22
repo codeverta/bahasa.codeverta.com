@@ -6,6 +6,7 @@ import 'package:bahasa_master/core/gamification/xp_gain.dart';
 import 'package:bahasa_master/core/unlock/unlock_flow.dart';
 import 'package:bahasa_master/core/unlock/unlock_repository.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -114,6 +115,8 @@ _pump(
         }),
       ],
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(body: XpResultBadge(gain: gain)),
       ),
     ),
@@ -135,12 +138,12 @@ void main() {
     tester,
   ) async {
     final env = await _pump(tester, placement: _adsOn);
-    expect(find.text('Tonton iklan untuk 2× XP (+50 XP)'), findsOneWidget);
+    expect(find.text('Watch an ad for 2× XP (+50 XP)'), findsOneWidget);
     await tester.tap(find.byKey(const Key('xp-boost-ad')));
     await tester.pumpAndSettle();
     expect(env.shower.shown, 1);
     expect(env.unlocks.calls, ['intent:xp-boost:grammar:attempt-1', 'claim']);
-    expect(find.text('2× XP diterima (+50 XP)'), findsOneWidget);
+    expect(find.text('2× XP received (+50 XP)'), findsOneWidget);
     expect(env.interstitials().skips, 1);
   });
 

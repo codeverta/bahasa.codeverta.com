@@ -98,11 +98,7 @@ type aiChatRequest struct {
 }
 
 func aiLocale(r *http.Request) string {
-	locale := requestContentLanguage(r.Header.Get("Accept-Language"))
-	if locale == localeEnglish && !englishLearningContentEnabled() {
-		return localeIndonesian
-	}
-	return locale
+	return requestContentLanguage(r.Header.Get("Accept-Language"))
 }
 
 // aiIsPremium reports Lifetime status. The stored entitlement expires shortly

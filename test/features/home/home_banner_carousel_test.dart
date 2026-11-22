@@ -4,6 +4,7 @@ import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
 import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
 import 'package:bahasa_master/features/home/presentation/widgets/home_banner_carousel.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:bahasa_master/shared/presentation/widgets/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,27 +15,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 const banners = [
   HomeBanner(
     id: 'learn',
-    title: 'Materi Belajar',
-    description: 'Kosakata, kanji, grammar dan reading.',
+    title: 'Study materials',
+    description: 'Vocabulary, grammar and reading.',
     imageUrl: '',
     action: 'learn',
-    buttonLabel: 'Buka materi',
+    buttonLabel: 'Open materials',
   ),
   HomeBanner(
     id: 'anki',
-    title: 'Flashcard Anki',
-    description: 'Ulangi kosakata dengan jadwal review.',
+    title: 'Anki flashcards',
+    description: 'Review vocabulary on a schedule.',
     imageUrl: '',
     action: 'anki',
-    buttonLabel: 'Buka Anki',
+    buttonLabel: 'Open Anki',
   ),
   HomeBanner(
     id: 'practice',
-    title: 'Latihan harian',
-    description: 'Mulai satu kuis hari ini.',
+    title: 'Daily practice',
+    description: 'Start one quiz today.',
     imageUrl: '',
     action: 'learn',
-    buttonLabel: 'Mulai latihan',
+    buttonLabel: 'Start practice',
   ),
 ];
 
@@ -45,6 +46,8 @@ Widget carousel({
   List<HomeBanner> items = banners,
   ValueChanged<HomeBanner>? onOpen,
 }) => MaterialApp(
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
   home: MediaQuery(
     data: MediaQueryData(
       textScaler: TextScaler.linear(textScale),
@@ -161,7 +164,7 @@ void main() {
         description: '',
         imageUrl: '',
         action: 'learn',
-        buttonLabel: 'Buka',
+        buttonLabel: 'Open',
       ),
     );
     await tester.pumpWidget(carousel(active: false, items: many));
@@ -218,7 +221,7 @@ void main() {
           name: 'Lifetime Access',
           billingType: 'lifetime',
           priceIdr: 149000,
-          features: ['Semua materi'],
+          features: ['All lessons'],
           recommended: true,
         ),
       ],
@@ -235,18 +238,22 @@ void main() {
           ),
           homeDashboardProvider.overrideWith((ref) async => data),
         ],
-        child: MaterialApp.router(routerConfig: router),
+        child: MaterialApp.router(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FilledButton, 'Lihat paket'));
+    await tester.tap(find.widgetWithText(FilledButton, 'View plans'));
     await tester.pumpAndSettle();
     expect(find.text('Premium destination'), findsOneWidget);
     router.pop();
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('home-banner-dot-1')));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FilledButton, 'Buka materi'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Open materials'));
     await tester.pumpAndSettle();
     expect(learnOpened, isTrue);
     await tester.pumpWidget(const SizedBox.shrink());

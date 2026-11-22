@@ -388,7 +388,7 @@ func TestAIChatPromptKeepsServerContentSeparateFromStudentText(t *testing.T) {
 		t.Fatalf("max tokens = %d", req.MaxTokens)
 	}
 	system := req.Messages[0]
-	if system.Role != "system" || !strings.Contains(system.Content, "<lesson") || !strings.Contains(system.Content, "Indonesian") {
+	if system.Role != "system" || !strings.Contains(system.Content, "<lesson") || !strings.Contains(system.Content, "English") {
 		t.Fatalf("system message missing lesson notes: %q", system.Content)
 	}
 	// History comes from the server: the first exchange precedes the new turn.
@@ -412,7 +412,6 @@ func TestAIChatPromptKeepsServerContentSeparateFromStudentText(t *testing.T) {
 }
 
 func TestAIChatAnswersInEnglishForEnglishClients(t *testing.T) {
-	t.Setenv("ENGLISH_QA_PREVIEW_ENABLED", "true")
 	env := newAITestEnv(t, false)
 	request := httptest.NewRequest(http.MethodPost, "/v1/ai/chat", strings.NewReader(`{"lessonType":"vocabulary","lessonId":"`+env.free+`","chip":"summary"}`))
 	request.Header.Set("Authorization", "Bearer "+env.token)

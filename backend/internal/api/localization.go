@@ -10,7 +10,6 @@ import (
 )
 
 const (
-	localeIndonesian = "id"
 	localeEnglish    = "en"
 )
 
@@ -25,9 +24,6 @@ func localizedLearningResponses(next http.Handler) http.Handler {
 		}
 
 		locale := requestContentLanguage(r.Header.Get("Accept-Language"))
-		if locale == localeEnglish && !englishLearningContentEnabled() {
-			locale = localeIndonesian
-		}
 		addVaryHeader(w.Header(), "Accept-Language")
 		w.Header().Set("Content-Language", locale)
 		if !isOfflinePracticePath(r.URL.Path) {
@@ -75,30 +71,29 @@ func (w *localizedResponseBuffer) Write(body []byte) (int, error) {
 
 func (w *localizedResponseBuffer) Unwrap() http.ResponseWriter { return w.ResponseWriter }
 
+// supportedLocales lists the languages the API can answer in. Adding a
+// language means adding its translations and listing it here; English is the
+// default and the fallback for everything else.
+var supportedLocales = map[string]bool{localeEnglish: true}
+
 func requestContentLanguage(header string) string {
 	if strings.TrimSpace(header) == "" {
-		return localeIndonesian
+		return localeEnglish
 	}
 	tags, qualities, err := language.ParseAcceptLanguage(header)
 	if err != nil {
-		return localeIndonesian
+		return localeEnglish
 	}
 	for index, tag := range tags {
 		if index < len(qualities) && qualities[index] <= 0 {
 			continue
 		}
 		base, _ := tag.Base()
-		switch strings.ToLower(base.String()) {
-		case localeEnglish:
-			return localeEnglish
-		case localeIndonesian:
-			return localeIndonesian
+		if code := strings.ToLower(base.String()); supportedLocales[code] {
+			return code
 		}
 	}
-	// Existing clients do not send Accept-Language. Unsupported languages also
-	// retain the API's established Indonesian behavior; the app sends `en` when
-	// it applies its English fallback for an unsupported device language.
-	return localeIndonesian
+	return localeEnglish
 }
 
 func isLocalizedLearningPath(path string) bool {

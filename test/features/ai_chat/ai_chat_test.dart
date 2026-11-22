@@ -7,6 +7,7 @@ import 'package:bahasa_master/core/offline/network_status.dart';
 import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
 import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_sheet.dart';
 import 'package:bahasa_master/features/ai_chat/presentation/ai_markdown.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -109,6 +110,8 @@ Future<void> _pump(
         ),
       ],
       child: const MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(body: AiChatSheet(chatKey: _key)),
       ),
     ),
@@ -264,7 +267,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('ai-send')));
       await tester.pumpAndSettle();
       expect(
-        find.text('Batas harian tercapai, coba lagi besok.'),
+        find.text('Daily limit reached, please try again tomorrow.'),
         findsOneWidget,
       );
       expect(find.byKey(const ValueKey('ai-ad-watch')), findsNothing);
@@ -297,7 +300,7 @@ void main() {
       expect(shower.shown, isEmpty);
       expect(
         find.text(
-          'Tonton iklan singkat untuk menambah 5 pesan. Pertanyaan ini langsung dikirim.',
+          'Watch a short ad to add 5 messages. This question is sent right away.',
         ),
         findsOneWidget,
       );
@@ -352,7 +355,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('ai-ad-watch')), findsNothing);
     expect(
-      find.text('Batas harian tercapai, coba lagi besok.'),
+      find.text('Daily limit reached, please try again tomorrow.'),
       findsOneWidget,
     );
   });
@@ -373,7 +376,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('ai-send')));
     await tester.pumpAndSettle();
     expect(find.text('Jawaban gagal dibuat.'), findsOneWidget);
-    await tester.tap(find.text('Coba lagi'));
+    await tester.tap(find.text('Try again'));
     await tester.pumpAndSettle();
     expect(repository.sent.map((s) => s.message), ['Halo', 'Halo']);
     expect(find.textContaining('Berhasil'), findsOneWidget);
@@ -399,7 +402,7 @@ void main() {
         AiChatMessage(role: AiRole.assistant, content: '## Inti\n- poin satu'),
       ];
     await _pump(tester, repository: repository);
-    expect(find.text('Ringkas'), findsWidgets);
+    expect(find.text('Summarize'), findsWidgets);
     expect(find.text('Inti'), findsOneWidget);
     expect(find.text('poin satu'), findsOneWidget);
   });

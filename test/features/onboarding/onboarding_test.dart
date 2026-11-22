@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -35,11 +35,15 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: MaterialApp.router(routerConfig: router),
+          child: MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Kuasai Bahasa Jepang'), findsOneWidget);
+      expect(find.text('Master Bahasa Indonesia'), findsOneWidget);
       expect(find.byKey(const Key('onboarding-close')), findsOneWidget);
       expect(container.read(isFirstTimeProvider), false);
       expect(prefs.getBool('is_first_time'), false);
@@ -69,12 +73,18 @@ void main() {
         ],
       );
       addTearDown(router.dispose);
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
+      );
       unawaited(router.push<void>('/onboarding'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('onboarding-page-2')));
       await tester.pumpAndSettle();
-      expect(find.text('Kembali ke aplikasi'), findsOneWidget);
+      expect(find.text('Back to the app'), findsOneWidget);
       await tester.tap(find.byKey(const Key('onboarding-next')));
       await tester.pumpAndSettle();
       expect(find.text('Origin'), findsOneWidget);
@@ -112,6 +122,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           builder: (context, child) => MediaQuery(
             data: MediaQuery.of(
               context,

@@ -5,6 +5,7 @@ import 'package:bahasa_master/features/billing/data/billing_repository.dart';
 import 'package:bahasa_master/features/billing/presentation/billing_controller.dart';
 import 'package:bahasa_master/features/billing/presentation/lifetime_offer.dart';
 import 'package:bahasa_master/features/billing/presentation/premium_screen.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -104,7 +105,7 @@ void main() {
       },
     );
 
-    test('unsafe or looping targets fall back to Beranda', () {
+    test('unsafe or looping targets fall back to Home', () {
       for (final from in [
         null,
         'https://evil.test',
@@ -132,8 +133,8 @@ void main() {
             ? '/home'
             : '/premium',
         routes: [
-          GoRoute(path: '/home', builder: (_, _) => const Text('Beranda')),
-          GoRoute(path: '/learn/x', builder: (_, _) => const Text('Pelajaran')),
+          GoRoute(path: '/home', builder: (_, _) => const Text('Home')),
+          GoRoute(path: '/learn/x', builder: (_, _) => const Text('Lesson')),
           GoRoute(
             path: '/premium',
             builder: (_, _) =>
@@ -148,12 +149,15 @@ void main() {
               (_) => AuthController.test(_user(lifetime: lifetime)),
             ),
             billingControllerProvider.overrideWith((_) => billing),
-            lifetimeDisplayPriceProvider.overrideWith((_) async => 99000),
             analyticsServiceProvider.overrideWithValue(
               AnalyticsService(preferences),
             ),
           ],
-          child: MaterialApp.router(routerConfig: router),
+          child: MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
         ),
       );
       if (offer == LifetimeOfferSource.periodic) {
@@ -163,7 +167,7 @@ void main() {
       return billing;
     }
 
-    testWidgets('"Lanjut gratis" continues to the login target', (
+    testWidgets('"Continue for free" continues to the login target', (
       tester,
     ) async {
       await pump(tester);
@@ -174,20 +178,20 @@ void main() {
       );
       await tester.tap(find.byKey(const Key('lifetime-offer-skip')));
       await tester.pumpAndSettle();
-      expect(find.text('Pelajaran'), findsOneWidget);
+      expect(find.text('Lesson'), findsOneWidget);
     });
 
     testWidgets('the close button and Android back skip too', (tester) async {
       await pump(tester);
       await tester.tap(find.byKey(const Key('lifetime-offer-close')));
       await tester.pumpAndSettle();
-      expect(find.text('Pelajaran'), findsOneWidget);
+      expect(find.text('Lesson'), findsOneWidget);
 
       await pump(tester, offer: LifetimeOfferSource.periodic);
       expect(find.byType(PremiumScreen), findsOneWidget);
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
-      expect(find.text('Beranda'), findsOneWidget);
+      expect(find.text('Home'), findsOneWidget);
     });
 
     testWidgets('a purchase while the offer is open continues on', (
@@ -196,14 +200,14 @@ void main() {
       final billing = await pump(tester);
       billing.grant();
       await tester.pumpAndSettle();
-      expect(find.text('Pelajaran'), findsOneWidget);
+      expect(find.text('Lesson'), findsOneWidget);
     });
 
     testWidgets('an account already Lifetime is not held on the offer', (
       tester,
     ) async {
       await pump(tester, lifetime: true);
-      expect(find.text('Pelajaran'), findsOneWidget);
+      expect(find.text('Lesson'), findsOneWidget);
     });
 
     testWidgets('the normal premium page has no skip', (tester) async {
@@ -214,9 +218,12 @@ void main() {
               (_) => AuthController.test(_user()),
             ),
             billingControllerProvider.overrideWith((_) => _Billing()),
-            lifetimeDisplayPriceProvider.overrideWith((_) async => 99000),
           ],
-          child: const MaterialApp(home: PremiumScreen()),
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: PremiumScreen(),
+          ),
         ),
       );
       await tester.pumpAndSettle();
@@ -237,7 +244,7 @@ void main() {
           GoRoute(
             path: '/home',
             builder: (_, _) =>
-                const LifetimeOfferLaunchCheck(child: Text('Beranda')),
+                const LifetimeOfferLaunchCheck(child: Text('Home')),
           ),
           GoRoute(path: '/premium', builder: (_, _) => const Text('Offer')),
         ],
@@ -284,7 +291,7 @@ void main() {
       expect(find.text('Offer'), findsNothing);
     });
 
-    testWidgets('only on launch: Beranda appearing again does not reopen it', (
+    testWidgets('only on launch: Home appearing again does not reopen it', (
       tester,
     ) async {
       final container = await _container(

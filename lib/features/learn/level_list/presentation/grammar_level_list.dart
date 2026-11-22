@@ -1,18 +1,19 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:bahasa_master/features/learn/level_list/data/level_list_repository.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_label.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// "Daftar Pola": every grammar point of a level, searchable, with a detail
+/// Pattern list: every grammar point of a level, searchable, with a detail
 /// sheet.
 class GrammarLevelList extends ConsumerStatefulWidget {
   const GrammarLevelList({required this.level, this.onLevelChanged, super.key});
 
   final String level;
 
-  /// When set, N5–N1 chips let the user switch level without leaving the list.
+  /// When set, level chips let the user switch level without leaving the list.
   final ValueChanged<String>? onLevelChanged;
 
   @override
@@ -45,11 +46,12 @@ class _GrammarLevelListState extends ConsumerState<GrammarLevelList> {
           itemBuilder: (context, index) {
             if (index == 0) {
               return LevelListHeader(
-                count: '${all.length} pola grammar ${widget.level}'.localized(
-                  context,
+                count: context.l10n.levelListPatternCount(
+                  all.length,
+                  levelLabel(context, widget.level),
                 ),
                 searchKey: ValueKey('grammar-list-search-${widget.level}'),
-                hint: 'Cari pola atau arti'.localized(context),
+                hint: context.l10n.levelListSearchPatterns,
                 onSearch: (value) => setState(() => _query = value),
                 level: widget.level,
                 onLevelChanged: widget.onLevelChanged,
@@ -84,7 +86,7 @@ class _GrammarTile extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          '${item.meaning}\n${'Lesson'.localized(context)} ${item.lessonNumber} · ${item.lessonTitle}',
+          '${item.meaning}\n${context.l10n.levelListItemLesson(item.lessonNumber, item.lessonTitle)}',
         ),
         isThreeLine: true,
         trailing: const Icon(Icons.chevron_right_rounded),
@@ -118,11 +120,24 @@ Future<void> showGrammarItemSheet(BuildContext context, GrammarListItem item) {
             ),
             const SizedBox(height: 4),
             Text(item.meaning, style: theme.textTheme.titleMedium),
-            LevelListSection(title: 'Pembentukan', body: item.formation),
-            LevelListSection(title: 'Penjelasan', body: item.explanation),
-            LevelListSection(title: 'Kesalahan umum', body: item.commonMistake),
+            LevelListSection(
+              title: context.l10n.levelListFormation,
+              body: item.formation,
+            ),
+            LevelListSection(
+              title: context.l10n.levelListExplanation,
+              body: item.explanation,
+            ),
+            LevelListSection(
+              title: context.l10n.levelListCommonMistake,
+              body: item.commonMistake,
+            ),
             if (item.examples.isNotEmpty) ...[
-              const LevelListSection(title: 'Contoh', body: ''),
+              LevelListSection(
+                title: context.l10n.levelListExamples,
+                body: '',
+                showWhenEmpty: true,
+              ),
               for (final example in item.examples)
                 LevelListExampleTile(example),
             ],
@@ -135,7 +150,7 @@ Future<void> showGrammarItemSheet(BuildContext context, GrammarListItem item) {
               },
               icon: const Icon(Icons.menu_book_rounded),
               label: Text(
-                '${'Buka lesson'.localized(context)} ${item.lessonNumber}',
+                context.l10n.levelListOpenLessonNumber(item.lessonNumber),
               ),
             ),
           ],
@@ -180,7 +195,7 @@ class LevelListHeader extends StatelessWidget {
               children: [
                 for (final item in const ['N5', 'N4', 'N3', 'N2', 'N1'])
                   ChoiceChip(
-                    label: Text(item),
+                    label: Text(levelLabel(context, item)),
                     selected: item == level,
                     onSelected: (_) => onLevelChanged!(item),
                   ),
@@ -205,7 +220,7 @@ class LevelListHeader extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 24),
               child: Text(
-                'Tidak ada hasil.'.localized(context),
+                context.l10n.levelListNoResults,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -216,15 +231,23 @@ class LevelListHeader extends StatelessWidget {
 }
 
 class LevelListSection extends StatelessWidget {
-  const LevelListSection({required this.title, required this.body, super.key});
+  const LevelListSection({
+    required this.title,
+    required this.body,
+    this.showWhenEmpty = false,
+    super.key,
+  });
 
   final String title;
   final String body;
 
+  /// Show the title even without a body (a heading for the items below).
+  final bool showWhenEmpty;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    if (body.trim().isEmpty && title != 'Contoh') {
+    if (body.trim().isEmpty && !showWhenEmpty) {
       return const SizedBox.shrink();
     }
     return Padding(
@@ -233,7 +256,7 @@ class LevelListSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title.localized(context),
+            title,
             style: theme.textTheme.labelLarge?.copyWith(
               color: theme.colorScheme.primary,
             ),
@@ -287,15 +310,11 @@ class LevelListError extends StatelessWidget {
           children: [
             const Icon(Icons.cloud_off_rounded, size: 48),
             const SizedBox(height: 12),
-            Text(
-              'Daftar belum dapat dimuat. Periksa koneksi lalu coba lagi.'
-                  .localized(context),
-              textAlign: TextAlign.center,
-            ),
+            Text(context.l10n.levelListTheList, textAlign: TextAlign.center),
             const SizedBox(height: 12),
             FilledButton(
               onPressed: onRetry,
-              child: Text('Muat ulang'.localized(context)),
+              child: Text(context.l10n.commonRefresh),
             ),
           ],
         ),

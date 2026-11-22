@@ -1,9 +1,9 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/notifications/notification_prompt.dart';
 import 'package:bahasa_master/core/notifications/push_notifications.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/features/home/presentation/widgets/home_notification_card.dart';
 import 'package:bahasa_master/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,7 +37,7 @@ _pumpOnboarding(
   WidgetTester tester, {
   PushToggleResult result = PushToggleResult.on,
   bool withOptIn = true,
-  Locale locale = const Locale('id'),
+  Locale locale = const Locale('en'),
   Size size = const Size(390, 844),
   double textScale = 1,
 }) async {
@@ -146,9 +146,9 @@ void main() {
     expect(find.byKey(const Key('onboarding-page-3')), findsOneWidget);
     expect(find.textContaining('01 / 04'), findsOneWidget);
     await _toNotificationPage(tester);
-    expect(find.text('Jangan ketinggalan kabar penting'), findsOneWidget);
-    expect(find.text('Aktifkan notifikasi'), findsOneWidget);
-    expect(find.text('Nanti saja'), findsOneWidget);
+    expect(find.text('Never miss important news'), findsOneWidget);
+    expect(find.text('Turn on notifications'), findsOneWidget);
+    expect(find.text('Maybe later'), findsOneWidget);
     expect(h.push.enableCalls, 0);
     expect(h.container.read(notificationPromptAnsweredProvider), isFalse);
   });
@@ -160,7 +160,7 @@ void main() {
     await _toNotificationPage(tester);
     await _tapEnable(tester);
     expect(h.push.enableCalls, 1);
-    expect(find.text('Notifikasi aktif. Terima kasih!'), findsOneWidget);
+    expect(find.text('Notifications are on. Thank you!'), findsOneWidget);
     expect(
       find.byKey(const Key('onboarding-notification-enable')),
       findsNothing,
@@ -176,7 +176,7 @@ void main() {
     final h = await _pumpOnboarding(tester, result: PushToggleResult.denied);
     await _toNotificationPage(tester);
     await _tapEnable(tester);
-    expect(find.textContaining('Izin belum diberikan'), findsOneWidget);
+    expect(find.textContaining('Permission was not granted'), findsOneWidget);
     expect(h.prefs.getBool('notification_prompt_answered_v1'), isTrue);
     await tester.tap(find.byKey(const Key('onboarding-next')));
     await tester.pumpAndSettle();
@@ -189,7 +189,7 @@ void main() {
     final h = await _pumpOnboarding(tester, result: PushToggleResult.failed);
     await _toNotificationPage(tester);
     await _tapEnable(tester);
-    expect(find.textContaining('belum dapat diaktifkan'), findsOneWidget);
+    expect(find.textContaining('could not be turned on'), findsOneWidget);
     expect(
       find.byKey(const Key('onboarding-notification-enable')),
       findsOneWidget,
@@ -233,12 +233,7 @@ void main() {
   testWidgets('fits 320 px at 2x text in English on every state', (
     tester,
   ) async {
-    await _pumpOnboarding(
-      tester,
-      locale: const Locale('en'),
-      size: const Size(320, 568),
-      textScale: 2,
-    );
+    await _pumpOnboarding(tester, size: const Size(320, 568), textScale: 2);
     await _toNotificationPage(tester);
     expect(find.text('Never miss important news'), findsOneWidget);
     expect(find.text('Turn on notifications'), findsOneWidget);
@@ -279,6 +274,8 @@ void main() {
         UncontrolledProviderScope(
           container: container,
           child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             home: Scaffold(body: HomeNotificationCard()),
           ),
         ),
@@ -327,7 +324,7 @@ void main() {
       await tester.tap(find.byKey(const Key('home-notification-enable')));
       await tester.pump();
       await tester.pump();
-      expect(find.textContaining('Izin belum diberikan'), findsOneWidget);
+      expect(find.textContaining('Permission was not granted'), findsOneWidget);
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('home-notification-card')), findsNothing);
     });

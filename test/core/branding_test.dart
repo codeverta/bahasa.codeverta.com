@@ -1,5 +1,6 @@
 import 'package:bahasa_master/core/branding/app_branding.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,6 +30,8 @@ void main() {
           appBrandingProvider.overrideWith((ref) async => const AppBranding()),
         ],
         child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: BrandStartup(child: Text('Application content')),
         ),
       ),

@@ -1,11 +1,12 @@
 import 'package:bahasa_master/core/app_review/app_review_service.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/core/unlock/unlock_repository.dart';
 import 'package:bahasa_master/features/learn/grammar/domain/grammar_models.dart';
 import 'package:bahasa_master/features/learn/grammar/presentation/controllers/grammar_controller.dart';
 import 'package:bahasa_master/features/learn/level_list/presentation/grammar_level_list.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_label.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,7 +21,7 @@ class GrammarCourseScreen extends ConsumerStatefulWidget {
 
 class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
   String query = '';
-  String chapter = 'Semua';
+  String? chapter;
   late String level =
       ['N5', 'N4', 'N3', 'N2', 'N1'].contains(widget.initialLevel)
       ? widget.initialLevel
@@ -45,13 +46,15 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Grammar JLPT $level'),
+          title: Text(
+            context.l10n.grammarCourseTitle(levelLabel(context, level)),
+          ),
           bottom: TabBar(
             tabs: [
-              Tab(text: 'Lesson'.localized(context)),
+              Tab(text: context.l10n.grammarLesson),
               Tab(
                 key: const ValueKey('grammar-tab-list'),
-                text: 'Daftar Pola'.localized(context),
+                text: context.l10n.grammarPatternList,
               ),
             ],
           ),
@@ -68,14 +71,11 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                     children: [
                       const Icon(Icons.cloud_off_rounded, size: 48),
                       const SizedBox(height: 16),
-                      Text(
-                        e.toString().localized(context),
-                        textAlign: TextAlign.center,
-                      ),
+                      Text(e.toString(), textAlign: TextAlign.center),
                       const SizedBox(height: 16),
                       FilledButton(
                         onPressed: invalidateCourse,
-                        child: Text('Muat ulang'.localized(context)),
+                        child: Text(context.l10n.commonRefresh),
                       ),
                     ],
                   ),
@@ -83,14 +83,11 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
               ),
               data: (data) {
                 final colors = Theme.of(context).colorScheme;
-                final chapters = [
-                  'Semua',
-                  ...data.lessons.map((l) => l.chapter).toSet(),
-                ];
+                final chapters = data.lessons.map((l) => l.chapter).toSet();
                 final visible = data.lessons
                     .where(
                       (l) =>
-                          (chapter == 'Semua' || chapter == l.chapter) &&
+                          (chapter == null || chapter == l.chapter) &&
                           '${l.title} ${l.chapter} ${l.patterns.join(' ')}'
                               .toLowerCase()
                               .contains(query.trim().toLowerCase()),
@@ -115,13 +112,13 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: ChoiceChip(
-                                label: Text(item),
+                                label: Text(levelLabel(context, item)),
                                 selected: item == level,
                                 onSelected: (_) {
                                   setState(() {
                                     level = item;
                                     query = '';
-                                    chapter = 'Semua';
+                                    chapter = null;
                                   });
                                 },
                               ),
@@ -148,19 +145,14 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                             const SizedBox(height: 14),
                             Text(
                               level == 'N1'
-                                  ? 'Kuasai pola tingkat lanjut untuk memahami nuansa dan maksud tersirat'
-                                        .localized(context)
+                                  ? context.l10n.grammarMasterAdvanced
                                   : level == 'N2'
-                                  ? 'Kuasai nuansa dan hubungan gagasan yang kompleks'
-                                        .localized(context)
+                                  ? context.l10n.grammarMasterNuance
                                   : level == 'N3'
-                                  ? 'Pahami nuansa, hubungan, dan maksud kalimat'
-                                        .localized(context)
+                                  ? context.l10n.grammarUnderstandNuance
                                   : level == 'N4'
-                                  ? 'Ungkapkan rencana, alasan, dan pendapat'
-                                        .localized(context)
-                                  : 'Bangun kalimat Jepang dari dasar'
-                                        .localized(context),
+                                  ? context.l10n.grammarExpressPlans
+                                  : context.l10n.grammarBuildIndonesian,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -169,14 +161,22 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              '${data.lessons.length} lesson • ${data.lessons.fold<int>(0, (n, l) => n + l.pointCount)} pola • ${data.lessons.fold<int>(0, (n, l) => n + l.questionCount)} soal'
-                                  .localized(context),
+                              context.l10n.grammarCourseSummary(
+                                data.lessons.length,
+                                data.lessons.fold<int>(
+                                  0,
+                                  (n, l) => n + l.pointCount,
+                                ),
+                                data.lessons.fold<int>(
+                                  0,
+                                  (n, l) => n + l.questionCount,
+                                ),
+                              ),
                               style: const TextStyle(color: Colors.white),
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              'Pahami pola, baca contoh, lalu kerjakan kuis. Lulus dengan nilai minimal 80% untuk menyelesaikan lesson.'
-                                  .localized(context),
+                              context.l10n.grammarStudyThe,
                               style: const TextStyle(
                                 color: Colors.white,
                                 height: 1.5,
@@ -193,8 +193,11 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                '${data.completedLessons}/${data.lessons.length} lesson selesai • ${data.progress}%'
-                                    .localized(context),
+                                context.l10n.grammarProgressSummary(
+                                  data.completedLessons,
+                                  data.lessons.length,
+                                  data.progress,
+                                ),
                                 key: const Key('grammar-course-progress'),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w800,
@@ -217,17 +220,12 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                                   icon: const Icon(Icons.play_arrow_rounded),
                                   label: Text(
                                     data.completedLessons == 0
-                                        ? 'Mulai belajar'.localized(context)
-                                        : 'Lanjutkan belajar'.localized(
-                                            context,
-                                          ),
+                                        ? context.l10n.commonStartLearning
+                                        : context.l10n.commonContinueLearning,
                                   ),
                                 )
                               else
-                                Text(
-                                  'Semua lesson selesai! Anda tetap dapat mengulang materi dan kuis.'
-                                      .localized(context),
-                                ),
+                                Text(context.l10n.grammarAllLessons),
                             ],
                           ),
                         ),
@@ -237,9 +235,8 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                         key: ValueKey('grammar-search-$level'),
                         onChanged: (v) => setState(() => query = v),
                         decoration: InputDecoration(
-                          hintText: 'Cari tema atau pola, misalnya そう'
-                              .localized(context),
-                          prefixIcon: Icon(Icons.search_rounded),
+                          hintText: context.l10n.grammarSearchFor,
+                          prefixIcon: const Icon(Icons.search_rounded),
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -247,12 +244,12 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            for (final c in chapters)
+                            for (final c in <String?>[null, ...chapters])
                               Padding(
                                 padding: const EdgeInsets.only(right: 8),
                                 child: ChoiceChip(
                                   label: Text(
-                                    c == 'Semua' ? c.localized(context) : c,
+                                    c ?? context.l10n.grammarFilterAll,
                                   ),
                                   selected: chapter == c,
                                   onSelected: (_) =>
@@ -265,10 +262,9 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                       const SizedBox(height: 18),
                       if (visible.isEmpty)
                         Padding(
-                          padding: EdgeInsets.all(24),
+                          padding: const EdgeInsets.all(24),
                           child: Text(
-                            'Tidak ada lesson yang cocok. Coba judul atau bab lain.'
-                                .localized(context),
+                            context.l10n.grammarNoMatching,
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -305,8 +301,7 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
                               ),
                             ),
                             subtitle: Text(
-                              '${lesson.chapter}\n${lesson.pointCount} pola • ${lesson.questionCount} soal • Terbaik ${lesson.bestScore}%'
-                                  .localized(context),
+                              '${lesson.chapter}\n${context.l10n.grammarLessonDetails(lesson.pointCount, lesson.questionCount, lesson.bestScore)}',
                             ),
                             isThreeLine: true,
                             trailing: UnlockLockIcon(
@@ -327,7 +322,7 @@ class _GrammarCourseScreenState extends ConsumerState<GrammarCourseScreen> {
               onLevelChanged: (value) => setState(() {
                 level = value;
                 query = '';
-                chapter = 'Semua';
+                chapter = null;
               }),
             ),
           ],

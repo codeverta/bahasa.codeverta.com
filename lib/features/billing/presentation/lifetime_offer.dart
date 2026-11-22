@@ -90,7 +90,7 @@ class LifetimeOffer {
   /// The periodic check runs at most once per app process, on its launch.
   bool _launchChecked = false;
 
-  /// Waits this long after Beranda first appears, so a notification tap that
+  /// Waits this long after Home first appears, so a notification tap that
   /// opens another page wins.
   @visibleForTesting
   Duration launchDelay = const Duration(milliseconds: 1500);
@@ -136,8 +136,8 @@ class LifetimeOffer {
     ).toString();
   }
 
-  /// Called once Beranda appears. On the app's launch only, opens the offer
-  /// when the interval has passed and the user is still on Beranda.
+  /// Called once Home appears. On the app's launch only, opens the offer
+  /// when the interval has passed and the user is still on Home.
   Future<void> maybeShowOnLaunch(BuildContext context) async {
     if (_launchChecked) return;
     _launchChecked = true;
@@ -168,7 +168,7 @@ class LifetimeOffer {
   }
 }
 
-/// Runs [LifetimeOffer.maybeShowOnLaunch] when Beranda first appears.
+/// Runs [LifetimeOffer.maybeShowOnLaunch] when Home first appears.
 class LifetimeOfferLaunchCheck extends ConsumerStatefulWidget {
   const LifetimeOfferLaunchCheck({required this.child, super.key});
   final Widget child;

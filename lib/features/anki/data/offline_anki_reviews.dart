@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -56,7 +57,7 @@ class OfflineAnkiReviews {
       final entries = _read(user);
       action(entries);
       if (!await preferences.setString(_key(user), jsonEncode(entries))) {
-        throw StateError('Penilaian offline belum tersimpan. Coba lagi.');
+        throw StateError(appL10n().ankiErrorOfflineNotSaved);
       }
     });
     _writes = operation.catchError((Object _) {});
@@ -72,7 +73,7 @@ class OfflineAnkiReviews {
     required bool premium,
   }) async {
     final user = currentUserId();
-    if (user == null) throw StateError('Masuk untuk menyimpan review.');
+    if (user == null) throw StateError(appL10n().ankiErrorSignInReview);
     final canQueue = !premium || await canReadPremium(user);
     if (!canQueue && isOffline()) {
       throw DioException(
@@ -83,7 +84,9 @@ class OfflineAnkiReviews {
         ),
       );
     }
-    if (currentUserId() != user) throw StateError('Akun sudah berubah.');
+    if (currentUserId() != user) {
+      throw StateError(appL10n().ankiErrorAccountChanged);
+    }
     final entry = <String, dynamic>{
       'deckId': deckId,
       'index': index,
@@ -99,13 +102,13 @@ class OfflineAnkiReviews {
     await _mutate(user, (entries) {
       if (entries.any((e) => e['requestId'] == requestId)) return;
       if (entries.length >= 1000) {
-        throw StateError(
-          'Antrean review penuh. Hubungkan internet untuk sinkronisasi.',
-        );
+        throw StateError(appL10n().ankiErrorQueueFull);
       }
       entries.add(entry);
     });
-    if (currentUserId() != user) throw StateError('Akun sudah berubah.');
+    if (currentUserId() != user) {
+      throw StateError(appL10n().ankiErrorAccountChanged);
+    }
     if (isOffline()) return {'pendingSync': true};
     try {
       return await _send(user, entry);
@@ -127,7 +130,9 @@ class OfflineAnkiReviews {
     String user,
     Map<String, dynamic> entry,
   ) async {
-    if (currentUserId() != user) throw StateError('Akun sudah berubah.');
+    if (currentUserId() != user) {
+      throw StateError(appL10n().ankiErrorAccountChanged);
+    }
     final generation = _generations[user] ?? 0;
     final response = await dio.post<Map<String, dynamic>>(
       '/anki/decks/${Uri.encodeComponent(entry['deckId'] as String)}/review',
@@ -138,7 +143,7 @@ class OfflineAnkiReviews {
       options: Options(extra: {'offlineAccountId': user}),
     );
     if (currentUserId() != user || generation != (_generations[user] ?? 0)) {
-      throw StateError('Akun sudah berubah.');
+      throw StateError(appL10n().ankiErrorAccountChanged);
     }
     await _mutate(
       user,

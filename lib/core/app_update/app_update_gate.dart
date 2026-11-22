@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bahasa_master/core/app_update/app_update_controller.dart';
 import 'package:bahasa_master/core/app_update/app_update_policy.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -80,10 +80,7 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
       if (!opened) throw StateError('Store unavailable');
     } on Object {
       if (mounted) {
-        setState(
-          () => _storeError =
-              'Store tidak dapat dibuka. Coba lagi atau hubungi rabih@codeverta.com.',
-        );
+        setState(() => _storeError = context.l10n.appUpdateStoreOpenFailed);
       }
     } finally {
       if (mounted) setState(() => _openingStore = false);
@@ -146,20 +143,17 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
     final androidMinimum = androidVersions[policy.minimumAndroidApi];
     final requirement = device.platform == 'android'
         ? androidMinimum == null
-              ? 'versi Android yang lebih baru'.localized(context)
-              : 'Android $androidMinimum ${'atau lebih baru'.localized(context)}'
-        : 'iOS ${policy.minimumIOSVersion} ${'atau lebih baru'.localized(context)}';
+              ? context.l10n.appUpdateANewer
+              : context.l10n.appUpdateRequirementAndroid(androidMinimum)
+        : context.l10n.appUpdateRequirementIos(policy.minimumIOSVersion);
     final instructions = device.platform == 'android'
-        ? 'Buka Pengaturan HP > Sistem > Pembaruan sistem. Nama menu dapat berbeda pada setiap merek.'
-              .localized(context)
-        : 'Buka Pengaturan > Umum > Pembaruan Perangkat Lunak.'.localized(
-            context,
-          );
+        ? context.l10n.appUpdateOpenSettings
+        : context.l10n.appUpdateOpenSettingsGeneral;
     return AlertDialog(
       title: Text(
         needsUpdate
-            ? 'Perbarui Bahasa Master'.localized(context)
-            : 'Perangkat belum mendukung versi baru'.localized(context),
+            ? context.l10n.appUpdateUpdateBahasa
+            : context.l10n.appUpdateYourDevice,
       ),
       icon: Icon(needsUpdate ? Icons.system_update : Icons.phonelink_erase),
       content: SizedBox(
@@ -170,23 +164,28 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
           children: [
             Text(
               needsUpdate
-                  ? '${'Versi aplikasi ini sudah tidak didukung.'.localized(context)} ${'Perbarui melalui'.localized(context)} $store ${'untuk melanjutkan.'.localized(context)}'
-                  : '${'Versi aplikasi yang diwajibkan membutuhkan'.localized(context)} $requirement. ${'Perangkat Anda menggunakan'.localized(context)} ${device.platform == 'android' ? 'Android' : 'iOS'} ${device.osVersion}.',
+                  ? context.l10n.appUpdateUnsupportedVersion(store)
+                  : context.l10n.appUpdateRequirementNotMet(
+                      requirement,
+                      device.platform == 'android' ? 'Android' : 'iOS',
+                      device.osVersion,
+                    ),
             ),
             const SizedBox(height: 12),
             if (needsUpdate)
               Text(
-                '${'Versi terpasang'.localized(context)}: ${device.version}\n${'Versi terbaru'.localized(context)}: ${policy.latestVersion}',
+                context.l10n.appUpdateVersions(
+                  device.version,
+                  policy.latestVersion,
+                ),
               )
             else ...[
               Text(instructions),
               const SizedBox(height: 12),
               Text(
                 canContinue
-                    ? 'Anda masih dapat menggunakan versi yang terpasang. Perbarui OS sebelum memasang versi aplikasi baru.'
-                          .localized(context)
-                    : 'Jika pembaruan OS sudah tidak tersedia, gunakan perangkat lain yang kompatibel. Untuk bantuan: rabih@codeverta.com.'
-                          .localized(context),
+                    ? context.l10n.appUpdateYouCan
+                    : context.l10n.appUpdateIfNo,
               ),
             ],
             if (policy.message.isNotEmpty) ...[
@@ -196,15 +195,12 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
             if (needsUpdate)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
-                child: Text(
-                  'Jika Update tidak muncul di store, periksa akun store dan ketersediaan rilis untuk perangkat Anda. Hubungi rabih@codeverta.com jika perangkat dinyatakan tidak kompatibel.'
-                      .localized(context),
-                ),
+                child: Text(context.l10n.appUpdateIfThe),
               ),
             if (state.error != null || _storeError != null) ...[
               const SizedBox(height: 12),
               Text(
-                (_storeError ?? state.error!).localized(context),
+                _storeError ?? state.error!,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ],
@@ -218,12 +214,8 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
               : () => ref.read(appUpdateControllerProvider.notifier).check(),
           child: Text(
             state.checking
-                ? 'Memeriksa…'.localized(context)
-                // 'Periksa lagi' is already mapped to "Review again" for exams.
-                // Use the app language, like every other string in this dialog.
-                : AppLocalizations.of(context).locale.languageCode == 'en'
-                ? 'Check again'
-                : 'Periksa lagi',
+                ? context.l10n.appUpdateChecking
+                : context.l10n.appUpdateCheckAgain,
           ),
         ),
         if (canContinue)
@@ -231,15 +223,15 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
             onPressed: () => ref
                 .read(appUpdateControllerProvider.notifier)
                 .continueOnLegacyDevice(),
-            child: Text('Lanjutkan versi ini'.localized(context)),
+            child: Text(context.l10n.appUpdateContinueWith),
           ),
         if (needsUpdate)
           FilledButton(
             onPressed: _openingStore ? null : () => _openStore(state),
             child: Text(
               _openingStore
-                  ? 'Membuka store…'.localized(context)
-                  : 'Update sekarang'.localized(context),
+                  ? context.l10n.appUpdateOpeningStore
+                  : context.l10n.appUpdateUpdateNow,
             ),
           ),
       ],

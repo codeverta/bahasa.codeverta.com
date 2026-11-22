@@ -45,16 +45,6 @@ class LearningActivity {
   final bool available;
   final bool pending;
   String get key => '$kind:$lessonId';
-  String get category => switch (kind) {
-    'vocabulary' => 'Kosakata',
-    'grammar' => 'Grammar',
-    _ => 'Reading',
-  };
-  String get unit => switch (kind) {
-    'vocabulary' => 'Kata',
-    'grammar' => 'Pola',
-    _ => 'Halaman',
-  };
   String get coursePath =>
       '/learn/$kind?level=${Uri.encodeQueryComponent(level)}';
   String get lessonPath =>

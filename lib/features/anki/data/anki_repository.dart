@@ -1,4 +1,5 @@
 import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/core/offline/network_status.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
@@ -57,12 +58,13 @@ class AnkiRepository {
       return result.data!['data'] as Map<String, dynamic>;
     } on DioException catch (error) {
       final status = error.response?.statusCode;
+      final l10n = appL10n();
       final message = switch (status) {
-        401 => 'Masuk untuk belajar dan menyimpan jadwal review.',
-        402 => 'Deck ini memerlukan Lifetime Access.',
-        404 => 'Deck tidak ditemukan.',
-        409 => 'Jadwal kartu sudah berubah. Muat ulang sesi untuk melanjutkan.',
-        _ => 'Belum dapat terhubung ke server. Coba kembali.',
+        401 => l10n.ankiErrorSignInStudy,
+        402 => l10n.ankiErrorLifetimeRequired,
+        404 => l10n.ankiErrorDeckNotFound,
+        409 => l10n.ankiErrorScheduleChanged,
+        _ => l10n.ankiErrorServerUnreachable,
       };
       throw AnkiFailure(message, status);
     }
@@ -106,12 +108,13 @@ class AnkiRepository {
         );
       } on DioException catch (error) {
         final status = error.response?.statusCode;
+        final l10n = appL10n();
         throw AnkiFailure(
           status == 409
-              ? 'Jadwal kartu berubah di perangkat lain. Muat ulang sesi untuk memakai jadwal terbaru.'
+              ? l10n.ankiErrorScheduleChangedElsewhere
               : status == 402
-              ? 'Verifikasi Lifetime Access diperlukan untuk deck ini.'
-              : 'Penilaian belum tersimpan. Coba kembali.',
+              ? l10n.ankiErrorLifetimeVerify
+              : l10n.ankiErrorRatingNotSaved,
           status,
         );
       }

@@ -1,6 +1,6 @@
 import 'package:bahasa_master/core/app_review/app_review_policy.dart';
 import 'package:bahasa_master/core/app_review/app_review_service.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -133,10 +133,7 @@ void main() {
 
   test('store listing is hidden on iOS until the App Store ID is set', () {
     expect(storeListingAvailable(platform: TargetPlatform.android), isTrue);
-    expect(
-      storeListingAvailable(platform: TargetPlatform.iOS, iosAppStoreId: ''),
-      isFalse,
-    );
+    expect(storeListingAvailable(platform: TargetPlatform.iOS), isFalse);
     expect(
       storeListingAvailable(
         platform: TargetPlatform.iOS,
@@ -151,10 +148,7 @@ void main() {
     expect(storeListingAvailable(platform: TargetPlatform.windows), isFalse);
   });
 
-  test('rate button copy is translated', () {
-    expect(
-      const AppLocalizations(Locale('en')).text('Beri rating aplikasi'),
-      'Rate this app',
-    );
+  test('rate button copy comes from the English ARB file', () {
+    expect(appL10n(const Locale('en')).reviewRateThis, 'Rate this app');
   });
 }

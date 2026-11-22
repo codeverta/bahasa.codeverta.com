@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:bahasa_master/core/ads/ads_controller.dart';
 import 'package:bahasa_master/core/analytics/analytics_service.dart';
-import 'package:bahasa_master/core/localization/app_language.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/leaderboard/data/leaderboard_repository.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,24 +19,23 @@ class SettingsScreen extends ConsumerWidget {
     final user = ref.watch(authControllerProvider).user;
     final error = Theme.of(context).colorScheme.error;
     return Scaffold(
-      appBar: AppBar(title: Text('Pengaturan'.localized(context))),
+      appBar: AppBar(title: Text(context.l10n.settingsSettings)),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const _LanguageCard(),
           const SizedBox(height: 12),
           Card(
             child: Column(
               children: [
                 _SettingsTile(
                   icon: Icons.text_fields_rounded,
-                  title: 'Pengaturan tampilan'.localized(context),
+                  title: context.l10n.settingsDisplaySettings,
                   onTap: () => context.push('/settings/display'),
                 ),
                 const Divider(height: 1, indent: 68),
                 _SettingsTile(
                   icon: Icons.notifications_outlined,
-                  title: 'Pengaturan notifikasi'.localized(context),
+                  title: context.l10n.settingsNotificationSettings,
                   onTap: () => context.push('/notifications'),
                 ),
               ],
@@ -55,7 +53,7 @@ class SettingsScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(left: 4, bottom: 8),
               child: Text(
-                'Akun'.localized(context),
+                context.l10n.settingsAccount,
                 style: Theme.of(
                   context,
                 ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
@@ -68,7 +66,7 @@ class SettingsScreen extends ConsumerWidget {
                     key: const Key('settings-logout'),
                     icon: Icons.logout_rounded,
                     iconColor: error,
-                    title: 'Logout'.localized(context),
+                    title: context.l10n.settingsSignOut,
                     onTap: () => _confirmLogout(context, ref),
                   ),
                   const Divider(height: 1, indent: 68),
@@ -76,7 +74,7 @@ class SettingsScreen extends ConsumerWidget {
                     key: const Key('settings-delete-account'),
                     icon: Icons.delete_forever_outlined,
                     iconColor: error,
-                    title: 'Hapus akun'.localized(context),
+                    title: context.l10n.settingsDeleteAccount,
                     onTap: () => _confirmDelete(context, ref),
                   ),
                 ],
@@ -92,19 +90,16 @@ class SettingsScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Keluar dari akun?'.localized(context)),
-        content: Text(
-          'Data pribadi di perangkat akan dihapus. Progres dan penilaian offline yang belum tersinkron juga akan hilang. Hubungkan internet sebelum logout untuk menyinkronkannya.'
-              .localized(context),
-        ),
+        title: Text(context.l10n.settingsSignOutOf),
+        content: Text(context.l10n.settingsPersonalData),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Batal'.localized(context)),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Logout'.localized(context)),
+            child: Text(context.l10n.settingsSignOut),
           ),
         ],
       ),
@@ -118,15 +113,12 @@ class SettingsScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Hapus akun permanen?'.localized(context)),
-        content: Text(
-          'Profil, progress, achievement, dan sesi login akan dihapus. Pembayaran store tidak otomatis direfund. Bukti transaksi minimum disimpan untuk restore dan mencegah penyalahgunaan. Setelah membuat akun baru, gunakan Restore dengan akun store pembeli.'
-              .localized(context),
-        ),
+        title: Text(context.l10n.settingsPermanentlyDelete),
+        content: Text(context.l10n.settingsYourProfile),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Batal'.localized(context)),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -134,7 +126,7 @@ class SettingsScreen extends ConsumerWidget {
               foregroundColor: Theme.of(context).colorScheme.onError,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Hapus akun'.localized(context)),
+            child: Text(context.l10n.settingsDeleteAccount),
           ),
         ],
       ),
@@ -146,13 +138,7 @@ class SettingsScreen extends ConsumerWidget {
     } on Object {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Akun belum dihapus. Periksa koneksi lalu coba lagi.'.localized(
-                context,
-              ),
-            ),
-          ),
+          SnackBar(content: Text(context.l10n.settingsYourAccount)),
         );
       }
     }
@@ -207,13 +193,10 @@ class _AnalyticsSwitchState extends ConsumerState<_AnalyticsSwitch> {
         color: Theme.of(context).colorScheme.primary,
       ),
       title: Text(
-        'Bantu tingkatkan aplikasi'.localized(context),
+        context.l10n.settingsHelpImprove,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
-      subtitle: Text(
-        'Kirim data penggunaan anonim (fitur yang dibuka). Tidak berisi data pribadi.'
-            .localized(context),
-      ),
+      subtitle: Text(context.l10n.settingsShareAnonymous),
       value: _enabled,
       onChanged: (value) {
         setState(() => _enabled = value);
@@ -250,12 +233,7 @@ class _LeaderboardVisibilitySwitchState
       if (!mounted) return;
       setState(() => _pending = null);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Pengaturan leaderboard belum tersimpan. Periksa koneksi lalu coba lagi.'
-                .localized(context),
-          ),
-        ),
+        SnackBar(content: Text(context.l10n.settingsYourLeaderboard)),
       );
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -274,13 +252,10 @@ class _LeaderboardVisibilitySwitchState
         color: Theme.of(context).colorScheme.primary,
       ),
       title: Text(
-        'Sembunyikan saya dari leaderboard'.localized(context),
+        context.l10n.settingsHideMe,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
-      subtitle: Text(
-        'Nama dan XP-mu tidak tampil di leaderboard. XP dan level tetap dihitung.'
-            .localized(context),
-      ),
+      subtitle: Text(context.l10n.settingsYourName),
       value: hidden,
       onChanged: ready ? _save : null,
     );
@@ -307,82 +282,12 @@ class _AdPrivacyTile extends ConsumerWidget {
             child: _SettingsTile(
               key: const Key('settings-ad-privacy'),
               icon: Icons.privacy_tip_outlined,
-              title: 'Pilihan privasi iklan'.localized(context),
+              title: context.l10n.settingsAdPrivacy,
               onTap: () => unawaited(runtime.showPrivacyOptions()),
             ),
           ),
         );
       },
-    );
-  }
-}
-
-/// Quick language switch. The same choice also moves push notifications to the
-/// matching language and is stored only on this device.
-class _LanguageCard extends ConsumerWidget {
-  const _LanguageCard();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final locale = ref.watch(appLanguageProvider);
-    final englishAvailable = ref.watch(englishAvailabilityProvider);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.language_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Bahasa aplikasi'.localized(context),
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.only(left: 36),
-              child: Text(
-                'Berlaku untuk tampilan aplikasi, materi, dan notifikasi.'
-                    .localized(context),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: SegmentedButton<String>(
-                key: const Key('settings-language'),
-                showSelectedIcon: false,
-                segments: [
-                  ButtonSegment(
-                    value: 'id',
-                    label: Text('Bahasa Indonesia'.localized(context)),
-                  ),
-                  if (englishAvailable)
-                    const ButtonSegment(value: 'en', label: Text('English')),
-                ],
-                selected: {locale.languageCode},
-                onSelectionChanged: (value) {
-                  unawaited(
-                    ref
-                        .read(appLanguageProvider.notifier)
-                        .selectLanguage(value.first),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

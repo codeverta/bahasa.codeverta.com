@@ -10,7 +10,6 @@ import (
 
 func accountLocalizationRequest(t *testing.T, path, language string, handler http.HandlerFunc) *httptest.ResponseRecorder {
 	t.Helper()
-	t.Setenv(englishQAPreviewFlag, "true")
 	request := httptest.NewRequest(http.MethodGet, path, nil)
 	if language != "" {
 		request.Header.Set("Accept-Language", language)
@@ -43,14 +42,12 @@ func TestAccountLocalizationTranslatesErrorsForEnglish(t *testing.T) {
 	}
 }
 
-func TestAccountLocalizationLeavesIndonesianAndOtherPathsUntouched(t *testing.T) {
+func TestAccountLocalizationLeavesNonAccountPathsUntouched(t *testing.T) {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		writeError(w, http.StatusUnauthorized, "unauthorized", "Sesi tidak valid atau sudah berakhir.")
 	}
 	for _, tc := range []struct{ path, language string }{
-		{"/v1/me/profile", "id"},
-		{"/v1/me/profile", ""},
 		{"/v1/admin/news", "en"},
 		{"/v1/dictionary/search", "en"},
 	} {
@@ -93,8 +90,12 @@ func TestAppUpdatePolicyUsesEnglishMessage(t *testing.T) {
 	if payload.Data.Android.Message != "Please update the app." || payload.Data.IOS.Message != "" {
 		t.Fatalf("unexpected messages: %+v", payload.Data)
 	}
-	indonesian := accountLocalizationRequest(t, "/v1/app-update-policy", "id", handler)
-	if !strings.Contains(indonesian.Body.String(), "Perbarui aplikasi.") {
-		t.Fatal("Indonesian policy changed")
+	unsupported := accountLocalizationRequest(t, "/v1/app-update-policy", "id", handler)
+	if !strings.Contains(unsupported.Body.String(), "Please update the app.") {
+		t.Fatal("unsupported languages must fall back to English")
+	}
+	defaulted := accountLocalizationRequest(t, "/v1/app-update-policy", "", handler)
+	if !strings.Contains(defaulted.Body.String(), "Please update the app.") {
+		t.Fatal("English must be the default")
 	}
 }

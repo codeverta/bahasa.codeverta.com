@@ -1,4 +1,4 @@
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,10 +12,9 @@ class CourseAnkiDeck {
 
   final String id;
 
-  /// Deck name without the level, as Indonesian source copy; localized with
-  /// `.localized(context)`.
-  final String title;
-  final String subtitle;
+  /// Deck name without the level.
+  final String Function(AppLocalizations l10n) title;
+  final String Function(AppLocalizations l10n) subtitle;
 }
 
 /// The built-in decks matching a course and level. The Japanese built-in decks
@@ -48,7 +47,7 @@ class CourseAnkiButton extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
               child: Text(
-                'Pilih deck Anki'.localized(context),
+                context.l10n.ankiChooseAnAnki,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
@@ -56,8 +55,8 @@ class CourseAnkiButton extends StatelessWidget {
               ListTile(
                 key: ValueKey('course-anki-deck-${deck.id}'),
                 leading: const Icon(Icons.style_outlined),
-                title: Text('$level · ${deck.title.localized(context)}'),
-                subtitle: Text(deck.subtitle.localized(context)),
+                title: Text('$level · ${deck.title(context.l10n)}'),
+                subtitle: Text(deck.subtitle(context.l10n)),
                 trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => Navigator.pop(context, deck),
               ),
@@ -77,7 +76,7 @@ class CourseAnkiButton extends StatelessWidget {
     if (decks.isEmpty) return const SizedBox.shrink();
     return IconButton(
       key: const ValueKey('course-anki-button'),
-      tooltip: 'Latihan kartu Anki'.localized(context),
+      tooltip: context.l10n.ankiPracticeWith,
       icon: const Icon(Icons.style_outlined),
       onPressed: () => _open(context, decks),
     );

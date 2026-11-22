@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/billing/data/billing_repository.dart';
@@ -93,10 +94,6 @@ final billingControllerProvider =
       return controller;
     });
 
-final lifetimeDisplayPriceProvider = FutureProvider.autoDispose<int>((ref) {
-  return BillingRepository(ref.watch(dioProvider)).displayPrice();
-});
-
 class BillingController extends StateNotifier<BillingState>
     with WidgetsBindingObserver {
   BillingController({
@@ -112,7 +109,7 @@ class BillingController extends StateNotifier<BillingState>
         unawaited(handle(items));
       },
       onError: (Object error) =>
-          showMessage('Koneksi store terputus. Coba lagi.'),
+          showMessage(appL10n().billingStoreConnectionLost),
     );
   }
   final BillingRepository repository;
@@ -174,7 +171,7 @@ class BillingController extends StateNotifier<BillingState>
       try {
         await gateway?.restore(account!.accountToken);
       } on Object {
-        showMessage('Tidak dapat memeriksa pembelian lama. Gunakan Restore.');
+        showMessage(appL10n().billingCheckOldPurchasesFailed);
       }
     }
   }
@@ -182,10 +179,10 @@ class BillingController extends StateNotifier<BillingState>
   Future<void> refresh() async {
     final id = user;
     if (id == null) {
-      showMessage('Masuk ke akun untuk membeli atau restore.');
+      showMessage(appL10n().billingSignInToBuy);
       return;
     }
-    showMessage('Memeriksa akses dan store…', busy: true);
+    showMessage(appL10n().billingCheckingAccess, busy: true);
     try {
       final info = await repository.status(userId: id);
       if (!mounted || user != id) return;
@@ -205,7 +202,7 @@ class BillingController extends StateNotifier<BillingState>
             ownedBy: ownedBy,
             premium: info.premium,
             priceIdr: info.priceIdr,
-            message: 'Pembelian store belum tersedia di perangkat ini.',
+            message: appL10n().billingStoreUnavailable,
           );
         }
         await onChanged();
@@ -222,9 +219,7 @@ class BillingController extends StateNotifier<BillingState>
         product: found,
         priceIdr: info.priceIdr,
         ready: found != null,
-        message: found == null
-            ? 'Produk belum tersedia. Coba lagi nanti.'
-            : null,
+        message: found == null ? appL10n().billingProductUnavailable : null,
       );
       await onChanged();
     } on DioException catch (error) {
@@ -240,8 +235,8 @@ class BillingController extends StateNotifier<BillingState>
           premium: offlinePremium,
           ready: state.ready,
           message: error.response?.statusCode == 403
-              ? 'Masuk dengan akun Google pribadi untuk membeli atau Restore. Akun demo digunakan bersama.'
-              : 'Sesi atau koneksi bermasalah. Masuk lagi jika sesi sudah berakhir.',
+              ? appL10n().billingSharedDemoAccount
+              : appL10n().billingSessionProblem,
         );
       }
     } on Object {
@@ -255,8 +250,7 @@ class BillingController extends StateNotifier<BillingState>
           priceIdr: state.priceIdr,
           premium: offlinePremium,
           ready: state.ready,
-          message:
-              'Tidak dapat memeriksa akses. Periksa koneksi lalu coba lagi.',
+          message: appL10n().billingAccessCheckFailed,
         );
       }
     }
@@ -272,12 +266,10 @@ class BillingController extends StateNotifier<BillingState>
         user == null) {
       return;
     }
-    showMessage('Selesaikan pembayaran di store.', busy: true);
+    showMessage(appL10n().billingCompletePayment, busy: true);
     checkoutTimeout?.cancel();
     checkoutTimeout = Timer(const Duration(seconds: 90), () {
-      showMessage(
-        'Store belum memberikan hasil. Gunakan Restore atau coba verifikasi lagi sebelum membeli ulang.',
-      );
+      showMessage(appL10n().billingStoreNoResult);
     });
     try {
       final started = await gateway!.buy(
@@ -291,14 +283,10 @@ class BillingController extends StateNotifier<BillingState>
         // owns Lifetime ("You already own this item"). Restore it instead:
         // either it belongs to this app account (or to none yet, like a
         // redeemed promo code) and unlocks now, or the owner is named.
-        await recoverOwned(
-          'Google Play tidak melanjutkan pembayaran. Jika dialog tadi ditutup, tidak ada biaya yang dikenakan dan akses tetap sama.',
-        );
+        await recoverOwned(appL10n().billingPlayDidNotContinue);
       }
     } on Object {
-      showMessage(
-        'Pembayaran tidak dapat dimulai. Coba Restore jika sudah membeli.',
-      );
+      showMessage(appL10n().billingPaymentCouldNotStart);
     }
   }
 
@@ -307,7 +295,7 @@ class BillingController extends StateNotifier<BillingState>
       return;
     }
     restoring = true;
-    showMessage('Memulihkan pembelian…', busy: true);
+    showMessage(appL10n().billingRestoring, busy: true);
     try {
       await gateway!
           .restore(account!.accountToken)
@@ -317,14 +305,12 @@ class BillingController extends StateNotifier<BillingState>
         await refresh();
         showMessage(
           state.premium
-              ? 'Lifetime Access aktif.'
-              : 'Belum ada pembelian yang berhasil dipulihkan. Pastikan akun store benar.',
+              ? appL10n().billingLifetimeAccess
+              : appL10n().billingRestoreNothingFound,
         );
       }
     } on Object {
-      showMessage(
-        'Restore gagal. Periksa akun store dan koneksi, lalu coba lagi.',
-      );
+      showMessage(appL10n().billingRestoreFailed);
     } finally {
       restoring = false;
     }
@@ -340,7 +326,7 @@ class BillingController extends StateNotifier<BillingState>
       return;
     }
     recovering = true;
-    showMessage('Memeriksa pembelian Lifetime yang sudah ada…', busy: true);
+    showMessage(appL10n().billingCheckingExistingLifetime, busy: true);
     try {
       await gateway!
           .restore(account!.accountToken)
@@ -365,9 +351,7 @@ class BillingController extends StateNotifier<BillingState>
 
   Future<void> handle(List<PurchaseDetails> items) async {
     queue = queue.then((_) => _handle(items)).catchError((Object error) {
-      showMessage(
-        'Pembelian belum selesai. Coba verifikasi lagi atau restore.',
-      );
+      showMessage(appL10n().billingPurchaseNotFinished);
     });
     await queue;
   }
@@ -379,9 +363,7 @@ class BillingController extends StateNotifier<BillingState>
       // product ID. Handle those results before filtering by product ID.
       if (purchase.productID.isEmpty &&
           purchase.status == PurchaseStatus.canceled) {
-        showMessage(
-          'Pembayaran dibatalkan. Tidak ada biaya yang dikenakan dan akses tidak berubah.',
-        );
+        showMessage(appL10n().billingPaymentCanceledNoCharge);
         if (purchase.pendingCompletePurchase) {
           await gateway!.complete(purchase);
         }
@@ -395,19 +377,13 @@ class BillingController extends StateNotifier<BillingState>
         }
         // Runs after this queue entry so it can wait for the restore.
         unawaited(
-          Future<void>(
-            () => recoverOwned(
-              'Google Play mencatat Lifetime sudah dimiliki akun Play ini, tetapi pembeliannya belum ditemukan. Gunakan Restore.',
-            ),
-          ),
+          Future<void>(() => recoverOwned(appL10n().billingPlayOwnedNotFound)),
         );
         continue;
       }
       if (purchase.productID.isEmpty &&
           purchase.status == PurchaseStatus.error) {
-        showMessage(
-          'Google Play tidak dapat memulai pembayaran. Akses tidak berubah; silakan coba lagi.',
-        );
+        showMessage(appL10n().billingPlayCouldNotStart);
         if (purchase.pendingCompletePurchase) {
           await gateway!.complete(purchase);
         }
@@ -423,23 +399,16 @@ class BillingController extends StateNotifier<BillingState>
       }
       switch (purchase.status) {
         case PurchaseStatus.pending:
-          showMessage(
-            'Pembayaran menunggu persetujuan. Akses aktif setelah terverifikasi.',
-            pending: true,
-          );
+          showMessage(appL10n().billingPaymentAwaitingApproval, pending: true);
           continue;
         case PurchaseStatus.canceled:
-          showMessage(
-            'Pembayaran dibatalkan. Tidak ada akses baru yang diaktifkan.',
-          );
+          showMessage(appL10n().billingPaymentCanceledNoAccess);
           if (purchase.pendingCompletePurchase) {
             await gateway!.complete(purchase);
           }
           continue;
         case PurchaseStatus.error:
-          showMessage(
-            'Pembayaran gagal. Coba lagi atau Restore jika sudah membeli.',
-          );
+          showMessage(appL10n().billingPaymentFailed);
           if (purchase.pendingCompletePurchase) {
             await gateway!.complete(purchase);
           }
@@ -453,7 +422,7 @@ class BillingController extends StateNotifier<BillingState>
       if (completed.contains(key)) continue;
       retryPurchases[key] = purchase;
       final id = user;
-      showMessage('Memverifikasi pembelian…', busy: true);
+      showMessage(appL10n().billingVerifying, busy: true);
       try {
         final result = await repository.verify(
           platform: platform,
@@ -464,7 +433,7 @@ class BillingController extends StateNotifier<BillingState>
         );
         if (!mounted || user != id) continue;
         if (result == 'pending') {
-          showMessage('Pembayaran masih tertunda di store.', pending: true);
+          showMessage(appL10n().billingPaymentStillPending, pending: true);
           continue;
         }
         // Finish only after server verification and durable ownership have succeeded.
@@ -476,8 +445,8 @@ class BillingController extends StateNotifier<BillingState>
         if (!mounted || user != id) continue;
         showMessage(
           result == 'purchased'
-              ? 'Lifetime Access berhasil diaktifkan.'
-              : 'Pembelian telah dicabut atau dikembalikan oleh store.',
+              ? appL10n().billingLifetimeActivated
+              : appL10n().billingPurchaseRevoked,
         );
       } on DioException catch (error) {
         if (error.response?.statusCode == 401) await onChanged();
@@ -497,14 +466,12 @@ class BillingController extends StateNotifier<BillingState>
         }
         showMessage(
           error.response?.statusCode == 402
-              ? 'Pembelian ini terkait akun aplikasi lain. Masuk ke akun pembeli lalu Restore.'
-              : 'Verifikasi belum selesai. Jangan membeli lagi; coba verifikasi atau Restore.',
+              ? appL10n().billingPurchaseOtherAccount
+              : appL10n().billingVerificationUnfinished,
         );
       } on Object {
         if (mounted && user == id) {
-          showMessage(
-            'Pembelian belum selesai. Coba verifikasi lagi atau Restore.',
-          );
+          showMessage(appL10n().billingPurchaseNotFinished);
         }
       }
     }

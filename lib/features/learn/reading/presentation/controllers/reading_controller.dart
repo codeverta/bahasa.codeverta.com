@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
@@ -132,7 +133,7 @@ class ReadingController extends StateNotifier<AsyncValue<ReadingState>> {
     final loaded = await AsyncValue.guard(() async {
       final lesson = await repository.getLesson(lessonId);
       if (lesson.pages.isEmpty) {
-        throw const ReadingException('Lesson ini belum memiliki materi.');
+        throw ReadingException(appL10n().readingEmptyLesson);
       }
       final savedPosition = mounted
           ? await history?.open(
@@ -177,7 +178,7 @@ class ReadingController extends StateNotifier<AsyncValue<ReadingState>> {
     try {
       final attempt = await repository.startAttempt(lessonId);
       if (attempt.questions.isEmpty) {
-        throw const ReadingException('Kuis lesson belum tersedia.');
+        throw ReadingException(appL10n().readingQuizUnavailable);
       }
       if (mounted) {
         state = AsyncValue.data(

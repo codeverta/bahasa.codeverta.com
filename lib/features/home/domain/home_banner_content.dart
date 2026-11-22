@@ -1,30 +1,30 @@
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 
 /// Distinct destinations, even when an older API has no banners yet.
 /// Subscribers see Anki in place of the purchase offer.
 List<HomeBanner> homeBannersFor(
   HomeDashboard data, {
   required bool lifetime,
-  bool english = false,
+  required AppLocalizations l10n,
 }) {
-  const defaults = [
+  final defaults = [
     HomeBanner(
       id: 'learn',
-      title: 'Belajar Jepang, setiap hari',
-      description:
-          'Kosakata, kanji, grammar, dan reading untuk target JLPT-mu.',
+      title: l10n.homeBannerLearnTitle,
+      description: l10n.homeBannerLearnDescription,
       imageUrl: '',
       action: 'learn',
-      buttonLabel: 'Mulai belajar',
+      buttonLabel: l10n.homeBannerLearnButton,
     ),
   ];
-  const anki = HomeBanner(
+  final anki = HomeBanner(
     id: 'anki',
-    title: 'Ingat lebih lama dengan Anki',
-    description: 'Pilih deck favorit dan bangun kebiasaan review kosakata.',
+    title: l10n.homeBannerAnkiTitle,
+    description: l10n.homeBannerAnkiDescription,
     imageUrl: '',
     action: 'anki',
-    buttonLabel: 'Jelajahi deck',
+    buttonLabel: l10n.homeBannerAnkiButton,
   );
   final plan =
       data.plans.where((p) => p.billingType == 'lifetime').firstOrNull ??
@@ -33,12 +33,10 @@ List<HomeBanner> homeBannersFor(
       ? HomeBanner(
           id: 'lifetime-offer',
           title: plan.name,
-          description: english
-              ? 'Your app store shows the local price at checkout.'
-              : '${plan.features.firstOrNull ?? plan.name} • Rp${plan.priceIdr.toString().replaceAllMapped(RegExp(r"(\d)(?=(\d{3})+(?!\d))"), (m) => '${m[1]}.')}',
+          description: l10n.homeBannerOfferDescription,
           imageUrl: '',
           action: 'premium',
-          buttonLabel: 'Lihat paket',
+          buttonLabel: l10n.homeBannerOfferButton,
         )
       : null;
   HomeBanner configured(HomeBanner fallback) =>

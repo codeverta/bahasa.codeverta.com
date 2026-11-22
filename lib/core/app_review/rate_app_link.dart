@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bahasa_master/core/app_review/app_review_service.dart';
-import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +17,7 @@ class RateAppLink extends ConsumerWidget {
       key: const Key('rate-app'),
       leading: const Icon(Icons.star_outline_rounded, size: 21),
       title: Text(
-        'Beri rating aplikasi'.localized(context),
+        context.l10n.reviewRateThis,
         style: const TextStyle(fontSize: 13),
       ),
       trailing: const Icon(Icons.open_in_new_rounded, size: 18),
