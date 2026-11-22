@@ -109,35 +109,6 @@ func (m *DeletedDemo) BeforeCreate(_ *gorm.DB) error {
 	return setUUID(&m.ID)
 }
 
-type DictionaryResponse struct {
-	Endpoint  string `gorm:"type:text"`
-	QueryText string `gorm:"type:varchar(512)"`
-	Mode      string `gorm:"type:varchar(16)"`
-	Page      int
-	JLPT      string `gorm:"type:varchar(2)"`
-	Common    bool
-	ID        string `gorm:"type:char(36);primaryKey"`
-	CacheKey  string `gorm:"column:cache_key;type:char(64);not null;uniqueIndex:dictionary_cache_key"`
-	Source    string `gorm:"type:varchar(64);not null"`
-	Body      []byte `gorm:"type:longblob;not null"`
-	FetchedAt int64  `gorm:"column:fetched_at;type:bigint;not null;index:dictionary_responses_age"`
-}
-
-func (DictionaryResponse) TableName() string                { return "dictionary_responses" }
-func (m *DictionaryResponse) BeforeCreate(_ *gorm.DB) error { return setUUID(&m.ID) }
-
-type DictionaryEntry struct {
-	ID        string `gorm:"type:char(36);primaryKey"`
-	Source    string `gorm:"type:varchar(64);not null;uniqueIndex:dictionary_entry_source,priority:1"`
-	EntryID   string `gorm:"column:source_entry_id;type:varchar(512);not null;uniqueIndex:dictionary_entry_source,priority:2"`
-	Kind      string `gorm:"type:varchar(32);not null"`
-	Body      []byte `gorm:"type:longblob;not null"`
-	FetchedAt int64  `gorm:"column:fetched_at;type:bigint;not null"`
-}
-
-func (DictionaryEntry) TableName() string                { return "dictionary_entries" }
-func (m *DictionaryEntry) BeforeCreate(_ *gorm.DB) error { return setUUID(&m.ID) }
-
 // XPEvent is one XP award. Raw events are kept for 12 weeks; the leaderboard
 // never sums them to rank (it reads weekly_scores and the xp_total column).
 type XPEvent struct {

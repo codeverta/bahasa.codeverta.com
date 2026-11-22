@@ -322,10 +322,7 @@ const _buttonStyle = TextStyle(
 
 String _eyebrow(String action) => switch (action) {
   'premium' => 'BAHASA PREMIUM',
-  'manga' => 'PREMIUM · LIFETIME ACCESS',
   'anki' => 'REVIEW SEDIKIT, INGAT LEBIH LAMA',
-  'ssw' => 'KETERAMPILAN UNTUK JEPANG',
-  'jobs' => 'PELUANG KARIER',
   _ => 'BELAJAR BAHASA JEPANG',
 };
 
@@ -342,21 +339,15 @@ class _BannerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (color, asset) = switch (banner.action) {
-      'premium' => (const Color(0xFF24285F), 'assets/images/exams/n5.webp'),
-      'manga' => (
-        const Color(0xFF30265D),
-        'assets/images/explore/manga-reading.webp',
+      'premium' => (
+        const Color(0xFF24285F),
+        'assets/images/explore/lifetime-access.webp',
       ),
       'anki' => (
         const Color(0xFF145B60),
         'assets/images/explore/anki-flashcards.webp',
       ),
-      'ssw' => (const Color(0xFF124E56), 'assets/images/ssw/ssw-careers.webp'),
-      'jobs' => (
-        const Color(0xFF443060),
-        'assets/images/jobs/job-category-atlas.webp',
-      ),
-      _ => (const Color(0xFF272C75), 'assets/images/exams/n5.webp'),
+      _ => (const Color(0xFF272C75), 'assets/images/onboarding/journey.webp'),
     };
     final logicalWidth = MediaQuery.sizeOf(context).width;
     final width =
@@ -466,9 +457,7 @@ class _BannerCard extends StatelessWidget {
                                 children: [
                                   Text(
                                     _eyebrow(banner.action).localized(context),
-                                    style:
-                                        (banner.action == 'premium' ||
-                                            banner.action == 'manga')
+                                    style: banner.action == 'premium'
                                         ? _eyebrowStyle.copyWith(
                                             color: const Color(0xFFFFD784),
                                           )
@@ -505,14 +494,10 @@ class _BannerCard extends StatelessWidget {
                         const SizedBox(height: 18),
                         FilledButton.icon(
                           style: FilledButton.styleFrom(
-                            backgroundColor:
-                                (banner.action == 'premium' ||
-                                    banner.action == 'manga')
+                            backgroundColor: banner.action == 'premium'
                                 ? SakuraColors.light.gold
                                 : Colors.white,
-                            foregroundColor:
-                                (banner.action == 'premium' ||
-                                    banner.action == 'manga')
+                            foregroundColor: banner.action == 'premium'
                                 ? SakuraColors.light.onGold
                                 : color,
                             minimumSize: const Size(0, 48),

@@ -1,13 +1,11 @@
 package store
 
 import (
-	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
 	"time"
 
-	vocabularyData "bahasa-master-backend/data/vocabulary"
 	"bahasa-master-backend/internal/domain"
 )
 
@@ -273,153 +271,16 @@ func shiftOptions(options []domain.QuizOption, shift int) {
 	sort.SliceStable(options, func(i, j int) bool { return (i+shift)%2 < (j+shift)%2 })
 }
 
+// vocabularySeed lets tests install fixture courses. Production ships no
+// built-in vocabulary yet: the Japanese courses were removed and the
+// Indonesian curriculum arrives in a later phase.
+var vocabularySeed func() []domain.VocabularyLevelContent
+
 func seedVocabulary() []domain.VocabularyLevelContent {
-	levels := []domain.VocabularyLevelContent{
-		vocabularyLevel("N5", "Fondasi sehari-hari", "Kosakata paling dasar untuk memperkenalkan diri, makan, dan kebutuhan harian.", "n5-daily", "Kata dasar sehari-hari", "Mulai dari kata yang paling sering ditemui.", []domain.VocabularyWord{
-			word("n5-watashi", "私", "わたし", "saya", "私は学生です。", "Saya adalah pelajar.", "Gunakan わたし sebagai kata ganti netral dan sopan."),
-			word("n5-gakusei", "学生", "がくせい", "pelajar", "田中さんは学生です。", "Tanaka adalah pelajar.", "学生 dipakai untuk siswa atau mahasiswa."),
-			word("n5-taberu", "食べる", "たべる", "makan", "パンを食べます。", "Saya makan roti.", "Bentuk sopannya adalah 食べます."),
-			word("n5-mizu", "水", "みず", "air", "水をください。", "Tolong beri saya air.", "ください berarti 'tolong berikan'."),
-		}),
-		vocabularyLevel("N4", "Aktivitas dan rencana", "Kosakata untuk menjelaskan rencana, kebutuhan, dan pengalaman sederhana.", "n4-plans", "Rencana dan pengalaman", "Bangun percakapan yang lebih panjang.", []domain.VocabularyWord{
-			word("n4-yotei", "予定", "よてい", "rencana atau jadwal", "週末の予定は何ですか。", "Apa rencana akhir pekanmu?", "予定 dapat berarti rencana maupun jadwal."),
-			word("n4-hitsuyou", "必要", "ひつよう", "perlu", "パスポートが必要です。", "Paspor diperlukan.", "Sering digunakan dengan pola ～が必要です."),
-			word("n4-tsuzukeru", "続ける", "つづける", "melanjutkan", "勉強を続けます。", "Saya melanjutkan belajar.", "Ini verba transitif: seseorang melanjutkan sesuatu."),
-			word("n4-keiken", "経験", "けいけん", "pengalaman", "日本で働いた経験があります。", "Saya punya pengalaman bekerja di Jepang.", "Pola 経験があります menyatakan pernah mengalami."),
-		}),
-		vocabularyLevel("N3", "Situasi dan dampak", "Kosakata menengah untuk memahami berita ringan dan lingkungan kerja.", "n3-work", "Komunikasi di tempat kerja", "Pahami masalah, tindakan, dan pengaruhnya.", []domain.VocabularyWord{
-			word("n3-kaizen", "改善", "かいぜん", "perbaikan", "サービスを改善します。", "Kami memperbaiki layanan.", "改善 menekankan perubahan menjadi lebih baik."),
-			word("n3-joukyou", "状況", "じょうきょう", "situasi", "現在の状況を説明します。", "Saya menjelaskan situasi saat ini.", "Lebih formal daripada 様子 untuk keadaan."),
-			word("n3-taiou", "対応", "たいおう", "penanganan atau respons", "問題に対応します。", "Kami menangani masalah.", "Gunakan ～に対応する untuk merespons sesuatu."),
-			word("n3-eikyou", "影響", "えいきょう", "pengaruh", "天気は試合に影響します。", "Cuaca memengaruhi pertandingan.", "Pola ～に影響する berarti memengaruhi."),
-		}),
-		vocabularyLevel("N2", "Bahasa profesional", "Kosakata formal untuk laporan, kebijakan, dan pencapaian kerja.", "n2-business", "Laporan dan kebijakan", "Kuasai kata yang sering muncul pada dokumen formal.", []domain.VocabularyWord{
-			word("n2-houshin", "方針", "ほうしん", "kebijakan atau arah", "会社の方針を確認します。", "Saya memastikan kebijakan perusahaan.", "方針 adalah arah dasar dalam mengambil tindakan."),
-			word("n2-jisshi", "実施", "じっし", "pelaksanaan", "調査を実施しました。", "Kami telah melaksanakan survei.", "Kata formal, sering dipasangkan dengan する."),
-			word("n2-kadai", "課題", "かだい", "tugas atau tantangan", "今後の課題を話し合います。", "Kami membahas tantangan ke depan.", "Dalam bisnis sering berarti masalah yang harus diselesaikan."),
-			word("n2-tassei", "達成", "たっせい", "pencapaian", "目標を達成しました。", "Kami telah mencapai target.", "Pola 目標を達成する sangat umum."),
-		}),
-		vocabularyLevel("N1", "Nuansa akademik", "Kosakata tingkat lanjut untuk argumen, analisis, dan bacaan abstrak.", "n1-analysis", "Analisis dan argumentasi", "Bedakan nuansa kata dalam tulisan kompleks.", []domain.VocabularyWord{
-			word("n1-gainen", "概念", "がいねん", "konsep", "基本的な概念を説明します。", "Saya menjelaskan konsep dasar.", "概念 merujuk pada gagasan abstrak yang digeneralisasi."),
-			word("n1-datou", "妥当", "だとう", "tepat atau valid", "その判断は妥当です。", "Keputusan itu tepat.", "Menilai bahwa alasan atau keputusan masuk akal."),
-			word("n1-fumaeru", "踏まえる", "ふまえる", "mempertimbangkan berdasarkan", "結果を踏まえて計画を直します。", "Kami memperbaiki rencana berdasarkan hasil.", "Pola ～を踏まえて sering muncul dalam tulisan formal."),
-			word("n1-ichijirushii", "著しい", "いちじるしい", "mencolok atau signifikan", "技術は著しく進歩しました。", "Teknologi berkembang secara signifikan.", "Digunakan untuk perubahan besar yang jelas terlihat."),
-		}),
+	if vocabularySeed != nil {
+		return vocabularySeed()
 	}
-	var n5 []domain.VocabularyLessonContent
-	if err := json.Unmarshal(vocabularyData.N5, &n5); err != nil {
-		panic("invalid vocabulary N5: " + err.Error())
-	}
-	if len(n5) != 20 {
-		panic("incomplete vocabulary N5")
-	}
-	for _, lesson := range n5 {
-		if len(lesson.Words) != 8 {
-			panic("invalid vocabulary lesson: " + lesson.ID)
-		}
-		for i, w := range lesson.Words {
-			if len(w.Examples) != 2 || w.ImagePanel != i || w.Term == "" || w.Reading == "" || w.Meaning == "" || w.ImageAsset == "" {
-				panic("invalid vocabulary word: " + w.ID)
-			}
-			for _, e := range w.Examples {
-				if e.Japanese == "" || e.Reading == "" || e.Meaning == "" {
-					panic("invalid vocabulary example: " + w.ID)
-				}
-			}
-		}
-	}
-	levels[0].Lessons = n5
-	levels[0].Description = "20 tema bergambar, 160 entri kosakata, dua contoh per kata, dan tiga jenis latihan."
-	var n4 []domain.VocabularyLessonContent
-	if err := json.Unmarshal(vocabularyData.N4, &n4); err != nil {
-		panic("invalid vocabulary N4: " + err.Error())
-	}
-	if len(n4) != 34 {
-		panic("incomplete vocabulary N4")
-	}
-	n4WordCount := 0
-	for _, lesson := range n4 {
-		if lesson.ID == "" || len(lesson.Words) == 0 {
-			panic("invalid vocabulary N4 lesson: " + lesson.ID)
-		}
-		n4WordCount += len(lesson.Words)
-		for _, w := range lesson.Words {
-			if w.ID == "" || w.Term == "" || w.Reading == "" || w.Meaning == "" || w.Example == "" || w.ExampleMeaning == "" || len(w.Examples) == 0 {
-				panic("invalid vocabulary N4 word: " + w.ID)
-			}
-			for _, example := range w.Examples {
-				if example.Japanese == "" || example.Reading == "" || example.Meaning == "" {
-					panic("invalid vocabulary N4 example: " + w.ID)
-				}
-			}
-		}
-	}
-	if n4WordCount != 630 {
-		panic("incomplete vocabulary N4 words")
-	}
-	levels[1].Lessons = n4
-	levels[1].Description = "34 tema dan 630 kosakata N4 dengan cara baca, arti Indonesia, dan contoh pemakaian."
-	levels[1].SourceName = "OpenJLPT"
-	levels[1].SourceURL = "https://github.com/evanclan/OpenJLPT/blob/main/data/json/vocab/n4.json"
-	levels[1].SourceLicense = "CC BY-SA 4.0 • diadaptasi dan diterjemahkan"
-	var n2 []domain.VocabularyLessonContent
-	if err := json.Unmarshal(vocabularyData.N2, &n2); err != nil {
-		panic("invalid vocabulary N2: " + err.Error())
-	}
-	if len(n2) != 5 {
-		panic("incomplete vocabulary N2")
-	}
-	for _, lesson := range n2 {
-		if len(lesson.Words) != 8 {
-			panic("invalid vocabulary lesson: " + lesson.ID)
-		}
-	}
-	levels[3].Lessons = n2
-	levels[3].Description = "5 tema, 40 entri kosakata N2 dengan bacaan, arti Indonesia, dan contoh kalimat."
-	var n3 []domain.VocabularyLessonContent
-	if err := json.Unmarshal(vocabularyData.N3, &n3); err != nil {
-		panic("invalid vocabulary N3: " + err.Error())
-	}
-	if len(n3) != 6 {
-		panic("incomplete vocabulary N3")
-	}
-	for _, lesson := range n3 {
-		if len(lesson.Words) != 12 {
-			panic("invalid vocabulary N3 lesson: " + lesson.ID)
-		}
-		for _, w := range lesson.Words {
-			if w.ID == "" || w.Term == "" || w.Reading == "" || w.Meaning == "" {
-				panic("invalid vocabulary N3 word: " + w.ID)
-			}
-		}
-	}
-	levels[2].Lessons = n3
-	levels[2].Description = "6 tema, 72 kosakata tingkat menengah dengan arti dan cara baca."
-	var n1 []domain.VocabularyLessonContent
-	if err := json.Unmarshal(vocabularyData.N1, &n1); err != nil {
-		panic("invalid vocabulary N1: " + err.Error())
-	}
-	if len(n1) != 8 {
-		panic("incomplete vocabulary N1")
-	}
-	n1WordCount := 0
-	for _, lesson := range n1 {
-		if lesson.ID == "" || len(lesson.Words) != 8 {
-			panic("invalid vocabulary N1 lesson: " + lesson.ID)
-		}
-		n1WordCount += len(lesson.Words)
-		for _, w := range lesson.Words {
-			if w.ID == "" || w.Term == "" || w.Reading == "" || w.Meaning == "" || w.Example == "" || w.ExampleMeaning == "" {
-				panic("invalid vocabulary N1 word: " + w.ID)
-			}
-		}
-	}
-	if n1WordCount != 64 {
-		panic("incomplete vocabulary N1 words")
-	}
-	levels[4].Lessons = n1
-	levels[4].Description = "8 tema dan 64 kosakata tingkat lanjut dengan cara baca, arti Indonesia, serta contoh."
-	return levels
+	return []domain.VocabularyLevelContent{}
 }
 
 func (s *MemoryStore) n5VocabularyQuestionsLocked(lesson *domain.VocabularyLessonContent) ([]domain.VocabularyQuestion, map[string]string, map[string]string) {
@@ -482,12 +343,4 @@ func (s *MemoryStore) n5VocabularyQuestionsLocked(lesson *domain.VocabularyLesso
 		}
 	}
 	return questions, correct, explanations
-}
-
-func vocabularyLevel(level, title, description, lessonID, lessonTitle, lessonDescription string, words []domain.VocabularyWord) domain.VocabularyLevelContent {
-	return domain.VocabularyLevelContent{Level: level, Title: title, Description: description, RequiredTier: domain.TierFree, Lessons: []domain.VocabularyLessonContent{{ID: lessonID, Order: 1, Title: lessonTitle, Description: lessonDescription, Words: words}}}
-}
-
-func word(id, term, reading, meaning, example, exampleMeaning, note string) domain.VocabularyWord {
-	return domain.VocabularyWord{ID: id, Term: term, Reading: reading, Meaning: meaning, Example: example, ExampleMeaning: exampleMeaning, Note: note}
 }

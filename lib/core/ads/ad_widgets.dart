@@ -1,4 +1,3 @@
-import 'package:bahasa_master/core/ads/ads_config.dart';
 import 'package:bahasa_master/core/ads/ads_controller.dart';
 import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +6,9 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 /// Adaptive banner. Renders nothing unless ads are on, the user is free, and
 /// consent allows ad requests, so the layout never reserves empty space.
-/// Where a banner sits: [main] above the bottom navigation (Home, Learn,
-/// Dictionary), [examTab] above it on the Exam tab, [quizResult] on lesson
-/// and exam results, [practiceResult] at the end of Anki, SSW practice and
-/// Kaigo.
-enum BannerAdPlacement { main, examTab, quizResult, practiceResult }
+/// Where a banner sits: [main] above the bottom navigation (Home,
+/// Learn), [quizResult] on lesson results, [practiceResult] at the end of Anki.
+enum BannerAdPlacement { main, quizResult, practiceResult }
 
 class AdBannerSlot extends ConsumerStatefulWidget {
   const AdBannerSlot({this.placement = BannerAdPlacement.main, super.key});
@@ -72,7 +69,6 @@ class _AdBannerSlotState extends ConsumerState<AdBannerSlot> {
     final config = ref.watch(adsReadyProvider).valueOrNull;
     final placement = switch (widget.placement) {
       BannerAdPlacement.main => config?.banner,
-      BannerAdPlacement.examTab => config?.examTabBanner,
       BannerAdPlacement.quizResult => config?.quizResultBanner,
       BannerAdPlacement.practiceResult => config?.practiceResultBanner,
     };
@@ -97,104 +93,4 @@ class _AdBannerSlotState extends ConsumerState<AdBannerSlot> {
       ),
     );
   }
-}
-
-enum NativeAdPlacement { news, jobs, dictionary, newsArticle }
-
-AdPlacementConfig? _nativePlacement(AdsConfig? config, NativeAdPlacement p) =>
-    switch (p) {
-      NativeAdPlacement.news => config?.newsNative,
-      NativeAdPlacement.jobs => config?.jobsNative,
-      NativeAdPlacement.dictionary => config?.dictionaryNative,
-      NativeAdPlacement.newsArticle => config?.newsArticleNative,
-    };
-
-/// Native ad rendered with Google's template so it matches the card style.
-/// It collapses to nothing until an ad has actually loaded.
-class NativeAdSlot extends ConsumerStatefulWidget {
-  const NativeAdSlot({required this.placement, super.key});
-
-  final NativeAdPlacement placement;
-
-  @override
-  ConsumerState<NativeAdSlot> createState() => _NativeAdSlotState();
-}
-
-class _NativeAdSlotState extends ConsumerState<NativeAdSlot> {
-  NativeAd? _ad;
-  bool _loaded = false;
-  bool _requested = false;
-
-  void _load(String unit) {
-    if (_requested) return;
-    _requested = true;
-    final scheme = Theme.of(context).colorScheme;
-    final ad = NativeAd(
-      adUnitId: unit,
-      request: const AdRequest(),
-      nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.medium,
-        mainBackgroundColor: scheme.surface,
-        cornerRadius: 12,
-        callToActionTextStyle: NativeTemplateTextStyle(
-          textColor: scheme.onPrimary,
-          backgroundColor: scheme.primary,
-          style: NativeTemplateFontStyle.bold,
-        ),
-        primaryTextStyle: NativeTemplateTextStyle(textColor: scheme.onSurface),
-        secondaryTextStyle: NativeTemplateTextStyle(
-          textColor: scheme.onSurfaceVariant,
-        ),
-      ),
-      listener: NativeAdListener(
-        onAdLoaded: (_) {
-          if (mounted) setState(() => _loaded = true);
-        },
-        onAdFailedToLoad: (ad, _) {
-          ad.dispose();
-          if (mounted) setState(() => _ad = null);
-        },
-      ),
-    );
-    _ad = ad;
-    ad.load();
-  }
-
-  @override
-  void dispose() {
-    _ad?.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final config = ref.watch(adsReadyProvider).valueOrNull;
-    final placement = _nativePlacement(config, widget.placement);
-    if (placement == null || !placement.usable) {
-      return const SizedBox.shrink();
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _load(placement.unitId);
-    });
-    final ad = _ad;
-    if (ad == null || !_loaded) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Semantics(
-        label: 'Iklan'.localized(context),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 320, maxHeight: 360),
-          child: AdWidget(ad: ad),
-        ),
-      ),
-    );
-  }
-}
-
-/// Returns the native ad spacing for a list, or 0 when ads are not active.
-int nativeAdEvery(WidgetRef ref, NativeAdPlacement placement) {
-  final config = ref.watch(adsReadyProvider).valueOrNull;
-  final p = _nativePlacement(config, placement);
-  if (p == null || !p.usable || p.every < 3) return 0;
-  return p.every;
 }

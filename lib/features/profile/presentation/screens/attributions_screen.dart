@@ -1,7 +1,6 @@
 import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AttributionsLink extends StatelessWidget {
   const AttributionsLink({super.key});
@@ -38,104 +37,6 @@ class AttributionsScreen extends StatelessWidget {
               .localized(context),
         ),
         const SizedBox(height: 24),
-        _SourceGroup(
-          title: 'Manga Jepang',
-          sources: [
-            (
-              'Rawkuma',
-              'Sumber katalog, metadata, dan panel manga berbahasa Jepang. Karya tetap milik penulis dan penerbit masing-masing.',
-              'https://rawkuma.net/',
-            ),
-          ],
-        ),
-        _SourceGroup(
-          title: 'Berita & informasi Jepang',
-          sources: [
-            (
-              'Global Voices 日本語',
-              'Berita Jepang · CC BY 3.0. Furigana ditambahkan oleh Bahasa Master. Kredit penulis, penerjemah, dan gambar tersedia pada setiap artikel.',
-              'https://jp.globalvoices.org/',
-            ),
-            (
-              '大阪市 · Pemerintah Kota Osaka',
-              'Informasi publik Jepang. Ketentuan penggunaan Osaka City kompatibel dengan CC BY 4.0; furigana ditambahkan oleh Bahasa Master.',
-              'https://www.city.osaka.lg.jp/main/site_policy/0000000124.html',
-            ),
-            (
-              '首相官邸 · Kantor Perdana Menteri Jepang',
-              'Berita resmi pemerintah Jepang · 公共データ利用規約 (PDL1.0), kompatibel dengan CC BY 4.0. Sumber: 首相官邸ホームページ; teks diolah (furigana ditambahkan) oleh Bahasa Master.',
-              'https://www.kantei.go.jp/jp/terms.html',
-            ),
-          ],
-        ),
-        _SourceGroup(
-          title: 'Kamus Jepang',
-          sources: [
-            (
-              'Jisho.org',
-              'Hasil pencarian kata dan bacaan Jepang melalui API Jisho. Atribusi dataset yang mendasari entri mengikuti informasi dari Jisho.',
-              'https://jisho.org/about',
-            ),
-            (
-              'Kanji API',
-              'Informasi kanji dan bacaannya melalui kanjiapi.dev.',
-              'https://kanjiapi.dev/',
-            ),
-          ],
-        ),
-        _SourceGroup(
-          title: 'Kosakata JLPT',
-          sources: [
-            (
-              'OpenJLPT',
-              'Dataset kosakata · CC BY-SA 4.0. Data diadaptasi menjadi lesson, dikelompokkan menurut tema, dan diterjemahkan ke bahasa Indonesia. Tingkat JLPT merupakan perkiraan komunitas.',
-              'https://github.com/evanclan/OpenJLPT',
-            ),
-          ],
-        ),
-        _SourceGroup(
-          title: 'Font Noto Sans JP',
-          sources: [
-            (
-              'Noto Sans JP',
-              'Font Noto Sans JP © 2014–2021 Adobe, lisensi SIL Open Font License 1.1. Digunakan pada PDF daftar pola dan kanji yang dapat diunduh.',
-              'https://openfontlicense.org/',
-            ),
-          ],
-        ),
-        const _SourceGroup(
-          title: 'Hiragana & katakana',
-          sources: [
-            (
-              'KanjiVG',
-              'Data urutan goresan hiragana dan katakana © Ulrich Apel, lisensi CC BY-SA 3.0. Diubah menjadi titik-titik goresan oleh Bahasa Master; data turunannya dibagikan dengan lisensi yang sama.',
-              'https://kanjivg.tagaini.net/',
-            ),
-          ],
-        ),
-        _SourceGroup(
-          title: 'Anki & flashcards',
-          sources: [
-            (
-              'Kotoba / mistval',
-              'Resource quiz_data untuk deck flashcard. Lisensi repository dan catatan sumber individual dapat dilihat di halaman Anki → Sumber data & lisensi.',
-              'https://github.com/mistval/kotoba/tree/master/resources/quiz_data',
-            ),
-          ],
-        ),
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.work_outline_rounded),
-            title: Text('Sumber lowongan kerja'.localized(context)),
-            subtitle: Text(
-              'Daftar portal dan penyedia lowongan. Sumber asli juga dicantumkan pada setiap lowongan.'
-                  .localized(context),
-            ),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () => context.push('/jobs/sources'),
-          ),
-        ),
-        const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: () => showLicensePage(
             context: context,
@@ -144,64 +45,6 @@ class AttributionsScreen extends StatelessWidget {
           icon: const Icon(Icons.code_rounded),
           label: Text('Lisensi perangkat lunak open source'.localized(context)),
         ),
-      ],
-    ),
-  );
-}
-
-class _SourceGroup extends StatelessWidget {
-  const _SourceGroup({required this.title, required this.sources});
-  final String title;
-  final List<(String, String, String)> sources;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 22),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title.localized(context),
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-        ),
-        const SizedBox(height: 8),
-        for (final (name, description, url) in sources)
-          Card(
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 10,
-              ),
-              title: Text(name.localized(context)),
-              subtitle: Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Text(description.localized(context)),
-              ),
-              trailing: const Icon(Icons.open_in_new_rounded, size: 18),
-              onTap: () async {
-                var opened = false;
-                try {
-                  opened = await launchUrl(
-                    Uri.parse(url),
-                    mode: LaunchMode.externalApplication,
-                  );
-                } on Object {
-                  /* Show the same retry message for platform errors. */
-                }
-                if (!opened && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Tautan sumber belum dapat dibuka. Coba lagi.'
-                            .localized(context),
-                      ),
-                    ),
-                  );
-                }
-              },
-            ),
-          ),
       ],
     ),
   );

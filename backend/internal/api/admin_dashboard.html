@@ -249,44 +249,6 @@ select.input.full{width:100%}
 .modal .row{justify-content:flex-end;margin-top:18px}
 @media (max-width:640px){.content{padding:16px 14px 40px}.fgrid{grid-template-columns:1fr}}
 
-/* view: news */
-.v-news-list{min-height:0}
-.v-news-src{padding:14px 0;border-bottom:1px solid var(--line)}
-.v-news-src:last-child{border-bottom:0}
-.v-news-src p{margin:6px 0}
-.v-news-item{display:flex;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.v-news-item .thumb{width:84px;height:56px}
-.v-news-item .grow{min-width:220px}
-.v-news-sum{margin-top:4px;color:var(--muted);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.v-news-prev{max-width:100%;max-height:180px;border-radius:12px;object-fit:cover;align-self:flex-start}
-.v-news-para{padding:10px 0;border-top:1px solid var(--line)}
-.v-news-para p{margin:0 0 8px;line-height:1.7}
-.v-news-title{font-weight:800}
-.v-news-tokens{display:flex;flex-wrap:wrap;gap:8px}
-.v-news-token{display:flex;flex-direction:column;gap:3px;padding:8px;background:var(--surface2);border-radius:12px;font-size:15px}
-.v-news-token small{font-size:10.5px}
-.v-news-token .reading{width:120px}
-.v-news .modal-body{max-width:100%}
-
-/* view: manga */
-.v-manga .tbl tbody tr{cursor:pointer}
-.v-manga .tbl td{vertical-align:top}
-
-/* view: map */
-.v-map-irow{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
-.v-map-irow .field{margin-bottom:0}
-.v-map-irow .field.grow{min-width:240px}
-.v-map .v-map-sub{font-size:12px;margin-top:2px}
-.v-map .v-map-h{font-size:14px;margin:6px 0 -4px}
-.v-map-phrase{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:center}
-.v-map-det{margin-bottom:8px;font-size:13px}
-.v-map-det summary{cursor:pointer;font-weight:700}
-.v-map-det p{margin:6px 0;white-space:pre-wrap}
-.v-map-bigimg{width:240px;max-width:100%;height:160px;object-fit:cover;border-radius:12px;background:var(--surface2)}
-.v-map-ed .check{margin-bottom:0}
-.v-map-ed .fgrid label.field{margin-bottom:12px}
-@media (max-width:640px){.v-map-phrase{grid-template-columns:1fr 1fr}.v-map-phrase .btn{grid-column:1/-1}}
-
 /* view: home-banners */
 .v-home-banners-cols{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
 .v-home-banners-item .row{margin-bottom:6px}
@@ -320,13 +282,6 @@ textarea.input{font:inherit}
 .v-ads .panelh{padding-bottom:0}
 .v-ads input[type=text]{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 .v-ads details.guide{margin-top:4px}.v-ads details.guide summary{cursor:pointer;font-weight:700;color:var(--primaryText);font-size:13px}.v-ads details.guide ol{margin:8px 0 0 18px;line-height:1.6;font-size:13px}.v-ads details.guide p{margin-top:8px;font-size:13px}
-
-/* view: prefecture-living */
-.v-prefecture-living{max-width:980px}
-.v-prefecture-living .pl-scroll{overflow-x:auto}
-.v-prefecture-living table{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
-.v-prefecture-living th,.v-prefecture-living td{padding:4px 6px;text-align:left;white-space:nowrap}
-.v-prefecture-living td .input{min-width:90px;padding:6px 8px}
 
 /* view: app-updates */
 .v-app-updates .panelh{flex-wrap:wrap}
@@ -431,10 +386,6 @@ textarea.input{font:inherit}
 var $=function(id){return document.getElementById(id)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var I={
-  news:'<path d="M4 4h13v16H6a2 2 0 0 1-2-2zM17 8h3v10a2 2 0 0 1-2 2M8 8h5M8 12h5M8 16h3"/>',
-  manga:'<path d="M4 19V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h14v-4"/>',
-  dict:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
-  map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/>',
   banner:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M7 13l3-3 3 3 2-2 2 2"/>',
   bell:'<path d="M6 9a6 6 0 1 1 12 0c0 6 3 8 3 8H3s3-2 3-8M10 21a2 2 0 0 0 4 0"/>',
   price:'<path d="M20 12 12 20 4 12V4h8z"/><circle cx="8.5" cy="8.5" r="1.5"/>',
@@ -453,10 +404,6 @@ var I={
 };
 var ic=function(n,cls){return '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+I[n]+'</svg>'};
 var TOOLS=[
-  {id:'news',path:'/admin/news',icon:'news',name:'Berita Jepang',desc:'Sumber, jadwal fetch, artikel, gambar & furigana.',c:'c-red'},
-  {id:'manga',path:'/admin/manga',icon:'manga',name:'Manga',desc:'Judul terkurasi, cache COS & jadwal mingguan.',c:'c-indigo'},
-  {id:'dictionary',path:'/admin/dictionary',icon:'dict',name:'Cache kamus',desc:'Pencarian tersimpan & refresh sumber.',c:'c-gold'},
-  {id:'map',path:'/admin/map',icon:'map',name:'Peta Jepang',desc:'Spot budaya, teks, frasa & publikasi.',c:'c-green'},
   {id:'home-banners',path:'/admin/home-banners',icon:'banner',name:'Banner beranda',desc:'Isi, gambar, urutan & tujuan carousel.',c:'c-red'},
   {id:'notifications',path:'/admin/notifications',icon:'bell',name:'Notifikasi',desc:'Tulis, pratinjau & kirim pengumuman.',c:'c-indigo'}
 ];
@@ -464,7 +411,6 @@ var SYSTEM=[
   {id:'pricing',path:'/admin/pricing',icon:'price',name:'Harga Lifetime',desc:'Harga yang tampil di aplikasi.',c:'c-gold'},
   {id:'ads',path:'/admin/ads',icon:'ads',name:'Iklan',desc:'Pengaturan slot iklan aplikasi.',c:'c-green'},
   {id:'ai',path:'/admin/ai',icon:'zap',name:'Tanya AI',desc:'Kuota, batas harian & cache jawaban.',c:'c-indigo'},
-  {id:'prefecture-living',path:'/admin/prefecture-living',icon:'price',name:'Upah & biaya hidup',desc:'Upah minimum, sewa & kurs per prefektur (peta).',c:'c-gold'},
   {id:'app-updates',path:'/admin/app-updates',icon:'update',name:'Update aplikasi',desc:'Versi minimum & panduan update.',c:'c-red'},
   {id:'branding',path:'/admin/branding',icon:'brand',name:'Branding',desc:'Nama, ikon & tampilan pembuka.',c:'c-indigo'},
   {id:'errors',path:'/admin/errors',icon:'bug',name:'Crash & error',desc:'Error dari Flutter & backend.',c:'c-gold'}
@@ -642,487 +588,12 @@ NM.skeleton=function(n){var h='';for(var i=0;i<(n||3);i++)h+='<div class="skel">
 NM.header=function(title,sub,actions){return NM.el('div',{class:'row between',style:'margin-bottom:14px'},[NM.el('div',{},[NM.el('p',{class:'muted',text:sub||''})]),NM.el('div',{class:'row'},actions||[])])};
 NM.view=function(id,fn){NM.views[id]=fn};
 
-/* view: news */
-(function(){
-NM.view('news',function(root){
-  var el=NM.el,B='/v1/admin/news';
-  var page=1,source='',timers=[],dead=false;
-  var DATE=function(v){return v?new Date(v).toLocaleString('id-ID'):'Belum pernah'};
-  var HAN=/[\u3400-\u9fff\u{20000}-\u{323af}]/u;
-  var api=function(path,method,body){return NM.data(B+path,{method:method||'GET',body:body})};
-
-  root.innerHTML='';
-  var wrap=el('div',{class:'v-news stack'});root.appendChild(wrap);
-  var statusEl=el('div',{class:'msg',role:'status'});
-  var srcCard=el('div',{class:'card'});
-  var artCard=el('div',{class:'card'});
-  var srcBox=el('div',{class:'pad stack'});
-  var srcSel=el('select',{class:'input sm','aria-label':'Filter sumber'},[
-    el('option',{value:'',text:'Semua sumber'}),el('option',{value:'global-voices',text:'Global Voices'}),el('option',{value:'osaka',text:'Osaka City'}),el('option',{value:'kantei',text:'首相官邸 (Kantei)'})]);
-  var reloadBtn=el('button',{class:'btn ghost sm',type:'button',text:'Muat ulang status'});
-  var list=el('div',{class:'v-news-list'});
-  var prev=el('button',{class:'btn ghost sm',type:'button',text:'Sebelumnya'});
-  var next=el('button',{class:'btn ghost sm',type:'button',text:'Berikutnya'});
-  var pages=el('span',{class:'muted'});
-
-  srcCard.appendChild(el('div',{class:'panelh'},[el('div',{},[el('h3',{text:'Sumber dan jadwal'}),
-    el('p',{text:'Hari: Minggu = 0 sampai Sabtu = 6. Boleh 1–7 hari per minggu (pisahkan dengan koma). Zona waktu mengikuti nama IANA, misalnya Asia/Jakarta. Pemeriksaan tidak menjamin selalu ada artikel baru.'})])]));
-  srcCard.appendChild(srcBox);
-  artCard.appendChild(el('div',{class:'panelh'},[el('h3',{text:'Artikel'}),el('div',{class:'row'},[srcSel,reloadBtn])]));
-  artCard.appendChild(list);
-  artCard.appendChild(el('div',{class:'pager'},[prev,pages,next]));
-  wrap.appendChild(statusEl);wrap.appendChild(srcCard);wrap.appendChild(artCard);
-
-  function say(s,kind){statusEl.className='msg'+(kind?' '+kind:'');statusEl.textContent=s||''}
-  function fail(e){say(e.message||'Gagal','err')}
-  function field(label,input,cls){return el('label',{class:'field'+(cls?' '+cls:'')},[el('span',{text:label}),input])}
-
-  list.innerHTML=NM.skeleton(3);srcBox.innerHTML=NM.skeleton(2);
-
-  function renderSource(s){
-    var days=el('input',{class:'input',type:'text',value:(s.days||[]).join(',')});
-    var hour=el('input',{class:'input',type:'number',min:'0',max:'23',value:s.hour});
-    var minute=el('input',{class:'input',type:'number',min:'0',max:'59',value:s.minute});
-    var zone=el('input',{class:'input',type:'text',value:s.timezone||''});
-    var active=el('input',{type:'checkbox'});active.checked=!!s.enabled;
-    var save=el('button',{class:'btn solid sm',type:'button',text:'Simpan jadwal'});
-    var fetchBtn=el('button',{class:'btn ghost sm',type:'button',text:'Fetch sekarang'});
-    save.addEventListener('click',function(){NM.busy(save,function(){
-      return api('/sources/'+s.id,'PUT',{days:days.value.split(',').map(function(x){return Number(x.trim())}),hour:Number(hour.value),minute:Number(minute.value),timezone:zone.value,enabled:active.checked})
-        .then(function(){say('Jadwal tersimpan.','ok');NM.toast('Jadwal tersimpan');return load()}).catch(fail)})});
-    fetchBtn.addEventListener('click',function(){NM.busy(fetchBtn,function(){
-      return api('/sources/'+s.id+'/fetch','POST').then(function(){
-        say('Permintaan diterima. Muat ulang status untuk melihat hasil; proses dapat memerlukan beberapa menit.');
-        timers.push(setTimeout(function(){if(!dead)load().catch(fail)},3000))}).catch(fail)})});
-    var st=s.status||'';
-    var box=el('div',{class:'v-news-src'},[
-      el('div',{class:'row between'},[el('b',{text:s.name}),el('span',{class:'pill '+(s.enabled?'ok':''),text:st||(s.enabled?'aktif':'nonaktif')})]),
-      el('p',{class:'muted',text:'Terakhir mulai: '+DATE(s.lastStartedAt)+' · Terakhir berhasil: '+DATE(s.lastSuccessAt)+' · Berikutnya: '+DATE(s.nextFetchAt)}),
-      el('p',{class:'muted',text:'Batch terakhir: '+s.lastImported+' artikel diproses; '+s.lastSkipped+' dilewati.'})]);
-    if(s.lastError)box.appendChild(el('div',{class:'code',text:s.lastError}));
-    box.appendChild(el('div',{class:'fgrid',style:'margin-top:12px'},[field('Hari',days),field('Jam',hour),field('Menit',minute),field('Zona waktu',zone)]));
-    box.appendChild(el('div',{class:'row'},[el('label',{class:'check'},[active,'Aktif']),save,fetchBtn]));
-    return box;
-  }
-
-  function renderArticle(a){
-    var meta=[a.sourceName,DATE(a.publishedAt)].join(' · ');
-    var item=el('div',{class:'v-news-item'},[
-      a.imageUrl?el('img',{class:'thumb',src:a.imageUrl,alt:'',loading:'lazy'}):null,
-      el('div',{class:'grow'},[el('b',{text:a.title}),el('div',{class:'muted',style:'font-size:12px',text:meta}),
-        el('p',{class:'v-news-sum',text:a.summary||''})]),
-      el('div',{class:'row'},[a.hidden?el('span',{class:'pill warn',text:'Disembunyikan'}):null,
-        el('button',{class:'btn solid sm',type:'button',text:'Edit artikel / furigana',on:{click:function(){edit(a.id)}}})])]);
-    return item;
-  }
-
-  function load(){
-    return api('?page='+page+'&source='+encodeURIComponent(source)).then(function(data){
-      if(dead)return;
-      srcBox.innerHTML='';
-      if(!(data.sources||[]).length)srcBox.appendChild(el('div',{class:'empty',text:'Belum ada sumber.'}));
-      (data.sources||[]).forEach(function(s){srcBox.appendChild(renderSource(s))});
-      list.innerHTML='';
-      if(!(data.items||[]).length)list.appendChild(el('div',{class:'empty'},[el('b',{text:'Belum ada artikel'}),'Tidak ada artikel untuk filter ini.']));
-      (data.items||[]).forEach(function(a){list.appendChild(renderArticle(a))});
-      pages.textContent='Halaman '+page+' · '+data.total+' artikel';
-      prev.disabled=page===1;next.disabled=page*data.pageSize>=data.total;
-    }).catch(function(e){list.innerHTML='';srcBox.innerHTML='';fail(e);throw e});
-  }
-
-  function edit(id){
-    return api('/'+id).then(function(a){
-      var changes=[];
-      var body=el('div',{class:'stack v-news'});
-      body.appendChild(el('p',{class:'muted',style:'margin:0',text:'Koreksi furigana hanya mengubah bacaan. Teks sumber tetap dipertahankan. Kosongkan bacaan untuk menyembunyikan ruby token tersebut.'}));
-      body.appendChild(el('a',{class:'link',href:a.url,target:'_blank',rel:'noopener noreferrer',text:'Sumber asli'}));
-      var hidden=el('input',{type:'checkbox'});hidden.checked=!!a.hidden;
-      var image=el('input',{class:'input',type:'text',value:a.imageUrl||''});
-      var credit=el('input',{class:'input',type:'text',value:a.imageCredit||''});
-      var license=el('input',{class:'input',type:'text',value:a.imageLicense||''});
-      var file=el('input',{class:'input',type:'file',accept:'image/png,image/jpeg'});
-      var preview=el('img',{class:'v-news-prev',alt:''});
-      var syncPrev=function(){if(image.value){preview.src=image.value;preview.style.display=''}else preview.style.display='none'};
-      image.addEventListener('change',syncPrev);syncPrev();
-      var up=el('button',{class:'btn ghost sm',type:'button',text:'Unggah PNG/JPEG'});
-      var err=el('div',{class:'msg err'});
-      up.addEventListener('click',function(){NM.busy(up,function(){
-        if(!file.files[0]){err.textContent='Pilih gambar terlebih dahulu.';return}
-        var form=new FormData();form.append('file',file.files[0]);err.textContent='';
-        return api('/images','POST',form).then(function(r){image.value=r.url;syncPrev();NM.toast('Gambar diunggah. Isi kredit dan lisensinya, lalu simpan artikel.')}).catch(function(e){err.textContent=e.message})})});
-      body.appendChild(el('label',{class:'check'},[hidden,'Sembunyikan']));
-      body.appendChild(el('div',{class:'fgrid'},[field('URL gambar tersimpan',image,'wide'),field('Kredit gambar',credit),field('Lisensi / izin gambar',license)]));
-      body.appendChild(preview);
-      body.appendChild(el('div',{class:'row'},[field('Unggah gambar milik sendiri/berizin',file,'grow'),up]));
-
-      var blocks=[[-1,a.titleTokens||[],a.title]].concat((a.paragraphs||[]).map(function(v,i){return [i,v.tokens||[],v.text]}));
-      blocks.forEach(function(b){
-        var p=b[0],tokens=b[1];
-        var sec=el('div',{class:'v-news-para'},[el('p',{class:p<0?'v-news-title':'',text:b[2]})]);
-        var row=el('div',{class:'v-news-tokens'});
-        tokens.forEach(function(t,i){
-          if(!HAN.test(t.surface))return;
-          var inp=el('input',{class:'input sm reading jp',type:'text',value:t.reading||'','aria-label':'Bacaan '+t.surface});
-          inp.addEventListener('change',function(){
-            var prior=changes.filter(function(x){return x.paragraph===p&&x.token===i})[0];
-            if(prior)prior.reading=inp.value;else changes.push({paragraph:p,token:i,reading:inp.value});
-          });
-          row.appendChild(el('div',{class:'v-news-token'},[el('span',{class:'jp',text:t.surface}),el('small',{class:'muted',text:t.readingSource||''}),inp]));
-        });
-        sec.appendChild(row);body.appendChild(sec);
-      });
-      body.appendChild(err);
-      var m;
-      var save=el('button',{class:'btn solid',type:'button',text:'Simpan artikel'});
-      var del=el('button',{class:'btn danger',type:'button',text:'Hapus artikel'});
-      var close=el('button',{class:'btn ghost',type:'button',text:'Tutup editor'});
-      save.addEventListener('click',function(){NM.busy(save,function(){
-        return api('/'+id,'PUT',{hidden:hidden.checked,imageUrl:image.value,imageCredit:credit.value,imageLicense:license.value,revision:a.revision,readings:changes})
-          .then(function(){m.close();NM.toast('Artikel tersimpan');say('Artikel tersimpan.','ok');return load().then(function(){return edit(id)})}).catch(function(e){err.textContent=e.message})})});
-      del.addEventListener('click',function(){
-        NM.confirm('Hapus artikel ini?','URL akan tetap ditandai agar tidak terbit ulang saat fetch.',{ok:'Hapus',danger:true}).then(function(ok){
-          if(!ok)return;NM.busy(del,function(){
-            return api('/'+id,'DELETE').then(function(){m.close();say('Artikel dihapus.','ok');NM.toast('Artikel dihapus');return load()}).catch(function(e){err.textContent=e.message})})})});
-      close.addEventListener('click',function(){m.close()});
-      body.appendChild(el('div',{class:'row'},[close,del,save]));
-      m=NM.modal(a.title,body,{wide:true});
-    }).catch(fail);
-  }
-
-  reloadBtn.addEventListener('click',function(){NM.busy(reloadBtn,function(){return load().catch(function(){})})});
-  srcSel.addEventListener('change',function(){source=srcSel.value;page=1;load().catch(function(){})});
-  prev.addEventListener('click',function(){page=Math.max(1,page-1);load().catch(function(){})});
-  next.addEventListener('click',function(){page++;load().catch(function(){})});
-  load().catch(function(){});
-  return function(){dead=true;timers.forEach(clearTimeout)};
-});
-
-})();
-/* view: manga */
-(function(){
-NM.view('manga',function(root){
-  var el=NM.el,B='/v1/admin/manga';
-  root.innerHTML='';
-  var wrap=el('div',{class:'v-manga stack'});root.appendChild(wrap);
-  var info=el('p',{class:'muted',text:'Katalog terkurasi tanpa konten dewasa/ecchi. Reader menggunakan gambar tersimpan di COS. Pemeriksaan sumber maksimal satu kali per tujuh hari; membuka halaman ini tidak memicu fetch.'});
-  var msg=el('div',{class:'msg',role:'status'});
-  var url=el('input',{class:'input',type:'url',placeholder:'https://rawkuma.net/manga/nama-judul/'});
-  var enabled=el('input',{type:'checkbox'});enabled.checked=true;
-  var jp=el('input',{type:'checkbox'});var safe=el('input',{type:'checkbox'});
-  var save=el('button',{class:'btn solid',type:'button',text:'Simpan'});
-  var reload=el('button',{class:'btn ghost sm',type:'button',text:'Muat ulang katalog'});
-  var tbody=el('tbody');
-  var wrapT=el('div',{class:'tablewrap'},[el('table',{class:'tbl'},[el('thead',{},[el('tr',{},['Judul','Status','Chapter','Pemeriksaan berikutnya'].map(function(t){return el('th',{text:t})}))]),tbody])]);
-  var form=el('div',{class:'card'},[el('div',{class:'panelh'},[el('h3',{text:'Tambahkan / ubah judul'})]),el('div',{class:'pad stack'},[
-    el('label',{class:'field'},[el('span',{text:'URL detail Rawkuma'}),url]),
-    el('div',{},[el('label',{class:'check'},[enabled,'Aktifkan judul ini']),el('label',{class:'check'},[jp,'Halaman chapter sudah diperiksa: bahasa Jepang asli']),el('label',{class:'check'},[safe,'Konten sudah ditinjau: tanpa dewasa, ecchi, atau eksploitasi seksual'])]),
-    el('span',{class:'help',text:'Gunakan hanya judul yang diizinkan untuk diimpor. Judul baru tetap ditolak bila metadata sumber memuat tag yang diblokir. Hilangkan centang aktif untuk menyembunyikan judul beserta semua chapter langsung dari aplikasi.'}),
-    el('div',{class:'row'},[save])])]);
-  var cat=el('div',{class:'card'},[el('div',{class:'panelh'},[el('h3',{text:'Katalog & jadwal'}),reload]),wrapT]);
-  wrap.appendChild(info);wrap.appendChild(msg);wrap.appendChild(form);wrap.appendChild(cat);
-  function say(s,k){msg.className='msg'+(k?' '+k:'');msg.textContent=s||''}
-  var D=function(v){return v?new Date(v).toLocaleString('id-ID'):'-'};
-  function load(){
-    tbody.innerHTML='<tr class="plain"><td colspan="4">'+NM.skeleton(2)+'</td></tr>';
-    return NM.data(B).then(function(data){
-      say(data.cacheEnabled?'COS siap. Worker berjalan berkala.':'COS belum dikonfigurasi. Impor ditunda; katalog tersimpan tetap dapat dibaca.',data.cacheEnabled?'ok':'');
-      tbody.innerHTML='';
-      if(!(data.items||[]).length){tbody.appendChild(el('tr',{class:'plain'},[el('td',{colspan:'4'},[el('div',{class:'empty',text:'Belum ada judul.'})])]));return}
-      data.items.forEach(function(item){
-        var st=el('td',{},[item.enabled?null:el('span',{class:'pill warn',text:'Nonaktif',style:'margin-right:6px'}),el('span',{class:'pill '+(item.importError?'err':'info'),text:item.status||'-'})]);
-        if(item.importError)st.appendChild(el('div',{class:'muted',style:'font-size:12px;margin-top:4px',text:item.importError}));
-        var tr=el('tr',{title:'Klik untuk mengisi formulir'},[el('td',{text:item.title||item.sourceUrl}),st,el('td',{text:String(item.chapterCount)}),el('td',{text:D(item.nextFetchAt)})]);
-        tr.addEventListener('click',function(){url.value=item.sourceUrl;enabled.checked=item.enabled;jp.checked=item.reviewed;safe.checked=item.reviewed;url.focus()});
-        tbody.appendChild(tr);
-      });
-    }).catch(function(e){tbody.innerHTML='';say(e.message,'err')});
-  }
-  save.addEventListener('click',function(){NM.busy(save,function(){
-    return NM.data(B+'/series',{method:'POST',body:{sourceUrl:url.value.trim(),enabled:enabled.checked,japaneseVerified:jp.checked,nonAdultReviewed:safe.checked}})
-      .then(function(){NM.toast('Judul tersimpan');return load()}).catch(function(e){say(e.message,'err')})})});
-  reload.addEventListener('click',function(){NM.busy(reload,load)});
-  load();
-});
-
-})();
-/* view: dictionary */
-(function(){
-NM.view('dictionary',function(root){
-  var el=NM.el,B='/v1/admin/dictionary';
-  var page=1,total=0,loading=false,dead=false;
-  root.innerHTML='';
-  var wrap=el('div',{class:'v-dictionary stack'});root.appendChild(wrap);
-  var q=el('input',{class:'input sm',type:'search',maxlength:'100',placeholder:'Cari query','aria-label':'Cari query'});
-  var go=el('button',{class:'btn solid sm',type:'submit',text:'Cari'});
-  var formEl=el('form',{class:'row'},[q,go]);
-  var msg=el('div',{class:'msg',role:'status','aria-live':'polite'});
-  var stats=el('p',{class:'muted'});var count=el('span',{class:'muted'});
-  var tbody=el('tbody');
-  var prev=el('button',{class:'btn ghost sm',type:'button',text:'Sebelumnya'});
-  var next=el('button',{class:'btn ghost sm',type:'button',text:'Berikutnya'});
-  wrap.appendChild(el('p',{class:'muted',text:'Hasil pencarian dan hasil kosong disimpan permanen. Refresh mengganti satu pencarian hanya setelah sumber dan database berhasil diperbarui.'}));
-  wrap.appendChild(msg);
-  wrap.appendChild(el('div',{class:'card'},[el('div',{class:'pad stack'},[formEl,stats]),
-    el('div',{class:'tablewrap'},[el('table',{class:'tbl'},[el('thead',{},[el('tr',{},['Query / mode','Halaman / filter','Terakhir diambil','Tindakan'].map(function(t,i){return el('th',{text:t,class:i===3?'act':''})}))]),tbody])]),
-    el('div',{class:'pager'},[prev,count,next])]));
-  function say(s,k){msg.className='msg'+(k?' '+k:'');msg.textContent=s||''}
-  function load(){
-    if(loading)return Promise.resolve();loading=true;say('Memuat…');
-    return NM.data(B+'?page='+page+'&q='+encodeURIComponent(q.value)).then(function(d){
-      if(dead)return;
-      total=d.total;tbody.innerHTML='';
-      if(!(d.items||[]).length)tbody.appendChild(el('tr',{class:'plain'},[el('td',{colspan:'4'},[el('div',{class:'empty',text:'Tidak ada pencarian tersimpan.'})])]));
-      (d.items||[]).forEach(function(item){
-        var b=el('button',{class:'btn ghost sm',type:'button',text:'Refresh'});b.disabled=!item.query;
-        b.addEventListener('click',function(){
-          b.disabled=true;say('Memperbarui '+item.query+'…');
-          NM.data(B+'/'+encodeURIComponent(item.id)+'/refresh',{method:'POST'}).then(function(){loading=false;return load()}).then(function(){say('Refresh berhasil.','ok')})
-            .catch(function(e){say(e.message,'err')}).then(function(){b.disabled=!item.query});
-        });
-        tbody.appendChild(el('tr',{class:'plain'},[
-          el('td',{text:(item.query||'Cache lama tanpa metadata')+' / '+(item.mode||'lama')}),
-          el('td',{text:'Hal. '+item.page+' · '+(item.jlpt||'Semua level')+(item.common?' · kata umum':'')}),
-          el('td',{text:item.fetchedAt?new Date(item.fetchedAt).toLocaleString('id-ID'):'-'}),
-          el('td',{class:'act'},[b])]));
-      });
-      count.textContent=total+' pencarian · halaman '+page;
-      var s=d.stats;
-      if(s)stats.textContent='Proses server ini: memori '+s.memoryHits+' hit · DB '+s.databaseHits+' hit · API '+s.upstreamCalls+' panggilan · memori '+(s.memoryBytes/1048576).toFixed(2)+' / '+(s.memoryLimitBytes/1048576)+' MiB';
-      prev.disabled=page===1;next.disabled=page*50>=total;say('');
-    }).catch(function(e){say(e.message,'err')}).then(function(){loading=false});
-  }
-  formEl.addEventListener('submit',function(e){e.preventDefault();page=1;load()});
-  prev.addEventListener('click',function(){page=Math.max(1,page-1);load()});
-  next.addEventListener('click',function(){page++;load()});
-  load();
-  return function(){dead=true};
-});
-
-})();
-/* view: map */
-(function(){
-NM.view('map',function(root){
-  var LABELS={culture:'Budaya',shrine:'Kuil & Shrine',nature:'Alam',food:'Kuliner',city:'Kota & modern',history:'Sejarah'};
-  var PREFS='Hokkaido,Aomori,Iwate,Miyagi,Akita,Yamagata,Fukushima,Ibaraki,Tochigi,Gunma,Saitama,Chiba,Tokyo,Kanagawa,Niigata,Toyama,Ishikawa,Fukui,Yamanashi,Nagano,Gifu,Shizuoka,Aichi,Mie,Shiga,Kyoto,Osaka,Hyogo,Nara,Wakayama,Tottori,Shimane,Okayama,Hiroshima,Yamaguchi,Tokushima,Kagawa,Ehime,Kochi,Fukuoka,Saga,Nagasaki,Kumamoto,Oita,Miyazaki,Kagoshima,Okinawa'.split(',');
-  var E=NM.el;
-  var spots=[],categories=[],working=false,dead=false,filter='',activeModal=null,activeId=null;
-  var prefName=function(c){return c?c+' '+(PREFS[Number(c)-1]||''):'—'};
-  var catName=function(c){return LABELS[c]||c};
-
-  root.innerHTML='<div class="v-map">'+NM.skeleton(3)+'</div>';
-  var wrap=root.firstChild;
-
-  var status=E('div',{class:'msg',role:'status','aria-live':'polite'});
-  function setStatus(m,err){status.textContent=m||'';status.className='msg'+(err?' err':'')}
-
-  function run(message,task){
-    if(working)return Promise.resolve();
-    working=true;setStatus(message);
-    return Promise.resolve().then(task).then(function(){return true},function(e){setStatus(e.message||'Gagal',true);NM.toast(e.message||'Gagal');return false}).then(function(r){working=false;return r});
-  }
-  function done(msg){setStatus('');NM.toast(msg)}
-  function api(path,method,body){return NM.data(path,{method:method||'GET',body:body})}
-
-  function replaceSpot(s){
-    var i=spots.findIndex(function(x){return x.id===s.id});
-    if(i<0)spots.push(s);else spots[i]=s;
-    renderList();
-    if(activeModal&&activeId===s.id)openEditor(s);
-  }
-
-  /* ---------- shell ---------- */
-  var catSel=E('select',{class:'input full','aria-label':'Kategori'});
-  var inputEl=E('input',{class:'input',maxlength:'300',required:true,placeholder:'Fushimi Inari-taisha atau Q…','aria-label':'Spot'});
-  var importBtn=E('button',{class:'btn solid',type:'submit',text:'Ambil & simpan'});
-  var filterSel=E('select',{class:'input sm','aria-label':'Filter'},[
-    ['','Semua'],['missing','Belum ada teks Indonesia'],['draft','Belum terbit'],['published','Sudah terbit'],['unpublishable','Belum bisa terbit (koordinat/prefektur kosong)']
-  ].map(function(o){return E('option',{value:o[0],text:o[1]})}));
-  filterSel.addEventListener('change',function(){filter=filterSel.value;renderList()});
-  var countEl=E('span',{class:'muted'});
-  var listBox=E('div',{class:'tablewrap'});
-
-  var importForm=E('form',{class:'v-map-import',on:{submit:function(e){
-    e.preventDefault();
-    var input=inputEl.value,cat=catSel.value;
-    run('Mengambil dari Wikidata/Wikipedia… (bisa 10–30 detik)',function(){
-      importBtn.disabled=true;
-      return fetch('/v1/admin/map/spots',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({input:input,category:cat})})
-        .then(function(r){
-          if(r.status===401)throw new Error('Sesi berakhir. Muat ulang halaman lalu masuk lagi.');
-          return r.json().catch(function(){return null}).then(function(j){
-            if(!r.ok){var er=new Error((j&&j.error&&j.error.message)||'Permintaan gagal');er.data=j&&j.data;throw er}
-            return j&&j.data});
-        }).then(function(s){
-          replaceSpot(s);inputEl.value='';
-          done('Tersimpan sebagai draft: '+(s.nameId||s.nameEn)+(s.publishable?'':' — lengkapi koordinat/prefektur sebelum terbit.'));
-          openEditor(s);
-        },function(err){if(err.data){replaceSpot(err.data);openEditor(err.data)}throw err})
-        .then(function(){importBtn.disabled=false},function(err){importBtn.disabled=false;throw err});
-    });
-  }}},[
-    E('div',{class:'v-map-irow'},[
-      E('label',{class:'field grow'},[E('span',{text:'ID Wikidata, URL en.wikipedia, atau judul en.wikipedia'}),inputEl]),
-      E('label',{class:'field'},[E('span',{text:'Kategori'}),catSel]),
-      E('div',{class:'field'},[E('span',{html:'&nbsp;'}),importBtn])
-    ])
-  ]);
-
-  function mount(){
-    wrap.innerHTML='';
-    wrap.appendChild(E('div',{class:'stack'},[
-      E('p',{class:'muted',html:'Tambah spot dengan <b>ID Wikidata</b> (misalnya Q123), <b>URL en.wikipedia</b>, atau <b>judul en.wikipedia</b>. Server mengambil nama, ringkasan, tips Wikivoyage, koordinat, dan foto Commons <b>sekali</b>, lalu menyimpannya di database. Spot baru belum terbit sampai Anda menerbitkannya.'}),
-      status,
-      E('section',{class:'card'},[E('div',{class:'panelh'},[E('div',{},[E('h3',{text:'Tambah spot'})])]),E('div',{class:'pad'},[importForm])]),
-      E('section',{class:'card'},[
-        E('div',{class:'panelh'},[E('div',{},[E('h3',{text:'Daftar spot'}),countEl]),filterSel]),
-        listBox
-      ])
-    ]));
-  }
-
-  /* ---------- list ---------- */
-  function pill(text,cls){return E('span',{class:'pill'+(cls?' '+cls:''),text:text})}
-  function renderList(){
-    var list=spots.filter(function(s){return !filter||(filter==='missing'&&s.missingIndonesian)||(filter==='draft'&&!s.published)||(filter==='published'&&s.published)||(filter==='unpublishable'&&!s.publishable)});
-    countEl.textContent=list.length+' dari '+spots.length+' spot';
-    listBox.innerHTML='';
-    if(!list.length){listBox.appendChild(E('div',{class:'empty'},[E('b',{text:'Tidak ada spot'}),E('span',{text:spots.length?'Tidak ada spot yang cocok dengan filter.':'Tambahkan spot pertama lewat form di atas.'})]));return}
-    var tb=E('tbody');
-    list.forEach(function(s){
-      var tags=E('div',{class:'chips'},[pill(s.published?'Terbit':'Draft',s.published?'ok':'')]);
-      if(s.missingIndonesian)tags.appendChild(pill('Belum ada teks Indonesia','warn'));
-      if(!s.publishable)tags.appendChild(pill('Koordinat/prefektur kosong','err'));
-      if(!s.imageUrl)tags.appendChild(pill('Tanpa foto'));
-      tb.appendChild(E('tr',{class:'plain'},[
-        E('td',{},[s.imageUrl?E('img',{class:'thumb',src:s.imageUrl,alt:'',loading:'lazy'}):E('span',{class:'muted',text:'—'})]),
-        E('td',{},[E('b',{text:s.nameId||s.nameEn||s.wikidataId}),
-          E('div',{class:'muted v-map-sub',text:[s.nameEn,s.nameJa,s.reading].filter(Boolean).join(' · ')}),
-          E('div',{class:'v-map-sub'},[E('a',{href:'https://www.wikidata.org/wiki/'+encodeURIComponent(s.wikidataId),target:'_blank',rel:'noopener',text:s.wikidataId})])]),
-        E('td',{text:catName(s.category)+' · '+prefName(s.prefecture)}),
-        E('td',{},[tags]),
-        E('td',{class:'act'},[
-          E('button',{class:'btn sm ghost',type:'button',text:'Edit',on:{click:function(){openEditor(s)}}}),' ',
-          E('button',{class:'btn sm ghost',type:'button',text:'Refresh',on:{click:function(){
-            run('Mengambil ulang '+s.wikidataId+'…',function(){return api('/v1/admin/map/spots/'+s.id+'/refresh','POST').then(function(u){replaceSpot(u);done('Refresh berhasil.')})});
-          }}})
-        ])
-      ]));
-    });
-    listBox.appendChild(E('table',{class:'tbl'},[
-      E('thead',{},[E('tr',{},['Foto','Spot','Kategori / prefektur','Status','Tindakan'].map(function(h,i){return E('th',{class:i===4?'act':'',text:h})}))]),tb]));
-  }
-
-  /* ---------- editor ---------- */
-  function fld(label,input,cls){return E('label',{class:'field'+(cls?' '+cls:'')},[E('span',{text:label}),input])}
-  function opt(v,t,sel){return E('option',{value:v,text:t,selected:sel})}
-  function fetched(label,text,url){
-    var d=E('details',{class:'v-map-det'},[E('summary',{text:label+(text?'':' (kosong)')}),E('p',{class:'muted',text:text||'—'})]);
-    if(url)d.appendChild(E('a',{href:url,target:'_blank',rel:'noopener',text:url}));
-    return d;
-  }
-
-  function openEditor(s){
-    if(activeModal){activeModal.close();activeModal=null}
-    activeId=s.id;
-    var cat=E('select',{class:'input full'},categories.map(function(c){return opt(c,catName(c),c===s.category)}));
-    var pref=E('select',{class:'input full'},[opt('','(otomatis dari koordinat)',false)].concat(PREFS.map(function(p,i){var code=('0'+(i+1)).slice(-2);return opt(code,code+' '+p,code===s.prefecture)})));
-    var lat=E('input',{class:'input',type:'number',step:'any',value:s.lat==null?'':s.lat});
-    var lng=E('input',{class:'input',type:'number',step:'any',value:s.lng==null?'':s.lng});
-    var manual=E('input',{type:'checkbox',checked:!!s.manualLocation});
-    var t=function(v,extra){var o={class:'input',maxlength:'200',value:v||''};for(var k in extra)o[k]=extra[k];return E('input',o)};
-    var ta=function(v){var x=E('textarea',{class:'input',maxlength:'5000'});x.value=v||'';return x};
-    var nameId=t(s.nameId),nameEn=t(s.nameEn),nameJa=t(s.nameJa,{lang:'ja'}),reading=t(s.reading,{lang:'ja'});
-    var sumId=ta(s.manualSummaryId),sumEn=ta(s.manualSummaryEn),tipsId=ta(s.manualTipsId),tipsEn=ta(s.manualTipsEn);
-    var published=E('input',{type:'checkbox',checked:!!s.published});
-    var phrases=E('div',{class:'stack'});
-    function addPhrase(p){
-      var f=function(ph,v,lang){return E('input',{class:'input sm',placeholder:ph,value:v||'','aria-label':ph,lang:lang})};
-      var row=E('div',{class:'v-map-phrase'},[f('Teks Jepang *',p.japanese,'ja'),f('Bacaan',p.reading,'ja'),f('Arti Indonesia *',p.meaningId),f('Arti Inggris (opsional)',p.meaningEn)]);
-      row.appendChild(E('button',{class:'btn sm danger',type:'button',text:'Hapus',on:{click:function(){row.remove()}}}));
-      phrases.appendChild(row);
-    }
-    (s.phrases||[]).forEach(addPhrase);
-
-    var form=E('form',{class:'stack',on:{submit:function(e){
-      e.preventDefault();
-      var body={category:cat.value,prefecture:pref.value,
-        lat:lat.value===''?null:Number(lat.value),lng:lng.value===''?null:Number(lng.value),manualLocation:manual.checked,
-        nameId:nameId.value,nameEn:nameEn.value,nameJa:nameJa.value,reading:reading.value,
-        manualSummaryId:sumId.value,manualSummaryEn:sumEn.value,manualTipsId:tipsId.value,manualTipsEn:tipsEn.value,
-        published:published.checked,
-        phrases:Array.prototype.map.call(phrases.children,function(r){var i=r.querySelectorAll('input');return{japanese:i[0].value,reading:i[1].value,meaningId:i[2].value,meaningEn:i[3].value}}).filter(function(p){return p.japanese||p.meaningId})};
-      run('Menyimpan…',function(){return api('/v1/admin/map/spots/'+s.id,'PUT',body).then(function(u){replaceSpot(u);done('Tersimpan.')})});
-    }}},[
-      E('div',{class:'fgrid'},[fld('Kategori',cat),fld('Nama Indonesia',nameId),fld('Nama Inggris',nameEn),fld('Nama Jepang',nameJa),fld('Bacaan (hiragana)',reading)]),
-      E('h4',{class:'v-map-h',text:'Lokasi'}),
-      E('div',{class:'fgrid'},[fld('Lintang',lat),fld('Bujur',lng),fld('Prefektur',pref),
-        E('label',{class:'check wide'},[manual,'Pakai lokasi manual (tidak ditimpa saat refresh)'])]),
-      E('h4',{class:'v-map-h',text:'Teks manual (menggantikan teks Wikipedia/Wikivoyage)'}),
-      E('div',{class:'fgrid'},[fld('Ringkasan Indonesia',sumId),fld('Ringkasan Inggris',sumEn),fld('Tips berkunjung Indonesia',tipsId),fld('Tips berkunjung Inggris',tipsEn)]),
-      E('h4',{class:'v-map-h',text:'Teks dari sumber'}),
-      E('div',{},[fetched('Wikipedia Indonesia',s.summaryId,s.wikipediaId),fetched('Wikipedia Inggris',s.summaryEn,s.wikipediaEn),fetched('Wikivoyage Indonesia',s.tipsId,s.wikivoyageId),fetched('Wikivoyage Inggris',s.tipsEn,s.wikivoyageEn)]),
-      E('h4',{class:'v-map-h',text:'Kosakata & frasa'}),
-      E('span',{class:'help',text:'Teks Jepang dan arti Indonesia wajib. Tanpa arti Inggris, frasa disembunyikan di mode Inggris.'}),
-      phrases,
-      E('div',{},[E('button',{class:'btn sm ghost',type:'button',text:'+ Tambah frasa',on:{click:function(){addPhrase({})}}})]),
-      E('h4',{class:'v-map-h',text:'Terbit'}),
-      E('label',{class:'check'},[published,'Tampilkan di peta aplikasi']),
-      E('div',{class:'row'},[E('button',{class:'btn solid',type:'submit',text:'Simpan perubahan'}),E('button',{class:'btn ghost',type:'button',text:'Tutup',on:{click:function(){closeEditor()}}})])
-    ]);
-
-    /* photo */
-    var file=E('input',{class:'input',type:'file',accept:'image/png,image/jpeg'});
-    var author=E('input',{class:'input sm',placeholder:'Pembuat foto *'});
-    var license=E('input',{class:'input sm',placeholder:'Lisensi, mis. "Milik sendiri" *'});
-    var photoActs=[
-      E('button',{class:'btn sm solid',type:'button',text:'Unggah foto sendiri',on:{click:function(){
-        if(!file.files[0]){NM.toast('Pilih file foto.');return}
-        var fd=new FormData();fd.append('image',file.files[0]);fd.append('author',author.value);fd.append('license',license.value);
-        run('Mengunggah…',function(){return api('/v1/admin/map/spots/'+s.id+'/image','POST',fd).then(function(u){replaceSpot(u);done('Foto tersimpan.')})});
-      }}})];
-    if(s.manualImage)photoActs.push(E('button',{class:'btn sm ghost',type:'button',text:'Kembali ke foto Commons (saat refresh)',on:{click:function(){
-      run('Menghapus foto unggahan…',function(){return api('/v1/admin/map/spots/'+s.id+'/image','DELETE').then(function(u){replaceSpot(u);done('Foto unggahan dihapus. Klik Refresh untuk mengambil foto Commons.')})});
-    }}}));
-    var photo=E('div',{class:'stack v-map-photo'},[
-      E('h4',{class:'v-map-h',text:'Foto'}),
-      s.imageUrl?E('img',{class:'v-map-bigimg',src:s.imageUrl,alt:''}):E('p',{class:'muted',text:'Belum ada foto berlisensi bebas.'}),
-      s.imageUrl?E('span',{class:'help',text:'© '+(s.imageAuthor||'?')+' · '+(s.imageLicense||'')+(s.manualImage?' · diunggah admin':' · Wikimedia Commons')}):null,
-      file,E('div',{class:'fgrid'},[author,license]),E('div',{class:'row'},photoActs)
-    ]);
-
-    var danger=E('div',{class:'v-map-danger'},[E('button',{class:'btn danger',type:'button',text:'Hapus spot',on:{click:function(){
-      NM.confirm('Hapus spot','Hapus spot ini secara permanen?',{ok:'Hapus',danger:true}).then(function(ok){
-        if(!ok)return;
-        run('Menghapus…',function(){return api('/v1/admin/map/spots/'+s.id,'DELETE').then(function(){spots=spots.filter(function(x){return x.id!==s.id});closeEditor();renderList();done('Spot dihapus.')})});
-      });
-    }}})]);
-
-    var body=E('div',{class:'v-map v-map-ed stack'},[form,photo,danger]);
-    activeModal=NM.modal('Edit: '+(s.nameId||s.nameEn||s.wikidataId),body,{wide:true});
-  }
-  function closeEditor(){if(activeModal){activeModal.close();activeModal=null}activeId=null}
-
-  /* ---------- load ---------- */
-  NM.data('/v1/admin/map/spots').then(function(d){
-    if(dead)return;
-    spots=d.spots||[];categories=d.categories||[];
-    catSel.innerHTML='';categories.forEach(function(c){catSel.appendChild(E('option',{value:c,text:catName(c)}))});
-    mount();renderList();
-  }).catch(function(e){
-    if(dead)return;
-    wrap.innerHTML='';wrap.appendChild(E('div',{class:'msg err',text:e.message||'Gagal memuat spot.'}));
-  });
-
-  return function(){dead=true;closeEditor()};
-});
-
-})();
 /* view: home-banners */
 (function(){
 NM.view('home-banners',function(root){
   var E=NM.el,MAX=12;
   var banners=[],busy=false,dead=false;
-  var ACTIONS=[['learn','Materi belajar'],['ssw','SSW / Tokutei Ginou'],['jobs','Lowongan kerja']];
+  var ACTIONS=[['learn','Materi belajar']];
 
   root.innerHTML='<div class="v-home-banners">'+NM.skeleton(3)+'</div>';
   var wrap=root.firstChild;
@@ -1133,7 +604,7 @@ NM.view('home-banners',function(root){
   var addBtn=E('button',{class:'btn ghost',type:'button',text:'Tambah banner',on:{click:add}});
   var saveBtn=E('button',{class:'btn solid',type:'button',text:'Simpan semua banner',on:{click:save}});
 
-  function validPreviewURL(u){u=u||'';return /^https:\/\//i.test(u)||/^\/home-banner-images\/[a-f0-9]{64}\.(png|jpg)$/.test(u)||/^\/assets\/images\/(exams\/n5|ssw\/ssw-careers|jobs\/job-category-atlas)\.png$/.test(u)}
+  function validPreviewURL(u){u=u||'';return /^https:\/\//i.test(u)||/^\/home-banner-images\/[a-f0-9]{64}\.(png|jpg)$/.test(u)}
   function setBusy(v){
     busy=v;saveBtn.disabled=v;addBtn.disabled=v||banners.length>=MAX;
     list.querySelectorAll('button,input,textarea,select').forEach(function(x){x.disabled=v});
@@ -1254,7 +725,7 @@ NM.view('notifications',function(root){
   var alive=true,items=[],editing=null,ready=false,busy=false;
   var API='/v1/admin/notifications';
   var states={draft:['Draft',''],sending:['Sedang dikirim','warn'],sent:['Diterima Firebase','ok'],failed:['Ditolak Firebase','err'],uncertain:['Status belum pasti','warn']};
-  var routes=[['/home','Beranda'],['/dictionary','Kamus'],['/anki','Anki'],['/ssw','SSW'],['/learn/vocabulary','Kosakata'],['/learn/grammar','Tata bahasa'],['/learn/kanji','Kanji'],['/learn/reading','Membaca'],['/exams/n5','Ujian N5'],['/premium','Lifetime access']];
+  var routes=[['/home','Beranda'],['/anki','Anki'],['/learn/vocabulary','Kosakata'],['/learn/grammar','Tata bahasa'],['/learn/reading','Membaca'],['/premium','Lifetime access']];
   var api=function(path,method,data){return NM.data(API+path,{method:method||'GET',body:data})};
   var wrap=NM.el('div',{class:'v-notifications stack'});
   root.innerHTML='';root.appendChild(wrap);
@@ -1415,19 +886,14 @@ NM.view('pricing',function(root){
 (function(){
 NM.view('ads',function(root){
   var alive=true,P=[
-    {k:'banner',t:'Banner',s:'Bawah layar Beranda, Belajar, Kamus.',every:false,fmt:'Banner',unit:'nm_banner'},
-    {k:'examTabBanner',t:'Banner di tab Ujian',s:'Bawah layar tab Ujian. Tab Profil tidak pernah menampilkan iklan.',every:false,fmt:'Banner',unit:'nm_banner'},
+    {k:'banner',t:'Banner',s:'Bawah layar Beranda dan Belajar.',every:false,fmt:'Banner',unit:'nm_banner'},
     {k:'quizResultBanner',t:'Banner di layar hasil kuis',s:'Di layar nilai setelah kuis pelajaran dan ujian selesai.',every:false,fmt:'Banner',unit:'nm_banner'},
-    {k:'practiceResultBanner',t:'Banner di akhir Anki, SSW, dan Kaigo',s:'Di layar akhir sesi Anki, latihan SSW, dan lesson Kaigo.',every:false,fmt:'Banner',unit:'nm_banner'},
-    {k:'interstitial',t:'Layar penuh setelah selesai belajar',s:'Hanya muncul saat pengguna keluar dari layar hasil (lesson, ujian, latihan SSW/Kaigo, sesi Anki), setelah nilainya terlihat, dan hanya bila sudah lewat N menit pemakaian sejak iklan layar penuh terakhir. Tidak pernah saat membuka materi, saat belajar, atau setelah pengguna baru menonton iklan rewarded.',every:true,label:'Jeda pemakaian (menit, 5-60)',min:5,max:60,def:10,fmt:'Interstitial',unit:'nm_interstitial'},
-    {k:'newsNative',t:'Native di daftar Berita',s:'Disisipkan di antara berita.',every:true,noun:'berita',fmt:'Native advanced',unit:'nm_native'},
-    {k:'newsArticleNative',t:'Native di akhir artikel berita',s:'Satu iklan setelah isi artikel, sebelum sumber & kredit. Artikel yang dibuka dengan iklan tidak menampilkannya.',every:false,fmt:'Native advanced',unit:'nm_native'},
-    {k:'jobsNative',t:'Native di daftar Lowongan',s:'Disisipkan di antara lowongan.',every:true,noun:'lowongan',fmt:'Native advanced',unit:'nm_native'},
-    {k:'dictionaryNative',t:'Native di hasil Kamus',s:'Disisipkan di antara hasil pencarian kamus.',every:true,noun:'hasil',fmt:'Native advanced',unit:'nm_native'},
+    {k:'practiceResultBanner',t:'Banner di akhir sesi Anki',s:'Di layar akhir sesi Anki.',every:false,fmt:'Banner',unit:'nm_banner'},
+    {k:'interstitial',t:'Layar penuh setelah selesai belajar',s:'Hanya muncul saat pengguna keluar dari layar hasil (lesson, ujian, sesi Anki), setelah nilainya terlihat, dan hanya bila sudah lewat N menit pemakaian sejak iklan layar penuh terakhir. Tidak pernah saat membuka materi, saat belajar, atau setelah pengguna baru menonton iklan rewarded.',every:true,label:'Jeda pemakaian (menit, 5-60)',min:5,max:60,def:10,fmt:'Interstitial',unit:'nm_interstitial'},
     {k:'aiChatRewarded',t:'Rewarded di Tanya AI',s:'Opsi tonton iklan setelah kuota gratis harian habis. Jika nonaktif, pengguna diarahkan ke Lifetime.',every:false,fmt:'Rewarded',unit:'nm_rewarded_ai'},
-    {k:'unlockRewarded',t:'Rewarded buka konten',s:'Opsi tonton iklan untuk membuka satu item terkunci (materi N3–N1, deck Anki, simulasi N3, berita, tautan lamar). Unit ini wajib memakai verifikasi sisi server (SSV).',every:false,fmt:'Rewarded',unit:'nm_rewarded_unlock',ssv:true},
+    {k:'unlockRewarded',t:'Rewarded buka konten',s:'Opsi tonton iklan untuk membuka satu item terkunci (materi N3–N1, deck Anki). Unit ini wajib memakai verifikasi sisi server (SSV).',every:false,fmt:'Rewarded',unit:'nm_rewarded_unlock',ssv:true},
     {k:'xpBoostRewarded',t:'Rewarded 2× XP',s:'Tombol opsional di layar hasil: tonton satu iklan untuk menggandakan XP aktivitas itu (sekali, dalam 30 menit setelah selesai). Pengguna Lifetime mengklaim tanpa iklan. Unit ini wajib memakai verifikasi sisi server (SSV).',every:false,fmt:'Rewarded',unit:'nm_rewarded_xp',ssv:true}];
-  var IK=[{k:'lessons',t:'Lesson JLPT (grammar, kanji, membaca, kosakata)'},{k:'exams',t:'Ujian (simulasi, diagnostik, JFT, NAT, SSW)'},{k:'practice',t:'Latihan SSW dan lesson Kaigo'},{k:'anki',t:'Sesi Anki'}];
+  var IK=[{k:'lessons',t:'Lesson (grammar, membaca, kosakata)'},{k:'anki',t:'Sesi Anki'}];
   // "How to create this ad unit": the same AdMob steps for every format, plus
   // the extras a format needs (reward settings, server-side verification).
   var guide=function(p){
@@ -1441,8 +907,8 @@ NM.view('ads',function(root){
       NM.el('ol',{},steps.map(function(t){return NM.el('li',{text:t})})),
       share.length?NM.el('p',{class:'muted',text:'Boleh memakai ID yang sama dengan: '+share.join(', ')+'. Buat unit terpisah bila ingin melihat pendapatan per posisi di laporan AdMob.'}):null]);
   };
-  var UK=[{k:'lessons',t:'Materi N3–N1 (grammar, kanji, membaca, kosakata)'},{k:'anki',t:'Deck Anki N3–N1'},{k:'simulation',t:'Simulasi JLPT N3 paket 01 (satu iklan per percobaan)'},{k:'news',t:'Artikel berita'},{k:'jobs',t:'Tautan lamar lowongan'}];
-  var GL={lessons:'Materi N3–N1',anki:'Deck Anki',simulation:'Simulasi N3',news:'Berita',jobs:'Lowongan',xp:'Double XP'};
+  var UK=[{k:'lessons',t:'Materi N3–N1 (grammar, membaca, kosakata)'},{k:'anki',t:'Deck Anki N3–N1'}];
+  var GL={lessons:'Materi N3–N1',anki:'Deck Anki',xp:'Double XP'};
   var UNIT=/^ca-app-pub-[0-9]{16}\/[0-9]{10}$/;
   // Statistics for ads that open locked content (GET /v1/admin/unlock-stats).
   var unlockStatsCard=function(isAlive){
@@ -1512,10 +978,10 @@ NM.view('ads',function(root){
     var xpCap=num('ads-xp-repeat-cap',c.xpRepeatDailyCap||100,10,1000);
     var boostCap=num('ads-xp-boost-cap',c.xpBoostDailyCap||10,1,50);
     var bk=c.xpBoostKinds||{},bkinds={};
-    var BK=[{k:'lessons',t:'Lesson JLPT'},{k:'exams',t:'Ujian'},{k:'practice',t:'Latihan SSW dan lesson Kaigo'}];
+    var BK=[{k:'lessons',t:'Lesson'}];
     var bkChecks=BK.map(function(x){var i=NM.el('input',{type:'checkbox',id:'ads-xp-boost-kind-'+x.k});i.checked=bk[x.k]!==false;bkinds[x.k]=i;return NM.el('label',{class:'check'},[i,x.t])});
     wrap.appendChild(NM.el('div',{class:'card'},[
-      NM.el('div',{class:'panelh'},[NM.el('div',{},[NM.el('h3',{text:'Aturan XP'}),NM.el('p',{text:'Lulus pertama lesson (50 XP) dan ujian (100 XP), target harian, lesson Kaigo/SSW, dan Anki punya aturannya sendiri. Batas di bawah ini berlaku untuk XP dari mengulang lesson atau ujian (nilai minimal 50%) dan latihan SSW, supaya latihan tetap dihargai tanpa bisa dipanen untuk peringkat mingguan.'})])]),
+      NM.el('div',{class:'panelh'},[NM.el('div',{},[NM.el('h3',{text:'Aturan XP'}),NM.el('p',{text:'Lulus pertama lesson (50 XP) dan ujian (100 XP), target harian dan Anki punya aturannya sendiri. Batas di bawah ini berlaku untuk XP dari mengulang lesson atau ujian (nilai minimal 50%) dan latihan SSW, supaya latihan tetap dihargai tanpa bisa dipanen untuk peringkat mingguan.'})])]),
       NM.el('div',{class:'pad'},[NM.el('label',{class:'field'},[NM.el('span',{text:'Batas XP pengulangan per hari (10-1000)'}),xpCap]),
         NM.el('p',{class:'muted',text:'Ambang sesi Anki di kartu atas juga menentukan kapan hari belajar Anki dihitung untuk streak.'}),
         NM.el('label',{class:'field'},[NM.el('span',{text:'Batas 2× XP per hari (1-50, dengan iklan atau Lifetime)'}),boostCap]),
@@ -1537,15 +1003,6 @@ NM.view('ads',function(root){
         NM.el('label',{class:'field'},[NM.el('span',{text:'Jatah cadangan bila iklan gagal dimuat (0-10, 0 = mati)'}),fb]),
         NM.el('p',{class:'muted',text:'Jenis yang boleh dibuka dengan iklan:'}),
         NM.el('div',{},kindChecks)])]));
-    var cg=c.contentGates||{},wasGate={news:!!cg.news,jobs:!!cg.jobs};
-    var gateNews=NM.el('input',{type:'checkbox',id:'ads-gate-news'});gateNews.checked=wasGate.news;
-    var gateJobs=NM.el('input',{type:'checkbox',id:'ads-gate-jobs'});gateJobs.checked=wasGate.jobs;
-    wrap.appendChild(NM.el('div',{class:'card'},[
-      NM.el('div',{class:'panelh'},[NM.el('div',{},[NM.el('h3',{text:'Kunci konten gratis'}),NM.el('p',{text:'Mengunci konten yang sebelumnya gratis bagi akun non-Lifetime. Materi N3–N1, Anki, dan simulasi dikunci lewat BAHASA_OPEN_ACCESS di server, bukan di sini.'})])]),
-      NM.el('div',{class:'pad'},[
-        NM.el('label',{class:'check'},[gateNews,'Kunci isi artikel berita (wajib login, lalu Lifetime atau iklan)']),
-        NM.el('label',{class:'check'},[gateJobs,'Kunci tautan lamar lowongan (Lifetime atau iklan)']),
-        NM.el('div',{class:'msg err',text:'Nyalakan hanya setelah versi aplikasi yang bisa membuka berita dan lowongan dengan iklan sudah beredar dan versi minimum sudah dinaikkan. Aplikasi lama akan gagal membuka berita, dan tombol lamarnya nonaktif.'})])]));
     wrap.appendChild(NM.el('div',{class:'msg',text:'ID uji Google (ca-app-pub-3940256099942544/...) tidak menghasilkan pendapatan. Ganti dengan ID unit iklan asli dari akun AdMob Anda. Build debug selalu memakai ID uji.'}));
     var msg=NM.el('div',{class:'msg',role:'status'});
     var setMsg=function(t,k){msg.className='msg'+(k?' '+k:'');msg.textContent=t||''};
@@ -1567,7 +1024,6 @@ NM.view('ads',function(root){
       if(!(fbN>=0&&fbN<=10)||Math.floor(fbN)!==fbN){setMsg('Jatah cadangan harus 0 sampai 10','err');fb.focus();return}
       d.unlockDailyCap=capN;d.unlockFallbackPerDay=fbN;d.unlockKinds={};
       UK.forEach(function(x){d.unlockKinds[x.k]=kinds[x.k].checked});
-      d.contentGates={news:gateNews.checked,jobs:gateJobs.checked};
       var ankiN=Number(ankiMin.value);
       if(!(ankiN>=1&&ankiN<=100)||Math.floor(ankiN)!==ankiN){setMsg('Ambang sesi Anki harus 1 sampai 100 kartu','err');ankiMin.focus();return}
       var xpN=Number(xpCap.value);
@@ -1579,18 +1035,10 @@ NM.view('ads',function(root){
       BK.forEach(function(x){d.xpBoostKinds[x.k]=bkinds[x.k].checked});
       d.ankiSessionMinCards=ankiN;d.interstitialKinds={};
       IK.forEach(function(x){d.interstitialKinds[x.k]=ikinds[x.k].checked});
-      var save=function(){
-        btn.disabled=true;setMsg('Menyimpan…');
-        NM.data('/v1/admin/ads-config',{method:'PUT',body:d}).then(function(){
-          wasGate={news:d.contentGates.news,jobs:d.contentGates.jobs};
-          setMsg('Tersimpan. Perubahan berlaku saat pengguna membuka aplikasi berikutnya.','ok');NM.toast('Pengaturan iklan tersimpan');
-        }).catch(function(er){setMsg(er.message||'Gagal menyimpan.','err')}).then(function(){btn.disabled=false});
-      };
-      var newGates=[];
-      if(d.contentGates.news&&!wasGate.news)newGates.push('berita');
-      if(d.contentGates.jobs&&!wasGate.jobs)newGates.push('tautan lamar lowongan');
-      if(!newGates.length){save();return}
-      NM.confirm('Kunci '+newGates.join(' dan ')+'?','Akun non-Lifetime harus menonton iklan atau membeli Lifetime. Pengguna aplikasi versi lama tidak bisa membuka konten ini sama sekali. Lanjutkan hanya bila aplikasi baru sudah beredar dan versi minimum sudah dinaikkan.',{ok:'Kunci sekarang',danger:true}).then(function(ok){if(ok)save()});
+      btn.disabled=true;setMsg('Menyimpan…');
+      NM.data('/v1/admin/ads-config',{method:'PUT',body:d}).then(function(){
+        setMsg('Tersimpan. Perubahan berlaku saat pengguna membuka aplikasi berikutnya.','ok');NM.toast('Pengaturan iklan tersimpan');
+      }).catch(function(er){setMsg(er.message||'Gagal menyimpan.','err')}).then(function(){btn.disabled=false});
     });
     root.innerHTML='';root.appendChild(wrap);
     root.appendChild(NM.el('div',{class:'v-ads',style:'margin-top:16px'},[unlockStatsCard(function(){return alive})]));
@@ -1659,63 +1107,6 @@ NM.view('ai',function(root){
   }).catch(function(e){
     if(!alive)return;
     root.innerHTML='<div class="v-ai"><div class="msg err">'+NM.esc(e.message||'Gagal membuka pengaturan.')+'</div></div>';
-  });
-  return function(){alive=false};
-});
-
-})();
-/* view: prefecture-living */
-(function(){
-NM.view('prefecture-living',function(root){
-  var alive=true,M=[
-    ['wageFiscalYear','Tahun fiskal upah','text'],['wageSource','Sumber upah','text'],
-    ['rentMeasure','Satuan sewa','text'],['rentSurveyYear','Tahun survei sewa','text'],['rentSource','Sumber sewa','text'],
-    ['priceIndexYear','Tahun indeks harga','text'],['priceIndexSource','Sumber indeks harga','text'],
-    ['idrPerJpy','Kurs IDR per JPY','number'],['exchangeRateDate','Tanggal kurs','text'],['exchangeRateSource','Sumber kurs','text'],
-    ['hoursPerDay','Jam kerja per hari','number'],['daysPerMonth','Hari kerja per bulan','number']];
-  var COLS=['Kode','Prefektur','Upah/jam','Berlaku','Sewa/3,3m\u00b2','Sewa 1K','Indeks'];
-  root.innerHTML='<div class="v-prefecture-living">'+NM.skeleton(3)+'</div>';
-  NM.data('/v1/admin/prefecture-living').then(function(r){
-    if(!alive)return;
-    var data=r||{},meta=data.meta||{},prefs=data.prefectures||[];
-    var wrap=NM.el('form',{class:'v-prefecture-living stack',novalidate:true});
-    var mf={},kids=[];
-    M.forEach(function(x){
-      var input=NM.el('input',{class:'input',type:x[2],id:'pl-'+x[0],autocomplete:'off'});
-      if(x[2]==='number')input.step=x[0]==='daysPerMonth'?'1':'any';
-      input.value=meta[x[0]]!=null?meta[x[0]]:'';mf[x[0]]=input;
-      kids.push(NM.el('label',{class:'field'},[NM.el('span',{text:x[1]}),input]));
-    });
-    kids.push(NM.el('p',{class:'muted',text:meta.updatedAt?'Terakhir diperbarui: '+meta.updatedAt:'Belum pernah diperbarui.'}));
-    wrap.appendChild(NM.el('div',{class:'card'},[NM.el('div',{class:'panelh'},[NM.el('div',{},[NM.el('h3',{text:'Sumber & kurs'}),NM.el('p',{text:'Upah minimum direvisi tiap Oktober (MHLW). Sewa dari 住宅・土地統計調査, indeks harga dari 消費者物価地域差指数. Kurs dipakai untuk estimasi Rupiah di aplikasi.'})])]),NM.el('div',{class:'pad'},kids)]));
-    var rows=prefs.map(function(p){
-      var cell=function(type,v,step){var i=NM.el('input',{class:'input',type:type});if(step)i.step=step;i.value=v!=null?v:'';return i};
-      var f={wage:cell('number',p.minimumWage,'1'),date:cell('date',p.wageEffectiveDate),rent:cell('number',p.rentPer33m2,'1'),r1k:cell('number',p.rent1kEstimate,'1'),idx:cell('number',p.priceIndex,'0.1')};
-      var tr=NM.el('tr',{},[NM.el('td',{text:p.code}),NM.el('td',{text:p.nameJa})].concat([f.wage,f.date,f.rent,f.r1k,f.idx].map(function(i){return NM.el('td',{},[i])})));
-      return {p:p,f:f,tr:tr};
-    });
-    var tbody=NM.el('tbody',{},rows.map(function(x){return x.tr}));
-    var thead=NM.el('thead',{},[NM.el('tr',{},COLS.map(function(c){return NM.el('th',{text:c})}))]);
-    wrap.appendChild(NM.el('div',{class:'card'},[NM.el('div',{class:'panelh'},[NM.el('div',{},[NM.el('h3',{text:'47 prefektur'}),NM.el('p',{text:'Kosongkan sewa atau indeks jika datanya tidak tersedia.'})])]),NM.el('div',{class:'pl-scroll'},[NM.el('table',{},[thead,tbody])])]));
-    var msg=NM.el('div',{class:'msg',role:'status'});
-    var setMsg=function(t,k){msg.className='msg'+(k?' '+k:'');msg.textContent=t||''};
-    var btn=NM.el('button',{class:'btn solid',type:'submit',text:'Simpan'});
-    wrap.appendChild(msg);wrap.appendChild(NM.el('div',{class:'row'},[btn]));
-    var num=function(i){var v=i.value.trim();return v===''?null:Number(v)};
-    wrap.addEventListener('submit',function(e){
-      e.preventDefault();
-      var m={};
-      M.forEach(function(x){var v=mf[x[0]].value.trim();m[x[0]]=x[2]==='number'?Number(v):v});
-      var d={meta:m,prefectures:rows.map(function(x){return {code:x.p.code,nameJa:x.p.nameJa,minimumWage:Number(x.f.wage.value),wageEffectiveDate:x.f.date.value,rentPer33m2:num(x.f.rent),rent1kEstimate:num(x.f.r1k),priceIndex:num(x.f.idx)}})};
-      btn.disabled=true;setMsg('Menyimpan\u2026');
-      NM.data('/v1/admin/prefecture-living',{method:'PUT',body:d}).then(function(){
-        setMsg('Tersimpan. Berlaku untuk peta di aplikasi.','ok');NM.toast('Data upah tersimpan');
-      }).catch(function(er){setMsg(er.message||'Gagal menyimpan.','err')}).then(function(){btn.disabled=false});
-    });
-    root.innerHTML='';root.appendChild(wrap);
-  }).catch(function(e){
-    if(!alive)return;
-    root.innerHTML='<div class="v-prefecture-living"><div class="msg err">'+NM.esc(e.message||'Gagal membuka data.')+'</div></div>';
   });
   return function(){alive=false};
 });

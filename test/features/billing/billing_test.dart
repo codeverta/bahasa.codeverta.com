@@ -28,18 +28,16 @@ void main() {
     await gateway.stream.close();
   });
 
-  test('premium route policy keeps N4 lessons and N5 exams free', () {
+  test('premium route policy keeps N4 lessons free', () {
     for (final route in [
       '/learn/grammar?level=N3',
       '/learn/reading?level=N2',
       '/learn/vocabulary/lessons/n1-daily',
-      '/exams/n4/simulation',
     ]) {
       expect(requiresPremium(Uri.parse(route)), isTrue);
     }
     for (final route in [
       '/learn/grammar?level=N4',
-      '/exams/n5/simulation',
       '/home',
     ]) {
       expect(requiresPremium(Uri.parse(route)), isFalse);

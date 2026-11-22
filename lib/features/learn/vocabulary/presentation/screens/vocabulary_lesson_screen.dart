@@ -3,7 +3,6 @@ import 'package:bahasa_master/core/ads/ads_config.dart';
 import 'package:bahasa_master/core/ads/completion_ads.dart';
 import 'package:bahasa_master/core/gamification/xp_gain.dart';
 import 'package:bahasa_master/core/localization/app_localizations.dart';
-import 'package:bahasa_master/core/settings/display_preferences.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
 import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_sheet.dart';
@@ -11,7 +10,6 @@ import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models
 import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/screens/vocabulary_study_view.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
-import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_ruby_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -101,8 +99,6 @@ class _QuizStage extends ConsumerWidget {
     final attempt = state.attempt!;
     final question = attempt.questions[state.questionIndex];
     final feedback = state.feedback;
-    final furigana = ref.watch(displayPreferencesProvider).furigana;
-    final annotateQuestion = furigana && question.kind != 'Cara baca';
     return Column(
       children: [
         LinearProgressIndicator(
@@ -146,10 +142,8 @@ class _QuizStage extends ConsumerWidget {
                   style: Theme.of(context).textTheme.labelLarge,
                 ),
                 const SizedBox(height: 12),
-                VocabularyRubyText(
-                  text: question.prompt,
-                  words: state.lesson.words,
-                  enabled: annotateQuestion,
+                Text(
+                  question.prompt,
                   key: Key('question-${question.id}'),
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w900,
@@ -159,8 +153,6 @@ class _QuizStage extends ConsumerWidget {
                 for (final option in question.options) ...[
                   _OptionTile(
                     option: option,
-                    words: state.lesson.words,
-                    furigana: annotateQuestion,
                     selected: state.selectedOptionId == option.id,
                     feedback: feedback,
                     onTap: () => selectOption(option.id),
@@ -176,11 +168,7 @@ class _QuizStage extends ConsumerWidget {
                   ),
                 if (feedback != null) ...[
                   const SizedBox(height: 10),
-                  _FeedbackCard(
-                    feedback: feedback,
-                    words: state.lesson.words,
-                    furigana: furigana,
-                  ),
+                  _FeedbackCard(feedback: feedback),
                 ],
               ],
             ),
@@ -226,16 +214,12 @@ class _QuizStage extends ConsumerWidget {
 class _OptionTile extends StatelessWidget {
   const _OptionTile({
     required this.option,
-    required this.words,
-    required this.furigana,
     required this.selected,
     required this.feedback,
     required this.onTap,
   });
 
   final QuizOption option;
-  final List<VocabularyWord> words;
-  final bool furigana;
   final bool selected;
   final AnswerFeedback? feedback;
   final VoidCallback onTap;
@@ -271,10 +255,8 @@ class _OptionTile extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: VocabularyRubyText(
-                  text: option.text,
-                  words: words,
-                  enabled: furigana,
+                child: Text(
+                  option.text,
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 19,
@@ -295,15 +277,9 @@ class _OptionTile extends StatelessWidget {
 }
 
 class _FeedbackCard extends StatelessWidget {
-  const _FeedbackCard({
-    required this.feedback,
-    required this.words,
-    required this.furigana,
-  });
+  const _FeedbackCard({required this.feedback});
 
   final AnswerFeedback feedback;
-  final List<VocabularyWord> words;
-  final bool furigana;
 
   @override
   Widget build(BuildContext context) {
@@ -333,11 +309,7 @@ class _FeedbackCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            VocabularyRubyText(
-              text: feedback.explanation,
-              words: words,
-              enabled: furigana,
-            ),
+            Text(feedback.explanation),
           ],
         ),
       ),

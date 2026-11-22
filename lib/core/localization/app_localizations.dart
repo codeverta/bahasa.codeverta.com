@@ -2,14 +2,12 @@ import 'package:bahasa_master/core/localization/anki_english_part_a.dart';
 import 'package:bahasa_master/core/localization/anki_english_part_b.dart';
 import 'package:bahasa_master/core/localization/anki_english_part_c.dart';
 import 'package:bahasa_master/core/localization/ui_english_ai_chat.dart';
-import 'package:bahasa_master/core/localization/ui_english_kana.dart';
 import 'package:bahasa_master/core/localization/ui_english_leaderboard.dart';
 import 'package:bahasa_master/core/localization/ui_english_level_list.dart';
 import 'package:bahasa_master/core/localization/ui_english_notification_prompt.dart';
 import 'package:bahasa_master/core/localization/ui_english_redesign.dart';
 import 'package:bahasa_master/core/localization/ui_english_unlock.dart';
 import 'package:bahasa_master/core/localization/ui_english_wave1_core.dart';
-import 'package:bahasa_master/core/localization/ui_english_wave1_exam.dart';
 import 'package:bahasa_master/core/localization/ui_english_wave1_learn.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -302,14 +300,12 @@ class AppLocalizations {
         ankiEnglishCopyC[source] ??
         uiEnglishWave1Core[source] ??
         uiEnglishWave1Learn[source] ??
-        uiEnglishWave1Exam[source] ??
         uiEnglishRedesign[source] ??
         uiEnglishAiChat[source] ??
         uiEnglishLeaderboard[source] ??
         uiEnglishNotificationPrompt[source] ??
         uiEnglishLevelList[source] ??
-        uiEnglishUnlock[source] ??
-        uiEnglishKana[source];
+        uiEnglishUnlock[source];
     if (exact != null) return exact;
 
     final learningCourseStats = RegExp(

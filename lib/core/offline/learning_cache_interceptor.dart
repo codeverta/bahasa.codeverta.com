@@ -599,7 +599,6 @@ bool _isPublicLessonKey(String key) {
       const <String>{
         'vocabulary',
         'grammar',
-        'kanji',
         'reading',
       }.contains(segments[0]) &&
       segments[1] == 'lessons';
@@ -682,7 +681,6 @@ String? _requestCacheKey(RequestOptions options) {
       const <String>{
         'vocabulary',
         'grammar',
-        'kanji',
         'reading',
       }.contains(segments[0]) &&
       const <String>{'levels', 'course'}.contains(segments[1])) {
@@ -692,22 +690,16 @@ String? _requestCacheKey(RequestOptions options) {
       const <String>{
         'vocabulary',
         'grammar',
-        'kanji',
         'reading',
       }.contains(segments[0]) &&
       segments[1] == 'lessons') {
     return _canonicalUrlKey(path, options.uri.queryParametersAll);
   }
-  // Level-wide grammar/kanji lists, so they open offline after one visit.
+  // Level-wide grammar lists, so they open offline after one visit.
   if (segments.length == 4 &&
       segments[1] == 'levels' &&
-      (segments[0] == 'grammar' && segments[3] == 'points' ||
-          segments[0] == 'kanji' && segments[3] == 'characters')) {
-    return _canonicalUrlKey(path, options.uri.queryParametersAll);
-  }
-  if (segments.length == 3 &&
-      segments[0] == 'ssw' &&
-      segments[2] == 'practice') {
+      segments[0] == 'grammar' &&
+      segments[3] == 'points') {
     return _canonicalUrlKey(path, options.uri.queryParametersAll);
   }
   if (segments.length == 2 && segments[0] == 'anki' && segments[1] == 'decks' ||
@@ -724,9 +716,7 @@ String? _requestCacheKey(RequestOptions options) {
       const <String>{
         'vocabulary',
         'grammar',
-        'kanji',
         'reading',
-        'ssw',
       }.contains(segments[2])) {
     return _canonicalUrlKey(path, options.uri.queryParametersAll);
   }
@@ -759,7 +749,6 @@ String? _mutationPlan(RequestOptions options) {
         const <String>{
           'vocabulary',
           'grammar',
-          'kanji',
           'reading',
         }.contains(segments[0]) &&
         segments[1] == 'attempts' &&
@@ -782,7 +771,6 @@ bool _invalidateForMutation(String routeKey, String plan) {
     return const <String>{
       'vocabulary',
       'grammar',
-      'kanji',
       'reading',
     }.any((kind) => _isCourseSnapshot(path, kind));
   }
@@ -792,7 +780,6 @@ bool _invalidateForMutation(String routeKey, String plan) {
         const <String>{
           'vocabulary',
           'grammar',
-          'kanji',
           'reading',
         }.any((kind) => _isCourseSnapshot(path, kind));
   }
@@ -927,17 +914,6 @@ String _canonicalUrlKey(String path, Map<String, List<String>> query) {
 bool _requiresPremium(RequestOptions options) {
   final path = _apiPath(options.uri.path);
   final segments = path.split('/').where((part) => part.isNotEmpty).toList();
-  if (segments.length == 3 &&
-      segments[0] == 'ssw' &&
-      segments[2] == 'practice') {
-    return true;
-  }
-  if (segments.length == 4 &&
-      segments[0] == 'offline' &&
-      segments[1] == 'practice' &&
-      segments[2] == 'ssw') {
-    return true;
-  }
   if (_isAnkiDeckRequest(options)) return true;
   String? level;
   if (options.uri.queryParameters['level'] != null) {

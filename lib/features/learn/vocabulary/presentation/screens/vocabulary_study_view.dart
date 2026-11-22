@@ -3,7 +3,6 @@ import 'package:bahasa_master/core/settings/display_preferences.dart';
 import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
-import 'package:bahasa_master/shared/presentation/widgets/japanese_ruby_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +27,6 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
   Widget build(BuildContext context) {
     final displayPreferences = ref.watch(displayPreferencesProvider);
     final meaning = displayPreferences.translation;
-    final furigana = displayPreferences.furigana;
     final s = widget.state;
     final w = s.lesson.words[s.wordIndex];
     final last = s.wordIndex == s.lesson.words.length - 1;
@@ -101,36 +99,17 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                       padding: const EdgeInsets.all(22),
                       child: Column(
                         children: [
-                          if (furigana)
-                            JapaneseRubyText(
-                              text: w.term,
-                              reading: w.reading,
-                              key: Key('word-${w.id}'),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: w.term.length > 5 ? 34 : 44,
-                                height: 1.3,
-                                fontWeight: FontWeight.w900,
-                                color: colors.secondary,
-                              ),
-                              rubyStyle: TextStyle(
-                                fontSize: 17,
-                                color: colors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )
-                          else
-                            Text(
-                              w.term,
-                              key: Key('word-${w.id}'),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: w.term.length > 5 ? 34 : 44,
-                                height: 1.3,
-                                fontWeight: FontWeight.w900,
-                                color: colors.secondary,
-                              ),
+                          Text(
+                            w.term,
+                            key: Key('word-${w.id}'),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: w.term.length > 5 ? 34 : 44,
+                              height: 1.3,
+                              fontWeight: FontWeight.w900,
+                              color: colors.secondary,
                             ),
+                          ),
                           const SizedBox(height: 12),
                           Text(
                             w.meaning,
@@ -165,19 +144,6 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  FilterChip(
-                    key: const Key('toggle-furigana'),
-                    label: Text('Furigana'.localized(context)),
-                    selected: furigana,
-                    showCheckmark: false,
-                    selectedColor: colors.secondary,
-                    labelStyle: TextStyle(
-                      color: furigana ? colors.onSecondary : colors.onSurface,
-                    ),
-                    onSelected: (enabled) => ref
-                        .read(displayPreferencesProvider.notifier)
-                        .setFurigana(enabled: enabled),
-                  ),
                   FilterChip(
                     label: Text('Terjemahan'.localized(context)),
                     selected: meaning,
@@ -215,27 +181,15 @@ class _StudyViewState extends ConsumerState<VocabularyStudyView> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        if (furigana)
-                          JapaneseRubyText(
-                            text: e.japanese,
-                            reading: e.reading,
-                            key: Key('example-japanese-$i'),
-                            style: const TextStyle(
-                              fontSize: 23,
-                              height: 1.8,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          )
-                        else
-                          Text(
-                            e.japanese,
-                            key: Key('example-japanese-$i'),
-                            style: const TextStyle(
-                              fontSize: 23,
-                              height: 1.8,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        Text(
+                          e.japanese,
+                          key: Key('example-japanese-$i'),
+                          style: const TextStyle(
+                            fontSize: 23,
+                            height: 1.8,
+                            fontWeight: FontWeight.w600,
                           ),
+                        ),
                         if (meaning) ...[
                           const SizedBox(height: 12),
                           Text(

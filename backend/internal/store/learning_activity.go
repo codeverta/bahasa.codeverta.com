@@ -32,27 +32,6 @@ func (s *MemoryStore) learningMetadataLocked(user, kind, id string) (LearningAct
 			return item, false
 		}
 		item.Title, item.Level, item.Total = lesson.Title, level.Level, len(lesson.Words)
-	case "grammar":
-		for _, lesson := range s.grammar {
-			if lesson.ID == id {
-				item.Title, item.Level, item.Total = lesson.Title, lesson.Level, len(lesson.Points)
-				break
-			}
-		}
-	case "kanji":
-		for _, lesson := range s.kanji {
-			if lesson.ID == id {
-				item.Title, item.Level, item.Total = lesson.Title, lesson.Level, len(lesson.Characters)
-				break
-			}
-		}
-	case "reading":
-		for _, lesson := range s.reading {
-			if lesson.ID == id {
-				item.Title, item.Level, item.Total = lesson.Title, lesson.Level, len(lesson.Pages)
-				break
-			}
-		}
 	default:
 		return item, false
 	}

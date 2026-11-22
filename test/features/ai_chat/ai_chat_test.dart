@@ -486,8 +486,8 @@ void main() {
   });
 
   test('controller key equality keeps one conversation per lesson', () {
-    const a = (type: AiLessonType.kanji, lessonId: 'k1');
-    const b = (type: AiLessonType.kanji, lessonId: 'k1');
+    const a = (type: AiLessonType.reading, lessonId: 'k1');
+    const b = (type: AiLessonType.reading, lessonId: 'k1');
     expect(a == b, isTrue);
   });
 }

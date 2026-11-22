@@ -22,8 +22,6 @@ func TestUUIDMigrationPreservesRelationsAndExternalIDs(t *testing.T) {
 		`CREATE TABLE billing_purchases(id VARBINARY(2048) PRIMARY KEY,state LONGBLOB NOT NULL)`,
 		`CREATE TABLE billing_tokens(user_id VARCHAR(191) PRIMARY KEY,token CHAR(36) UNIQUE NOT NULL)`,
 		`CREATE TABLE deleted_demo(id VARCHAR(191) PRIMARY KEY)`,
-		`CREATE TABLE dictionary_responses(cache_key CHAR(64) PRIMARY KEY,source VARCHAR(64),body LONGBLOB,fetched_at BIGINT)`,
-		`CREATE TABLE dictionary_entries(source VARCHAR(64),entry_id VARCHAR(512),kind VARCHAR(32),body LONGBLOB,fetched_at BIGINT,PRIMARY KEY(source,entry_id))`,
 	}
 	for _, statement := range statements {
 		if err := db.Exec(statement).Error; err != nil {
@@ -43,8 +41,6 @@ func TestUUIDMigrationPreservesRelationsAndExternalIDs(t *testing.T) {
 		{`INSERT INTO billing_purchases VALUES(?,?)`, []any{"android:external-store-token", purchase}},
 		{`INSERT INTO billing_tokens VALUES(?,?)`, []any{oldUser, token}},
 		{`INSERT INTO deleted_demo VALUES(?)`, []any{"demo-user"}},
-		{`INSERT INTO dictionary_responses VALUES(?,?,?,?)`, []any{"cache-hash", "jisho.org", []byte(`{"word":"猫"}`), int64(123)}},
-		{`INSERT INTO dictionary_entries VALUES(?,?,?,?,?)`, []any{"jisho.org", "猫", "word", []byte(`{"word":"猫"}`), int64(123)}},
 	}
 	for _, input := range inputs {
 		if err := db.Exec(input.query, input.args...).Error; err != nil {
@@ -54,11 +50,11 @@ func TestUUIDMigrationPreservesRelationsAndExternalIDs(t *testing.T) {
 	if err := database.EnsureUUIDSchema(db); err != nil {
 		t.Fatal(err)
 	}
-	if err := database.Migrate(db, &database.Account{}, &database.GamificationUser{}, &database.BillingPurchase{}, &database.BillingToken{}, &database.DeletedDemo{}, &database.DictionaryResponse{}, &database.DictionaryEntry{}); err != nil {
+	if err := database.Migrate(db, &database.Account{}, &database.GamificationUser{}, &database.BillingPurchase{}, &database.BillingToken{}, &database.DeletedDemo{}); err != nil {
 		t.Fatal(err)
 	}
 	ids := map[string]string{}
-	for _, table := range []string{"accounts", "gamification_users", "billing_purchases", "billing_tokens", "deleted_demo", "dictionary_responses", "dictionary_entries"} {
+	for _, table := range []string{"accounts", "gamification_users", "billing_purchases", "billing_tokens", "deleted_demo"} {
 		var row struct{ ID string }
 		if err := db.Table(table).Take(&row).Error; err != nil {
 			t.Fatal(err)
@@ -96,11 +92,6 @@ func TestUUIDMigrationPreservesRelationsAndExternalIDs(t *testing.T) {
 	db.First(&d)
 	if d.UserID != database.DemoUserID {
 		t.Fatal("deleted demo account mapping changed")
-	}
-	var entry database.DictionaryEntry
-	db.First(&entry)
-	if entry.EntryID != "猫" || string(entry.Body) != `{"word":"猫"}` {
-		t.Fatal("source archive changed")
 	}
 	if err := database.EnsureUUIDSchema(db); err != nil {
 		t.Fatal(err)

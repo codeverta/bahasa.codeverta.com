@@ -59,7 +59,7 @@ void main() {
           await _writeText(
             firstRun,
             'account-a',
-            '/kanji/lessons/kanji-n5-01',
+            '/reading/lessons/reading-n5-01',
             'disk lesson',
           );
           await firstRun.dispose();
@@ -70,7 +70,7 @@ void main() {
           );
           final response = await coldReload.readResponse(
             accountId: 'account-a',
-            key: '/kanji/lessons/kanji-n5-01',
+            key: '/reading/lessons/reading-n5-01',
           );
 
           expect(utf8.decode(response!.body), 'disk lesson');
@@ -704,11 +704,11 @@ void main() {
         return _jsonResponse('{"data":{"questions":[]}}');
       });
       dio.interceptors.add(_interceptor(dio, cache, isPremium: () => premium));
-      await dio.get<Map<String, dynamic>>('/ssw/building-cleaning/practice');
+      await dio.get<Map<String, dynamic>>('/vocabulary/lessons/n3-work');
       premium = false;
 
       await expectLater(
-        dio.get<Map<String, dynamic>>('/ssw/building-cleaning/practice'),
+        dio.get<Map<String, dynamic>>('/vocabulary/lessons/n3-work'),
         throwsA(isA<DioException>()),
       );
 
@@ -716,19 +716,19 @@ void main() {
       expect(
         await cache.readResponse(
           accountId: 'user-a',
-          key: '/ssw/building-cleaning/practice',
+          key: '/vocabulary/lessons/n3-work',
         ),
         isNull,
       );
     });
 
     test(
-      'caches SSW signed practice packages as premium account data',
+      'caches signed premium practice packages as premium account data',
       () async {
         final cache = await _newCache();
         var premium = true;
         var networkCalls = 0;
-        const key = '/offline/practice/ssw/nursing-care';
+        const key = '/offline/practice/vocabulary/n3-work';
         final dio = _dio((options) async {
           networkCalls++;
           if (!premium) {

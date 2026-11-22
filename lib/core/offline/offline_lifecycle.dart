@@ -8,7 +8,6 @@ import 'package:bahasa_master/features/billing/presentation/billing_controller.d
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
 import 'package:bahasa_master/features/learn/activity/learning_history.dart';
 import 'package:bahasa_master/features/learn/grammar/presentation/controllers/grammar_controller.dart';
-import 'package:bahasa_master/features/learn/kanji/presentation/controllers/kanji_controller.dart';
 import 'package:bahasa_master/features/learn/offline/offline_practice.dart';
 import 'package:bahasa_master/features/learn/reading/presentation/controllers/reading_controller.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
@@ -57,7 +56,6 @@ class _OfflineLifecycleState extends ConsumerState<OfflineLifecycle>
           ..invalidate(vocabularyLevelsProvider)
           ..invalidate(grammarCourseProvider)
           ..invalidate(grammarCourseLevelProvider)
-          ..invalidate(kanjiCourseProvider)
           ..invalidate(readingCourseProvider);
         unawaited(ref.read(learningHistoryProvider.notifier).refresh());
       });

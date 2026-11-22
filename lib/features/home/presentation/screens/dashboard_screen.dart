@@ -15,8 +15,6 @@ import 'package:bahasa_master/features/leaderboard/data/leaderboard_repository.d
 import 'package:bahasa_master/features/leaderboard/presentation/home_leaderboard_widgets.dart';
 import 'package:bahasa_master/features/learn/activity/continue_learning_section.dart';
 import 'package:bahasa_master/features/learn/activity/learning_history.dart';
-import 'package:bahasa_master/features/news/data/news_repository.dart';
-import 'package:bahasa_master/features/news/presentation/news_screens.dart';
 import 'package:bahasa_master/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:bahasa_master/shared/presentation/widgets/auth_gate.dart';
 import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
@@ -27,18 +25,14 @@ import 'package:go_router/go_router.dart';
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({
     required this.openLearn,
-    required this.openExam,
     required this.openProfile,
     this.active = true,
-    this.openExamCategory,
     super.key,
   });
 
   final VoidCallback openLearn;
-  final VoidCallback openExam;
   final VoidCallback openProfile;
   final bool active;
-  final ValueChanged<String>? openExamCategory;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,7 +64,6 @@ class DashboardScreen extends ConsumerWidget {
         onRefresh: () async {
           await ref.read(learningHistoryProvider.notifier).refresh();
           await (ref
-                ..invalidate(newsPreviewProvider)
                 ..invalidate(myLeaderboardProvider)
                 ..invalidate(homeDashboardProvider))
               .read(homeDashboardProvider.future);
@@ -81,13 +74,6 @@ class DashboardScreen extends ConsumerWidget {
           active: active,
           accountHasLifetimeAccess: accountHasLifetimeAccess,
           openLearn: () => _authorize(context, openLearn),
-          openExamCategory: (category) => _authorize(context, () {
-            if (openExamCategory != null) {
-              openExamCategory!(category);
-            } else {
-              openExam();
-            }
-          }),
           openProfile: () => _authorize(context, openProfile),
         ),
       ),
@@ -138,7 +124,6 @@ class _DashboardContent extends StatelessWidget {
     required this.offline,
     required this.active,
     required this.accountHasLifetimeAccess,
-    required this.openExamCategory,
     required this.openLearn,
     required this.openProfile,
   });
@@ -146,7 +131,6 @@ class _DashboardContent extends StatelessWidget {
   final HomeDashboard data;
   final bool offline;
   final bool active;
-  final ValueChanged<String> openExamCategory;
   final bool accountHasLifetimeAccess;
   final VoidCallback openLearn;
   final VoidCallback openProfile;
@@ -187,12 +171,6 @@ class _DashboardContent extends StatelessWidget {
                           openLearn();
                         case 'anki':
                           context.push('/anki');
-                        case 'manga':
-                          context.push('/manga');
-                        case 'ssw':
-                          context.push('/ssw');
-                        case 'jobs':
-                          context.push('/jobs');
                       }
                     },
                   ),
@@ -221,14 +199,9 @@ class _DashboardContent extends StatelessWidget {
                 const _OfflineDashboardNotice(),
               ],
               const SizedBox(height: 20),
-              HomeQuickMenu(
-                openExamCategory: openExamCategory,
-                hasLifetimeAccess: hasLifetimeAccess,
-              ),
+              const HomeQuickMenu(),
               const SizedBox(height: 22),
               const ContinueLearningSection(),
-              const SizedBox(height: 24),
-              const NewsPreview(),
             ],
           ),
         ),

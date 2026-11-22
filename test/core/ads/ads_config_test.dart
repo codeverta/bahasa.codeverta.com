@@ -16,20 +16,21 @@ void main() {
   test('missing or malformed config keeps every ad off', () {
     expect(AdsConfig.fromJson(null).enabled, isFalse);
     expect(AdsConfig.fromJson('x').banner.usable, isFalse);
-    expect(AdsConfig.fromJson(<String, dynamic>{}).newsNative.usable, isFalse);
+    expect(
+      AdsConfig.fromJson(<String, dynamic>{}).quizResultBanner.usable,
+      isFalse,
+    );
   });
 
   test('parses server payload', () {
     final config = AdsConfig.fromJson({
       'enabled': true,
       'banner': {'enabled': true, 'unitId': testBannerAdUnitId},
-      'newsNative': {'enabled': true, 'unitId': testNativeAdUnitId, 'every': 6},
-      'jobsNative': {'enabled': false, 'unitId': testNativeAdUnitId},
+      'quizResultBanner': {'enabled': false, 'unitId': testBannerAdUnitId},
     });
     expect(config.enabled, isTrue);
     expect(config.banner.usable, isTrue);
-    expect(config.newsNative.every, 6);
-    expect(config.jobsNative.usable, isFalse);
+    expect(config.quizResultBanner.usable, isFalse);
   });
 
   test('debug builds swap real units for Google test units', () {

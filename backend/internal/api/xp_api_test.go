@@ -7,27 +7,6 @@ import (
 	"testing"
 )
 
-func TestFinishedPracticeLessonEarnsXPOnce(t *testing.T) {
-	e := newUnlockEnv(t, "")
-	path := "/v1/me/practice-lessons/nursing-care/kaigo-01/complete"
-	first := e.data(t, e.do(http.MethodPost, path, ""), http.StatusOK)
-	xp, _ := first["xp"].(map[string]any)
-	if xp["awarded"] != float64(5) || xp["streak"] != float64(1) || xp["completionId"] != "practice-lesson:nursing-care:kaigo-01" {
-		t.Fatalf("first = %v", first)
-	}
-	again := e.data(t, e.do(http.MethodPost, path, ""), http.StatusOK)
-	if again["xp"].(map[string]any)["awarded"] != float64(0) {
-		t.Fatalf("a lesson pays once: %v", again)
-	}
-	if response := e.do(http.MethodPost, "/v1/me/practice-lessons/Nursing/x/complete", ""); response.Code != http.StatusUnprocessableEntity {
-		t.Fatalf("bad id: %d", response.Code)
-	}
-	signedOut := &unlockEnv{handler: e.handler}
-	if response := signedOut.do(http.MethodPost, path, ""); response.Code != http.StatusUnauthorized {
-		t.Fatalf("signed out: %d", response.Code)
-	}
-}
-
 func TestRepeatXPCapIsValidatedAndKept(t *testing.T) {
 	e := newUnlockEnv(t, `{"enabled":true,"xpRepeatDailyCap":40}`)
 	save := func(body string) int {
@@ -37,7 +16,7 @@ func TestRepeatXPCapIsValidatedAndKept(t *testing.T) {
 		e.handler.ServeHTTP(response, request)
 		return response.Code
 	}
-	base := `"enabled":true,"banner":{"enabled":false,"unitId":""},"newsNative":{"enabled":false,"unitId":"","every":6},"jobsNative":{"enabled":false,"unitId":"","every":8},"aiChatRewarded":{"enabled":false,"unitId":""}`
+	base := `"enabled":true,"banner":{"enabled":false,"unitId":""},"aiChatRewarded":{"enabled":false,"unitId":""}`
 	if code := save(`{` + base + `,"xpRepeatDailyCap":5}`); code != http.StatusUnprocessableEntity {
 		t.Fatalf("cap of 5: %d", code)
 	}

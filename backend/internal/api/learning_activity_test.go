@@ -28,16 +28,16 @@ func TestLearningHistoryRequiresAuthAndRejectsSpoofedMetadata(t *testing.T) {
 		t.Fatal(w.Code, w.Body.String())
 	}
 	body := `{"position":0,"accessedAt":"` + time.Now().UTC().Format(time.RFC3339Nano) + `"}`
-	if w := request("PUT", path+"/grammar/grammar-n5-01", body, token); w.Code != 200 {
+	if w := request("PUT", path+"/vocabulary/n5-daily", body, token); w.Code != 200 {
 		t.Fatal(w.Code, w.Body.String())
 	}
-	if w := request("GET", path, "", token); w.Code != 200 || !strings.Contains(w.Body.String(), `"kind":"grammar"`) || w.Header().Get("Cache-Control") != "no-store" {
+	if w := request("GET", path, "", token); w.Code != 200 || !strings.Contains(w.Body.String(), `"kind":"vocabulary"`) || w.Header().Get("Cache-Control") != "no-store" {
 		t.Fatal(w.Code, w.Body.String())
 	}
-	if w := request("PUT", path+"/grammar/grammar-n5-01", `{"position":0,"title":"spoof"}`, token); w.Code != 400 {
+	if w := request("PUT", path+"/vocabulary/n5-daily", `{"position":0,"title":"spoof"}`, token); w.Code != 400 {
 		t.Fatal(w.Code, w.Body.String())
 	}
-	if w := request("PUT", path+"/grammar/grammar-n5-01", `{"accessedAt":"`+time.Now().UTC().Format(time.RFC3339Nano)+`"}`, token); w.Code != 400 {
+	if w := request("PUT", path+"/vocabulary/n5-daily", `{"accessedAt":"`+time.Now().UTC().Format(time.RFC3339Nano)+`"}`, token); w.Code != 400 {
 		t.Fatal(w.Code, w.Body.String())
 	}
 }

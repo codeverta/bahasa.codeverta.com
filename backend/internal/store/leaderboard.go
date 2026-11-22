@@ -22,25 +22,23 @@ import (
 
 // XP rules. First passes are in recordStudyLocked; these are the extra sources.
 const (
-	xpLessonPass          = 50  // first time a lesson scores >= 80%
-	xpExamPass            = 100 // first time an exam scores >= 80%
-	xpLessonComplete      = 10  // any later lesson scoring >= xpRepeatMinScore
-	xpExamComplete        = 20  // any later exam scoring >= xpRepeatMinScore
-	xpSSWPractice         = 10  // a fully answered SSW practice session
-	xpPracticeLesson      = 5   // first completion of a Kaigo/SSW curriculum lesson
-	xpRepeatMinScore      = 50  // below this a completion counts for the streak only
-	xpDailyGoal           = 20
-	xpAnkiCard            = 1
-	xpAnkiMaxPerDay       = 30
-	dailyGoalMinutes      = 20
+	xpLessonPass     = 50  // first time a lesson scores >= 80%
+	xpExamPass       = 100 // first time an exam scores >= 80%
+	xpLessonComplete = 10  // any later lesson scoring >= xpRepeatMinScore
+	xpExamComplete   = 20  // any later exam scoring >= xpRepeatMinScore
+	xpRepeatMinScore = 50  // below this a completion counts for the streak only
+	xpDailyGoal      = 20
+	xpAnkiCard       = 1
+	xpAnkiMaxPerDay  = 30
+	dailyGoalMinutes = 20
 
 	// Admin-tunable defaults (see SetXPRules).
 	defaultXPRepeatDailyCap = 100 // XP per study day from repeats and SSW practice
 	defaultAnkiStreakCards  = 10  // Anki reviews that make a day count for the streak
-	leaderboardTopSize    = 50
-	leaderboardSnapshotTT = time.Minute
-	xpEventRetention      = 12 * 7 * 24 * time.Hour
-	leaderboardJobID      = "weekly-close"
+	leaderboardTopSize      = 50
+	leaderboardSnapshotTT   = time.Minute
+	xpEventRetention        = 12 * 7 * 24 * time.Hour
+	leaderboardJobID        = "weekly-close"
 
 	achievementWeeklyPodium   = "weekly-podium"
 	achievementWeeklyChampion = "weekly-champion"

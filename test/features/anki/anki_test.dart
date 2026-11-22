@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/features/anki/data/anki_repository.dart';
@@ -15,15 +12,49 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-List<Map<String, dynamic>> _sourceDecks() =>
-    ((jsonDecode(
-                  File(
-                    'backend/internal/anki/resources/catalog.json',
-                  ).readAsStringSync(),
-                )
-                as Map<String, dynamic>)['decks']
-            as List<dynamic>)
-        .cast<Map<String, dynamic>>();
+// The built-in deck set is empty for now, so the tests use a small fixture
+// catalog shaped like the backend response.
+List<Map<String, dynamic>> _sourceDecks() => [
+  {
+    'id': 'basic_words',
+    'title': 'Basic Words',
+    'category': 'Vocabulary',
+    'level': '',
+    'description': 'Kata dan frasa dasar untuk pemula.',
+    'instructions': 'Ingat jawaban sebelum membalik kartu.',
+    'originalName': 'Basic Words',
+    'meaningLanguage': 'English',
+    'cardCount': 30,
+    'sourceCount': 30,
+    'skippedCount': 0,
+    'available': true,
+    'unavailableReason': '',
+    'preview': [
+      {
+        'index': 0,
+        'front': 'terima kasih',
+        'answers': ['thank you'],
+        'meaning': 'thank you',
+      },
+    ],
+  },
+  {
+    'id': 'unavailable_deck',
+    'title': 'Unavailable Deck',
+    'category': 'Vocabulary',
+    'level': '',
+    'description': 'Deck ini belum bisa dipelajari.',
+    'instructions': 'Belum tersedia.',
+    'originalName': 'Unavailable Deck',
+    'meaningLanguage': 'English',
+    'cardCount': 0,
+    'sourceCount': 5,
+    'skippedCount': 5,
+    'available': false,
+    'unavailableReason': 'Jawaban deck ini belum lengkap.',
+    'preview': <Map<String, dynamic>>[],
+  },
+];
 
 class StudyRepository extends AnkiRepository {
   StudyRepository({this.failFirst = false}) : super(Dio());
@@ -138,7 +169,7 @@ void main() {
     'flip required, double ratings ignored, uncertain retry preserves request identity',
     () async {
       final repository = StudyRepository(failFirst: true);
-      final controller = AnkiStudyController(repository, 'wakayama');
+      final controller = AnkiStudyController(repository, 'basic_words');
       addTearDown(controller.dispose);
       await controller.load();
       await controller.rate('good');
@@ -169,7 +200,7 @@ void main() {
       dio.interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) {
-            expect(options.path, '/anki/decks/wakayama/review');
+            expect(options.path, '/anki/decks/basic_words/review');
             expect(options.method, 'POST');
             expect(options.data, {
               'index': 0,
@@ -196,12 +227,12 @@ void main() {
       });
       final result = await AnkiRepository(
         dio,
-      ).review('wakayama', card, 'hard', 'request-id');
+      ).review('basic_words', card, 'hard', 'request-id');
       expect(result['version'], 4);
     },
   );
   testWidgets(
-    'phone searches the real catalog, explains Wakayama, then reveals and saves a flashcard',
+    'phone searches the catalog, explains a deck, then reveals and saves a flashcard',
     (tester) async {
       tester.view.physicalSize = const Size(320, 740);
       tester.view.devicePixelRatio = 1;
@@ -270,14 +301,14 @@ void main() {
       }
 
       await show(find.byKey(const Key('anki-search')));
-      await tester.enterText(find.byKey(const Key('anki-search')), 'wakayama');
+      await tester.enterText(find.byKey(const Key('anki-search')), 'basic_words');
       tester.testTextInput.hide();
       await tester.pumpAndSettle();
-      await show(find.byKey(const Key('anki-deck-wakayama')));
-      await tester.tap(find.byKey(const Key('anki-deck-wakayama')));
+      await show(find.byKey(const Key('anki-deck-basic_words')));
+      await tester.tap(find.byKey(const Key('anki-deck-basic_words')));
       await tester.pumpAndSettle();
       expect(
-        find.textContaining('Wakayama adalah salah satu prefektur'),
+        find.textContaining('Kata dan frasa dasar'),
         findsOneWidget,
       );
       await show(find.byKey(const Key('anki-start')));
@@ -294,7 +325,7 @@ void main() {
       expect(repository.reviews.length, 1);
       expect(find.text('Sesi selesai!'), findsOneWidget);
       expect(tester.takeException(), isNull);
-      router.go('/anki/decks/esyn_easy');
+      router.go('/anki/decks/unavailable_deck');
       await tester.pumpAndSettle();
       await show(find.text('Ketersediaan deck'));
       expect(find.byKey(const Key('anki-start')), findsNothing);

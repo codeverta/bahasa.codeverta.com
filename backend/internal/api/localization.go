@@ -103,9 +103,8 @@ func requestContentLanguage(header string) string {
 
 func isLocalizedLearningPath(path string) bool {
 	for _, prefix := range []string{
-		"/v1/home", "/v1/learning/", "/v1/exams", "/v1/dictionary/", "/v1/vocabulary/",
-		"/v1/grammar/", "/v1/kanji/", "/v1/reading/", "/v1/simulation/",
-		"/v1/exam-attempts", "/v1/diagnostic/", "/v1/ssw/", "/v1/offline/practice/",
+		"/v1/home", "/v1/learning/", "/v1/vocabulary/",
+		"/v1/grammar/", "/v1/reading/", "/v1/offline/practice/",
 	} {
 		base := strings.TrimSuffix(prefix, "/")
 		if path == base || strings.HasPrefix(path, base+"/") {
@@ -139,26 +138,7 @@ func translateLearningJSONForPath(body []byte, path string) ([]byte, error) {
 	if err := json.Unmarshal(body, &payload); err != nil {
 		return nil, err
 	}
-	domain := ""
-	materialContextID := ""
-	if strings.HasPrefix(path, "/v1/reading/") {
-		domain = "reading"
-	} else if strings.HasPrefix(path, "/v1/kanji/") {
-		domain = "kanji"
-		if strings.HasPrefix(path, "/v1/kanji/lessons/") {
-			lessonID := strings.TrimPrefix(path, "/v1/kanji/lessons/")
-			lessonID = strings.SplitN(lessonID, "/", 2)[0]
-			parts := strings.Split(lessonID, "-")
-			if len(parts) >= 3 && strings.HasPrefix(parts[1], "n") {
-				materialContextID = "kanji:" + strings.ToUpper(parts[1]) + ":" + lessonID
-			}
-		}
-	} else if strings.HasPrefix(path, "/v1/vocabulary/") {
-		domain = "vocabulary"
-	} else if strings.HasPrefix(path, "/v1/grammar/") {
-		domain = "grammar"
-	}
-	translateLearningValueInContext(payload, "", nil, domain, materialContextID)
+	translateLearningValue(payload, "")
 	if path == "/v1/home" || strings.HasPrefix(path, "/v1/home/") {
 		translateAchievements(payload)
 		translatePlanFeatures(payload)
@@ -166,15 +146,9 @@ func translateLearningJSONForPath(body []byte, path string) ([]byte, error) {
 	return json.Marshal(payload)
 }
 
-func translateLearningValueInContext(value any, field string, questionContext map[string]any, domain, materialContextID string) {
+func translateLearningValue(value any, field string) {
 	switch value := value.(type) {
 	case map[string]any:
-		if _, isQuestion := value["prompt"].(string); isQuestion {
-			questionContext = make(map[string]any, len(value))
-			for key, item := range value {
-				questionContext[key] = item
-			}
-		}
 		if field == "error" {
 			code, _ := value["code"].(string)
 			if message, ok := value["message"].(string); ok {
@@ -183,111 +157,20 @@ func translateLearningValueInContext(value any, field string, questionContext ma
 		}
 		for key, child := range value {
 			if text, ok := child.(string); ok {
-				value[key] = translateLearningTextInQuestionContext(key, text, questionContext, domain, materialContextID)
+				value[key] = translateLearningText(key, text)
 				continue
 			}
-			translateLearningValueInContext(child, key, questionContext, domain, materialContextID)
+			translateLearningValue(child, key)
 		}
 	case []any:
 		for index, child := range value {
 			if text, ok := child.(string); ok {
-				value[index] = translateLearningTextInQuestionContext(field, text, questionContext, domain, materialContextID)
+				value[index] = translateLearningText(field, text)
 				continue
 			}
-			translateLearningValueInContext(child, field, questionContext, domain, materialContextID)
+			translateLearningValue(child, field)
 		}
 	}
-}
-
-func translateLearningTextInQuestionContext(field, text string, questionContext map[string]any, domain, materialContextID string) string {
-	if domain == "reading" || domain == "kanji" {
-		if domain == "kanji" && materialContextID != "" {
-			key := jlptKanjiMaterialEnglishKey{contextID: materialContextID, field: field, source: text}
-			if translated, ok := jlptKanjiN2Lessons19To44English[key]; ok {
-				return translated
-			}
-			if translated, ok := jlptKanjiN2Lessons45To74English[key]; ok {
-				return translated
-			}
-			if translated, ok := jlptKanjiN3EarlyMaterialEnglish[key]; ok {
-				return translated
-			}
-			if translated, ok := jlptKanjiN3Lessons39To77English[key]; ok {
-				return translated
-			}
-			if translated, ok := jlptKanjiN3MeaningGapsEnglish[key]; ok {
-				return translated
-			}
-			if translated, ok := jlptKanjiN2Lessons09To18English[key]; ok {
-				return translated
-			}
-			if translated, ok := jlptKanjiN2MnemonicNoteEnglish[key]; ok {
-				return translated
-			}
-			if translated, ok := jlptKanjiN3QuizEnglishCatalog[key]; ok {
-				return translated
-			}
-		}
-		if domain == "kanji" && materialContextID != "" {
-			key := jlptKanjiMaterialEnglishKey{contextID: materialContextID, field: field, source: text}
-			if translated, ok := jlptKanjiMaterialEnglishCatalog[key]; ok {
-				return translated
-			}
-		}
-		candidates := []string{field, "reading." + field, "kanji." + field}
-		if field == "text" {
-			candidates = append(candidates, "choices", "reading.choices", "kanji.choices")
-		}
-		for _, candidate := range candidates {
-			if translated, ok := jlptKanjiReadingEnglish[candidate][text]; ok {
-				return translated
-			}
-		}
-		switch field {
-		case "title", "chapter", "description", "meaning", "prompt", "explanation", "choices", "text", "section", "group", "instructions", "imageDescription":
-			return text
-		}
-	}
-	if field == "text" && questionContext != nil {
-		kind, _ := questionContext["kind"].(string)
-		prompt, _ := questionContext["prompt"].(string)
-		if kind == "Arti kata" || (kind == "" && isVocabularyMeaningQuestion(prompt)) {
-			if translated, ok := englishJLPTVocabularyGrammar("vocabulary.meaning", text); ok {
-				return translated
-			}
-			// Meaning choices belong to the vocabulary meaning catalog. Do not
-			// borrow a different sense from another JLPT choice catalog.
-			return text
-		}
-	}
-	if domain == "vocabulary" || domain == "grammar" {
-		candidates := []string{domain + "." + field}
-		if domain == "vocabulary" {
-			switch field {
-			case "kind":
-				candidates = append(candidates, "vocabulary.quiz.kind")
-			case "prompt":
-				candidates = append(candidates, "vocabulary.quiz.prompt")
-			case "explanation":
-				candidates = append(candidates, "vocabulary.quiz.explanation")
-			case "imageDescription":
-				candidates = append(candidates, "vocabulary.quiz.imageDescription")
-			}
-		}
-		if domain == "grammar" && field == "meaning" {
-			candidates = append(candidates, "grammar.exampleMeaning")
-		}
-		for _, candidate := range candidates {
-			if translated, ok := englishJLPTVocabularyGrammar(candidate, text); ok {
-				return translated
-			}
-		}
-		switch field {
-		case "title", "chapter", "description", "meaning", "exampleMeaning", "note", "pattern", "prompt", "explanation", "text", "kind", "imageDescription":
-			return text
-		}
-	}
-	return translateLearningText(field, text)
 }
 
 var learningAPIErrorMessages = map[string]string{
@@ -322,99 +205,10 @@ func translateLearningAPIError(code, _ string) string {
 // untouched. Unknown content remains source text until a reviewed translation
 // is added for that field and value.
 func translateLearningText(field, text string) string {
-	if translated, ok := translateReviewedLearningText(field, text); ok {
-		return translated
-	}
 	if translated, ok := learningTranslations[field][text]; ok {
 		return translated
 	}
 	return text
-}
-
-func isVocabularyMeaningQuestion(prompt string) bool {
-	_, exists := englishJLPTVocabularyGrammar("vocabulary.quiz.prompt", prompt)
-	return exists
-}
-
-// translateReviewedLearningText looks up exact human-authored entries across
-// the learning-content catalogs. API responses expose only the leaf JSON key,
-// so try the known domain-qualified variants and accept a result only when all
-// matching catalogs agree on the translation.
-func translateReviewedLearningText(field, source string) (string, bool) {
-	if field == "title" {
-		if translated, ok := englishJLPTVocabularyGrammar("grammar.title", source); ok {
-			return translated, true
-		}
-	}
-	if field == "chapter" {
-		if translated, ok := englishJLPTVocabularyGrammar("grammar.chapter", source); ok {
-			return translated, true
-		}
-	}
-	fields := []string{field}
-	for _, domain := range []string{
-		"vocabulary", "grammar", "kanji", "reading", "diagnostic", "simulation", "ssw", "ssw.paper",
-	} {
-		fields = append(fields, domain+"."+field)
-	}
-	switch field {
-	case "text", "option":
-		fields = append(fields,
-			"vocabulary.choice", "grammar.choice", "kanji.choices", "reading.choices",
-			"diagnostic.choice", "simulation.choice", "ssw.choice", "choices",
-		)
-	case "prompt":
-		fields = append(fields, "vocabulary.quiz.prompt")
-	case "explanation":
-		fields = append(fields, "vocabulary.quiz.explanation")
-	case "kind":
-		fields = append(fields, "vocabulary.quiz.kind")
-	case "imageDescription":
-		fields = append(fields, "vocabulary.quiz.imageDescription")
-	case "options":
-		// SSW practice returns options as []string, while the other quiz APIs
-		// return QuizOption objects whose learner-facing leaf is `text`.
-		fields = append(fields, "ssw.option")
-	case "instructions":
-		fields = append(fields, "simulation.instruction", "diagnostic.instruction", "ssw.instruction")
-	case "name":
-		fields = append(fields, "diagnostic.section", "simulation.section", "ssw.section")
-	case "section":
-		fields = append(fields, "diagnostic.section", "simulation.section", "ssw.section")
-	case "title":
-		fields = append(fields, "ssw.paper.title", "grammar.title")
-	case "chapter":
-		fields = append(fields, "grammar.chapter")
-	}
-	seenFields := make(map[string]struct{}, len(fields))
-	translations := make(map[string]struct{})
-	for _, candidate := range fields {
-		if _, seen := seenFields[candidate]; seen {
-			continue
-		}
-		seenFields[candidate] = struct{}{}
-		if translated, ok := englishJLPTVocabularyGrammar(candidate, source); ok {
-			translations[translated] = struct{}{}
-		}
-		if bySource, ok := jlptKanjiReadingEnglish[candidate]; ok {
-			if translated, found := bySource[source]; found {
-				translations[translated] = struct{}{}
-			}
-		}
-		if translated, ok := englishExamSSWText(candidate, source); ok {
-			translations[translated] = struct{}{}
-		}
-		if translated, ok := sswCurriculumAccommodationEnglish[examSSWEnglishKey{field: candidate, source: source}]; ok {
-			translations[translated] = struct{}{}
-		}
-	}
-	if len(translations) != 1 {
-		return "", false
-	}
-	for translated := range translations {
-		return translated, true
-	}
-	return "", false
 }
 
 var learningTranslations = map[string]map[string]string{

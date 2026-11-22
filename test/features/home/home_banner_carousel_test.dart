@@ -4,7 +4,6 @@ import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
 import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
 import 'package:bahasa_master/features/home/presentation/widgets/home_banner_carousel.dart';
-import 'package:bahasa_master/features/news/data/news_repository.dart';
 import 'package:bahasa_master/shared/presentation/widgets/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,20 +21,20 @@ const banners = [
     buttonLabel: 'Buka materi',
   ),
   HomeBanner(
-    id: 'ssw',
-    title: 'SSW / Tokutei Ginou',
-    description: 'Siapkan keterampilan dan ujianmu.',
+    id: 'anki',
+    title: 'Flashcard Anki',
+    description: 'Ulangi kosakata dengan jadwal review.',
     imageUrl: '',
-    action: 'ssw',
-    buttonLabel: 'Buka SSW',
+    action: 'anki',
+    buttonLabel: 'Buka Anki',
   ),
   HomeBanner(
-    id: 'jobs',
-    title: 'Kerja di Jepang',
-    description: 'Temukan peluang sesuai kualifikasimu.',
+    id: 'practice',
+    title: 'Latihan harian',
+    description: 'Mulai satu kuis hari ini.',
     imageUrl: '',
-    action: 'jobs',
-    buttonLabel: 'Buka lowongan',
+    action: 'learn',
+    buttonLabel: 'Mulai latihan',
   ),
 ];
 
@@ -145,7 +144,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     }
-    expect(opened, ['learn', 'ssw', 'jobs']);
+    expect(opened, ['learn', 'anki', 'learn']);
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
@@ -195,21 +194,10 @@ void main() {
               body: DashboardScreen(
                 active: false,
                 openLearn: () => learnOpened = true,
-                openExam: () {},
                 openProfile: () {},
               ),
             ),
           ),
-        ),
-        GoRoute(
-          path: '/jobs',
-          builder: (context, state) =>
-              const Scaffold(body: Text('Job destination')),
-        ),
-        GoRoute(
-          path: '/ssw',
-          builder: (context, state) =>
-              const Scaffold(body: Text('SSW destination')),
         ),
       ],
     );
@@ -224,7 +212,6 @@ void main() {
       banners: banners,
       categories: [],
       tracks: [],
-      exams: [],
       plans: [
         SubscriptionPlan(
           id: 'lifetime',
@@ -247,10 +234,6 @@ void main() {
             (ref) => AuthController.test(const AuthenticationState.guest()),
           ),
           homeDashboardProvider.overrideWith((ref) async => data),
-          newsPreviewProvider.overrideWith(
-            (ref) async =>
-                const NewsPage(items: [], total: 0, page: 1, sources: []),
-          ),
         ],
         child: MaterialApp.router(routerConfig: router),
       ),
@@ -259,20 +242,6 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Lihat paket'));
     await tester.pumpAndSettle();
     expect(find.text('Premium destination'), findsOneWidget);
-    router.pop();
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('home-banner-dot-3')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FilledButton, 'Buka lowongan'));
-    await tester.pumpAndSettle();
-    expect(find.text('Job destination'), findsOneWidget);
-    router.pop();
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('home-banner-dot-2')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FilledButton, 'Buka SSW'));
-    await tester.pumpAndSettle();
-    expect(find.text('SSW destination'), findsOneWidget);
     router.pop();
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('home-banner-dot-1')));

@@ -62,7 +62,7 @@ func (s *Server) ConfigureNotifications(path, token string, sender notifications
 	return nil
 }
 
-var announcementRoutes = map[string]bool{"/home": true, "/dictionary": true, "/anki": true, "/ssw": true, "/premium": true, "/learn/vocabulary": true, "/learn/grammar": true, "/learn/kanji": true, "/learn/reading": true, "/exams/n5": true}
+var announcementRoutes = map[string]bool{"/home": true, "/anki": true, "/premium": true, "/learn/vocabulary": true, "/learn/grammar": true, "/learn/reading": true}
 
 func validateAnnouncement(m *notifications.Message) error {
 	m.Title = strings.TrimSpace(m.Title)

@@ -42,9 +42,6 @@ func TestAnkiAPIResourceDetailsAuthAndReviewContract(t *testing.T) {
 	if w := request("GET", "/v1/anki/decks/wakayama/study?limit=999", "", true); w.Code != 422 {
 		t.Fatal("invalid page accepted")
 	}
-	if w := request("GET", "/v1/anki/decks/strokes_kanken/study", "", true); w.Code != 422 {
-		t.Fatal("placeholder stroke answers exposed")
-	}
 	w := request("GET", "/v1/anki/decks/wakayama/study?limit=1", "", true)
 	var session struct {
 		Data struct {

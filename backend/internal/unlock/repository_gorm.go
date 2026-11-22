@@ -376,16 +376,6 @@ func (r *GormRepository) ConsumeVerified(ctx context.Context, userID, nonce stri
 	return consumed, nil
 }
 
-func (r *GormRepository) Convert(ctx context.Context, userID, fromKey, toKey string) (bool, error) {
-	result := r.db.WithContext(ctx).Model(&unlockRow{}).
-		Where("user_id = ? AND content_key = ?", userID, fromKey).
-		UpdateColumn("content_key", toKey)
-	if isDuplicate(result.Error) {
-		return false, nil
-	}
-	return result.RowsAffected == 1, result.Error
-}
-
 func (r *GormRepository) Has(ctx context.Context, userID, contentKey string) (bool, error) {
 	var count int64
 	err := r.db.WithContext(ctx).Model(&unlockRow{}).

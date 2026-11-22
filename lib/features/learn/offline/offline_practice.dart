@@ -115,19 +115,12 @@ class OfflinePracticeService {
         .toList(growable: false);
   }
 
-  Future<Map<String, dynamic>> start(
-    String kind,
-    String lessonId, {
-    String? scope,
-  }) async {
+  Future<Map<String, dynamic>> start(String kind, String lessonId) async {
     final user = currentUserId();
     if (user == null || user.isEmpty) {
       throw StateError('Masuk untuk menyimpan latihan.');
     }
     if (!_supportedKind(kind)) throw ArgumentError.value(kind, 'kind');
-    if (kind != 'ssw' && scope != null) {
-      throw ArgumentError.value(scope, 'scope');
-    }
     final generation = _generations[user] ?? 0;
     final package = await _fetchPackage(user, kind, lessonId, generation);
     final questions = package['questions'] as List<dynamic>;
@@ -140,55 +133,20 @@ class OfflinePracticeService {
       'answers': <Map<String, String>>[],
       'status': 'inProgress',
       'createdAt': DateTime.now().toUtc().toIso8601String(),
-      if (scope != null) 'scope': scope,
     };
     await _mutate(user, (attempts) {
-      if (kind == 'ssw') {
-        final existing = attempts.where((entry) {
-          if (entry['status'] != 'inProgress' || entry['scope'] != scope) {
-            return false;
-          }
-          final existingPackage = entry['package'];
-          if (existingPackage is! Map) return false;
-          final existingManifest = existingPackage['manifest'];
-          return existingManifest is Map &&
-              existingManifest['kind'] == kind &&
-              existingManifest['lessonId'] == lessonId &&
-              existingManifest['contentHash'] ==
-                  (package['manifest'] as Map<String, dynamic>)['contentHash'];
-        }).firstOrNull;
-        if (existing != null) {
-          attemptRow = existing;
-        } else {
-          attempts
-            ..removeWhere(
-              (entry) =>
-                  entry['status'] == 'inProgress' &&
-                  entry['package'] is Map &&
-                  (entry['package'] as Map)['manifest'] is Map &&
-                  ((entry['package'] as Map)['manifest'] as Map)['kind'] ==
-                      kind &&
-                  ((entry['package'] as Map)['manifest'] as Map)['lessonId'] ==
-                      lessonId,
-            )
-            ..add(row);
-          attemptRow = row;
-        }
-      } else {
-        attempts
-          ..removeWhere(
-            (entry) =>
-                entry['status'] == 'inProgress' &&
-                entry['package'] is Map &&
-                (entry['package'] as Map)['manifest'] is Map &&
-                ((entry['package'] as Map)['manifest'] as Map)['kind'] ==
-                    kind &&
-                ((entry['package'] as Map)['manifest'] as Map)['lessonId'] ==
-                    lessonId,
-          )
-          ..add(row);
-        attemptRow = row;
-      }
+      attempts
+        ..removeWhere(
+          (entry) =>
+              entry['status'] == 'inProgress' &&
+              entry['package'] is Map &&
+              (entry['package'] as Map)['manifest'] is Map &&
+              ((entry['package'] as Map)['manifest'] as Map)['kind'] == kind &&
+              ((entry['package'] as Map)['manifest'] as Map)['lessonId'] ==
+                  lessonId,
+        )
+        ..add(row);
+      attemptRow = row;
       if (attempts.length > 500) {
         attempts.removeWhere((entry) => entry['status'] == 'synced');
         if (attempts.length > 500) {
@@ -340,10 +298,7 @@ class OfflinePracticeService {
           .map((value) => Map<String, String>.from(value as Map))
           .toList();
       final questions = package['questions'] as List<dynamic>;
-      final isSswPractice =
-          (package['manifest'] as Map<String, dynamic>)['kind'] == 'ssw';
-      if (answers.isEmpty ||
-          (!isSswPractice && answers.length != questions.length)) {
+      if (answers.isEmpty || answers.length != questions.length) {
         throw StateError('Jawab semua soal sebelum menyelesaikan latihan.');
       }
       localResult = _provisionalResult(attemptId, package, answers);
@@ -593,8 +548,7 @@ class OfflinePracticeService {
               byQuestion[question['id']] == question['correctOptionId'],
         )
         .length;
-    final kind = manifest['kind'];
-    final total = kind == 'ssw' ? answers.length : questions.length;
+    final total = questions.length;
     final score = total == 0 ? 0 : correct * 100 ~/ total;
     return {
       'attemptId': attemptId,
@@ -602,7 +556,7 @@ class OfflinePracticeService {
       'score': score,
       'correctAnswers': correct,
       'totalQuestions': total,
-      'passed': kind != 'ssw' && score >= 80,
+      'passed': score >= 80,
       'bestScore': 0,
       'progress': 0,
       'canRetry': true,
@@ -616,12 +570,11 @@ class OfflinePracticeService {
   ) => attempts.where((row) => row['attemptId'] == attemptId).firstOrNull;
 
   static bool _supportedKind(String kind) =>
-      const {'vocabulary', 'grammar', 'kanji', 'reading', 'ssw'}.contains(kind);
+      const {'vocabulary', 'grammar', 'reading'}.contains(kind);
 
   static bool _isPremiumManifest(Map<String, dynamic> manifest) {
     final level = (manifest['level'] as String? ?? '').toUpperCase();
-    return manifest['kind'] == 'ssw' ||
-        const {'N3', 'N2', 'N1'}.contains(level);
+    return const {'N3', 'N2', 'N1'}.contains(level);
   }
 
   static Future<bool> _denyPremium(String _) async => false;

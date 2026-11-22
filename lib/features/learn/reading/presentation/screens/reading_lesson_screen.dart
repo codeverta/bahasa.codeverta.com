@@ -10,7 +10,6 @@ import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_sheet.dart';
 import 'package:bahasa_master/features/learn/reading/domain/reading_models.dart';
 import 'package:bahasa_master/features/learn/reading/presentation/controllers/reading_controller.dart';
 import 'package:bahasa_master/features/learn/reading/presentation/widgets/reading_illustration.dart';
-import 'package:bahasa_master/shared/presentation/widgets/japanese_ruby_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -89,7 +88,6 @@ class _StudyState extends ConsumerState<_Study> {
   @override
   Widget build(BuildContext context) {
     final displayPreferences = ref.watch(displayPreferencesProvider);
-    final furigana = displayPreferences.furigana;
     final translation = displayPreferences.translation;
     final state = widget.state;
     final controller = widget.controller;
@@ -140,24 +138,6 @@ class _StudyState extends ConsumerState<_Study> {
                 runSpacing: 6,
                 children: [
                   FilterChip(
-                    key: const Key('reading-furigana-toggle'),
-                    label: Text('Furigana'.localized(context)),
-                    selected: furigana,
-                    showCheckmark: false,
-                    selectedColor: colors.secondary,
-                    labelStyle: TextStyle(
-                      color: furigana ? colors.onSecondary : colors.onSurface,
-                    ),
-                    onSelected: (enabled) => ref
-                        .read(displayPreferencesProvider.notifier)
-                        .setFurigana(enabled: enabled),
-                    avatar: Icon(
-                      Icons.translate_rounded,
-                      size: 18,
-                      color: furigana ? colors.onSecondary : colors.primary,
-                    ),
-                  ),
-                  FilterChip(
                     label: Text('Terjemahan'.localized(context)),
                     selected: translation,
                     showCheckmark: false,
@@ -188,27 +168,15 @@ class _StudyState extends ConsumerState<_Study> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (furigana)
-                      JapaneseRubyText(
-                        text: page.japanese,
-                        reading: page.reading,
-                        key: const Key('reading-passage'),
-                        style: const TextStyle(
-                          fontSize: 23,
-                          height: 1.9,
-                          letterSpacing: 0.4,
-                        ),
-                      )
-                    else
-                      Text(
-                        page.japanese,
-                        key: const Key('reading-passage'),
-                        style: const TextStyle(
-                          fontSize: 23,
-                          height: 1.9,
-                          letterSpacing: 0.4,
-                        ),
+                    Text(
+                      page.japanese,
+                      key: const Key('reading-passage'),
+                      style: const TextStyle(
+                        fontSize: 23,
+                        height: 1.9,
+                        letterSpacing: 0.4,
                       ),
+                    ),
                     if (translation) ...[
                       const SizedBox(height: 16),
                       Text(
@@ -242,27 +210,13 @@ class _StudyState extends ConsumerState<_Study> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        if (furigana)
-                          JapaneseRubyText(
-                            text: word.japanese,
-                            reading: word.reading,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
-                            ),
-                            rubyStyle: TextStyle(
-                              color: colors.primary,
-                              fontSize: 12,
-                            ),
-                          )
-                        else
-                          Text(
-                            word.japanese,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
-                            ),
+                        Text(
+                          word.japanese,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
                           ),
+                        ),
                         const SizedBox(height: 8),
                         Text(word.meaning),
                       ],

@@ -62,7 +62,7 @@ func scenarioXPBoostIntentIsConsumedOnce(t *testing.T, h *harness) {
 func TestBoostCallbackAcceptsEitherConfiguredUnit(t *testing.T) {
 	h := newHarness(t, unlock.NewMemoryRepository())
 	ctx := context.Background()
-	key, _ := unlock.Key(unlock.KindXPBoost, "simulation:simulation-abc")
+	key, _ := unlock.Key(unlock.KindXPBoost, "exam:exam-abc")
 	intent, err := h.service.CreateIntent(ctx, userA, key)
 	if err != nil {
 		t.Fatal(err)

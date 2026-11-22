@@ -8,14 +8,14 @@ import (
 )
 
 // accountLocalizedPrefixes lists public JSON routes that are not covered by the
-// learning or news localizers. Admin routes stay in Indonesian.
+// learning localizer. Admin routes stay in Indonesian.
 var accountLocalizedPrefixes = []string{
 	"/v1/me", "/v1/billing", "/v1/plans", "/v1/pricing", "/v1/auth",
-	"/v1/jobs", "/v1/map", "/v1/manga", "/v1/anki", "/v1/app-update-policy", "/v1/branding",
+	"/v1/anki", "/v1/app-update-policy", "/v1/branding",
 }
 
 func isAccountLocalizedPath(path string) bool {
-	if strings.HasPrefix(path, "/v1/admin/") || isLocalizedLearningPath(path) || isPublicNewsPath(path) {
+	if strings.HasPrefix(path, "/v1/admin/") || isLocalizedLearningPath(path) {
 		return false
 	}
 	for _, prefix := range accountLocalizedPrefixes {
@@ -27,7 +27,7 @@ func isAccountLocalizedPath(path string) bool {
 }
 
 // localizedAccountResponses translates app-authored success text and error
-// messages for English clients on account, billing, jobs, manga, Anki and
+// messages for English clients on account, billing, Anki and
 // branding routes. Indonesian clients and non-JSON responses (file downloads,
 // images) pass through untouched.
 func localizedAccountResponses(next http.Handler) http.Handler {

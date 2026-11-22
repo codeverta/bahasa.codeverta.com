@@ -16,15 +16,12 @@ import (
 func TestLegacyImportPreservesBlobsAndRejectsOverwrite(t *testing.T) {
 	dsn := testdb.DSN(t)
 	state := []byte(`{"XP":50,"Events":{},"Rewards":{},"Lessons":{},"Subjects":{},"Days":{},"Unlocked":{},"Exams":{}}`)
-	body := []byte(`{"kanji":"猫","stroke_count":11}`)
 	tables := map[string]any{
 		"gamification_users":   []map[string]any{{"user_id": "legacy-user", "state": state}},
 		"accounts":             []map[string]any{},
 		"billing_purchases":    []map[string]any{},
 		"billing_tokens":       []map[string]any{},
 		"deleted_demo":         []map[string]any{},
-		"dictionary_responses": []map[string]any{},
-		"dictionary_entries":   []map[string]any{{"source": "kanjiapi.dev", "entry_id": "猫", "kind": "kanji", "body": body, "fetched_at": int64(1700000000000)}},
 	}
 	raw, err := json.Marshal(map[string]any{"version": 1, "tables": tables})
 	if err != nil {
@@ -46,8 +43,8 @@ func TestLegacyImportPreservesBlobsAndRejectsOverwrite(t *testing.T) {
 	}
 	defer db.Close()
 	var actual []byte
-	if err := db.QueryRow(`SELECT body FROM dictionary_entries WHERE source_entry_id='猫'`).Scan(&actual); err != nil || !bytes.Equal(actual, body) {
-		t.Fatalf("legacy UTF-8 blob changed: %v", err)
+	if err := db.QueryRow(`SELECT state FROM gamification_users WHERE user_id=?`, database.UserUUID("legacy-user")).Scan(&actual); err != nil || !bytes.Equal(actual, state) {
+		t.Fatalf("legacy blob changed: %v", err)
 	}
 	s := store.NewMemoryStore()
 	if err := s.EnableGamificationPersistence(dsn); err != nil {

@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -65,7 +64,6 @@ type MemoryStore struct {
 	progress             map[string]map[string]domain.LessonProgress
 	categories           []domain.LearningCategory
 	tracks               []domain.LearningTrack
-	exams                []domain.Exam
 	plans                []domain.Plan
 	attemptID            atomic.Uint64
 	accounts             map[string]account
@@ -76,17 +74,6 @@ type MemoryStore struct {
 	vocabulary           []domain.VocabularyLevelContent
 	vocabAttempts        map[string]*vocabularyAttemptState
 	assetBaseURL         string
-	grammar              []grammarLessonContent
-	grammarAttempts      map[string]*grammarAttemptState
-	kanji                []kanjiLessonContent
-	kanjiAttempts        map[string]*kanjiAttemptState
-	reading              []readingLessonContent
-	readingAttempts      map[string]*readingAttemptState
-	diagnosticAttempts   map[string]*diagnosticAttemptState
-	diagnosticOrder      []string
-	simulationAttempts   map[string]*simulationAttemptState
-	simulationOrder      []string
-	simulationNow        func() time.Time
 	lb                   *leaderboardState
 }
 
@@ -108,21 +95,11 @@ func NewMemoryStore() *MemoryStore {
 		progress:             map[string]map[string]domain.LessonProgress{},
 		categories:           seedCategories(),
 		tracks:               seedTracks(),
-		exams:                seedExams(),
 		plans:                seedPlans(),
 		accounts:             map[string]account{},
 		sessions:             map[string]string{},
 		vocabulary:           seedVocabulary(),
 		vocabAttempts:        map[string]*vocabularyAttemptState{},
-		grammar:              append(append(append(append(seedGrammar(), seedGrammarN4()...), seedGrammarN3()...), seedGrammarN2()...), seedGrammarN1()...),
-		grammarAttempts:      map[string]*grammarAttemptState{},
-		kanji:                seedKanji(),
-		kanjiAttempts:        map[string]*kanjiAttemptState{},
-		reading:              seedReading(),
-		readingAttempts:      map[string]*readingAttemptState{},
-		diagnosticAttempts:   map[string]*diagnosticAttemptState{},
-		simulationAttempts:   map[string]*simulationAttemptState{},
-		simulationNow:        time.Now,
 		lb:                   newLeaderboardState(),
 	}
 	var nonce [8]byte
@@ -132,15 +109,6 @@ func NewMemoryStore() *MemoryStore {
 	result.attemptID.Store(binary.LittleEndian.Uint64(nonce[:]) >> 1)
 	result.seedDemoAccount()
 	for i := range result.categories {
-		if result.categories[i].ID == "grammar" {
-			result.categories[i].LessonCount = len(result.grammar)
-		}
-		if result.categories[i].ID == "reading" {
-			result.categories[i].LessonCount = len(result.reading)
-		}
-		if result.categories[i].ID == "kanji" {
-			result.categories[i].LessonCount = len(result.kanji)
-		}
 		if result.categories[i].ID == "vocabulary" {
 			result.categories[i].LessonCount = 0
 			for _, level := range result.vocabulary {
@@ -157,7 +125,6 @@ func (s *MemoryStore) Dashboard(userID string) domain.Dashboard {
 		DailyGoal:       domain.DailyGoal{TargetMinutes: 20},
 		Categories:      s.Categories(),
 		Tracks:          s.Tracks(""),
-		Exams:           s.Exams(""),
 		Plans:           s.Plans(),
 	}
 	if userID == "" {
@@ -203,25 +170,6 @@ func (s *MemoryStore) Tracks(system string) []domain.LearningTrack {
 		for i := range result {
 			result[i].RequiredTier = domain.TierFree
 		}
-	}
-	return result
-}
-
-func (s *MemoryStore) Exams(system string) []domain.Exam {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	var result []domain.Exam
-	for _, exam := range s.exams {
-		if system != "" && !strings.EqualFold(exam.System, system) {
-			continue
-		}
-		if openLearningAccess {
-			exam.RequiredTier = domain.TierFree
-		}
-		result = append(result, exam)
-	}
-	if system == "" && result == nil {
-		return []domain.Exam{}
 	}
 	return result
 }
@@ -404,89 +352,6 @@ func (s *MemoryStore) Achievements(userID string) []domain.Achievement {
 	return s.Gamification(userID).Achievements
 }
 
-func (s *MemoryStore) StartExam(userID, examID string) (domain.ExamAttempt, error) {
-	return s.StartExamFor(userID, examID, false)
-}
-
-// StartExamFor is StartExam for an account that may have paid for this
-// simulation paper with a rewarded ad (unlocked). It only affects simulation
-// papers; other exams keep their own entitlement check.
-func (s *MemoryStore) StartExamFor(userID, examID string, unlocked bool) (domain.ExamAttempt, error) {
-	for _, level := range SSWLevels() {
-		if examID == strings.ToLower(level)+"-simulation-1" {
-			return s.startSimulation(userID, unlocked, level)
-		}
-	}
-	if rest, ok := strings.CutPrefix(examID, "nat-5q-full-"); ok {
-		paperNo, err := strconv.Atoi(rest)
-		if err != nil || strconv.Itoa(paperNo) != rest || paperNo < 1 || paperNo > natLastPaper {
-			return domain.ExamAttempt{}, ErrNotFound
-		}
-		if paperNo == 1 {
-			return s.startSimulation(userID, unlocked, "NAT")
-		}
-		return s.startSimulation(userID, unlocked, fmt.Sprintf("NAT-%d", paperNo))
-	}
-	if examID == "jft-a2-full-1" {
-		return s.startSimulation(userID, unlocked, "JFT")
-	}
-	for paperNo := 2; paperNo <= jftLastPaper; paperNo++ {
-		if examID == fmt.Sprintf("jft-a2-full-%d", paperNo) {
-			return s.startSimulation(userID, unlocked, fmt.Sprintf("JFT-%d", paperNo))
-		}
-	}
-	// Older clients used this ID for the premium N5 catalog placeholder.
-	if examID == "jlpt-n5-full-1" {
-		return s.startSimulation(userID, unlocked)
-	}
-	if examID == "jlpt-n3-simulation-1" {
-		return s.startSimulation(userID, unlocked, "N3")
-	}
-	if examID == "jlpt-n2-simulation-1" {
-		return s.startSimulation(userID, unlocked, "N2")
-	}
-	if examID == "jlpt-n1-simulation-1" {
-		return s.startSimulation(userID, unlocked, "N1")
-	}
-	if examID == "jlpt-n4-simulation-1" {
-		return s.startSimulation(userID, unlocked, "N4")
-	}
-	if base, paperNo, ok := jlptExtraExam(examID); ok {
-		return s.startSimulation(userID, unlocked, fmt.Sprintf("%s-%d", base, paperNo))
-	}
-	if examID == "jlpt-n5-simulation-1" {
-		return s.startSimulation(userID, unlocked)
-	}
-	if examID == "jlpt-n5-diagnostic" {
-		return s.startDiagnostic(userID), nil
-	}
-	s.mu.RLock()
-	var selected *domain.Exam
-	for i := range s.exams {
-		if s.exams[i].ID == examID {
-			copy := s.exams[i]
-			selected = &copy
-			break
-		}
-	}
-	profile := s.entitlementLocked(userID)
-	s.mu.RUnlock()
-	if selected == nil {
-		return domain.ExamAttempt{}, ErrNotFound
-	}
-	if !openLearningAccess && selected.RequiredTier == domain.TierPremium && profile.Tier != domain.TierPremium {
-		return domain.ExamAttempt{}, ErrPremium
-	}
-	id := s.attemptID.Add(1)
-	return domain.ExamAttempt{
-		ID:        fmt.Sprintf("attempt-%d", id),
-		ExamID:    examID,
-		UserID:    userID,
-		Status:    "in_progress",
-		StartedAt: time.Now().UTC(),
-	}, nil
-}
-
 func (s *MemoryStore) ensureProfileLocked(userID string) domain.Profile {
 	if profile, ok := s.profiles[userID]; ok {
 		return profile
@@ -522,104 +387,12 @@ func seedCategories() []domain.LearningCategory {
 	return []domain.LearningCategory{
 		{ID: "vocabulary", Name: "Vocabulary", Description: "Kosakata tematik dengan spaced repetition", LessonCount: 240, RequiredTier: domain.TierFree},
 		{ID: "grammar", Name: "Grammar", Description: "Grammar JLPT N5 sampai N1: pola, contoh kalimat, dan kuis", LessonCount: 196, RequiredTier: domain.TierFree},
-		{ID: "kanji", Name: "Kanji", Description: "Kanji JLPT N5 sampai N1: bacaan, contoh pemakaian, dan kuis", LessonCount: 452, RequiredTier: domain.TierFree},
 		{ID: "reading", Name: "Reading", Description: "Reading JLPT N5 sampai N1: cerita, kosakata, dan kuis", LessonCount: 60, RequiredTier: domain.TierFree},
 	}
 }
 
 func seedTracks() []domain.LearningTrack {
-	return []domain.LearningTrack{
-		{ID: "jlpt-n5", System: "JLPT", Level: "N5", Title: "JLPT N5 Foundation", Description: "Fondasi kana, 100 kanji, dan grammar dasar", RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4", System: "JLPT", Level: "N4", Title: "JLPT N4 Elementary", Description: "Pemahaman bahasa Jepang sehari-hari", RequiredTier: domain.TierFree},
-		{ID: "jlpt-n3", System: "JLPT", Level: "N3", Title: "JLPT N3 Intermediate", Description: "Jembatan menuju bahasa Jepang tingkat lanjut", RequiredTier: domain.TierPremium},
-		{ID: "jlpt-n2", System: "JLPT", Level: "N2", Title: "JLPT N2 Advanced", Description: "Bahasa akademik dan profesional", RequiredTier: domain.TierPremium},
-		{ID: "jlpt-n1", System: "JLPT", Level: "N1", Title: "JLPT N1 Mastery", Description: "Penguasaan bahasa Jepang tingkat tinggi", RequiredTier: domain.TierPremium},
-		{ID: "nat-5q", System: "NAT", Level: "5Q", Title: "NAT-TEST 5Q", Description: "Persiapan NAT level dasar", RequiredTier: domain.TierFree},
-		{ID: "jft-a2", System: "JFT", Level: "A2", Title: "JFT-Basic A2", Description: "Bahasa Jepang untuk kehidupan dan kerja", RequiredTier: domain.TierPremium},
-	}
-}
-
-func seedExams() []domain.Exam {
-	return []domain.Exam{
-		{ID: "ssw-agriculture-crop-simulation-1", System: "SSW", Level: "Tanaman", Title: "Pertanian · Tanaman · Simulasi Tertulis 1", QuestionCount: 70, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "ssw-agriculture-livestock-simulation-1", System: "SSW", Level: "Peternakan", Title: "Pertanian · Peternakan · Simulasi Tertulis 1", QuestionCount: 70, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "ssw-fishery-capture-simulation-1", System: "SSW", Level: "Tangkap", Title: "Perikanan Tangkap · Simulasi 1", QuestionCount: 55, DurationMin: 70, RequiredTier: domain.TierPremium},
-		{ID: "ssw-fishery-aquaculture-simulation-1", System: "SSW", Level: "Budi daya", Title: "Budi Daya · Simulasi 1", QuestionCount: 50, DurationMin: 70, RequiredTier: domain.TierPremium},
-		{ID: "ssw-kaigo-simulation-1", System: "SSW", Level: "Kaigo", Title: "Kaigo · Simulasi Keterampilan 1", QuestionCount: 45, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "ssw-kaigo-jp-simulation-1", System: "SSW", Level: "Kaigo", Title: "Kaigo · Simulasi Bahasa Jepang 1", QuestionCount: 15, DurationMin: 30, RequiredTier: domain.TierPremium},
-		{ID: "ssw-cleaning-simulation-1", System: "SSW", Level: "Building cleaning", Title: "Pembersihan Gedung · Simulasi 1", QuestionCount: 50, DurationMin: 50, RequiredTier: domain.TierPremium},
-		{ID: "jlpt-n3-simulation-1", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierPremium},
-		{ID: "jlpt-n2-simulation-1", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierPremium},
-		{ID: "jlpt-n1-simulation-1", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierPremium},
-		{ID: "jlpt-n3-simulation-2", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Paket 02 · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n3-simulation-3", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Paket 03 · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n2-simulation-2", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Paket 02 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n2-simulation-3", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Paket 03 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n1-simulation-2", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Paket 02 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n1-simulation-3", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Paket 03 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n3-simulation-4", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Paket 04 · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n3-simulation-5", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Paket 05 · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n3-simulation-6", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Paket 06 · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n3-simulation-7", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Paket 07 · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n3-simulation-8", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Paket 08 · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n3-simulation-9", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Paket 09 · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n3-simulation-10", System: "JLPT", Level: "N3", Title: "JLPT N3 Simulation · Paket 10 · Kosakata, Grammar & Reading", QuestionCount: 74, DurationMin: 100, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n2-simulation-4", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Paket 04 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n2-simulation-5", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Paket 05 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n2-simulation-6", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Paket 06 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n2-simulation-7", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Paket 07 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n2-simulation-8", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Paket 08 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n2-simulation-9", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Paket 09 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n2-simulation-10", System: "JLPT", Level: "N2", Title: "JLPT N2 Simulation · Paket 10 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 105, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n1-simulation-4", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Paket 04 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n1-simulation-5", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Paket 05 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n1-simulation-6", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Paket 06 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n1-simulation-7", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Paket 07 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n1-simulation-8", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Paket 08 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n1-simulation-9", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Paket 09 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n1-simulation-10", System: "JLPT", Level: "N1", Title: "JLPT N1 Simulation · Paket 10 · Kosakata, Grammar & Reading", QuestionCount: 64, DurationMin: 110, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-1", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-diagnostic", System: "JLPT", Level: "N5", Title: "JLPT N5 Diagnostic", QuestionCount: 25, DurationMin: 30, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-1", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-2", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Paket 02 · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-3", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Paket 03 · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-2", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Paket 02 · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-3", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Paket 03 · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-4", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Paket 04 · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-5", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Paket 05 · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-4", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Paket 04 · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-5", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Paket 05 · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-6", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Paket 06 · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-7", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Paket 07 · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-6", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Paket 06 · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-7", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Paket 07 · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-8", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Paket 08 · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-9", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Paket 09 · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n5-simulation-10", System: "JLPT", Level: "N5", Title: "JLPT N5 Simulation · Paket 10 · Kosakata & Grammar", QuestionCount: 38, DurationMin: 40, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-8", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Paket 08 · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-9", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Paket 09 · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "jlpt-n4-simulation-10", System: "JLPT", Level: "N4", Title: "JLPT N4 Simulation · Paket 10 · Kosakata, Grammar & Reading", QuestionCount: 57, DurationMin: 80, RequiredTier: domain.TierFree},
-		{ID: "nat-5q-full-1", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 1 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "nat-5q-full-2", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 2 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "nat-5q-full-3", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 3 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "nat-5q-full-4", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 4 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "nat-5q-full-5", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 5 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "nat-5q-full-6", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 6 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "nat-5q-full-7", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 7 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "nat-5q-full-8", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 8 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "nat-5q-full-9", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 9 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "nat-5q-full-10", System: "NAT", Level: "5Q", Title: "NAT 5Q Exam 10 · Latihan tertulis", QuestionCount: 43, DurationMin: 60, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-1", System: "JFT", Level: "A2", Title: "JFT Exam 1 · Latihan tertulis", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-2", System: "JFT", Level: "A2", Title: "JFT Exam 2 · Latihan tertulis orisinal", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-3", System: "JFT", Level: "A2", Title: "JFT Exam 3 · Latihan tertulis orisinal", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-4", System: "JFT", Level: "A2", Title: "JFT Exam 4 · Latihan tertulis orisinal", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-5", System: "JFT", Level: "A2", Title: "JFT Exam 5 · Latihan tertulis orisinal", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-6", System: "JFT", Level: "A2", Title: "JFT Exam 6 · Latihan tertulis orisinal", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-7", System: "JFT", Level: "A2", Title: "JFT Exam 7 · Latihan tertulis orisinal", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-8", System: "JFT", Level: "A2", Title: "JFT Exam 8 · Latihan tertulis orisinal", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-9", System: "JFT", Level: "A2", Title: "JFT Exam 9 · Latihan tertulis orisinal", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-		{ID: "jft-a2-full-10", System: "JFT", Level: "A2", Title: "JFT Exam 10 · Latihan tertulis orisinal", QuestionCount: 36, DurationMin: 45, RequiredTier: domain.TierPremium},
-	}
+	return []domain.LearningTrack{}
 }
 
 func seedPlans() []domain.Plan {

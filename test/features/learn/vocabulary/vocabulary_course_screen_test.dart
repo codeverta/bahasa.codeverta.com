@@ -130,48 +130,13 @@ void main() {
       expect(find.byKey(const Key('word-word-1')), findsOneWidget);
       expect(find.byKey(const Key('revealed-word-meaning')), findsOneWidget);
       expect(find.text('saya'), findsOneWidget);
-      expect(find.text('わたし'), findsOneWidget);
-      expect(
-        tester
-            .widget<FilterChip>(find.byKey(const Key('toggle-furigana')))
-            .selected,
-        isTrue,
-      );
-      await tester.ensureVisible(find.byKey(const Key('toggle-furigana')));
-      await tester.tap(find.byKey(const Key('toggle-furigana')));
-      await tester.pumpAndSettle();
-      expect(find.text('わたし'), findsNothing);
-      await tester.ensureVisible(find.byKey(const Key('toggle-furigana')));
-      await tester.tap(find.byKey(const Key('toggle-furigana')));
-      await tester.pumpAndSettle();
-      expect(find.text('わたし'), findsOneWidget);
+      expect(find.byKey(const Key('toggle-furigana')), findsNothing);
       await tester.scrollUntilVisible(
         find.byKey(const Key('example-japanese-0')),
         100,
         scrollable: find.byType(Scrollable).first,
       );
       expect(find.byKey(const Key('example-japanese-0')), findsOneWidget);
-      expect(find.text('わたし'), findsOneWidget);
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('toggle-furigana')),
-        100,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.tap(find.byKey(const Key('toggle-furigana')));
-      await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('example-japanese-0')),
-        100,
-        scrollable: find.byType(Scrollable).first,
-      );
-      expect(find.text('わたし'), findsNothing);
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('toggle-furigana')),
-        100,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.tap(find.byKey(const Key('toggle-furigana')));
-      await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.text('Saya adalah pelajar.'),
         100,

@@ -219,15 +219,8 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                         ).uri.queryParameters['from'];
                         context.go(
                           from != null &&
-                                  (RegExp(r'^/jobs/[^/]+$').hasMatch(from) ||
-                                      from.startsWith('/learn/') ||
-                                      from.startsWith('/exams/') ||
-                                      RegExp(r'^/news/[^/]+$').hasMatch(from) ||
-                                      RegExp(
-                                        r'^/anki/[^?#]+$',
-                                      ).hasMatch(from) ||
-                                      from == '/manga' ||
-                                      from.startsWith('/manga/'))
+                                  (from.startsWith('/learn/') ||
+                                      RegExp(r'^/anki/[^?#]+$').hasMatch(from))
                               ? from
                               : '/home',
                         );
@@ -664,7 +657,7 @@ class _LifetimeHero extends StatelessWidget {
   }
 }
 
-/// Empat manfaat Lifetime Access dalam grid ringkas 2×2.
+/// Manfaat Lifetime Access dalam grid ringkas dua kolom.
 class _BenefitGrid extends StatelessWidget {
   const _BenefitGrid();
 
@@ -684,8 +677,6 @@ class _BenefitGrid extends StatelessWidget {
       'Unduh offline',
       'Belajar tanpa internet',
     ),
-    (Icons.auto_stories_rounded, 'Baca manga', 'Koleksi manga Jepang'),
-    (Icons.work_rounded, 'Lamar kerja', 'Tautan lowongan aktif'),
   ];
 
   @override

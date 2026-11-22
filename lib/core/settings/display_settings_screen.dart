@@ -141,17 +141,6 @@ class DisplaySettingsScreen extends ConsumerWidget {
             child: Column(
               children: [
                 SwitchListTile.adaptive(
-                  key: const Key('display-furigana-setting'),
-                  title: Text('Furigana'.localized(context)),
-                  subtitle: Text(
-                    'Tampilkan cara baca di atas kanji.'.localized(context),
-                  ),
-                  value: preferences.furigana,
-                  onChanged: (enabled) =>
-                      controller.setFurigana(enabled: enabled),
-                ),
-                const Divider(height: 1, indent: 16, endIndent: 16),
-                SwitchListTile.adaptive(
                   key: const Key('display-translation-setting'),
                   title: Text('Terjemahan'.localized(context)),
                   subtitle: Text(

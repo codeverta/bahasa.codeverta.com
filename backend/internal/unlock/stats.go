@@ -11,19 +11,15 @@ import (
 type Group string
 
 const (
-	GroupLessons    Group = "lessons"
-	GroupAnki       Group = "anki"
-	GroupSimulation Group = "simulation"
-	GroupNews       Group = "news"
-	GroupJobs       Group = "jobs"
-	GroupXP         Group = "xp" // double XP after a finished activity
+	GroupLessons Group = "lessons"
+	GroupAnki    Group = "anki"
+	GroupXP      Group = "xp" // double XP after a finished activity
 )
 
 // Groups lists every group in display order.
-var Groups = []Group{GroupLessons, GroupAnki, GroupSimulation, GroupNews, GroupJobs, GroupXP}
+var Groups = []Group{GroupLessons, GroupAnki, GroupXP}
 
-// GroupOf maps a stored content key to its group. A spent simulation credit is
-// stored as a simulation attempt and still counts as a simulation.
+// GroupOf maps a stored content key to its group.
 func GroupOf(contentKey string) (Group, bool) {
 	kind, _, found := strings.Cut(contentKey, ":")
 	if !found {
@@ -34,12 +30,6 @@ func GroupOf(contentKey string) (Group, bool) {
 		return GroupLessons, true
 	case k == KindAnki:
 		return GroupAnki, true
-	case k == KindSimulation || k == KindSimulationAttempt:
-		return GroupSimulation, true
-	case k == KindNews:
-		return GroupNews, true
-	case k == KindJob:
-		return GroupJobs, true
 	case k == KindXPBoost:
 		return GroupXP, true
 	}

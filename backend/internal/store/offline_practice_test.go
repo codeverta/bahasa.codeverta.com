@@ -15,9 +15,7 @@ func TestOfflinePracticeQuestionBanksUseAuthoredLessonContent(t *testing.T) {
 	s := NewMemoryStore()
 	for _, tc := range []struct{ kind, lessonID string }{
 		{"vocabulary", "n5-daily"},
-		{"grammar", "grammar-n5-01"},
-		{"kanji", "kanji-n5-01"},
-		{"reading", "reading-n5-01"},
+		{"vocabulary", "n4-plans"},
 	} {
 		practice, err := s.OfflinePracticePackage(database.DemoUserID, tc.kind, tc.lessonID)
 		if err != nil || practice.Manifest.Kind != tc.kind || practice.Manifest.LessonID != tc.lessonID || len(practice.Questions) == 0 {
@@ -38,7 +36,9 @@ func TestOfflinePracticeQuestionBanksUseAuthoredLessonContent(t *testing.T) {
 	if _, err := s.OfflinePracticePackage(database.DemoUserID, "simulation", "jlpt-n5"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("exam simulation was exposed as lesson practice: %v", err)
 	}
-	if _, err := s.OfflinePracticePackage(database.DemoUserID, "grammar", "grammar-n3-01"); !errors.Is(err, ErrPremium) {
+	previous := SetOpenLearningAccess(false)
+	defer SetOpenLearningAccess(previous)
+	if _, err := s.OfflinePracticePackage("free", "vocabulary", "n3-work"); !errors.Is(err, ErrPremium) {
 		t.Fatalf("free account received a premium package: %v", err)
 	}
 }
@@ -46,10 +46,10 @@ func TestOfflinePracticeQuestionBanksUseAuthoredLessonContent(t *testing.T) {
 func TestOfflinePracticeSyncIsIdempotentAndPreservesBestScore(t *testing.T) {
 	s := NewMemoryStore()
 	user := database.DemoUserID
-	first := offlinePracticeInput(t, s, user, "grammar", "grammar-n5-01", 4)
+	first := offlinePracticeInput(t, s, user, "vocabulary", "n4-plans", 4)
 	firstFingerprint := "fingerprint-first"
 	result, err := s.SyncOfflinePracticeAttempt(user, first, firstFingerprint)
-	if err != nil || !result.Verified || result.Score != 80 || result.BestScore != 80 || !result.Passed {
+	if err != nil || !result.Verified || result.Score != 100 || result.BestScore != 100 || !result.Passed {
 		t.Fatalf("first verified completion failed: %#v %v", result, err)
 	}
 	if xp := s.Gamification(user).XP; xp != 50 {
@@ -63,19 +63,19 @@ func TestOfflinePracticeSyncIsIdempotentAndPreservesBestScore(t *testing.T) {
 		t.Fatalf("attempt ID accepted changed answers: %v", err)
 	}
 
-	second := offlinePracticeInput(t, s, user, "grammar", "grammar-n5-01", 2)
+	second := offlinePracticeInput(t, s, user, "vocabulary", "n4-plans", 1)
 	secondResult, err := s.SyncOfflinePracticeAttempt(user, second, "fingerprint-second")
-	if err != nil || secondResult.Score != 40 || secondResult.BestScore != 80 || secondResult.Passed || s.Gamification(user).XP != 50 {
+	if err != nil || secondResult.Score != 25 || secondResult.BestScore != 100 || secondResult.Passed || s.Gamification(user).XP != 50 {
 		t.Fatalf("lower retry replaced best score or repeated XP: %#v %v xp=%d", secondResult, err, s.Gamification(user).XP)
 	}
-	if progress := s.Progress(user); len(progress) != 1 || progress[0].Completion != 80 || !progress[0].Completed {
+	if progress := s.Progress(user); len(progress) != 1 || progress[0].Completion != 100 || !progress[0].Completed {
 		t.Fatalf("best score or pass was not preserved: %#v", progress)
 	}
 }
 
 func TestOfflinePracticeAttemptIsAccountBound(t *testing.T) {
 	s := NewMemoryStore()
-	input := offlinePracticeInput(t, s, database.DemoUserID, "reading", "reading-n5-01", 5)
+	input := offlinePracticeInput(t, s, database.DemoUserID, "vocabulary", "n4-plans", 4)
 	if _, err := s.SyncOfflinePracticeAttempt("another-user", input, "fingerprint"); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("attempt crossed account boundary: %v", err)
 	}
@@ -84,7 +84,7 @@ func TestOfflinePracticeAttemptIsAccountBound(t *testing.T) {
 func TestOfflinePracticeDuplicateSurvivesEntitlementOrContentChanges(t *testing.T) {
 	s := NewMemoryStore()
 	user := database.DemoUserID
-	input := offlinePracticeInput(t, s, user, "grammar", "grammar-n5-01", 4)
+	input := offlinePracticeInput(t, s, user, "vocabulary", "n4-plans", 4)
 	fingerprint := "replay-after-content-change"
 	want, err := s.SyncOfflinePracticeAttempt(user, input, fingerprint)
 	if err != nil {
@@ -93,58 +93,10 @@ func TestOfflinePracticeDuplicateSurvivesEntitlementOrContentChanges(t *testing.
 
 	// A package already accepted by the server stays idempotently replayable if
 	// its lesson is later removed or the account's entitlement changes.
-	s.grammar = nil
+	s.vocabulary = nil
 	got, err := s.SyncOfflinePracticeAttempt(user, input, fingerprint)
 	if err != nil || !reflect.DeepEqual(got, want) || s.Gamification(user).XP != 50 {
 		t.Fatalf("verified replay depended on current lesson content: %#v %v", got, err)
-	}
-}
-
-func TestOfflinePracticeSSWSyncIsVerifiedIdempotentAndDoesNotReward(t *testing.T) {
-	s := NewMemoryStore()
-	if _, err := s.OfflinePracticePackage("free", "ssw", "building-cleaning"); !errors.Is(err, ErrPremium) {
-		t.Fatalf("free account received the SSW practice package: %v", err)
-	}
-	user := "ssw-practice-user"
-	grantTestLifetime(t, s, user)
-	practice, err := s.OfflinePracticePackage(user, "ssw", "building-cleaning")
-	if err != nil || practice.Manifest.Level != "SSW" || len(practice.Questions) != 60 {
-		t.Fatalf("missing authored SSW practice bank: %d questions, %v", len(practice.Questions), err)
-	}
-	practice.Manifest.UserID = user
-	input := domain.OfflinePracticeSyncInput{AttemptID: uuid.NewString(), Package: practice}
-	module := practice.Questions[0].ModuleID
-	for _, question := range practice.Questions {
-		if question.ModuleID != module || len(input.Answers) == 4 {
-			continue
-		}
-		input.Answers = append(input.Answers, domain.OfflinePracticeAnswer{
-			QuestionID: question.ID, OptionID: question.CorrectOptionID,
-		})
-	}
-	if len(input.Answers) != 4 {
-		t.Fatalf("fixture module had too few questions: %s", module)
-	}
-	fingerprint := "ssw-practice-partial-attempt"
-	first, err := s.SyncOfflinePracticeAttempt(user, input, fingerprint)
-	if err != nil || !first.Verified || first.Score != 100 || first.Total != 4 || first.Passed || first.Progress != 0 {
-		t.Fatalf("server did not verify SSW partial practice without an exam pass: %#v %v", first, err)
-	}
-	if summary := s.Gamification(user); summary.XP != 0 || summary.LessonsCompleted != 0 {
-		t.Fatalf("ordinary SSW practice changed rewards: %+v", summary)
-	} else {
-		for _, achievement := range summary.Achievements {
-			if achievement.UnlockedAt != nil {
-				t.Fatalf("ordinary SSW practice unlocked an achievement: %+v", achievement)
-			}
-		}
-	}
-	duplicate, err := s.SyncOfflinePracticeAttempt(user, input, fingerprint)
-	if err != nil || !reflect.DeepEqual(duplicate, first) {
-		t.Fatalf("duplicate SSW sync changed its result: %#v %v", duplicate, err)
-	}
-	if xp := s.Gamification(user).XP; xp != 0 {
-		t.Fatalf("duplicate SSW sync awarded XP: %d", xp)
 	}
 }
 
@@ -155,7 +107,7 @@ func TestOfflinePracticeResultSurvivesPersistenceRestart(t *testing.T) {
 	if err := s.EnableGamificationPersistence(dsn); err != nil {
 		t.Fatal(err)
 	}
-	input := offlinePracticeInput(t, s, user, "kanji", "kanji-n5-01", 10)
+	input := offlinePracticeInput(t, s, user, "vocabulary", "n4-plans", 4)
 	fingerprint := "persisted-attempt-fingerprint"
 	first, err := s.SyncOfflinePracticeAttempt(user, input, fingerprint)
 	if err != nil {

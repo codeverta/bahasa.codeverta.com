@@ -7,8 +7,6 @@ import 'package:bahasa_master/features/auth/presentation/controllers/auth_contro
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
 import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
-import 'package:bahasa_master/features/news/data/news_repository.dart';
-import 'package:bahasa_master/features/news/presentation/news_screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,7 +32,6 @@ Future<void> _pumpLoadingDashboard(
           (ref) => AuthController.test(const AuthenticationState.guest()),
         ),
         homeDashboardProvider.overrideWith((ref) => pending.future),
-        newsPreviewProvider.overrideWith((ref) => Completer<NewsPage>().future),
       ],
       child: MediaQuery(
         data: MediaQueryData(
@@ -47,7 +44,6 @@ Future<void> _pumpLoadingDashboard(
             body: DashboardScreen(
               active: true,
               openLearn: () {},
-              openExam: () {},
               openProfile: () {},
             ),
           ),
@@ -66,9 +62,8 @@ void main() {
     expect(find.byKey(const Key('home-loading')), findsOneWidget);
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(find.byType(SkeletonShimmer), findsWidgets);
-    // Greeting, banner, progress, 8 quick-menu tiles and 3 news rows.
-    expect(find.byType(SkeletonBox), findsAtLeastNWidgets(20));
-    expect(find.byKey(const Key('news-preview-skeleton')), findsOneWidget);
+    // Greeting, banner, progress and the quick-menu tiles.
+    expect(find.byType(SkeletonBox), findsAtLeastNWidgets(10));
     // The shimmer keeps animating while loading.
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.byType(ShaderMask), findsWidgets);
@@ -83,30 +78,6 @@ void main() {
     expect(find.byType(SkeletonBox), findsWidgets);
     expect(find.byType(ShaderMask), findsNothing);
     expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox.shrink());
-  });
-
-  testWidgets('the news preview shows article placeholders while loading', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          newsPreviewProvider.overrideWith(
-            (ref) => Completer<NewsPage>().future,
-          ),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: const Scaffold(
-            body: SingleChildScrollView(child: NewsPreview()),
-          ),
-        ),
-      ),
-    );
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(find.byKey(const Key('news-preview-skeleton')), findsOneWidget);
-    expect(find.byType(LinearProgressIndicator), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
 }

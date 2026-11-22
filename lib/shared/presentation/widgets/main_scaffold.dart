@@ -5,8 +5,6 @@ import 'package:bahasa_master/core/analytics/analytics_service.dart';
 import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/billing/presentation/lifetime_offer.dart';
-import 'package:bahasa_master/features/dictionary/presentation/dictionary_screen.dart';
-import 'package:bahasa_master/features/exam/presentation/screens/exam_hub_screen.dart';
 import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
 import 'package:bahasa_master/features/learn/presentation/screens/learn_hub_screen.dart';
 import 'package:bahasa_master/features/profile/presentation/screens/profile_screen.dart';
@@ -24,9 +22,6 @@ class MainScaffold extends ConsumerStatefulWidget {
 
 class _MainScaffoldState extends ConsumerState<MainScaffold> {
   int _selectedIndex = 0;
-  bool _dictionaryOpened = false;
-  String _examCategory = 'JLPT';
-  int _examNavigation = 0;
 
   Future<bool> _ensureAuthenticated() async {
     if (ref.read(authControllerProvider).isAuthenticated) return true;
@@ -35,13 +30,10 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
   }
 
   Future<void> _selectDestination(int index) async {
-    if (index == 0 || index == 3 || await _ensureAuthenticated()) {
+    if (index == 0 || await _ensureAuthenticated()) {
       if (mounted) {
-        setState(() {
-          _selectedIndex = index;
-          if (index == 3) _dictionaryOpened = true;
-        });
-        const tabs = ['home', 'learn', 'exam', 'dictionary', 'profile'];
+        setState(() => _selectedIndex = index);
+        const tabs = ['home', 'learn', 'profile'];
         if (index >= 0 && index < tabs.length) {
           ref.read(analyticsServiceProvider).logTab(tabs[index]);
         }
@@ -58,32 +50,10 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
         child: DashboardScreen(
           active: _selectedIndex == 0,
           openLearn: () => _selectDestination(1),
-          openExam: () {
-            setState(() {
-              _examCategory = 'JLPT';
-              _examNavigation++;
-            });
-            _selectDestination(2);
-          },
-          openExamCategory: (category) {
-            setState(() {
-              _examCategory = category;
-              _examNavigation++;
-            });
-            _selectDestination(2);
-          },
-          openProfile: () => _selectDestination(4),
+          openProfile: () => _selectDestination(2),
         ),
       ),
       const LearnHubScreen(),
-      ExamHubScreen(
-        key: ValueKey(_examNavigation),
-        initialCategory: _examCategory,
-      ),
-      if (_dictionaryOpened)
-        const DictionaryScreen(embedded: true)
-      else
-        const SizedBox.shrink(),
       const ProfileScreen(),
     ];
     ref.listen<AuthenticationState>(authControllerProvider, (previous, next) {
@@ -106,14 +76,11 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Visibility(
-            visible: const {0, 1, 3}.contains(_selectedIndex),
+            visible: const {0, 1}.contains(_selectedIndex),
             maintainState: true,
             child: const AdBannerSlot(),
           ),
-          // The Exam tab has its own switch in the admin dashboard; the
-          // Profile tab never shows an ad.
-          if (_selectedIndex == 2)
-            const AdBannerSlot(placement: BannerAdPlacement.examTab),
+          // The Profile tab never shows an ad.
           _buildNavigationBar(context, colorScheme),
         ],
       ),
@@ -158,16 +125,6 @@ class _MainScaffoldState extends ConsumerState<MainScaffold> {
             icon: const Icon(Icons.local_library_outlined),
             selectedIcon: const Icon(Icons.local_library_rounded),
             label: 'Belajar'.localized(context),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.quiz_outlined),
-            selectedIcon: const Icon(Icons.quiz_rounded),
-            label: 'Ujian'.localized(context),
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.search_outlined),
-            selectedIcon: const Icon(Icons.manage_search_rounded),
-            label: 'Kamus'.localized(context),
           ),
           NavigationDestination(
             icon: const Icon(Icons.person_outline_rounded),

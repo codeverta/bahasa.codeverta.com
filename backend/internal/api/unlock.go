@@ -14,7 +14,6 @@ import (
 	"bahasa-master-backend/internal/aichat"
 	"bahasa-master-backend/internal/anki"
 	"bahasa-master-backend/internal/domain"
-	"bahasa-master-backend/internal/jobs"
 	"bahasa-master-backend/internal/store"
 	"bahasa-master-backend/internal/unlock"
 )
@@ -47,33 +46,13 @@ var unlockNoncePattern = regexp.MustCompile(`^[0-9a-f]{32}$`)
 // unlockLessonRoute matches the routes whose content an ad can open: lesson
 // pages and the quiz attempts that belong to them. Offline packages, PDFs and
 // everything else stay Lifetime-only.
-var unlockLessonRoute = regexp.MustCompile(`^/v1/(vocabulary|grammar|kanji|reading)/(lessons|attempts)/`)
+var unlockLessonRoute = regexp.MustCompile(`^/v1/(vocabulary|grammar|reading)/(lessons|attempts)/`)
 
 // unlockAIRoute matches the AI tutor's conversation routes for a lesson.
-var unlockAIRoute = regexp.MustCompile(`^/v1/ai/conversations/(vocabulary|grammar|kanji|reading)/`)
+var unlockAIRoute = regexp.MustCompile(`^/v1/ai/conversations/(vocabulary|grammar|reading)/`)
 
 // unlockAnkiRoute matches studying and reviewing a built-in deck.
 var unlockAnkiRoute = regexp.MustCompile(`^/v1/anki/decks/[^/]+/(study|review)$`)
-
-// unlockSimulationAttemptRoute matches the routes of one simulation attempt.
-var unlockSimulationAttemptRoute = regexp.MustCompile(`^/v1/simulation/attempts/`)
-
-// unlockSimulationOverviewRoute matches a simulation paper's overview.
-var unlockSimulationOverviewRoute = regexp.MustCompile(`^/v1/simulation/([^/]+)$`)
-
-// adUnlockableExams are the premium simulation papers an ad can open, one
-// attempt per ad. N3–N1 papers 02–10 are already free; only paper 01 is
-// premium, and the product decision covers N3.
-var adUnlockableExams = map[string]string{"jlpt-n3-simulation-1": "N3"}
-
-func adUnlockableSimulationLevel(level string) bool {
-	for _, unlockable := range adUnlockableExams {
-		if strings.EqualFold(level, unlockable) {
-			return true
-		}
-	}
-	return false
-}
 
 // adsSnapshot returns the current ads configuration.
 func (s *Server) adsSnapshot() AdsConfig {
@@ -149,22 +128,8 @@ func (s *Server) registerUnlocks(mux *http.ServeMux) {
 	mux.HandleFunc("POST /v1/unlocks/claim", s.requireAuth(s.unlockClaim))
 	mux.HandleFunc("POST /v1/unlocks/fallback", s.requireAuth(s.unlockFallback))
 	mux.HandleFunc("GET /v1/ads/ssv", s.unlockSSV)
-	mux.HandleFunc("POST /v1/jobs/{jobID}/apply-link", s.requireAuth(s.jobApplyLink))
 	mux.HandleFunc("GET /v1/admin/unlock-stats", s.unlockStats)
-	mux.HandleFunc("POST /v1/me/practice-lessons/{sectorID}/{lessonID}/complete", s.requireAuth(s.completePracticeLesson))
 	mux.HandleFunc("POST /v1/xp-boosts/{completionID}/free", s.requireAuth(s.freeXPBoost))
-}
-
-// completePracticeLesson records a finished Kaigo or SSW curriculum lesson
-// for XP and the streak (docs/ads-xp-spec.md).
-func (s *Server) completePracticeLesson(w http.ResponseWriter, r *http.Request) {
-	gain, err := s.store.CompletePracticeLesson(userID(r), r.PathValue("sectorID"), r.PathValue("lessonID"))
-	if err != nil {
-		writeStoreError(w, err)
-		return
-	}
-	w.Header().Set("Cache-Control", "no-store")
-	writeData(w, http.StatusOK, map[string]any{"xp": gain})
 }
 
 // unlockStats is the admin view of ad unlocks. "accountsNowLifetime" counts
@@ -215,11 +180,6 @@ func (s *Server) unlockedByAd(r *http.Request, id string) bool {
 	if s.unlocks == nil {
 		return false
 	}
-	// A paper's overview lists its sections and history, never questions, so
-	// it opens while an ad can open the paper: the app needs it to offer one.
-	if match := unlockSimulationOverviewRoute.FindStringSubmatch(r.URL.Path); match != nil {
-		return adUnlockableSimulationLevel(match[1]) && s.adsSnapshot().unlockOffered(unlock.KindSimulation)
-	}
 	kind, itemID, ok := s.routeItem(r)
 	if !ok {
 		return false
@@ -240,8 +200,6 @@ func (s *Server) routeItem(r *http.Request) (unlock.Kind, string, bool) {
 		return unlock.Kind(r.PathValue("lessonType")), r.PathValue("lessonID"), true
 	case unlockAnkiRoute.MatchString(path):
 		return unlock.KindAnki, r.PathValue("deckID"), true
-	case unlockSimulationAttemptRoute.MatchString(path):
-		return unlock.KindSimulationAttempt, r.PathValue("attemptID"), true
 	}
 	return "", "", false
 }
@@ -266,28 +224,12 @@ func (s *Server) writeLockedItem(w http.ResponseWriter, kind unlock.Kind, itemID
 // unlockLocked reports whether item is currently locked for free accounts,
 // which is the only case where unlocking it means anything.
 func (s *Server) unlockLocked(r *http.Request, kind unlock.Kind, itemID string) bool {
-	cfg := s.adsSnapshot()
 	switch {
 	case kind.IsLesson():
 		return s.store.PremiumRequest("/v1/"+string(kind)+"/lessons/"+itemID, "", itemID, "")
 	case kind == unlock.KindAnki:
 		deck, err := anki.Get(itemID)
 		return err == nil && store.PremiumLevel(deck.Level)
-	case kind == unlock.KindSimulation:
-		_, unlockable := adUnlockableExams[itemID]
-		return unlockable && s.store.ExamRequiresPremium(itemID)
-	case kind == unlock.KindNews:
-		if !cfg.ContentGates.News || s.news == nil {
-			return false
-		}
-		_, err := s.news.Detail(r.Context(), itemID, false)
-		return err == nil
-	case kind == unlock.KindJob:
-		if !cfg.ContentGates.Jobs || s.jobs == nil {
-			return false
-		}
-		_, err := s.jobs.Get(r.Context(), itemID)
-		return err == nil
 	}
 	return false
 }
@@ -296,132 +238,6 @@ func (s *Server) unlockLocked(r *http.Request, kind unlock.Kind, itemID string) 
 func (s *Server) itemUnlocked(r *http.Request, id string, kind unlock.Kind, itemID string) bool {
 	key, ok := unlock.Key(kind, itemID)
 	return ok && id != "" && s.unlocks != nil && s.unlocks.svc.Allowed(r.Context(), id, key)
-}
-
-// gateNews decides whether the caller may read a news article. It writes the
-// refusal and returns true when the article stays locked.
-func (s *Server) gateNews(w http.ResponseWriter, r *http.Request, articleID string) bool {
-	if !s.adsSnapshot().ContentGates.News {
-		return false
-	}
-	id, ok := s.store.ResolveSession(bearerToken(r))
-	if !ok {
-		writeError(w, http.StatusUnauthorized, "login_required", "Masuk untuk membaca berita ini.")
-		return true
-	}
-	if s.aiIsPremium(r, id) || s.itemUnlocked(r, id, unlock.KindNews, articleID) {
-		return false
-	}
-	s.writeLockedItem(w, unlock.KindNews, articleID, "Berita ini memerlukan Lifetime Access atau dibuka dengan iklan.")
-	return true
-}
-
-// jobLinksLocked reports whether job application links are hidden from the
-// public catalog.
-func (s *Server) jobLinksLocked() bool { return s.adsSnapshot().ContentGates.Jobs }
-
-// publicJob is a job as the public catalog shows it while application links
-// are locked: both links are removed, because many sources use the same URL
-// for the listing and the application.
-type publicJob struct {
-	jobs.Job
-	ApplyLocked bool `json:"applyLocked"`
-}
-
-func lockedJob(job jobs.Job) publicJob {
-	job.ApplyURL, job.SourceURL = "", ""
-	return publicJob{Job: job, ApplyLocked: true}
-}
-
-type publicJobPage struct {
-	Items      []publicJob `json:"items"`
-	Total      int64       `json:"total"`
-	NextCursor string      `json:"nextCursor"`
-	HasMore    bool        `json:"hasMore"`
-}
-
-func lockedJobPage(page jobs.Page) publicJobPage {
-	items := make([]publicJob, 0, len(page.Items))
-	for _, job := range page.Items {
-		items = append(items, lockedJob(job))
-	}
-	return publicJobPage{Items: items, Total: page.Total, NextCursor: page.NextCursor, HasMore: page.HasMore}
-}
-
-// jobApplyLink returns a job's application link to an account allowed to
-// apply: Lifetime, or one that opened this job with an ad. While the jobs gate
-// is off the link is public anyway, so every signed-in account gets it.
-func (s *Server) jobApplyLink(w http.ResponseWriter, r *http.Request) {
-	if s.jobs == nil {
-		writeError(w, 503, "jobs_unavailable", "Katalog lowongan belum terhubung. Coba lagi nanti.")
-		return
-	}
-	jobID := r.PathValue("jobID")
-	job, err := s.jobs.Get(r.Context(), jobID)
-	if err != nil {
-		writeJobError(w, err)
-		return
-	}
-	w.Header().Set("Cache-Control", "private, no-store")
-	id := userID(r)
-	if s.jobLinksLocked() && !s.aiIsPremium(r, id) && !s.itemUnlocked(r, id, unlock.KindJob, job.ID) {
-		s.writeLockedItem(w, unlock.KindJob, job.ID, "Melamar lowongan memerlukan Lifetime Access atau dibuka dengan iklan.")
-		return
-	}
-	writeData(w, http.StatusOK, map[string]string{"applyUrl": job.ApplyURL, "sourceUrl": job.SourceURL})
-}
-
-// startSimulationWithCredit handles starting a premium simulation paper that
-// an ad can open. One ad buys one attempt: the credit is converted into an
-// unlock of the attempt it starts, and resuming that attempt costs nothing.
-// It returns false when the request is not such a start, leaving it to the
-// normal path.
-func (s *Server) startSimulationWithCredit(w http.ResponseWriter, r *http.Request, examID string) bool {
-	if _, unlockable := adUnlockableExams[examID]; !unlockable || s.unlocks == nil || !s.store.ExamRequiresPremium(examID) {
-		return false
-	}
-	id := userID(r)
-	if s.aiIsPremium(r, id) {
-		return false
-	}
-	ctx := r.Context()
-	credit, _ := unlock.Key(unlock.KindSimulation, examID)
-	attemptKey := func(attemptID string) string {
-		key, _ := unlock.Key(unlock.KindSimulationAttempt, attemptID)
-		return key
-	}
-	active, hasActive := s.store.ActiveSimulationAttempt(id, examID)
-	resuming := hasActive && s.unlocks.svc.Allowed(ctx, id, attemptKey(active))
-	if !resuming && !s.unlocks.svc.Allowed(ctx, id, credit) {
-		s.writeLockedItem(w, unlock.KindSimulation, examID, "Simulasi ini memerlukan Lifetime Access atau dibuka dengan iklan.")
-		return true
-	}
-	// Starting is safe before the credit is spent: an attempt nobody has
-	// unlocked cannot be opened, so a lost race leaves nothing usable.
-	attempt, err := s.store.StartExamFor(id, examID, true)
-	if err != nil {
-		writeStoreError(w, err)
-		return true
-	}
-	key := attemptKey(attempt.ID)
-	if key == "" {
-		writeError(w, http.StatusInternalServerError, "internal_error", "unexpected server error")
-		return true
-	}
-	if !s.unlocks.svc.Allowed(ctx, id, key) {
-		converted, err := s.unlocks.svc.Convert(ctx, id, credit, key)
-		if err != nil {
-			log.Printf("unlock convert simulation credit: %v", err)
-			writeError(w, http.StatusInternalServerError, "internal_error", "unexpected server error")
-			return true
-		}
-		if !converted && !s.unlocks.svc.Allowed(ctx, id, key) {
-			s.writeLockedItem(w, unlock.KindSimulation, examID, "Simulasi ini memerlukan Lifetime Access atau dibuka dengan iklan.")
-			return true
-		}
-	}
-	writeData(w, http.StatusCreated, attempt)
-	return true
 }
 
 type unlockTarget struct {
@@ -721,13 +537,11 @@ func (s *Server) unlockList(w http.ResponseWriter, r *http.Request) {
 		// gates says which content is locked for free accounts right now, so
 		// the app only draws locks that are real.
 		"gates": map[string]bool{
-			"lessons": !store.OpenLearningAccess(), "news": cfg.ContentGates.News, "jobs": cfg.ContentGates.Jobs,
+			"lessons": !store.OpenLearningAccess(),
 		},
 		// offered says, per kind, whether an ad may open it.
 		"offered": map[string]bool{
 			"lessons": cfg.unlockOffered(unlock.KindGrammar), "anki": cfg.unlockOffered(unlock.KindAnki),
-			"simulation": cfg.unlockOffered(unlock.KindSimulation), "news": cfg.unlockOffered(unlock.KindNews),
-			"jobs": cfg.unlockOffered(unlock.KindJob),
 		},
 	})
 }

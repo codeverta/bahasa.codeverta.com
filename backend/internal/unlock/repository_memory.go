@@ -153,19 +153,6 @@ func (m *MemoryRepository) ConsumeVerified(_ context.Context, userID, nonce stri
 	return *intent, nil
 }
 
-func (m *MemoryRepository) Convert(_ context.Context, userID, fromKey, toKey string) (bool, error) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	from, held := m.unlocks[userID+"|"+fromKey]
-	if _, taken := m.unlocks[userID+"|"+toKey]; !held || taken {
-		return false, nil
-	}
-	delete(m.unlocks, userID+"|"+fromKey)
-	from.ContentKey = toKey
-	m.unlocks[userID+"|"+toKey] = from
-	return true, nil
-}
-
 func (m *MemoryRepository) Has(_ context.Context, userID, contentKey string) (bool, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()

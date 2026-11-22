@@ -105,14 +105,14 @@ func TestBillingDeletionRestoreAndRestart(t *testing.T) {
 	}
 	grantTestLifetime(t, s, buyer.ID)
 	session, _ := s.CreateSession(buyer.ID)
-	a, _ := s.StartGrammarAttempt(buyer.ID, "grammar-n3-01")
+	a, _ := s.StartVocabularyAttempt(buyer.ID, "n3-work")
 	if err = s.DeleteAccount(buyer.ID); err != nil {
 		t.Fatal(err)
 	}
 	if _, ok := s.ResolveSession(session); ok {
 		t.Fatal("session survives account deletion")
 	}
-	if _, err = s.AnswerGrammarQuestion(buyer.ID, a.ID, a.Questions[0].ID, a.Questions[0].Options[0].ID); !errors.Is(err, ErrNotFound) {
+	if _, err = s.AnswerVocabularyQuestion(buyer.ID, a.ID, a.Questions[0].ID, a.Questions[0].Options[0].ID); !errors.Is(err, ErrNotFound) {
 		t.Fatal("deleted account quiz survives")
 	}
 	old, _ := s.Purchase("android", "test-"+buyer.ID)
@@ -146,17 +146,8 @@ func TestBillingDeletionRestoreAndRestart(t *testing.T) {
 		t.Fatal("valid restore after deletion failed")
 	}
 }
-func TestPaidExamPolicy(t *testing.T) {
+func TestPlanCatalog(t *testing.T) {
 	s := NewMemoryStore()
-	if _, err := s.StartSimulation("free", "N3"); !errors.Is(err, ErrPremium) {
-		t.Fatal("N3 simulation is free")
-	}
-	if _, err := s.StartSimulation("free", "N5"); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := s.StartExam("free", "nat-5q-full-1"); !errors.Is(err, ErrPremium) {
-		t.Fatal("NAT exam is free")
-	}
 	if len(s.Plans()) != 2 || s.Plans()[1].PriceIDR != 99000 || s.Plans()[1].BillingType != "lifetime" {
 		t.Fatal("incorrect plan catalog")
 	}

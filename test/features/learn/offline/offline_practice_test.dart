@@ -275,50 +275,6 @@ void main() {
       service.dispose();
     },
   );
-
-  test(
-    'SSW signed practice supports partial module attempts without a pass',
-    () async {
-      var online = false;
-      final store = _MemoryPracticeStore();
-      final server = _PracticeServer();
-      final service = _service(
-        store: store,
-        server: server,
-        user: () => 'ssw-user',
-        offline: () => !online,
-        canReadPremium: (_) async => true,
-        kind: 'ssw',
-        lessonId: 'building-cleaning',
-        level: 'SSW',
-      );
-
-      final bank = await service.loadBank('ssw', 'building-cleaning');
-      expect(bank.single['moduleId'], 'cleaning');
-      final attempt = await service.start(
-        'ssw',
-        'building-cleaning',
-        scope: 'cleaning',
-      );
-      final question =
-          (attempt['questions'] as List).first as Map<String, dynamic>;
-      await service.answer(
-        attempt['id'] as String,
-        question['id'] as String,
-        'ssw-q1-o1',
-      );
-      final result = await service.complete(attempt['id'] as String);
-      expect(result['verified'], isFalse);
-      expect(result['passed'], isFalse);
-      expect(result['totalQuestions'], 1);
-      expect(result['pendingSync'], isTrue);
-      online = true;
-      await service.flush();
-      expect(server.syncRequests, 1);
-      expect(await service.pendingCount, 0);
-      service.dispose();
-    },
-  );
 }
 
 OfflinePracticeService _service({
@@ -350,8 +306,7 @@ OfflinePracticeService _service({
                   .firstWhere((item) => item['id'] == value['questionId']);
               return value['optionId'] == question['correctOptionId'];
             }).length;
-            final ssw = manifest['kind'] == 'ssw';
-            final totalQuestions = ssw ? answers.length : questions.length;
+            final totalQuestions = questions.length;
             final score = correctAnswers * 100 ~/ totalQuestions;
             handler.resolve(
               Response<Map<String, dynamic>>(
@@ -364,9 +319,9 @@ OfflinePracticeService _service({
                     'score': score,
                     'correctAnswers': correctAnswers,
                     'totalQuestions': totalQuestions,
-                    'passed': !ssw && score >= 80,
+                    'passed': score >= 80,
                     'bestScore': score,
-                    'progress': ssw ? 0 : score,
+                    'progress': score,
                     'canRetry': true,
                     'verified': true,
                   },
@@ -396,24 +351,13 @@ OfflinePracticeService _service({
                   },
                   'questions': [
                     {
-                      'id': kind == 'ssw' ? 'ssw-q1' : '$lessonId-q1',
-                      if (kind == 'ssw') 'moduleId': 'cleaning',
-                      if (kind == 'ssw') 'group': 'cleaning',
-                      if (kind == 'ssw') 'lessonId': lessonId,
+                      'id': '$lessonId-q1',
                       'prompt': 'Choose the correct answer.',
                       'options': [
-                        {
-                          'id': kind == 'ssw' ? 'ssw-q1-o1' : '$lessonId-o1',
-                          'text': 'Correct',
-                        },
-                        {
-                          'id': kind == 'ssw' ? 'ssw-q1-o2' : '$lessonId-o2',
-                          'text': 'Wrong',
-                        },
+                        {'id': '$lessonId-o1', 'text': 'Correct'},
+                        {'id': '$lessonId-o2', 'text': 'Wrong'},
                       ],
-                      'correctOptionId': kind == 'ssw'
-                          ? 'ssw-q1-o1'
-                          : '$lessonId-o1',
+                      'correctOptionId': '$lessonId-o1',
                       'explanation': 'The first option is correct.',
                     },
                   ],

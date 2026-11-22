@@ -56,13 +56,5 @@ flutter:
 
   assets:
     - assets/images/onboarding/
-    - assets/images/exams/
-    - assets/images/ssw/
-    - assets/images/jobs/
     - assets/images/explore/
-    - assets/map/
-    - assets/content/ssw/
-    - assets/content/ssw/en/
-    - assets/content/kana/kana_strokes.json
     - assets/images/app-icon-small.webp
-    - backend/assets/images/vocabulary/

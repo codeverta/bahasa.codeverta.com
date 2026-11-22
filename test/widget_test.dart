@@ -3,11 +3,9 @@ import 'package:bahasa_master/core/localization/app_language.dart';
 import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:bahasa_master/features/exam/presentation/screens/exam_hub_screen.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
 import 'package:bahasa_master/features/home/presentation/widgets/home_banner_carousel.dart';
-import 'package:bahasa_master/features/news/data/news_repository.dart';
 import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
 import 'package:bahasa_master/main.dart';
 import 'package:bahasa_master/shared/presentation/widgets/main_scaffold.dart';
@@ -17,35 +15,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('guest can open the free dictionary tab', (tester) async {
-    SharedPreferences.setMockInitialValues({'is_first_time': false});
-    final preferences = await SharedPreferences.getInstance();
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(preferences),
-          authControllerProvider.overrideWith(
-            (ref) => AuthController.test(const AuthenticationState.guest()),
-          ),
-          homeDashboardProvider.overrideWith((ref) async => _dashboard),
-          newsPreviewProvider.overrideWith(
-            (ref) async =>
-                const NewsPage(items: [], total: 0, page: 1, sources: []),
-          ),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.lightTheme,
-          home: const MainScaffold(),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Kamus'));
-    await tester.pumpAndSettle();
-    expect(find.text('Kamus Jepang'), findsOneWidget);
-    expect(find.text('Cari di kamus'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
   testWidgets('first launch redirects to onboarding', (tester) async {
     SharedPreferences.setMockInitialValues({});
     final preferences = await SharedPreferences.getInstance();
@@ -85,10 +54,6 @@ void main() {
             ),
           ),
           homeDashboardProvider.overrideWith((ref) async => _dashboard),
-          newsPreviewProvider.overrideWith(
-            (ref) async =>
-                const NewsPage(items: [], total: 0, page: 1, sources: []),
-          ),
         ],
         child: MaterialApp(
           theme: AppTheme.lightTheme,
@@ -113,39 +78,20 @@ void main() {
           matching: find.byType(Scrollable),
         )
         .first;
-    // Beranda opens features from the quick menu (redesign replaced the
-    // category grid and the Jobs card).
+    // Beranda opens features from the quick menu.
     await tester.scrollUntilVisible(
-      find.byKey(const Key('home-quick-jobs')),
+      find.byKey(const Key('home-quick-anki')),
       150,
       scrollable: homeScroll,
     );
     expect(find.byKey(const Key('home-quick-anki')), findsOneWidget);
-    expect(find.byKey(const Key('home-quick-ssw')), findsOneWidget);
-    expect(find.byKey(const Key('home-quick-jobs')), findsOneWidget);
+    expect(find.byKey(const Key('home-quick-jobs')), findsNothing);
 
     await tester.tap(find.text('Belajar'));
     await tester.pumpAndSettle();
 
     expect(find.text('Pilih level JLPT'), findsOneWidget);
-    expect(find.byKey(const Key('open-manga')), findsNothing);
     expect(find.text('Anki · Flashcards'), findsNothing);
-    expect(find.text('SSW / Tokutei Ginou'), findsNothing);
-    expect(find.text('Kerja di Jepang'), findsNothing);
-
-    await tester.tap(find.text('Ujian'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Latihan Ujian'), findsOneWidget);
-    // Every signed-in account opens all exams, so no exam is tagged as
-    // needing Lifetime Access.
-    expect(
-      find.descendant(
-        of: find.byType(ExamHubScreen),
-        matching: find.text('Lifetime Access', skipOffstage: false),
-      ),
-      findsNothing,
-    );
 
     await tester.tap(find.text('Profil'));
     await tester.pumpAndSettle();
@@ -175,10 +121,6 @@ void main() {
             ),
           ),
           homeDashboardProvider.overrideWith((ref) async => _dashboard),
-          newsPreviewProvider.overrideWith(
-            (ref) async =>
-                const NewsPage(items: [], total: 0, page: 1, sources: []),
-          ),
         ],
         child: MaterialApp(
           theme: AppTheme.lightTheme,
@@ -204,10 +146,6 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(preferences),
             authControllerProvider.overrideWith((ref) => auth),
             homeDashboardProvider.overrideWith((ref) async => _dashboard),
-            newsPreviewProvider.overrideWith(
-              (ref) async =>
-                  const NewsPage(items: [], total: 0, page: 1, sources: []),
-            ),
             gamificationProvider.overrideWith((ref) async => _gamification),
           ],
           child: MaterialApp(
@@ -252,13 +190,7 @@ void main() {
         carousel.banners.where((banner) => banner.action == 'premium'),
         isEmpty,
       );
-      expect(carousel.banners.map((banner) => banner.id), [
-        'learn',
-        'ssw',
-        'jobs',
-        'anki',
-        'manga-reading',
-      ]);
+      expect(carousel.banners.map((banner) => banner.id), ['learn', 'anki']);
       expect(find.text('Lifetime dari API'), findsNothing);
       expect(tester.takeException(), isNull);
     },
@@ -276,10 +208,6 @@ void main() {
           sharedPreferencesProvider.overrideWithValue(preferences),
           analyticsBootstrapProvider.overrideWith((ref) {}),
           homeDashboardProvider.overrideWith((ref) async => _dashboard),
-          newsPreviewProvider.overrideWith(
-            (ref) async =>
-                const NewsPage(items: [], total: 0, page: 1, sources: []),
-          ),
         ],
         child: const BahasaMasterApp(),
       ),
@@ -339,17 +267,6 @@ const _dashboard = HomeDashboard(
       title: 'JLPT N5 Foundation',
       description: 'Fondasi',
       progress: 40,
-      requiredTier: 'free',
-    ),
-  ],
-  exams: [
-    HomeExam(
-      id: 'exam-1',
-      system: 'JLPT',
-      level: 'N5',
-      title: 'Exam dari API',
-      questionCount: 25,
-      durationMinutes: 30,
       requiredTier: 'free',
     ),
   ],

@@ -8,8 +8,8 @@ import 'package:bahasa_master/core/offline/offline_providers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Only public learning illustrations use this cache. Profile photos and manga
-/// pages must not be placed in the shared illustration namespace.
+/// Only public learning illustrations use this cache. Profile photos must not
+/// be placed in the shared illustration namespace.
 final learningAssetProvider = FutureProvider.autoDispose.family<Uint8List?, String>((
   ref,
   url,

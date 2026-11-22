@@ -222,6 +222,5 @@ class ContinueLearningSection extends ConsumerWidget {
 IconData _icon(String kind) => switch (kind) {
   'vocabulary' => Icons.translate_rounded,
   'grammar' => Icons.menu_book_outlined,
-  'kanji' => Icons.brush_outlined,
   _ => Icons.auto_stories_outlined,
 };

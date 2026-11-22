@@ -332,10 +332,8 @@ void main() {
     () async {
       SharedPreferences.setMockInitialValues({
         authTokenStorageKey: 'private-session',
-        'dictionary_library_v1_account-1': '{}',
         'learning_history_v1_account-1': '[]',
         'anki_reviews_v1_account-1': '[]',
-        'ssw_kaigo_completed_v1_account-1': <String>['module-1'],
         'public_catalog_cache': 'shared',
       });
       final preferences = await SharedPreferences.getInstance();
@@ -362,13 +360,8 @@ void main() {
 
       expect(store.userId, isNull);
       expect(preferences.getString(authTokenStorageKey), isNull);
-      expect(preferences.getString('dictionary_library_v1_account-1'), isNull);
       expect(preferences.getString('learning_history_v1_account-1'), isNull);
       expect(preferences.getString('anki_reviews_v1_account-1'), isNull);
-      expect(
-        preferences.getStringList('ssw_kaigo_completed_v1_account-1'),
-        isNull,
-      );
       expect(preferences.getString('public_catalog_cache'), 'shared');
       expect(await store.canReadPremium('account-1'), isFalse);
     },

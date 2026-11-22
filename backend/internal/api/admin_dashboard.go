@@ -249,10 +249,9 @@ func (s *Server) adminLogin(w http.ResponseWriter, r *http.Request) {
 // adminToolRedirects sends the old standalone /admin/<tool> pages to the
 // matching native view inside the dashboard.
 var adminToolRoutes = map[string]string{
-	"/admin/news": "news", "/admin/manga": "manga", "/admin/dictionary": "dictionary",
-	"/admin/map": "map", "/admin/home-banners": "home-banners", "/admin/notifications": "notifications",
+	"/admin/home-banners": "home-banners", "/admin/notifications": "notifications",
 	"/admin/pricing": "pricing", "/admin/ads": "ads", "/admin/ai": "ai", "/admin/app-updates": "app-updates",
-	"/admin/branding": "branding", "/admin/errors": "errors", "/admin/prefecture-living": "prefecture-living",
+	"/admin/branding": "branding", "/admin/errors": "errors",
 }
 
 func adminToolRedirects(next http.Handler) http.Handler {

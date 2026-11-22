@@ -1,7 +1,7 @@
 # Bahasa Master
 
-Bahasa Master adalah aplikasi pembelajaran bahasa Jepang berbasis Flutter
-dengan backend Go.
+Bahasa Master adalah aplikasi pembelajaran bahasa Indonesia untuk penutur asing,
+berbasis Flutter dengan backend Go.
 
 ## Menjalankan aplikasi
 
@@ -43,17 +43,5 @@ bahasa_master/
 - [Backend Developer Guide](docs/backend-development.md)
 - [Backend API quick reference](backend/README.md)
 - [Ikon, splash, branding backend, dan preview Play Store](docs/app-branding.md)
-- [JLPT N5 Simulation](docs/jlpt-n5-simulation.md)
-- [Simulasi JLPT N5–N1, NAT dan JFT Paket 02–10](docs/jlpt-n5-n4-extra-simulations.md)
-- [JLPT N3 Simulation dan thumbnail ujian](docs/jlpt-n3-simulation.md)
-- [JFT Exam 1: latihan tertulis](docs/jft-exam-1.md)
-- [NAT 5Q Exam 1: latihan tertulis](docs/nat-exam-1.md)
-- [SSW / Tokutei Ginou: 4 bidang aktif](docs/ssw-section.md)
-- [Materi, latihan soal, dan simulasi SSW](docs/ssw-assessments.md)
-- [SSW Pertanian, Perikanan Tangkap, dan Budi Daya](docs/ssw-agriculture-fishery.md)
-- [Anki / Flashcards: resource Kotoba, deck, dan jadwal review](docs/anki.md)
-- [Modul Grammar JLPT N5](docs/grammar-n5.md)
-- [Grammar JLPT N2: 60 lesson dan 120 unit pola](docs/grammar-n2.md)
+- [Anki / Flashcards: deck, jadwal review, dan import/export](docs/anki.md)
 - [Lifetime Access Rp99.000 dan konfigurasi pembayaran store](docs/lifetime-billing.md)
-- [Kamus Jepang gratis: Jisho dan detail kanji](docs/dictionary.md)
-- [Kanji N4](docs/kanji-n4.md)

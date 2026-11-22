@@ -32,7 +32,7 @@ enum AiChip {
 }
 
 /// The lesson types that offer Tanya AI.
-enum AiLessonType { grammar, vocabulary, kanji, reading }
+enum AiLessonType { grammar, vocabulary, reading }
 
 class AiChatMessage {
   const AiChatMessage({

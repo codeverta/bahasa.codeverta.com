@@ -108,16 +108,16 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('verified premium returns to the originating job detail', (
+  testWidgets('verified premium returns to the originating lesson', (
     tester,
   ) async {
     final router = GoRouter(
-      initialLocation: '/premium?from=%2Fjobs%2Fone',
+      initialLocation: '/premium?from=%2Flearn%2Fvocabulary',
       routes: [
         GoRoute(path: '/premium', builder: (_, __) => const PremiumScreen()),
         GoRoute(
-          path: '/jobs/one',
-          builder: (_, __) => const Scaffold(body: Text('Job destination')),
+          path: '/learn/vocabulary',
+          builder: (_, __) => const Scaffold(body: Text('Lesson destination')),
         ),
       ],
     );
@@ -144,7 +144,7 @@ void main() {
     );
     await tester.tap(find.text('Jelajahi akses saya'));
     await tester.pumpAndSettle();
-    expect(find.text('Job destination'), findsOneWidget);
+    expect(find.text('Lesson destination'), findsOneWidget);
   });
   testWidgets('premium page shows the public backend price to guests', (
     tester,

@@ -20,24 +20,18 @@ func scenarioStatsCountActivityByDayAndGroup(t *testing.T, h *harness) {
 
 	// Yesterday: one verified ad that was claimed.
 	h.now = today.AddDate(0, 0, -1)
-	intent := h.verifiedIntents(t, userA, []string{"kanji:k1"})[0]
+	intent := h.verifiedIntents(t, userA, []string{"vocabulary:k1"})[0]
 	if _, err := h.service.Claim(ctx, userA, intent.Nonce); err != nil {
 		t.Fatal(err)
 	}
 
-	// Today: an ad shown but never confirmed, a fallback, and a spent simulation credit.
+	// Today: an ad shown but never confirmed, a fallback and a fallback.
 	h.now = today
-	if _, err := h.service.CreateIntent(ctx, userB, "news:a1"); err != nil {
+	if _, err := h.service.CreateIntent(ctx, userB, "reading:a1"); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := h.service.Fallback(ctx, userB, "anki:deck-1"); err != nil {
 		t.Fatal(err)
-	}
-	if _, err := h.service.Fallback(ctx, userA, "simulation:jlpt-n3-simulation-1"); err != nil {
-		t.Fatal(err)
-	}
-	if ok, err := h.service.Convert(ctx, userA, "simulation:jlpt-n3-simulation-1", "simulation-attempt:attempt-1"); err != nil || !ok {
-		t.Fatalf("convert: %v %v", ok, err)
 	}
 
 	report, err := h.service.Stats(ctx, 2)
@@ -55,11 +49,8 @@ func scenarioStatsCountActivityByDayAndGroup(t *testing.T, h *harness) {
 		total[row.Group] = row
 	}
 	want := map[unlock.Group]unlock.DayStats{
-		unlock.GroupLessons:    {Group: unlock.GroupLessons, Intents: 1, Verified: 1, Rewarded: 1},
-		unlock.GroupNews:       {Group: unlock.GroupNews, Intents: 1},
-		unlock.GroupAnki:       {Group: unlock.GroupAnki, Fallback: 1},
-		unlock.GroupSimulation: {Group: unlock.GroupSimulation, Fallback: 1},
-		unlock.GroupJobs:       {Group: unlock.GroupJobs},
+		unlock.GroupLessons: {Group: unlock.GroupLessons, Intents: 2, Verified: 1, Rewarded: 1},
+		unlock.GroupAnki:    {Group: unlock.GroupAnki, Fallback: 1},
 	}
 	for group, w := range want {
 		if total[group] != w {

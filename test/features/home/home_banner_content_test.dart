@@ -23,6 +23,17 @@ void main() {
 
     expect(banner.description, 'All lessons • Rp1.499.000');
   });
+
+  test('banners only point at destinations that still exist', () {
+    const destinations = {'premium', 'learn', 'anki'};
+    for (final lifetime in [true, false]) {
+      final banners = homeBannersFor(_dashboard(), lifetime: lifetime);
+      expect(banners, isNotEmpty);
+      for (final banner in banners) {
+        expect(destinations, contains(banner.action));
+      }
+    }
+  });
 }
 
 HomeDashboard _dashboard() => const HomeDashboard(
@@ -30,7 +41,6 @@ HomeDashboard _dashboard() => const HomeDashboard(
   dailyGoal: HomeDailyGoal(minutesLearned: 0, targetMinutes: 20, streakDays: 0),
   categories: [],
   tracks: [],
-  exams: [],
   plans: [
     SubscriptionPlan(
       id: 'lifetime',

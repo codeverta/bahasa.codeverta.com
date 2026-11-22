@@ -262,17 +262,9 @@ void main() {
       final config = AdsConfig.fromJson(const {
         'enabled': true,
         'interstitialKinds': {'lessons': true, 'exams': false},
-        'examTabBanner': {
-          'enabled': true,
-          'unitId': 'ca-app-pub-1234567890123456/1234567893',
-        },
         'practiceResultBanner': {
           'enabled': true,
           'unitId': 'ca-app-pub-1234567890123456/1234567894',
-        },
-        'newsArticleNative': {
-          'enabled': true,
-          'unitId': 'ca-app-pub-1234567890123456/1234567895',
         },
         'ankiSessionMinCards': 15,
       });
@@ -283,12 +275,9 @@ void main() {
         isTrue,
         reason: 'missing means on',
       );
-      expect(config.examTabBanner.usable, isTrue);
       expect(config.ankiSessionMinCards, 15);
       final debug = config.withTestUnits();
-      expect(debug.examTabBanner.unitId, testBannerAdUnitId);
       expect(debug.practiceResultBanner.unitId, testBannerAdUnitId);
-      expect(debug.newsArticleNative.unitId, testNativeAdUnitId);
       expect(
         AdsConfig.fromJson(const {
           'ankiSessionMinCards': 0,
@@ -306,22 +295,15 @@ void main() {
         'unitId': 'ca-app-pub-1234567890123456/1234567890',
         'every': 10,
       },
-      'dictionaryNative': {
-        'enabled': true,
-        'unitId': 'ca-app-pub-1234567890123456/1234567891',
-        'every': 8,
-      },
       'quizResultBanner': {
         'enabled': true,
         'unitId': 'ca-app-pub-1234567890123456/1234567892',
       },
     });
     expect(config.interstitial.every, 10);
-    expect(config.dictionaryNative.every, 8);
     expect(config.quizResultBanner.usable, isTrue);
     final debug = config.withTestUnits();
     expect(debug.interstitial.unitId, testInterstitialAdUnitId);
-    expect(debug.dictionaryNative.unitId, testNativeAdUnitId);
     expect(debug.quizResultBanner.unitId, testBannerAdUnitId);
   });
 }

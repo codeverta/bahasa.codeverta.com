@@ -7,19 +7,14 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
     required this.openLearn,
-    required this.openExam,
     required this.openProfile,
     super.key,
   });
 
   final VoidCallback openLearn;
-  final VoidCallback openExam;
   final VoidCallback openProfile;
 
   @override
-  Widget build(BuildContext context) => DashboardScreen(
-    openLearn: openLearn,
-    openExam: openExam,
-    openProfile: openProfile,
-  );
+  Widget build(BuildContext context) =>
+      DashboardScreen(openLearn: openLearn, openProfile: openProfile);
 }

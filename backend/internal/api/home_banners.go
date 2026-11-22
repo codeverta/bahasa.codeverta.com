@@ -31,10 +31,11 @@ var (
 	bannerImagePattern = regexp.MustCompile(`^[a-f0-9]{64}\.(png|jpg)$`)
 )
 
+// defaultBannerImages maps each banner action to its bundled artwork. The
+// Japanese artwork was removed, so the default banner ships without an image
+// until new artwork arrives.
 var defaultBannerImages = map[string]string{
-	"learn": "/assets/images/exams/n5.webp",
-	"ssw":   "/assets/images/ssw/ssw-careers.webp",
-	"jobs":  "/assets/images/jobs/job-category-atlas.webp",
+	"learn": "",
 }
 
 type homeBannerConfig struct {
@@ -50,8 +51,6 @@ type HomeBannerStore struct {
 func defaultHomeBanners() homeBannerConfig {
 	return homeBannerConfig{Banners: []domain.HomeBanner{
 		{ID: "learn", Title: "Belajar Jepang, selangkah setiap hari", Description: "Kosakata, kanji, grammar, dan reading untuk target JLPT-mu.", ImageURL: defaultBannerImages["learn"], Action: "learn", ButtonLabel: "Mulai belajar", Order: 0, Enabled: true},
-		{ID: "ssw", Title: "Siapkan langkahmu untuk Tokutei Ginou", Description: "Kenali bidang SSW, pelajari materi, dan latih kesiapan ujianmu.", ImageURL: defaultBannerImages["ssw"], Action: "ssw", ButtonLabel: "Jelajahi SSW", Order: 1, Enabled: true},
-		{ID: "jobs", Title: "Temukan peluang kerja di Jepang", Description: "Jelajahi lowongan, lokasi, gaji, dan kualifikasi yang sesuai denganmu.", ImageURL: defaultBannerImages["jobs"], Action: "jobs", ButtonLabel: "Jelajahi lowongan", Order: 2, Enabled: true},
 	}}
 }
 
@@ -146,7 +145,7 @@ func (b *HomeBannerStore) validate(config homeBannerConfig) error {
 			return fmt.Errorf("judul wajib (maks 80), deskripsi maks 180, teks tombol wajib (maks 40 karakter)")
 		}
 		if _, ok := defaultBannerImages[banner.Action]; !ok {
-			return fmt.Errorf("tujuan banner harus learn, ssw, atau jobs")
+			return fmt.Errorf("tujuan banner harus learn")
 		}
 		if banner.Order < 0 || banner.Order > 999 {
 			return fmt.Errorf("urutan harus antara 0 dan 999")

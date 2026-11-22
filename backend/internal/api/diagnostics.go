@@ -266,7 +266,7 @@ func diagnosticRoute(path string) string {
 
 func isDynamicRouteSegment(previous string) bool {
 	switch previous {
-	case "attempts", "lessons", "news", "manga", "series", "chapters", "users", "accounts", "errors":
+	case "attempts", "lessons", "users", "accounts", "errors":
 		return true
 	default:
 		return false

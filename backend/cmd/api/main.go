@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"runtime/debug"
 	"strings"
 	"syscall"
@@ -19,14 +18,8 @@ import (
 	"bahasa-master-backend/internal/billing"
 	"bahasa-master-backend/internal/config"
 	"bahasa-master-backend/internal/diagnostics"
-	"bahasa-master-backend/internal/jobfetch"
-	"bahasa-master-backend/internal/jobs"
-	"bahasa-master-backend/internal/manga"
 	"bahasa-master-backend/internal/media"
-	"bahasa-master-backend/internal/news"
 	"bahasa-master-backend/internal/notifications"
-	"bahasa-master-backend/internal/places"
-	"bahasa-master-backend/internal/prefinfo"
 	"bahasa-master-backend/internal/store"
 	"bahasa-master-backend/internal/unlock"
 )
@@ -85,16 +78,6 @@ func main() {
 		auth.NewGoogleVerifier(os.Getenv("GOOGLE_CLIENT_ID")),
 	)
 	apiServer.ConfigureBilling(billingService, os.Getenv("GOOGLE_PLAY_PUSH_AUDIENCE"), os.Getenv("GOOGLE_PLAY_PUSH_EMAIL"))
-	dictionaryCache, err := memoryStore.DictionaryCache()
-	if err != nil {
-		log.Fatal(err)
-	}
-	apiServer.ConfigureDictionaryCache(dictionaryCache)
-	dictionaryToken := os.Getenv("DICTIONARY_ADMIN_TOKEN")
-	if dictionaryToken == "" {
-		dictionaryToken = os.Getenv("BRANDING_ADMIN_TOKEN")
-	}
-	apiServer.ConfigureDictionaryAdmin(dictionaryToken)
 	adminEmails := os.Getenv("ADMIN_EMAILS")
 	if loginEmail := strings.TrimSpace(os.Getenv("ADMIN_LOGIN_EMAIL")); loginEmail != "" {
 		if adminEmails != "" {
@@ -103,11 +86,11 @@ func main() {
 		adminEmails += loginEmail
 	}
 	apiServer.ConfigureAdminAccounts(adminEmails)
-	jobDB, err := memoryStore.JobsDatabase()
+	sharedDB, err := memoryStore.SharedDatabase()
 	if err != nil {
 		log.Fatal(err)
 	}
-	diagnosticRepository, err := diagnostics.New(jobDB)
+	diagnosticRepository, err := diagnostics.New(sharedDB)
 	if err != nil {
 		log.Fatalf("configure error diagnostics: %v", err)
 	}
@@ -116,21 +99,8 @@ func main() {
 		diagnosticToken = os.Getenv("BRANDING_ADMIN_TOKEN")
 	}
 	apiServer.ConfigureDiagnostics(diagnosticRepository, diagnosticToken)
-	jobInterval, err := jobs.Interval(os.Getenv("JOBS_SYNC_INTERVAL_HOURS"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	jobRepository, err := jobs.New(jobDB, jobInterval)
-	if err != nil {
-		log.Fatalf("configure Japan jobs: %v", err)
-	}
-	jobRepository.SetErrorHandler(func(err error) { apiServer.ReportBackendWorkerError("jobs-sync", err) })
-	apiServer.ConfigureJobs(jobRepository)
 	jobsContext, stopJobs := context.WithCancel(context.Background())
 	defer stopJobs()
-	if os.Getenv("JOBS_SYNC_ENABLED") != "false" {
-		go jobRepository.Run(jobsContext, jobfetch.NewClient())
-	}
 	billingContext, stopBilling := context.WithCancel(context.Background())
 	defer stopBilling()
 	go func() {
@@ -175,91 +145,8 @@ func main() {
 	if err := apiServer.ConfigureBranding(brandingPath, os.Getenv("BRANDING_ADMIN_TOKEN")); err != nil {
 		log.Fatal(err)
 	}
-	newsRepository, err := news.New(jobDB)
-	if err != nil {
-		log.Fatalf("configure news: %v", err)
-	}
-	newsFetcher := news.NewFetcher(filepath.Join(filepath.Dir(brandingPath), "news-images"))
-	newsImages, err := media.NewCOSNewsImageStorage(os.Getenv("COS_BUCKET_URL"), assetBaseURL, os.Getenv("COS_SECRET_ID"), os.Getenv("COS_SECRET_KEY"))
-	if err != nil {
-		log.Fatalf("configure news image COS: %v", err)
-	}
-	if newsImages != nil {
-		newsFetcher.SetImageStore(newsImages)
-		apiServer.ConfigureNewsImageStore(newsImages)
-	} else {
-		log.Printf("news images stay on local disk: COS is not configured")
-	}
-	newsFetcher.SetImageLookup(newsRepository.HasImage)
-	newsToken := os.Getenv("NEWS_ADMIN_TOKEN")
-	if newsToken == "" {
-		newsToken = os.Getenv("BRANDING_ADMIN_TOKEN")
-	}
-	if newsToken == "" {
-		newsToken = os.Getenv("DICTIONARY_ADMIN_TOKEN")
-	}
-	if err := apiServer.ConfigureNews(newsRepository, newsFetcher, newsToken, filepath.Join(filepath.Dir(brandingPath), "news-images"), jobsContext); err != nil {
-		log.Fatal(err)
-	}
-	newsRepository.SetErrorHandler(func(err error) { apiServer.ReportBackendWorkerError("news-sync", err) })
-	if os.Getenv("NEWS_SYNC_ENABLED") != "false" {
-		go newsRepository.Run(jobsContext, newsFetcher)
-	}
 	// Leaderboard snapshot every minute and the Monday 00:00 WIB weekly close.
 	go memoryStore.RunLeaderboard(jobsContext)
-	mapRepository, err := places.New(jobDB)
-	if err != nil {
-		log.Fatalf("configure map spots: %v", err)
-	}
-	mapService := &places.Service{
-		Store:   mapRepository,
-		Fetcher: places.NewFetcher(os.Getenv("MAP_SOURCE_USER_AGENT")),
-		Reading: news.Reading,
-	}
-	var mapLocalImages *places.LocalImages
-	if newsImages != nil {
-		mapService.Images = newsImages.WithPrefix("map/images/")
-	} else {
-		mapLocalImages = &places.LocalImages{Directory: filepath.Join(filepath.Dir(brandingPath), "map-images"), PublicPath: "/map-images/"}
-		mapService.Images = mapLocalImages
-	}
-	mapToken := os.Getenv("MAP_ADMIN_TOKEN")
-	if mapToken == "" {
-		mapToken = os.Getenv("BRANDING_ADMIN_TOKEN")
-	}
-	apiServer.ConfigureMap(mapService, mapToken, mapLocalImages)
-	prefLivingPath := os.Getenv("PREFECTURE_LIVING_PATH")
-	if prefLivingPath == "" {
-		prefLivingPath = "data/prefecture_living.json"
-	}
-	prefLiving, err := prefinfo.Load(prefLivingPath)
-	if err != nil {
-		log.Fatalf("configure prefecture living data: %v", err)
-	}
-	apiServer.ConfigurePrefectureLiving(prefLiving)
-	mangaImages, err := manga.NewCOSStore(os.Getenv("COS_BUCKET_URL"), assetBaseURL, os.Getenv("COS_SECRET_ID"), os.Getenv("COS_SECRET_KEY"))
-	if err != nil {
-		log.Fatalf("configure manga COS: %v", err)
-	}
-	var mangaStorage manga.ImageStore
-	if mangaImages != nil {
-		mangaStorage = mangaImages
-	}
-	mangaRepository, err := manga.New(jobDB, mangaStorage)
-	if err != nil {
-		log.Fatalf("configure manga: %v", err)
-	}
-	mangaToken := os.Getenv("MANGA_ADMIN_TOKEN")
-	if mangaToken == "" {
-		mangaToken = os.Getenv("BRANDING_ADMIN_TOKEN")
-	}
-	apiServer.ConfigureManga(mangaRepository, mangaToken)
-	mangaRepository.SetErrorHandler(func(err error) { apiServer.ReportBackendWorkerError("manga-sync", err) })
-	if os.Getenv("MANGA_SYNC_ENABLED") != "false" && mangaStorage != nil {
-		go mangaRepository.Run(jobsContext, manga.NewFetcher())
-	} else if mangaStorage == nil {
-		log.Print("manga import disabled: COS storage is not configured")
-	}
 	bannerPath := os.Getenv("HOME_BANNERS_CONFIG_PATH")
 	if bannerPath == "" {
 		bannerPath = "data/home-banners.json"
@@ -312,7 +199,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("configure AI chat: %v", err)
 	}
-	aiRepository, err := aichat.NewGormRepository(jobDB)
+	aiRepository, err := aichat.NewGormRepository(sharedDB)
 	if err != nil {
 		log.Fatalf("configure AI chat storage: %v", err)
 	}
@@ -328,7 +215,7 @@ func main() {
 	}
 	apiServer.ConfigureAIChat(aiRepository, aiConfig, aiCompleter, aiToken)
 	go apiServer.RunAIChatMaintenance(jobsContext)
-	unlockRepository, err := unlock.NewGormRepository(jobDB)
+	unlockRepository, err := unlock.NewGormRepository(sharedDB)
 	if err != nil {
 		log.Fatalf("configure unlock storage: %v", err)
 	}

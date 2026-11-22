@@ -1,6 +1,8 @@
 package store
 
 import (
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
 	"context"
 	"crypto/sha256"
 	"database/sql"
@@ -10,9 +12,6 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
 	"log"
-	"bahasa-master-backend/internal/database"
-	"bahasa-master-backend/internal/domain"
-	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -26,13 +25,10 @@ var studyLocation = time.FixedZone(defaultStudyTimezone, 7*60*60)
 type studyEvent struct {
 	ID, Kind, Subject, LessonID, ExamID string
 	Score, Answered, Seconds            int
-	// Complete marks an SSW practice where every question was answered.
-	Complete                 bool
-	At                       time.Time
-	Progress                 *domain.LessonProgress
-	SSWAttempt               *SSWAttemptRecord
-	OfflinePracticeAttemptID string
-	OfflinePracticeRecord    *offlinePracticeAttemptRecord
+	At                                  time.Time
+	Progress                            *domain.LessonProgress
+	OfflinePracticeAttemptID            string
+	OfflinePracticeRecord               *offlinePracticeAttemptRecord
 }
 
 // completionRecord is a finished activity that earned XP, kept briefly so
@@ -48,7 +44,6 @@ type gamificationState struct {
 	Completions             map[string]completionRecord             `json:",omitempty"`
 	LearningActivity        map[string]LearningActivity             `json:",omitempty"`
 	OfflinePracticeAttempts map[string]offlinePracticeAttemptRecord `json:",omitempty"`
-	SSWAttempts             map[string]SSWAttemptRecord
 	Anki                    map[string]*AnkiDeckState
 	XP                      int
 	Events                  map[string]bool
@@ -175,11 +170,6 @@ func (s *MemoryStore) EnableGamificationPersistence(dsn string) error {
 		if state.XP < 0 || state.Events == nil || state.Rewards == nil || state.Lessons == nil || state.Subjects == nil || state.Days == nil || state.Unlocked == nil || state.Exams == nil {
 			return fmt.Errorf("invalid gamification record for user %q", record.UserID)
 		}
-		for attemptID, r := range state.SSWAttempts {
-			if r.Session.Attempt.UserID != record.UserID || r.Session.Attempt.ID != attemptID || len(r.Session.Sections) == 0 || r.Correct == nil || r.Marked == nil {
-				return fmt.Errorf("invalid SSW attempt")
-			}
-		}
 		loaded[record.UserID] = state
 	}
 	var persistedDecks []database.UserAnkiDeck
@@ -239,10 +229,6 @@ func (s *MemoryStore) EnableGamificationPersistence(dsn string) error {
 	s.userAnkiDecks = loadedUserDecks
 	s.userAnkiDeckRequests = loadedUserDeckRequests
 	for id, state := range loaded {
-		for attemptID, r := range state.SSWAttempts {
-			s.simulationAttempts[attemptID] = &simulationAttemptState{r.Session, r.Questions, r.Correct, r.Explanations, r.Marked}
-			s.simulationOrder = append(s.simulationOrder, attemptID)
-		}
 		s.progress[id] = map[string]domain.LessonProgress{}
 		for key, progress := range state.Lessons {
 			s.progress[id][key] = progress
@@ -252,9 +238,6 @@ func (s *MemoryStore) EnableGamificationPersistence(dsn string) error {
 		profile.Level = 1 + state.XP/500
 		s.profiles[id] = profile
 	}
-	sort.SliceStable(s.simulationOrder, func(i, j int) bool {
-		return s.simulationAttempts[s.simulationOrder[i]].session.Attempt.StartedAt.Before(s.simulationAttempts[s.simulationOrder[j]].session.Attempt.StartedAt)
-	})
 	failed = false
 	s.persistenceStop = make(chan struct{})
 	go keepMariaDBWriterAlive(writer, s.persistenceStop)
@@ -323,20 +306,6 @@ func (s *MemoryStore) recordStudyLocked(userID string, event studyEvent) (domain
 	if err = json.Unmarshal(raw, next); err != nil {
 		return domain.XPGain{}, err
 	}
-	if event.SSWAttempt != nil {
-		if next.SSWAttempts == nil {
-			next.SSWAttempts = map[string]SSWAttemptRecord{}
-		}
-		raw, err := json.Marshal(event.SSWAttempt)
-		if err != nil {
-			return domain.XPGain{}, err
-		}
-		var record SSWAttemptRecord
-		if err := json.Unmarshal(raw, &record); err != nil {
-			return domain.XPGain{}, err
-		}
-		next.SSWAttempts[record.Session.Attempt.ID] = record
-	}
 	if event.OfflinePracticeRecord != nil {
 		if event.OfflinePracticeAttemptID == "" {
 			return domain.XPGain{}, fmt.Errorf("offline practice attempt ID is required")
@@ -401,16 +370,6 @@ func (s *MemoryStore) recordStudyLocked(userID string, event studyEvent) (domain
 			} else if event.Score >= xpRepeatMinScore {
 				repeat(xpExamComplete, "exam_repeat")
 			}
-		case "ssw-practice":
-			if event.Complete {
-				repeat(xpSSWPractice, "ssw_practice")
-			}
-		case "practice-lesson":
-			key := "practice-lesson:" + event.LessonID
-			if !next.Rewards[key] {
-				next.Rewards[key] = true
-				awards = append(awards, xpAward{xpPracticeLesson, "practice_lesson"})
-			}
 		}
 		if !ledger.Goal && next.Days[day] >= dailyGoalMinutes*60 {
 			ledger.Goal = true
@@ -419,9 +378,7 @@ func (s *MemoryStore) recordStudyLocked(userID string, event studyEvent) (domain
 		next.pruneXPDays(event.At)
 		next.XP += totalXP(awards)
 	}
-	if event.Kind != "ssw-practice" {
-		unlockAchievements(next, event.At)
-	}
+	unlockAchievements(next, event.At)
 	gain := domain.XPGain{Awarded: totalXP(awards), Total: next.XP, CompletionID: event.ID, Kind: completionKind(event.Kind)}
 	gain.Streak, _ = studyStreaks(next, event.At)
 	if gain.Awarded > 0 && gain.Kind != "" {
@@ -479,29 +436,6 @@ func (s *MemoryStore) ankiStreakCardsLocked() int {
 		return s.ankiStreakCards
 	}
 	return defaultAnkiStreakCards
-}
-
-// practiceLessonPattern bounds the IDs a client may report for curriculum
-// lessons, which are app content the server does not hold.
-var practiceLessonPattern = regexp.MustCompile(`^[a-z0-9][a-z0-9-]{0,63}$`)
-
-// CompletePracticeLesson records a finished Kaigo or SSW curriculum lesson:
-// it counts for the streak and earns XP the first time. The server cannot
-// verify reading, so the reward is small and given once per lesson.
-func (s *MemoryStore) CompletePracticeLesson(userID, sectorID, lessonID string) (domain.XPGain, error) {
-	if !practiceLessonPattern.MatchString(sectorID) || !practiceLessonPattern.MatchString(lessonID) {
-		return domain.XPGain{}, ErrInvalid
-	}
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if _, exists := s.profiles[userID]; !exists {
-		return domain.XPGain{}, ErrNotFound
-	}
-	key := sectorID + ":" + lessonID
-	return s.recordStudyLocked(userID, studyEvent{
-		ID: "practice-lesson:" + key, Kind: "practice-lesson", LessonID: key,
-		Answered: 1, At: s.gamificationNow().UTC(),
-	})
 }
 
 func unlockAchievements(state *gamificationState, at time.Time) {
@@ -650,8 +584,6 @@ func completionKind(eventKind string) string {
 		return "lessons"
 	case "exam":
 		return "exams"
-	case "ssw-practice", "practice-lesson":
-		return "practice"
 	}
 	return ""
 }

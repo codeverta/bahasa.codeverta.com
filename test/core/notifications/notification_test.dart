@@ -37,8 +37,10 @@ void main() {
       ]) {
         expect(safeNotificationRoute(route), '/home');
       }
-      expect(safeNotificationRoute('/dictionary'), '/dictionary');
       expect(safeNotificationRoute('/anki'), '/anki');
+      for (final removed in ['/dictionary', '/ssw', '/learn/kanji', '/exams/n5']) {
+        expect(safeNotificationRoute(removed), '/home');
+      }
     },
   );
 
@@ -53,8 +55,8 @@ void main() {
         routes: [
           GoRoute(path: '/home', builder: (_, __) => const Text('home-view')),
           GoRoute(
-            path: '/dictionary',
-            builder: (_, __) => const Text('dictionary-view'),
+            path: '/anki',
+            builder: (_, __) => const Text('anki-view'),
           ),
         ],
       );
@@ -76,13 +78,13 @@ void main() {
           ),
         ),
       );
-      push.navigate('/dictionary');
+      push.navigate('/anki');
       await tester.pumpAndSettle();
       expect(find.text('home-view'), findsOneWidget);
-      expect(push.state.navigation, '/dictionary');
+      expect(push.state.navigation, '/anki');
       await container.read(isFirstTimeProvider.notifier).completeOnboarding();
       await tester.pumpAndSettle();
-      expect(find.text('dictionary-view'), findsOneWidget);
+      expect(find.text('anki-view'), findsOneWidget);
       expect(push.state.navigation, isNull);
     },
   );

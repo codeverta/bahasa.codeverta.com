@@ -58,9 +58,6 @@ func importLegacy(dsn, input string) error {
 	if err := s.EnableBillingPersistence(); err != nil {
 		return err
 	}
-	if _, err := s.DictionaryCache(); err != nil {
-		return err
-	}
 	db, err := database.Open(dsn)
 	if err != nil {
 		return err
@@ -84,8 +81,6 @@ func importLegacy(dsn, input string) error {
 		{"billing_purchases", []string{"id", "state"}},
 		{"billing_tokens", []string{"user_id", "token"}},
 		{"deleted_demo", []string{"id"}},
-		{"dictionary_responses", []string{"cache_key", "source", "body", "fetched_at"}},
-		{"dictionary_entries", []string{"source", "entry_id", "kind", "body", "fetched_at"}},
 	}
 	for _, table := range tables {
 		if _, ok := data.Tables[table.name]; !ok {

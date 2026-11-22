@@ -1,7 +1,6 @@
 package store
 
 import (
-	"errors"
 	"testing"
 	"time"
 
@@ -26,42 +25,6 @@ func TestCompletionsReturnWhatTheyEarned(t *testing.T) {
 	}
 	if again.Awarded != 0 || again.Total != 50 {
 		t.Fatalf("a repeated event must earn nothing: %+v", again)
-	}
-}
-
-func TestSSWPracticeEarnsXPOnlyWhenComplete(t *testing.T) {
-	s, now := newLeaderboardStore(t)
-	user := addLeaderboardAccount(s, "Sari")
-	s.mu.Lock()
-	partial, _ := s.recordStudyLocked(user, studyEvent{ID: "p1", Kind: "ssw-practice", Answered: 3, Complete: false, At: *now})
-	full, _ := s.recordStudyLocked(user, studyEvent{ID: "p2", Kind: "ssw-practice", Answered: 10, Complete: true, At: *now})
-	s.mu.Unlock()
-	if partial.Awarded != 0 || partial.Streak != 1 {
-		t.Fatalf("a partial practice counts for the streak only: %+v", partial)
-	}
-	if full.Awarded != xpSSWPractice {
-		t.Fatalf("full practice = %+v", full)
-	}
-}
-
-func TestPracticeLessonsPayOnceAndCountForTheStreak(t *testing.T) {
-	s, _ := newLeaderboardStore(t)
-	user := addLeaderboardAccount(s, "Kaigo")
-	first, err := s.CompletePracticeLesson(user, "nursing-care", "kaigo-01")
-	if err != nil || first.Awarded != xpPracticeLesson || first.Streak != 1 {
-		t.Fatalf("first = %+v, %v", first, err)
-	}
-	again, err := s.CompletePracticeLesson(user, "nursing-care", "kaigo-01")
-	if err != nil || again.Awarded != 0 || again.Total != xpPracticeLesson {
-		t.Fatalf("again = %+v, %v", again, err)
-	}
-	for _, bad := range [][2]string{{"Nursing", "x"}, {"nursing-care", "../x"}, {"", "x"}} {
-		if _, err := s.CompletePracticeLesson(user, bad[0], bad[1]); !errors.Is(err, ErrInvalid) {
-			t.Fatalf("%v: %v", bad, err)
-		}
-	}
-	if _, err := s.CompletePracticeLesson(uuid.NewString(), "nursing-care", "kaigo-01"); !errors.Is(err, ErrNotFound) {
-		t.Fatalf("unknown account: %v", err)
 	}
 }
 

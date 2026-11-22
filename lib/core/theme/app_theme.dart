@@ -34,15 +34,6 @@ class AppTypography {
   static TextStyle jpCardTitle({Color? color}) {
     return japanese(fontSize: 28, fontWeight: FontWeight.w700, color: color);
   }
-
-  /// Teks Furigana / Sub-teks Kanji.
-  static TextStyle jpFurigana({Color? color}) {
-    return japanese(
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      color: color ?? const Color(0xFF666666),
-    );
-  }
 }
 
 /// Extension pada [TextStyle] agar mudah mengubah font menjadi Noto Sans JP.

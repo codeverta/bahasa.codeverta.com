@@ -486,10 +486,8 @@ class OfflineAccessStore {
       final suffix = '_$activeUserId';
       final privateKeys = _preferences.getKeys().where((key) {
         if (!key.endsWith(suffix)) return false;
-        return key.startsWith('dictionary_library_v1_') ||
-            key.startsWith('learning_history_v1_') ||
-            key.startsWith('anki_reviews_v1_') ||
-            (key.startsWith('ssw_') && key.contains('_completed_v1_'));
+        return key.startsWith('learning_history_v1_') ||
+            key.startsWith('anki_reviews_v1_');
       }).toList();
       for (final key in privateKeys) {
         await _preferences.remove(key);

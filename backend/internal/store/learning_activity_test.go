@@ -12,21 +12,21 @@ func TestLearningHistoryOrderingIsolationValidationAndScores(t *testing.T) {
 	s := NewMemoryStore()
 	user := database.DemoUserID
 	now := time.Now().UTC().Add(-time.Minute)
-	id := s.grammar[0].ID
-	first, err := s.SaveLearningActivity(user, "grammar", id, 1, now)
-	if err != nil || first.Position != 1 || first.Title != s.grammar[0].Title {
+	id := "n4-plans"
+	first, err := s.SaveLearningActivity(user, "vocabulary", id, 1, now)
+	if err != nil || first.Position != 1 || first.Title != "Fixture lesson" {
 		t.Fatal(first, err)
 	}
-	if _, err = s.SaveLearningActivity(user, "grammar", id, 0, now.Add(-time.Second)); err != nil {
+	if _, err = s.SaveLearningActivity(user, "vocabulary", id, 0, now.Add(-time.Second)); err != nil {
 		t.Fatal(err)
 	}
 	if items := s.LearningHistory(user); len(items) != 1 || items[0].Position != 1 {
 		t.Fatal("stale write changed position", items)
 	}
-	if _, err = s.SaveLearningActivity(user, "reading", s.reading[0].ID, 0, now.Add(time.Second)); err != nil {
+	if _, err = s.SaveLearningActivity(user, "vocabulary", "n5-daily", 0, now.Add(time.Second)); err != nil {
 		t.Fatal(err)
 	}
-	if items := s.LearningHistory(user); len(items) != 2 || items[0].Kind != "reading" {
+	if items := s.LearningHistory(user); len(items) != 2 || items[0].LessonID != "n5-daily" {
 		t.Fatal(items)
 	}
 	if len(s.LearningHistory("other")) != 0 {
@@ -38,33 +38,31 @@ func TestLearningHistoryOrderingIsolationValidationAndScores(t *testing.T) {
 		at       time.Time
 		expected error
 	}{
-		{"grammar", id, -1, now, ErrInvalid},
-		{"grammar", id, len(s.grammar[0].Points), now, ErrInvalid},
-		{"grammar", id, 0, time.Now().Add(time.Hour), ErrInvalid},
-		{"grammar", id, 0, time.Time{}, ErrInvalid},
+		{"vocabulary", id, -1, now, ErrInvalid},
+		{"vocabulary", id, 4, now, ErrInvalid},
+		{"vocabulary", id, 0, time.Now().Add(time.Hour), ErrInvalid},
+		{"vocabulary", id, 0, time.Time{}, ErrInvalid},
 		{"kamus", id, 0, now, ErrNotFound},
-		{"grammar", "missing", 0, now, ErrNotFound},
+		{"vocabulary", "missing", 0, now, ErrNotFound},
 	} {
 		if _, err = s.SaveLearningActivity(user, tc.kind, tc.id, tc.position, tc.at); !errors.Is(err, tc.expected) {
 			t.Fatal(tc, err)
 		}
 	}
-	for _, lesson := range s.grammar {
-		if PremiumLevel(lesson.Level) {
-			if _, err = s.SaveLearningActivity(user, "grammar", lesson.ID, 0, now); !errors.Is(err, ErrPremium) {
-				t.Fatal("premium bypass", err)
-			}
-			break
-		}
+	previous := SetOpenLearningAccess(false)
+	if _, err = s.SaveLearningActivity(user, "vocabulary", "n3-work", 0, now); !errors.Is(err, ErrPremium) {
+		SetOpenLearningAccess(previous)
+		t.Fatal("premium bypass", err)
 	}
+	SetOpenLearningAccess(previous)
 	if s.Gamification(user).XP != 0 || len(s.Progress(user)) != 0 {
 		t.Fatal("navigation awarded progress or XP")
 	}
-	passStudyLesson(t, s, user, "grammar", id)
+	passStudyLesson(t, s, user, "vocabulary", id)
 	if items := s.LearningHistory(user); !items[1].Completed {
 		t.Fatal("completion was not derived from graded progress", items)
 	}
-	s.grammar = s.grammar[1:]
+	s.vocabulary = nil
 	if items := s.LearningHistory(user); items[1].Available {
 		t.Fatal("removed material was not flagged", items)
 	}
@@ -77,8 +75,8 @@ func TestLearningHistoryMariaDBRestartAndDeletion(t *testing.T) {
 	if err := s.EnableGamificationPersistence(dsn); err != nil {
 		t.Fatal(err)
 	}
-	id := s.grammar[0].ID
-	if _, err := s.SaveLearningActivity(user, "grammar", id, 1, time.Now().UTC()); err != nil {
+	id := "n4-plans"
+	if _, err := s.SaveLearningActivity(user, "vocabulary", id, 1, time.Now().UTC()); err != nil {
 		t.Fatal(err)
 	}
 	if err := s.Close(); err != nil {

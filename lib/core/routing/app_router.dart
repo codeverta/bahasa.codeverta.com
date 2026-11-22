@@ -16,38 +16,16 @@ import 'package:bahasa_master/features/auth/presentation/controllers/auth_contro
 import 'package:bahasa_master/features/auth/presentation/screens/login_screen.dart';
 import 'package:bahasa_master/features/billing/presentation/lifetime_offer.dart';
 import 'package:bahasa_master/features/billing/presentation/premium_screen.dart';
-import 'package:bahasa_master/features/dictionary/presentation/dictionary_screen.dart';
-import 'package:bahasa_master/features/exam/presentation/screens/diagnostic_attempt_screen.dart';
-import 'package:bahasa_master/features/exam/presentation/screens/diagnostic_intro_screen.dart';
-import 'package:bahasa_master/features/exam/presentation/screens/jft_intro_screen.dart';
-import 'package:bahasa_master/features/exam/presentation/screens/simulation_attempt_screen.dart';
-import 'package:bahasa_master/features/exam/presentation/screens/simulation_intro_screen.dart';
-import 'package:bahasa_master/features/jobs/presentation/jobs_screens.dart';
 import 'package:bahasa_master/features/leaderboard/presentation/leaderboard_screen.dart';
 import 'package:bahasa_master/features/learn/grammar/presentation/screens/grammar_course_screen.dart';
 import 'package:bahasa_master/features/learn/grammar/presentation/screens/grammar_lesson_screen.dart';
-import 'package:bahasa_master/features/learn/kana/domain/kana_models.dart';
-import 'package:bahasa_master/features/learn/kana/presentation/kana_chart_screen.dart';
-import 'package:bahasa_master/features/learn/kana/presentation/kana_detail_screen.dart';
-import 'package:bahasa_master/features/learn/kana/presentation/kana_practice_screen.dart';
-import 'package:bahasa_master/features/learn/kanji/presentation/screens/kanji_course_screen.dart';
-import 'package:bahasa_master/features/learn/kanji/presentation/screens/kanji_lesson_screen.dart';
 import 'package:bahasa_master/features/learn/reading/presentation/screens/reading_course_screen.dart';
 import 'package:bahasa_master/features/learn/reading/presentation/screens/reading_lesson_screen.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/screens/vocabulary_course_screen.dart';
 import 'package:bahasa_master/features/learn/vocabulary/presentation/screens/vocabulary_lesson_screen.dart';
-import 'package:bahasa_master/features/manga/presentation/manga_screens.dart';
-import 'package:bahasa_master/features/map/presentation/japan_map_screen.dart';
-import 'package:bahasa_master/features/map/presentation/prefecture_profile_screen.dart';
-import 'package:bahasa_master/features/map/presentation/spot_detail_screen.dart';
-import 'package:bahasa_master/features/news/presentation/news_screens.dart';
 import 'package:bahasa_master/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:bahasa_master/features/profile/presentation/screens/achievements_screen.dart';
 import 'package:bahasa_master/features/profile/presentation/screens/attributions_screen.dart';
-import 'package:bahasa_master/features/ssw/domain/ssw_sector.dart';
-import 'package:bahasa_master/features/ssw/presentation/kaigo_screens.dart';
-import 'package:bahasa_master/features/ssw/presentation/ssw_assessment_screens.dart';
-import 'package:bahasa_master/features/ssw/presentation/ssw_screens.dart';
 import 'package:bahasa_master/shared/presentation/widgets/main_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,15 +53,6 @@ abstract final class AppRoutes {
   static const readingLessonRoute = '/learn/reading/lessons/:lessonId';
   static String readingLessonPath(String id) =>
       '/learn/reading/lessons/${Uri.encodeComponent(id)}';
-  static const kanaPath = '/learn/kana';
-  static String kanaCharPath(String char) =>
-      '/learn/kana/char/${Uri.encodeComponent(char)}';
-  static String kanaPracticePath(String char) =>
-      '${kanaCharPath(char)}/practice';
-  static const kanjiPath = '/learn/kanji';
-  static const kanjiLessonRoute = '/learn/kanji/lessons/:lessonId';
-  static String kanjiLessonPath(String id) =>
-      '/learn/kanji/lessons/${Uri.encodeComponent(id)}';
   static const grammarPath = '/learn/grammar';
   static const grammarLessonRoute = '/learn/grammar/lessons/:lessonId';
   static String grammarLessonPath(String id) =>
@@ -137,60 +106,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AttributionsScreen(),
       ),
       GoRoute(
-        path: '/manga',
-        builder: (context, state) => const MangaCatalogScreen(),
-      ),
-      GoRoute(
-        path: '/manga/chapters/:id',
-        builder: (context, state) => MangaReaderScreen(
-          id: state.pathParameters['id']!,
-          key: ValueKey(state.pathParameters['id']),
-        ),
-      ),
-      GoRoute(
-        path: '/manga/:id',
-        builder: (context, state) =>
-            MangaDetailScreen(id: state.pathParameters['id']!),
-      ),
-      GoRoute(
-        path: '/news',
-        builder: (context, state) => const NewsListScreen(),
-      ),
-      GoRoute(
-        path: '/news/:id',
-        builder: (context, state) =>
-            NewsReaderScreen(id: state.pathParameters['id']!),
-      ),
-      GoRoute(
-        path: '/jobs',
-        builder: (context, state) => JobsScreen(
-          initialPrefecture: state.uri.queryParameters['prefecture'],
-        ),
-      ),
-      GoRoute(
-        path: '/map',
-        builder: (context, state) => const JapanMapScreen(),
-      ),
-      GoRoute(
-        path: '/map/prefecture/:code',
-        builder: (context, state) =>
-            PrefectureProfileScreen(code: state.pathParameters['code']!),
-      ),
-      GoRoute(
-        path: '/map/spot/:id',
-        builder: (context, state) =>
-            SpotDetailScreen(id: state.pathParameters['id']!),
-      ),
-      GoRoute(
-        path: '/jobs/sources',
-        builder: (context, state) => const JobSourcesScreen(),
-      ),
-      GoRoute(
-        path: '/jobs/:id',
-        builder: (context, state) =>
-            JobDetailScreen(id: state.pathParameters['id']!),
-      ),
-      GoRoute(
         path: '/notifications',
         builder: (context, state) => const NotificationSettingsScreen(),
       ),
@@ -219,51 +134,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/anki/decks/:deckId/study',
         builder: (context, state) =>
             AnkiStudyScreen(deckId: state.pathParameters['deckId']!),
-      ),
-      GoRoute(
-        path: '/dictionary',
-        builder: (context, state) => DictionaryScreen(
-          initialQuery: state.uri.queryParameters['q'] ?? '',
-        ),
-      ),
-      GoRoute(
-        path: '/ssw',
-        builder: (context, state) =>
-            SswHubScreen(exams: state.uri.queryParameters['tab'] == 'test'),
-      ),
-      GoRoute(
-        path: '/ssw/:sectorId/lessons/:lessonId',
-        builder: (context, state) => KaigoLessonScreen(
-          lessonId: state.pathParameters['lessonId']!,
-          sectorId: state.pathParameters['sectorId']!,
-        ),
-      ),
-      GoRoute(
-        path: '/ssw/:sectorId/practice',
-        builder: (context, state) =>
-            SswPracticeScreen(sector: state.pathParameters['sectorId']!),
-      ),
-      for (final level in sswAssessmentLevels.values.expand(
-        (levels) => levels,
-      )) ...[
-        GoRoute(
-          path: '/exams/${level.toLowerCase()}/simulation',
-          builder: (context, state) => SswSimulationIntroScreen(level: level),
-        ),
-        GoRoute(
-          path: '/exams/${level.toLowerCase()}/simulation/:attemptId',
-          builder: (context, state) => SimulationAttemptScreen(
-            level: level,
-            attemptId: state.pathParameters['attemptId']!,
-          ),
-        ),
-      ],
-      GoRoute(
-        path: '/ssw/:sectorId',
-        builder: (context, state) => SswSectorScreen(
-          sectorId: state.pathParameters['sectorId']!,
-          exams: state.uri.queryParameters['tab'] == 'test',
-        ),
       ),
       GoRoute(
         path: '/premium',
@@ -331,135 +201,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(
-        path: '/exams/n5',
-        builder: (context, state) => const DiagnosticIntroScreen(),
-      ),
-      GoRoute(
-        path: '/exams/nat/simulation',
-        builder: (context, state) => const SimulationIntroScreen(level: 'NAT'),
-      ),
-      GoRoute(
-        path: '/exams/nat/simulation/:attemptId',
-        builder: (context, state) => SimulationAttemptScreen(
-          level: 'NAT',
-          attemptId: state.pathParameters['attemptId']!,
-        ),
-      ),
-      for (final paper in [2, 3, 4, 5, 6, 7, 8, 9, 10]) ...[
-        GoRoute(
-          path: '/exams/nat-$paper/simulation',
-          builder: (context, state) =>
-              SimulationIntroScreen(level: 'NAT-$paper'),
-        ),
-        GoRoute(
-          path: '/exams/nat-$paper/simulation/:attemptId',
-          builder: (context, state) => SimulationAttemptScreen(
-            level: 'NAT-$paper',
-            attemptId: state.pathParameters['attemptId']!,
-          ),
-        ),
-      ],
-      GoRoute(
-        path: '/exams/jft/exam-1',
-        builder: (context, state) => const JftIntroScreen(),
-      ),
-      GoRoute(
-        path: '/exams/jft/exam-1/:attemptId',
-        builder: (context, state) => SimulationAttemptScreen(
-          level: 'JFT',
-          attemptId: state.pathParameters['attemptId']!,
-        ),
-      ),
-      for (final examNumber in [2, 3, 4, 5, 6, 7, 8, 9, 10]) ...[
-        GoRoute(
-          path: '/exams/jft/exam-$examNumber',
-          builder: (context, state) => JftIntroScreen(examNumber: examNumber),
-        ),
-        GoRoute(
-          path: '/exams/jft/exam-$examNumber/:attemptId',
-          builder: (context, state) => SimulationAttemptScreen(
-            level: 'JFT-$examNumber',
-            attemptId: state.pathParameters['attemptId']!,
-          ),
-        ),
-      ],
-      for (final base in ['N5', 'N4', 'N3', 'N2', 'N1']) ...[
-        for (final paper in [2, 3, 4, 5, 6, 7, 8, 9, 10]) ...[
-          GoRoute(
-            path: '/exams/${base.toLowerCase()}-$paper/simulation',
-            builder: (context, state) =>
-                SimulationIntroScreen(level: '$base-$paper'),
-          ),
-          GoRoute(
-            path: '/exams/${base.toLowerCase()}-$paper/simulation/:attemptId',
-            builder: (context, state) => SimulationAttemptScreen(
-              level: '$base-$paper',
-              attemptId: state.pathParameters['attemptId']!,
-            ),
-          ),
-        ],
-      ],
-      GoRoute(
-        path: '/exams/n5/simulation',
-        builder: (context, state) => const SimulationIntroScreen(),
-      ),
-      GoRoute(
-        path: '/exams/n5/simulation/:attemptId',
-        builder: (context, state) => SimulationAttemptScreen(
-          attemptId: state.pathParameters['attemptId']!,
-        ),
-      ),
-      GoRoute(
-        path: '/exams/n4/simulation',
-        builder: (context, state) => const SimulationIntroScreen(level: 'N4'),
-      ),
-      GoRoute(
-        path: '/exams/n4/simulation/:attemptId',
-        builder: (context, state) => SimulationAttemptScreen(
-          level: 'N4',
-          attemptId: state.pathParameters['attemptId']!,
-        ),
-      ),
-      GoRoute(
-        path: '/exams/n3/simulation',
-        builder: (context, state) => const SimulationIntroScreen(level: 'N3'),
-      ),
-      GoRoute(
-        path: '/exams/n3/simulation/:attemptId',
-        builder: (context, state) => SimulationAttemptScreen(
-          level: 'N3',
-          attemptId: state.pathParameters['attemptId']!,
-        ),
-      ),
-      GoRoute(
-        path: '/exams/n2/simulation',
-        builder: (context, state) => const SimulationIntroScreen(level: 'N2'),
-      ),
-      GoRoute(
-        path: '/exams/n2/simulation/:attemptId',
-        builder: (context, state) => SimulationAttemptScreen(
-          level: 'N2',
-          attemptId: state.pathParameters['attemptId']!,
-        ),
-      ),
-      GoRoute(
-        path: '/exams/n1/simulation',
-        builder: (context, state) => const SimulationIntroScreen(level: 'N1'),
-      ),
-      GoRoute(
-        path: '/exams/n1/simulation/:attemptId',
-        builder: (context, state) => SimulationAttemptScreen(
-          level: 'N1',
-          attemptId: state.pathParameters['attemptId']!,
-        ),
-      ),
-      GoRoute(
-        path: '/exams/n5/attempt/:attemptId',
-        builder: (context, state) => DiagnosticAttemptScreen(
-          attemptId: state.pathParameters['attemptId']!,
-        ),
-      ),
-      GoRoute(
         path: AppRoutes.readingPath,
         builder: (context, state) => ReadingCourseScreen(
           level: state.uri.queryParameters['level'] ?? 'N5',
@@ -469,39 +210,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.readingLessonRoute,
         builder: (context, state) =>
             ReadingLessonScreen(lessonId: state.pathParameters['lessonId']!),
-      ),
-      GoRoute(
-        path: AppRoutes.kanaPath,
-        builder: (context, state) => KanaChartScreen(
-          script: state.uri.queryParameters['script'] == 'katakana'
-              ? KanaScript.katakana
-              : KanaScript.hiragana,
-        ),
-      ),
-      GoRoute(
-        path: '/learn/kana/char/:char',
-        builder: (context, state) => KanaDetailScreen(
-          key: ValueKey(state.pathParameters['char']),
-          char: state.pathParameters['char']!,
-        ),
-      ),
-      GoRoute(
-        path: '/learn/kana/char/:char/practice',
-        builder: (context, state) => KanaPracticeScreen(
-          key: ValueKey(state.pathParameters['char']),
-          char: state.pathParameters['char']!,
-        ),
-      ),
-      GoRoute(
-        path: AppRoutes.kanjiPath,
-        builder: (context, state) => KanjiCourseScreen(
-          level: state.uri.queryParameters['level'] ?? 'N5',
-        ),
-      ),
-      GoRoute(
-        path: AppRoutes.kanjiLessonRoute,
-        builder: (context, state) =>
-            KanjiLessonScreen(lessonId: state.pathParameters['lessonId']!),
       ),
       GoRoute(
         path: AppRoutes.grammarPath,
@@ -546,12 +254,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       );
       if (sessionRedirect != null) return sessionRedirect;
 
-      final user = authState.user;
-      if ((location == '/manga' || location.startsWith('/manga/')) &&
-          !(user?.isLifetime ?? false)) {
-        return '/premium?from=${Uri.encodeQueryComponent(state.uri.toString())}';
-      }
-      // Study and exam features are open to every account, but never to guests.
+      // Study features are open to every account, but never to guests.
       if (authState.status == AuthenticationStatus.guest &&
           requiresLogin(state.uri)) {
         return '${AppRoutes.loginPath}?from=${Uri.encodeQueryComponent(state.uri.toString())}';
@@ -608,23 +311,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return router;
 });
 
-/// Learning, exam and SSW practice pages need a signed-in account (no guests).
+/// Learning pages and Anki study sessions need a signed-in account (no guests).
 bool requiresLogin(Uri uri) {
   final path = uri.path.toLowerCase();
-  // The kana chart works offline and on-device only, so guests can use it.
-  if (path == '/learn/kana' || path.startsWith('/learn/kana/')) return false;
-  if (path.startsWith('/learn/') || path.startsWith('/exams/')) return true;
-  if (path.startsWith('/ssw/') && path.endsWith('/practice')) return true;
+  if (path.startsWith('/learn/')) return true;
   return path.startsWith('/anki/decks/') && path.endsWith('/study');
 }
 
-/// Legacy classification of Lifetime-only study routes. Study and exam features
+/// Legacy classification of Lifetime-only study routes. Study features
 /// are open to every signed-in account now, so the router no longer redirects
 /// on it; it is kept for offline-cache decisions and existing tests.
 bool requiresPremium(Uri uri) {
   final path = uri.path.toLowerCase();
-  if (path.startsWith('/ssw/') && path.endsWith('/practice')) return true;
-  if (path.startsWith('/exams/') && !path.startsWith('/exams/n5')) return true;
   if (!path.startsWith('/learn/')) return false;
   final level = (uri.queryParameters['level'] ?? '').toUpperCase();
   return const ['N3', 'N2', 'N1'].contains(level) ||

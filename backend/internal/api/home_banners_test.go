@@ -42,6 +42,11 @@ func TestHomeBannersPersistencePublicOrderingAndEmptyCarousel(t *testing.T) {
 		}
 	}
 	config := defaultHomeBanners()
+	for _, id := range []string{"second", "third"} {
+		extra := config.Banners[0]
+		extra.ID = id
+		config.Banners = append(config.Banners, extra)
+	}
 	config.Banners[0].Order = 8
 	config.Banners[0].Title = "Materi yang diperbarui"
 	config.Banners[1].Order = 2
@@ -57,7 +62,7 @@ func TestHomeBannersPersistencePublicOrderingAndEmptyCarousel(t *testing.T) {
 	if err := json.Unmarshal(w.Body.Bytes(), &dashboard); err != nil {
 		t.Fatal(err)
 	}
-	if w.Code != 200 || len(dashboard.Data.Banners) != 2 || dashboard.Data.Banners[0].Action != "ssw" || dashboard.Data.Banners[1].Title != "Materi yang diperbarui" {
+	if w.Code != 200 || len(dashboard.Data.Banners) != 2 || dashboard.Data.Banners[0].ID != "second" || dashboard.Data.Banners[1].Title != "Materi yang diperbarui" {
 		t.Fatalf("public carousel: %d %s", w.Code, w.Body.String())
 	}
 	var admin struct {
@@ -71,7 +76,7 @@ func TestHomeBannersPersistencePublicOrderingAndEmptyCarousel(t *testing.T) {
 	if err := restored.ConfigureHomeBanners(path, "banner-admin"); err != nil {
 		t.Fatal(err)
 	}
-	if got := restored.homeBanners.publicBanners(); len(got) != 2 || got[0].ID != "ssw" {
+	if got := restored.homeBanners.publicBanners(); len(got) != 2 || got[0].ID != "second" {
 		t.Fatalf("restart lost state: %+v", got)
 	}
 	if w := bannerRequest(h, "PUT", "/v1/admin/home-banners", "banner-admin", []byte(`{"banners":[]}`)); w.Code != 200 {
@@ -92,7 +97,7 @@ func TestHomeBannersRejectInvalidEditsWithoutChangingPublishedState(t *testing.T
 	}
 	h := s.Handler()
 	for _, mutate := range []func(*homeBannerConfig){
-		func(c *homeBannerConfig) { c.Banners[1].ID = c.Banners[0].ID },
+		func(c *homeBannerConfig) { c.Banners = append(c.Banners, c.Banners[0]) },
 		func(c *homeBannerConfig) { c.Banners[0].ImageURL = "javascript:alert(1)" },
 		func(c *homeBannerConfig) { c.Banners[0].ImageURL = "/home-banner-images/../../branding.json" },
 		func(c *homeBannerConfig) { c.Banners[0].Action = "/admin/" },
@@ -108,7 +113,7 @@ func TestHomeBannersRejectInvalidEditsWithoutChangingPublishedState(t *testing.T
 	if w := bannerRequest(h, "PUT", "/v1/admin/home-banners", "key", []byte(`{}`)); w.Code != 422 {
 		t.Fatalf("missing list: %d", w.Code)
 	}
-	if got := s.homeBanners.publicBanners(); len(got) != 3 || got[0].ID != "learn" {
+	if got := s.homeBanners.publicBanners(); len(got) != 1 || got[0].ID != "learn" {
 		t.Fatalf("bad edits changed live config: %+v", got)
 	}
 	noAdmin := (&Server{}).Handler()
@@ -192,16 +197,3 @@ func TestHomeBannerUploadPersistsServesImageAndRejectsNonImages(t *testing.T) {
 	}
 }
 
-func TestDefaultBannerAssetsAreServed(t *testing.T) {
-	s := &Server{}
-	if err := s.ConfigureAssets("../../assets"); err != nil {
-		t.Fatal(err)
-	}
-	h := s.Handler()
-	for _, imageURL := range defaultBannerImages {
-		w := bannerRequest(h, "HEAD", imageURL, "", nil)
-		if w.Code != 200 || w.Header().Get("Content-Type") != "image/webp" {
-			t.Fatalf("missing banner asset %s: %d %v", imageURL, w.Code, w.Header())
-		}
-	}
-}

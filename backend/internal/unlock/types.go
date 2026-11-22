@@ -16,21 +16,10 @@ type Kind string
 
 const (
 	KindGrammar Kind = "grammar"
-	KindKanji   Kind = "kanji"
 	KindReading Kind = "reading"
 	KindVocab   Kind = "vocabulary"
-	// KindAnki opens one built-in JLPT deck, permanently.
+	// KindAnki opens one built-in deck, permanently.
 	KindAnki Kind = "anki"
-	// KindSimulation is a one-time credit for one simulation exam: starting
-	// an attempt converts it into KindSimulationAttempt for that attempt.
-	KindSimulation Kind = "simulation"
-	// KindSimulationAttempt opens one simulation attempt. It is only ever
-	// created by converting a KindSimulation credit, never requested directly.
-	KindSimulationAttempt Kind = "simulation-attempt"
-	// KindNews opens one news article, permanently.
-	KindNews Kind = "news"
-	// KindJob opens one job's application link, permanently.
-	KindJob Kind = "job"
 	// KindXPBoost doubles the XP of one finished activity. Its ID is the
 	// activity's completion ID (for example "grammar:<attempt>"). It is only
 	// ever verified by SSV and then consumed; it never becomes an unlock.
@@ -39,13 +28,12 @@ const (
 
 // clientKinds are the kinds an app may ask to unlock.
 var clientKinds = map[Kind]bool{
-	KindGrammar: true, KindKanji: true, KindReading: true, KindVocab: true,
-	KindAnki: true, KindSimulation: true, KindNews: true, KindJob: true,
-	KindXPBoost: true,
+	KindGrammar: true, KindReading: true, KindVocab: true,
+	KindAnki: true, KindXPBoost: true,
 }
 
 var kinds = func() map[Kind]bool {
-	all := map[Kind]bool{KindSimulationAttempt: true}
+	all := map[Kind]bool{}
 	for kind := range clientKinds {
 		all[kind] = true
 	}
@@ -64,10 +52,10 @@ func ParseKind(value string) (Kind, bool) {
 	return kind, clientKinds[kind]
 }
 
-// IsLesson reports whether kind is a study lesson (grammar, kanji, reading,
+// IsLesson reports whether kind is a study lesson (grammar, reading,
 // vocabulary).
 func (k Kind) IsLesson() bool {
-	return k == KindGrammar || k == KindKanji || k == KindReading || k == KindVocab
+	return k == KindGrammar || k == KindReading || k == KindVocab
 }
 
 // Key builds the stable key stored for an unlocked item, for example
@@ -147,9 +135,6 @@ type Repository interface {
 	Claim(ctx context.Context, userID, nonce, day string, dailyCap int, at time.Time) (Unlock, error)
 	// Fallback records an unlock without an ad, bounded by both limits.
 	Fallback(ctx context.Context, userID, contentKey, day string, dailyCap, fallbackCap int, at time.Time) (Unlock, error)
-	// Convert turns the unlock fromKey into toKey, consuming a one-time
-	// credit. It reports false when fromKey is not held or toKey already is.
-	Convert(ctx context.Context, userID, fromKey, toKey string) (bool, error)
 	// ConsumeVerified marks a verified, unexpired intent owned by userID as
 	// used and returns it, without recording an unlock or counting toward the
 	// unlock limits (double XP has its own). A second call returns

@@ -1,4 +1,5 @@
-// Package anki serves the pinned, local Kotoba mirror. It never fetches upstream.
+// Package anki serves the embedded default deck catalog. It never fetches upstream.
+// The default deck set is currently empty; user decks and review state live elsewhere.
 package anki
 
 import (
@@ -14,7 +15,7 @@ import (
 	"sync"
 )
 
-//go:embed resources/catalog.json resources/cards resources/source resources/manifest.json resources/KOTOBA-LICENSE.txt
+//go:embed resources/catalog.json
 var files embed.FS
 
 var ErrNotFound = errors.New("deck or card not found")
@@ -98,7 +99,9 @@ func Get(id string) (Deck, error) {
 	return Deck{}, ErrNotFound
 }
 func Revision() string { _ = load(); return catalog.Revision }
-func License() string  { raw, _ := files.ReadFile("resources/KOTOBA-LICENSE.txt"); return string(raw) }
+
+// License returns the license text of the default deck set (none while empty).
+func License() string { return "" }
 
 type cacheEntry struct {
 	key   string
@@ -116,6 +119,12 @@ func ReadCard(id string, index int) (Card, error) {
 	deck, err := Get(id)
 	if err != nil {
 		return Card{}, err
+	}
+	if cards, ok := registered[id]; ok {
+		if index < 0 || index >= len(cards) {
+			return Card{}, ErrNotFound
+		}
+		return cards[index], nil
 	}
 	if index < 0 || index >= deck.CardCount || deck.ChunkSize < 1 {
 		return Card{}, ErrNotFound

@@ -45,9 +45,9 @@ type unlockEnv struct {
 	private *ecdsa.PrivateKey
 	token   string
 	userID  string
-	locked  string // an N3 grammar lesson
-	other   string // a second N3 grammar lesson
-	free    string // an N5 grammar lesson
+	locked  string // an N3 vocabulary lesson
+	other   string // a second N3 vocabulary lesson
+	free    string // an N5 vocabulary lesson
 }
 
 // newUnlockEnv builds a server whose unlock ad is configured. adsConfig is the
@@ -57,7 +57,7 @@ func newUnlockEnv(t *testing.T, adsConfig string) *unlockEnv {
 	return newUnlockEnvWith(t, adsConfig, nil)
 }
 
-// newUnlockEnvWith is newUnlockEnv with extra server wiring (news, jobs).
+// newUnlockEnvWith is newUnlockEnv with extra server wiring .
 func newUnlockEnvWith(t *testing.T, adsConfig string, configure func(*api.Server)) *unlockEnv {
 	t.Helper()
 	memory := store.NewMemoryStore()
@@ -84,10 +84,9 @@ func newUnlockEnvWith(t *testing.T, adsConfig string, configure func(*api.Server
 	server.ConfigureUnlockTiming(60*time.Millisecond, 10*time.Millisecond)
 	handler := server.Handler()
 	session := aiLogin(t, handler)
-	lessons := memory.GrammarCourse("", "N3").Lessons
-	return &unlockEnv{
+		return &unlockEnv{
 		handler: handler, memory: memory, private: private, token: session.Token, userID: session.User.ID,
-		locked: lessons[0].ID, other: lessons[1].ID, free: memory.GrammarCourse("", "N5").Lessons[0].ID,
+		locked: "n3-work", other: "n3-health", free: "n5-daily",
 	}
 }
 
@@ -130,9 +129,9 @@ func (e *unlockEnv) errorBody(t *testing.T, response *httptest.ResponseRecorder,
 	return payload.Error
 }
 
-func (e *unlockEnv) lessonPath(id string) string { return "/v1/grammar/lessons/" + id }
+func (e *unlockEnv) lessonPath(id string) string { return "/v1/vocabulary/lessons/" + id }
 
-func (e *unlockEnv) item(id string) string { return `{"kind":"grammar","itemId":"` + id + `"}` }
+func (e *unlockEnv) item(id string) string { return `{"kind":"vocabulary","itemId":"` + id + `"}` }
 
 // callback sends a callback signed the way Google signs SSV requests.
 func (e *unlockEnv) callback(user, nonce, transaction string) *httptest.ResponseRecorder {
@@ -192,7 +191,7 @@ func TestLockedLessonOffersAnAdOnlyWhenOneCanBeShown(t *testing.T) {
 		t.Fatalf("error = %v", body)
 	}
 	ref, _ := body["unlock"].(map[string]any)
-	if ref["kind"] != "grammar" || ref["itemId"] != e.locked {
+	if ref["kind"] != "vocabulary" || ref["itemId"] != e.locked {
 		t.Fatalf("unlock ref = %v", ref)
 	}
 	if response := e.do(http.MethodGet, e.lessonPath(e.free), ""); response.Code != http.StatusOK {
@@ -226,7 +225,7 @@ func TestWatchingAnAdOpensOnlyThatLesson(t *testing.T) {
 		t.Fatalf("callback: %d", response.Code)
 	}
 	claimed := e.data(t, e.do(http.MethodPost, "/v1/unlocks/claim", `{"nonce":"`+nonce+`"}`), http.StatusOK)
-	if claimed["unlocked"] != true || claimed["contentKey"] != "grammar:"+e.locked || claimed["remaining"] != float64(19) {
+	if claimed["unlocked"] != true || claimed["contentKey"] != "vocabulary:"+e.locked || claimed["remaining"] != float64(19) {
 		t.Fatalf("claim = %v", claimed)
 	}
 
@@ -239,34 +238,34 @@ func TestWatchingAnAdOpensOnlyThatLesson(t *testing.T) {
 		t.Fatalf("attempt = %v", attempt)
 	}
 	// The quiz of an unlocked lesson follows the lesson, so its attempt routes open too.
-	if response := e.do(http.MethodPost, "/v1/grammar/attempts/"+attemptID+"/answers", `{}`); response.Code == http.StatusPaymentRequired {
+	if response := e.do(http.MethodPost, "/v1/vocabulary/attempts/"+attemptID+"/answers", `{}`); response.Code == http.StatusPaymentRequired {
 		t.Fatalf("attempt route of an unlocked lesson was refused: %s", response.Body.String())
 	}
 
 	if response := e.do(http.MethodGet, e.lessonPath(e.other), ""); response.Code != http.StatusPaymentRequired {
 		t.Fatalf("another locked lesson opened: %d", response.Code)
 	}
-	if response := e.do(http.MethodGet, "/v1/offline/practice/grammar/"+e.locked, ""); response.Code != http.StatusPaymentRequired {
+	if response := e.do(http.MethodGet, "/v1/offline/practice/vocabulary/"+e.locked, ""); response.Code != http.StatusPaymentRequired {
 		t.Fatalf("offline package of an ad-unlocked lesson must stay Lifetime-only: %d", response.Code)
 	}
 
 	list := e.data(t, e.do(http.MethodGet, "/v1/unlocks", ""), http.StatusOK)
 	items, _ := list["items"].([]any)
-	if len(items) != 1 || items[0] != "grammar:"+e.locked || list["remaining"] != float64(19) || list["available"] != true {
+	if len(items) != 1 || items[0] != "vocabulary:"+e.locked || list["remaining"] != float64(19) || list["available"] != true {
 		t.Fatalf("list = %v", list)
 	}
 	gates, _ := list["gates"].(map[string]any)
 	offered, _ := list["offered"].(map[string]any)
-	if gates["lessons"] != true || gates["news"] != false || offered["lessons"] != true || offered["news"] != true {
+	if gates["lessons"] != true || offered["lessons"] != true {
 		t.Fatalf("gates = %v, offered = %v", gates, offered)
 	}
 }
 
 func TestCatalogStaysOpenSoFreeAccountsCanSeeWhatToUnlock(t *testing.T) {
 	e := newUnlockEnv(t, "")
-	data := e.data(t, e.do(http.MethodGet, "/v1/grammar/course?level=N3", ""), http.StatusOK)
-	if lessons, _ := data["lessons"].([]any); len(lessons) == 0 {
-		t.Fatalf("catalog = %v", data)
+	response := e.do(http.MethodGet, "/v1/vocabulary/levels", "")
+	if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), `"level":"N3"`) || !strings.Contains(response.Body.String(), e.locked) {
+		t.Fatalf("catalog = %d %s", response.Code, response.Body.String())
 	}
 }
 
@@ -276,8 +275,8 @@ func TestIntentRefusesItemsThatNeedNoUnlock(t *testing.T) {
 		"free lesson":     e.item(e.free),
 		"unknown lesson":  e.item("does-not-exist"),
 		"bad kind":        `{"kind":"news","itemId":"x"}`,
-		"bad item id":     `{"kind":"grammar","itemId":"../x"}`,
-		"unknown field":   `{"kind":"grammar","itemId":"x","extra":1}`,
+		"bad item id":     `{"kind":"vocabulary","itemId":"../x"}`,
+		"unknown field":   `{"kind":"vocabulary","itemId":"x","extra":1}`,
 		"missing details": `{}`,
 	} {
 		response := e.do(http.MethodPost, "/v1/unlocks/intents", body)
@@ -389,31 +388,31 @@ func TestDailyLimitStopsFurtherUnlocks(t *testing.T) {
 
 func TestFallbackOpensALessonWhenNoAdCanLoadButOnlyTwiceADay(t *testing.T) {
 	e := newUnlockEnv(t, "")
-	lessons := e.memory.GrammarCourse("", "N3").Lessons
+	lessons := []string{e.locked, e.other, "n3-travel"}
 	for i := 0; i < 2; i++ {
-		data := e.data(t, e.do(http.MethodPost, "/v1/unlocks/fallback", e.item(lessons[i].ID)), http.StatusOK)
+		data := e.data(t, e.do(http.MethodPost, "/v1/unlocks/fallback", e.item(lessons[i])), http.StatusOK)
 		if data["unlocked"] != true || data["source"] != "fallback" {
 			t.Fatalf("fallback %d = %v", i, data)
 		}
-		if response := e.do(http.MethodGet, e.lessonPath(lessons[i].ID), ""); response.Code != http.StatusOK {
+		if response := e.do(http.MethodGet, e.lessonPath(lessons[i]), ""); response.Code != http.StatusOK {
 			t.Fatalf("lesson %d after fallback: %d", i, response.Code)
 		}
 	}
-	if body := e.errorBody(t, e.do(http.MethodPost, "/v1/unlocks/fallback", e.item(lessons[2].ID)), http.StatusTooManyRequests); body["code"] != "unlock_fallback_exhausted" {
+	if body := e.errorBody(t, e.do(http.MethodPost, "/v1/unlocks/fallback", e.item(lessons[2])), http.StatusTooManyRequests); body["code"] != "unlock_fallback_exhausted" {
 		t.Fatalf("error = %v", body)
 	}
-	if response := e.do(http.MethodGet, e.lessonPath(lessons[2].ID), ""); response.Code != http.StatusPaymentRequired {
+	if response := e.do(http.MethodGet, e.lessonPath(lessons[2]), ""); response.Code != http.StatusPaymentRequired {
 		t.Fatalf("third lesson opened without an ad: %d", response.Code)
 	}
 }
 
 func TestUnlockedLessonKeepsItsAITutor(t *testing.T) {
 	e := newUnlockEnv(t, "")
-	if before := e.do(http.MethodGet, "/v1/ai/conversations/grammar/"+e.locked, ""); before.Code != http.StatusPaymentRequired {
+	if before := e.do(http.MethodGet, "/v1/ai/conversations/vocabulary/"+e.locked, ""); before.Code != http.StatusPaymentRequired {
 		t.Fatalf("AI tutor of a locked lesson: %d", before.Code)
 	}
 	e.watchAd(t, e.locked, "tx-1")
-	if after := e.do(http.MethodGet, "/v1/ai/conversations/grammar/"+e.locked, ""); after.Code != http.StatusOK {
+	if after := e.do(http.MethodGet, "/v1/ai/conversations/vocabulary/"+e.locked, ""); after.Code != http.StatusOK {
 		t.Fatalf("AI tutor of an unlocked lesson: %d %s", after.Code, after.Body.String())
 	}
 }
@@ -437,7 +436,7 @@ func TestAdminSeesUnlockStatistics(t *testing.T) {
 	}
 
 	e.watchAd(t, e.locked, "tx-1")
-	e.fallback(t, "grammar", e.other)
+	e.fallback(t, "vocabulary", e.other)
 	forged := httptest.NewRecorder()
 	e.handler.ServeHTTP(forged, httptest.NewRequest(http.MethodGet, "/v1/ads/ssv?custom_data=x&signature=AAAA&key_id=1", nil))
 
@@ -451,8 +450,8 @@ func TestAdminSeesUnlockStatistics(t *testing.T) {
 	if lessons["intents"] != float64(1) || lessons["verified"] != float64(1) || lessons["rewarded"] != float64(1) || lessons["fallback"] != float64(1) {
 		t.Fatalf("lesson totals = %v", lessons)
 	}
-	if days := data["days"].([]any); len(days) != 7*6 {
-		t.Fatalf("days rows = %d, want 7 days x 6 groups (incl. double XP)", len(days))
+	if days := data["days"].([]any); len(days) != 7*3 {
+		t.Fatalf("days rows = %d, want 7 days x 3 groups (lessons, Anki, double XP)", len(days))
 	}
 	callbacks := data["callbacks"].(map[string]any)
 	if callbacks["ok"] != float64(1) || callbacks["badSignature"] != float64(1) {
@@ -477,7 +476,7 @@ func TestSavingAdsFromAnOlderDashboardKeepsTheUnlockSettings(t *testing.T) {
 		return response
 	}
 	// A dashboard built before the unlock settings existed sends none of them.
-	legacy := `{"enabled":true,"banner":{"enabled":true,"unitId":"ca-app-pub-3940256099942544/6300978111"},"newsNative":{"enabled":true,"unitId":"ca-app-pub-3940256099942544/2247696110","every":6},"jobsNative":{"enabled":true,"unitId":"ca-app-pub-3940256099942544/2247696110","every":8},"aiChatRewarded":{"enabled":true,"unitId":"ca-app-pub-3940256099942544/5224354917"}}`
+	legacy := `{"enabled":true,"banner":{"enabled":true,"unitId":"ca-app-pub-3940256099942544/6300978111"},"aiChatRewarded":{"enabled":true,"unitId":"ca-app-pub-3940256099942544/5224354917"}}`
 	if response := save(legacy); response.Code != http.StatusOK {
 		t.Fatalf("save: %d %s", response.Code, response.Body.String())
 	}
@@ -502,7 +501,7 @@ func TestSavingAdsFromAnOlderDashboardKeepsTheUnlockSettings(t *testing.T) {
 	}
 
 	// Sending them explicitly is validated.
-	explicit := `{"enabled":true,"banner":{"enabled":false,"unitId":""},"newsNative":{"enabled":false,"unitId":"","every":6},"jobsNative":{"enabled":false,"unitId":"","every":8},"aiChatRewarded":{"enabled":false,"unitId":""},"unlockRewarded":{"enabled":true,"unitId":"` + unlockUnit + `"},"unlockDailyCap":500,"unlockFallbackPerDay":1}`
+	explicit := `{"enabled":true,"banner":{"enabled":false,"unitId":""},"aiChatRewarded":{"enabled":false,"unitId":""},"unlockRewarded":{"enabled":true,"unitId":"` + unlockUnit + `"},"unlockDailyCap":500,"unlockFallbackPerDay":1}`
 	if response := save(explicit); response.Code != http.StatusUnprocessableEntity {
 		t.Fatalf("daily cap of 500: %d, want 422", response.Code)
 	}

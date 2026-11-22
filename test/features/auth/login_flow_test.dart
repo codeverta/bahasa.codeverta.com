@@ -3,7 +3,6 @@ import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:bahasa_master/features/news/data/news_repository.dart';
 import 'package:bahasa_master/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -101,10 +100,6 @@ _createContainer({AuthException? failure}) async {
         analyticsBootstrapProvider.overrideWith((ref) {}),
         authControllerProvider.overrideWith((ref) => authController),
         homeDashboardProvider.overrideWith((ref) async => _dashboard),
-        newsPreviewProvider.overrideWith(
-          (ref) async =>
-              const NewsPage(items: [], total: 0, page: 1, sources: []),
-        ),
       ],
     ),
     repository: repository,
@@ -155,7 +150,6 @@ const _dashboard = HomeDashboard(
   dailyGoal: HomeDailyGoal(minutesLearned: 0, targetMinutes: 20, streakDays: 0),
   categories: [],
   tracks: [],
-  exams: [],
   plans: [],
   achievements: [],
 );

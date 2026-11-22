@@ -48,13 +48,11 @@ class LearningActivity {
   String get category => switch (kind) {
     'vocabulary' => 'Kosakata',
     'grammar' => 'Grammar',
-    'kanji' => 'Kanji',
     _ => 'Reading',
   };
   String get unit => switch (kind) {
     'vocabulary' => 'Kata',
     'grammar' => 'Pola',
-    'kanji' => 'Karakter',
     _ => 'Halaman',
   };
   String get coursePath =>

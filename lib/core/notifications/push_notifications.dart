@@ -23,15 +23,11 @@ String announcementTopicFor(String languageCode) =>
 
 const notificationRoutes = <String>{
   '/home',
-  '/dictionary',
   '/anki',
-  '/ssw',
   '/premium',
   '/learn/vocabulary',
   '/learn/grammar',
-  '/learn/kanji',
   '/learn/reading',
-  '/exams/n5',
 };
 String safeNotificationRoute(Object? value) =>
     value is String && notificationRoutes.contains(value) ? value : '/home';

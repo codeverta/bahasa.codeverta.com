@@ -16,30 +16,12 @@ import (
 	backendAuth "bahasa-master-backend/internal/auth"
 	"bahasa-master-backend/internal/billing"
 	"bahasa-master-backend/internal/diagnostics"
-	"bahasa-master-backend/internal/dictionary"
 	"bahasa-master-backend/internal/domain"
-	"bahasa-master-backend/internal/jobs"
-	"bahasa-master-backend/internal/manga"
 	"bahasa-master-backend/internal/media"
-	"bahasa-master-backend/internal/news"
-	"bahasa-master-backend/internal/places"
-	"bahasa-master-backend/internal/prefinfo"
 	"bahasa-master-backend/internal/store"
 )
 
 type Server struct {
-	manga                     *manga.Repository
-	mangaAdminToken           string
-	mangaAccess               MangaAccessChecker
-	news                      *news.Repository
-	newsFetcher               news.Fetcher
-	newsAdminToken            string
-	newsImageDirectory        string
-	newsImageStore            news.ImageStore
-	newsContext               context.Context
-	jobs                      *jobs.Repository
-	dictionary                *dictionary.Client
-	dictionaryAdminToken      string
 	billing                   *billing.Service
 	billingPushAudience       string
 	billingPushEmail          string
@@ -53,24 +35,18 @@ type Server struct {
 	ads                       *AdsStore
 	ai                        *aiChatService
 	unlocks                   *unlockAPI
-	prefLiving                *prefinfo.Store
 	notifications             *NotificationStore
 	pricing                   *PricingStore
 	profilePhotos             *media.ProfilePhotoStorage
 	diagnostics               *diagnostics.Repository
 	diagnosticsAdminToken     string
 	diagnosticLimiter         diagnosticRateLimiter
-	webDictionaryLimiter      webDictionaryLimiter
-	mapSpots                  *places.Service
-	mapAdminToken             string
-	mapLocalImages            *places.LocalImages
 }
 
 func NewServer(store *store.MemoryStore, googleVerifier backendAuth.GoogleVerifier) *Server {
 	return &Server{
 		store:                     store,
 		googleVerifier:            googleVerifier,
-		dictionary:                dictionary.NewClient(),
 		offlinePracticeSigningKey: offlinePracticeSigningKey(os.Getenv("OFFLINE_PRACTICE_SIGNING_KEY"), os.Getenv("OFFLINE_PRACTICE_SIGNING_KEY_FILE"), os.Getenv("DB_PASSWORD")),
 	}
 }
@@ -81,19 +57,10 @@ func (s *Server) Handler() http.Handler {
 	mux := http.NewServeMux()
 	s.registerAdminDashboard(mux)
 	s.registerDiagnostics(mux)
-	s.registerManga(mux)
-	s.registerNews(mux)
-	s.registerDictionaryAdmin(mux)
-	s.registerJobs(mux)
 	s.registerLegal(mux)
 	s.registerLanding(mux)
-	s.registerDictionaryWeb(mux)
-	s.registerMap(mux)
-	s.registerPrefectureLiving(mux)
 	s.registerAnki(mux)
 	s.registerLeaderboard(mux)
-	mux.HandleFunc("GET /v1/dictionary/search", s.dictionarySearch)
-	mux.HandleFunc("GET /v1/dictionary/kanji/{character}", s.dictionaryKanji)
 	mux.HandleFunc("GET /v1/billing", s.requireAuth(s.billingStatus))
 	mux.HandleFunc("POST /v1/billing/verify", s.requireAuth(s.verifyPurchase))
 	mux.HandleFunc("POST /v1/billing/notifications/apple", s.appleBillingNotification)
@@ -107,14 +74,7 @@ func (s *Server) Handler() http.Handler {
 	s.registerAds(mux)
 	s.registerAIChat(mux)
 	s.registerUnlocks(mux)
-	s.registerLearningLists(mux)
 	s.registerNotifications(mux)
-	mux.HandleFunc("GET /v1/simulation/{level}", s.requireAuth(s.simulationOverview))
-	mux.HandleFunc("GET /v1/ssw/{sector}/practice", s.requireAuth(s.sswPractice))
-	mux.HandleFunc("POST /v1/ssw/{sector}/practice/check", s.requireAuth(s.sswPracticeCheck))
-	mux.HandleFunc("GET /v1/simulation/attempts/{attemptID}", s.requireAuth(s.simulationSession))
-	mux.HandleFunc("PUT /v1/simulation/attempts/{attemptID}/answers", s.requireAuth(s.simulationAnswer))
-	mux.HandleFunc("POST /v1/simulation/attempts/{attemptID}/submit-section", s.requireAuth(s.simulationSubmit))
 	mux.HandleFunc("GET /healthz", s.health)
 	mux.HandleFunc("POST /v1/auth/login", s.login)
 	mux.HandleFunc("POST /v1/auth/google", s.googleLogin)
@@ -123,12 +83,6 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /v1/home", s.optionalAuth(s.home))
 	mux.HandleFunc("GET /v1/learning/categories", s.categories)
 	mux.HandleFunc("GET /v1/learning/tracks", s.tracks)
-	mux.HandleFunc("GET /v1/exams", s.exams)
-	mux.HandleFunc("POST /v1/exam-attempts", s.requireAuth(s.startExam))
-	mux.HandleFunc("GET /v1/diagnostic/n5", s.requireAuth(s.diagnosticOverview))
-	mux.HandleFunc("GET /v1/exam-attempts/{attemptID}", s.requireAuth(s.diagnosticSession))
-	mux.HandleFunc("PUT /v1/exam-attempts/{attemptID}/answers", s.requireAuth(s.diagnosticAnswer))
-	mux.HandleFunc("POST /v1/exam-attempts/{attemptID}/complete", s.requireAuth(s.diagnosticComplete))
 	mux.HandleFunc("GET /v1/plans", s.plans)
 	mux.HandleFunc("GET /v1/me/profile", s.requireAuth(s.profile))
 	mux.HandleFunc("PATCH /v1/me/profile", s.requireAuth(s.updateProfile))
@@ -145,24 +99,9 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("POST /v1/vocabulary/lessons/{lessonID}/attempts", s.requireAuth(s.startVocabularyAttempt))
 	mux.HandleFunc("POST /v1/vocabulary/attempts/{attemptID}/answers", s.requireAuth(s.answerVocabularyQuestion))
 	mux.HandleFunc("POST /v1/vocabulary/attempts/{attemptID}/complete", s.requireAuth(s.completeVocabularyAttempt))
-	mux.HandleFunc("GET /v1/grammar/course", s.requireAuth(s.grammarCourse))
-	mux.HandleFunc("GET /v1/grammar/lessons/{lessonID}", s.requireAuth(s.grammarLesson))
-	mux.HandleFunc("POST /v1/grammar/lessons/{lessonID}/attempts", s.requireAuth(s.startGrammarAttempt))
-	mux.HandleFunc("POST /v1/grammar/attempts/{attemptID}/answers", s.requireAuth(s.answerGrammarQuestion))
-	mux.HandleFunc("POST /v1/grammar/attempts/{attemptID}/complete", s.requireAuth(s.completeGrammarAttempt))
-	mux.HandleFunc("GET /v1/kanji/course", s.requireAuth(s.kanjiCourse))
-	mux.HandleFunc("GET /v1/kanji/lessons/{lessonID}", s.requireAuth(s.kanjiLesson))
-	mux.HandleFunc("POST /v1/kanji/lessons/{lessonID}/attempts", s.requireAuth(s.startKanjiAttempt))
-	mux.HandleFunc("POST /v1/kanji/attempts/{attemptID}/answers", s.requireAuth(s.answerKanjiQuestion))
-	mux.HandleFunc("POST /v1/kanji/attempts/{attemptID}/complete", s.requireAuth(s.completeKanjiAttempt))
-	mux.HandleFunc("GET /v1/reading/course", s.requireAuth(s.readingCourse))
-	mux.HandleFunc("GET /v1/reading/lessons/{lessonID}", s.requireAuth(s.readingLesson))
-	mux.HandleFunc("POST /v1/reading/lessons/{lessonID}/attempts", s.requireAuth(s.startReadingAttempt))
-	mux.HandleFunc("POST /v1/reading/attempts/{attemptID}/answers", s.requireAuth(s.answerReadingQuestion))
-	mux.HandleFunc("POST /v1/reading/attempts/{attemptID}/complete", s.requireAuth(s.completeReadingAttempt))
 	mux.HandleFunc("GET /v1/offline/practice/{kind}/{lessonID}", s.requireAuth(s.offlinePracticePackage))
 	mux.HandleFunc("POST /v1/offline/practice-attempts/sync", s.requireAuth(s.syncOfflinePracticeAttempt))
-	return s.middleware(adminToolRedirects(localizedAccountResponses(localizedLearningResponses(localizedNewsResponses(mux)))))
+	return s.middleware(adminToolRedirects(localizedAccountResponses(localizedLearningResponses(mux))))
 }
 
 func (s *Server) ConfigureProfilePhotoStorage(storage *media.ProfilePhotoStorage) {
@@ -250,10 +189,6 @@ func (s *Server) categories(w http.ResponseWriter, _ *http.Request) {
 
 func (s *Server) tracks(w http.ResponseWriter, r *http.Request) {
 	writeData(w, http.StatusOK, s.store.Tracks(r.URL.Query().Get("system")))
-}
-
-func (s *Server) exams(w http.ResponseWriter, r *http.Request) {
-	writeData(w, http.StatusOK, s.store.Exams(r.URL.Query().Get("system")))
 }
 
 func (s *Server) plans(w http.ResponseWriter, _ *http.Request) {
@@ -373,31 +308,6 @@ func (s *Server) completeVocabularyAttempt(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	writeData(w, http.StatusOK, result)
-}
-
-func (s *Server) startExam(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		ExamID string `json:"examId"`
-	}
-	if err := decodeJSON(r, &input); err != nil {
-		writeError(w, http.StatusBadRequest, "invalid_json", err.Error())
-		return
-	}
-	if s.startSimulationWithCredit(w, r, input.ExamID) {
-		return
-	}
-	if s.billing != nil && s.store.ExamRequiresPremium(input.ExamID) {
-		if err := s.billing.RefreshUser(r.Context(), userID(r)); err != nil {
-			writeBillingError(w, err)
-			return
-		}
-	}
-	attempt, err := s.store.StartExam(userID(r), input.ExamID)
-	if err != nil {
-		writeStoreError(w, err)
-		return
-	}
-	writeData(w, http.StatusCreated, attempt)
 }
 
 func (s *Server) requireAuth(next http.HandlerFunc) http.HandlerFunc {

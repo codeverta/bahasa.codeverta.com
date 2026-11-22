@@ -116,18 +116,19 @@ var scenarios = []struct {
 	{"ClaimsAndFallbacksRaceForTheSameLesson", scenarioClaimsAndFallbacksRaceForTheSameLesson},
 	{"MixedClaimsAndFallbacksRespectBothLimits", scenarioMixedClaimsAndFallbacksRespectBothLimits},
 	{"ManyAccountsAtOnce", scenarioManyAccountsAtOnce},
-	{"CreditConvertsExactlyOnce", scenarioCreditConvertsExactlyOnce},
 	{"StatsCountActivityByDayAndGroup", scenarioStatsCountActivityByDayAndGroup},
 	{"XPBoostIntentIsConsumedOnce", scenarioXPBoostIntentIsConsumedOnce},
 }
 
-func TestClientCannotAskForAnAttemptUnlock(t *testing.T) {
-	if _, ok := unlock.ParseKind(string(unlock.KindSimulationAttempt)); ok {
-		t.Fatal("simulation attempts must only be opened by converting a credit")
-	}
-	for _, kind := range []unlock.Kind{unlock.KindAnki, unlock.KindSimulation, unlock.KindNews, unlock.KindJob} {
+func TestClientCanAskForTheOfferedKinds(t *testing.T) {
+	for _, kind := range []unlock.Kind{unlock.KindAnki, unlock.KindGrammar, unlock.KindReading, unlock.KindVocab, unlock.KindXPBoost} {
 		if _, ok := unlock.ParseKind(string(kind)); !ok {
 			t.Fatalf("kind %q rejected", kind)
+		}
+	}
+	for _, removed := range []string{"kanji", "simulation", "simulation-attempt", "news", "job"} {
+		if _, ok := unlock.ParseKind(removed); ok {
+			t.Fatalf("removed kind %q accepted", removed)
 		}
 	}
 }

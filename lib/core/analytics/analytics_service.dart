@@ -9,21 +9,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Maps a route pattern (for example `/learn/kanji/lessons/:lessonId`) to a
+/// Maps a route pattern (for example `/learn/grammar/lessons/:lessonId`) to a
 /// stable, low-cardinality feature name for Google Analytics reports.
 String analyticsFeatureForPath(String path) {
   const prefixes = <String, String>{
     '/learn/vocabulary': 'vocabulary',
-    '/learn/kanji': 'kanji',
     '/learn/grammar': 'grammar',
     '/learn/reading': 'reading',
     '/anki': 'anki',
-    '/dictionary': 'dictionary',
-    '/news': 'news',
-    '/manga': 'manga',
-    '/jobs': 'jobs',
-    '/ssw': 'ssw',
-    '/exams': 'exam',
     '/premium': 'premium',
     '/achievements': 'statistics',
     '/leaderboard': 'leaderboard',

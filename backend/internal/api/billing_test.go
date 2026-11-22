@@ -74,14 +74,14 @@ func TestBillingAPIUnlockRevokeAndDelete(t *testing.T) {
 		handler.ServeHTTP(w, r)
 		return w
 	}
-	for _, path := range []string{"/v1/grammar/lessons/grammar-n2-01", "/v1/kanji/lessons/kanji-n3-01", "/v1/reading/lessons/reading-n2-01", "/v1/vocabulary/lessons/n3-daily-life", "/v1/simulation/n4", "/v1/simulation/n3", "/v1/simulation/jft", "/v1/simulation/nat"} {
+	for _, path := range []string{"/v1/vocabulary/lessons/n3-work", "/v1/vocabulary/lessons/n3-health"} {
 		if w := call("GET", path, ""); w.Code != 402 {
 			t.Fatalf("free user accessed %s: %d %s", path, w.Code, w.Body.String())
 		}
 	}
 	// Level catalogs only list lesson titles, so they stay open to free accounts:
 	// they need to see what an ad or Lifetime Access unlocks.
-	for _, path := range []string{"/v1/grammar/course?level=N4", "/v1/grammar/course?level=N3", "/v1/simulation/n5"} {
+	for _, path := range []string{"/v1/vocabulary/levels"} {
 		if w := call("GET", path, ""); w.Code != 200 {
 			t.Fatal(w.Body.String())
 		}
@@ -109,7 +109,7 @@ func TestBillingAPIUnlockRevokeAndDelete(t *testing.T) {
 	if w = call("POST", "/v1/billing/verify", body); w.Code != 200 {
 		t.Fatal(w.Body.String())
 	}
-	if w = call("GET", "/v1/grammar/lessons/grammar-n2-01", ""); w.Code != 200 {
+	if w = call("GET", "/v1/vocabulary/lessons/n3-work", ""); w.Code != 200 {
 		t.Fatal("paid user cannot read N2")
 	}
 	// A second app account on the same Play account learns which account owns it.
@@ -176,12 +176,7 @@ func TestBillingAPIUnlockRevokeAndDelete(t *testing.T) {
 	if json.Unmarshal(w.Body.Bytes(), &renewedBilling) != nil || renewedBilling.Data.OfflineLease == "" || renewedBilling.Data.OfflineLease == activeBilling.Data.OfflineLease {
 		t.Fatal("authoritative store revalidation did not issue a renewed lease")
 	}
-	w = call("POST", "/v1/grammar/lessons/grammar-n2-01/attempts", "")
-	var attempt struct {
-		Data domain.GrammarAttempt `json:"data"`
-	}
-	json.Unmarshal(w.Body.Bytes(), &attempt)
-	w = call("POST", "/v1/vocabulary/lessons/n3-daily-life/attempts", "")
+	w = call("POST", "/v1/vocabulary/lessons/n3-work/attempts", "")
 	var vocabAttempt struct {
 		Data domain.VocabularyAttempt `json:"data"`
 	}
@@ -203,9 +198,6 @@ func TestBillingAPIUnlockRevokeAndDelete(t *testing.T) {
 	}
 	if json.Unmarshal(w.Body.Bytes(), &revokedBilling) != nil || revokedBilling.Data.Entitlement.Tier != domain.TierFree || revokedBilling.Data.OfflineLease != "" {
 		t.Fatal("confirmed refund did not clear the offline lease")
-	}
-	if w = call("POST", "/v1/grammar/attempts/"+attempt.Data.ID+"/complete", ""); w.Code != 402 {
-		t.Fatal("revoked user completes premium quiz")
 	}
 	if w = call("POST", "/v1/vocabulary/attempts/"+vocabAttempt.Data.ID+"/complete", ""); w.Code != 402 {
 		t.Fatal("revoked user completes premium vocabulary quiz")

@@ -248,39 +248,18 @@ func PremiumLevel(level string) bool {
 
 // LessonRef identifies the study lesson a request targets, either from its
 // lesson ID or from the attempt that belongs to one. ok is false for anything
-// that is not a grammar, kanji, reading or vocabulary lesson.
+// that is not a grammar, reading or vocabulary lesson.
 func (s *MemoryStore) LessonRef(lessonID, attemptID string) (kind, id string, ok bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	if lessonID == "" && attemptID != "" {
 		switch {
-		case s.grammarAttempts[attemptID] != nil:
-			lessonID = s.grammarAttempts[attemptID].Attempt.LessonID
-		case s.kanjiAttempts[attemptID] != nil:
-			lessonID = s.kanjiAttempts[attemptID].Attempt.LessonID
-		case s.readingAttempts[attemptID] != nil:
-			lessonID = s.readingAttempts[attemptID].Attempt.LessonID
 		case s.vocabAttempts[attemptID] != nil:
 			lessonID = s.vocabAttempts[attemptID].attempt.LessonID
 		}
 	}
 	if lessonID == "" {
 		return "", "", false
-	}
-	for _, l := range s.grammar {
-		if l.ID == lessonID {
-			return "grammar", lessonID, true
-		}
-	}
-	for _, l := range s.kanji {
-		if l.ID == lessonID {
-			return "kanji", lessonID, true
-		}
-	}
-	for _, l := range s.reading {
-		if l.ID == lessonID {
-			return "reading", lessonID, true
-		}
 	}
 	for _, level := range s.vocabulary {
 		for _, lesson := range level.Lessons {
@@ -292,20 +271,6 @@ func (s *MemoryStore) LessonRef(lessonID, attemptID string) (kind, id string, ok
 	return "", "", false
 }
 
-func (s *MemoryStore) ExamRequiresPremium(id string) bool {
-	if openLearningAccess {
-		return false
-	}
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	for _, e := range s.exams {
-		if e.ID == id {
-			return !(e.System == "JLPT" && e.Level == "N5") && !IsFreeJLPTSimulationExam(e.ID)
-		}
-	}
-	return false
-}
-
 // Authorization covers catalogs, direct lesson URLs, and ongoing quiz IDs.
 func (s *MemoryStore) PremiumRequest(path, level, lessonID, attemptID string) bool {
 	if openLearningAccess {
@@ -313,34 +278,10 @@ func (s *MemoryStore) PremiumRequest(path, level, lessonID, attemptID string) bo
 	}
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	if strings.Contains(path, "/simulation/") && attemptID == "" {
-		if IsSSWLevel(level) {
-			return true
-		}
-		return strings.ToUpper(level) == "N4" || strings.ToUpper(level) == "N3" || IsJFTLevel(level) || strings.ToUpper(level) == "NAT"
-	}
-	if strings.Contains(path, "/ssw/") {
-		return true
-	}
 	// Level catalogs only list lesson titles and progress, never lesson
 	// content, so they stay open: a free account has to see what it can unlock.
 	if strings.Contains(path, "/course") {
 		return false
-	}
-	for _, l := range s.grammar {
-		if l.ID == lessonID {
-			return PremiumLevel(l.Level)
-		}
-	}
-	for _, l := range s.kanji {
-		if l.ID == lessonID {
-			return PremiumLevel(l.Level)
-		}
-	}
-	for _, l := range s.reading {
-		if l.ID == lessonID {
-			return PremiumLevel(l.Level)
-		}
 	}
 	for _, l := range s.vocabulary {
 		for _, lesson := range l.Lessons {
@@ -350,20 +291,8 @@ func (s *MemoryStore) PremiumRequest(path, level, lessonID, attemptID string) bo
 		}
 	}
 	id := ""
-	if a := s.grammarAttempts[attemptID]; a != nil {
-		id = a.Attempt.LessonID
-	}
-	if a := s.kanjiAttempts[attemptID]; a != nil {
-		id = a.Attempt.LessonID
-	}
-	if a := s.readingAttempts[attemptID]; a != nil {
-		id = a.Attempt.LessonID
-	}
 	if a := s.vocabAttempts[attemptID]; a != nil {
 		id = a.attempt.LessonID
-	}
-	if a := s.simulationAttempts[attemptID]; a != nil {
-		return !IsFreeJLPTSimulationExam(a.session.Attempt.ExamID)
 	}
 	for _, level := range s.vocabulary {
 		for _, lesson := range level.Lessons {
@@ -486,33 +415,6 @@ func (s *MemoryStore) DeleteAccountWithProfilePhoto(user string) (string, error)
 			delete(s.vocabAttempts, id)
 		}
 	}
-	for id, a := range s.grammarAttempts {
-		if a.UserID == user {
-			delete(s.grammarAttempts, id)
-		}
-	}
-	for id, a := range s.kanjiAttempts {
-		if a.UserID == user {
-			delete(s.kanjiAttempts, id)
-		}
-	}
-	for id, a := range s.readingAttempts {
-		if a.UserID == user {
-			delete(s.readingAttempts, id)
-		}
-	}
-	for id, a := range s.diagnosticAttempts {
-		if a.session.Attempt.UserID == user {
-			delete(s.diagnosticAttempts, id)
-		}
-	}
-	for id, a := range s.simulationAttempts {
-		if a.session.Attempt.UserID == user {
-			delete(s.simulationAttempts, id)
-		}
-	}
-	s.diagnosticOrder = filterAttemptIDs(s.diagnosticOrder, func(id string) bool { return s.diagnosticAttempts[id] != nil })
-	s.simulationOrder = filterAttemptIDs(s.simulationOrder, func(id string) bool { return s.simulationAttempts[id] != nil })
 	return customPhotoURL, nil
 }
 func filterAttemptIDs(ids []string, keep func(string) bool) []string {

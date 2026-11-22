@@ -178,53 +178,6 @@ func scenarioMixedClaimsAndFallbacksRespectBothLimits(t *testing.T, h *harness) 
 	}
 }
 
-func scenarioCreditConvertsExactlyOnce(t *testing.T, h *harness) {
-	ctx := context.Background()
-	const credit = "simulation:jlpt-n3-simulation-1"
-	if _, err := h.service.Fallback(ctx, userA, credit); err != nil {
-		t.Fatal(err)
-	}
-	var mu sync.Mutex
-	converted := 0
-	run(10, func(i int) {
-		ok, err := h.service.Convert(ctx, userA, credit, fmt.Sprintf("simulation-attempt:attempt-%02d", i))
-		if err != nil {
-			t.Errorf("convert %d: %v", i, err)
-		}
-		if ok {
-			mu.Lock()
-			converted++
-			mu.Unlock()
-		}
-	})
-	if converted != 1 {
-		t.Fatalf("one credit was spent %d times", converted)
-	}
-	if h.service.Allowed(ctx, userA, credit) {
-		t.Fatal("the credit is still held after being spent")
-	}
-	if ok, _ := h.service.Convert(ctx, userA, credit, "simulation-attempt:late"); ok {
-		t.Fatal("a spent credit converted again")
-	}
-	if ok, _ := h.service.Convert(ctx, userB, credit, "simulation-attempt:other"); ok {
-		t.Fatal("another account spent this credit")
-	}
-	// A new credit cannot overwrite an attempt that is already open.
-	listed, _ := h.repo.List(ctx, userA)
-	if len(listed) != 1 {
-		t.Fatalf("unlocks = %v", listed)
-	}
-	if _, err := h.service.Fallback(ctx, userA, credit); err != nil {
-		t.Fatal(err)
-	}
-	if ok, _ := h.service.Convert(ctx, userA, credit, listed[0].ContentKey); ok {
-		t.Fatal("converted onto an attempt that is already open")
-	}
-	if !h.service.Allowed(ctx, userA, credit) {
-		t.Fatal("a refused conversion must keep the credit")
-	}
-}
-
 func scenarioManyAccountsAtOnce(t *testing.T, h *harness) {
 	h.limits.DailyCap = 4
 	const accounts, perAccount = 8, 6

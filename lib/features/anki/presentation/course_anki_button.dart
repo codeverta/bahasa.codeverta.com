@@ -18,39 +18,11 @@ class CourseAnkiDeck {
   final String subtitle;
 }
 
-/// The built-in decks matching a course (`kanji` or `vocabulary`) and JLPT
-/// level. Grammar and reading have no matching deck. IDs come from the
-/// backend Anki catalog (backend/internal/anki/resources/catalog.json).
-List<CourseAnkiDeck> courseAnkiDecks(String type, String level) {
-  final n = level.toLowerCase();
-  if (!const ['n5', 'n4', 'n3', 'n2', 'n1'].contains(n)) return const [];
-  switch (type) {
-    case 'kanji':
-      return [
-        CourseAnkiDeck(
-          id: 'k_$n',
-          title: 'Penggunaan Kanji',
-          subtitle: 'Latih bacaan dan arti kanji dengan kartu',
-        ),
-      ];
-    case 'vocabulary':
-      return [
-        CourseAnkiDeck(
-          id: n,
-          title: 'Bacaan Kosakata',
-          subtitle: 'Kartu: kanji → cara baca',
-        ),
-        // Meaning decks exist only for these levels in the catalog.
-        if (const ['n5', 'n4', 'n2'].contains(n))
-          CourseAnkiDeck(
-            id: '${n}m',
-            title: 'Arti Kosakata',
-            subtitle: 'Kartu: kata → arti',
-          ),
-      ];
-  }
-  return const [];
-}
+/// The built-in decks matching a course and level. The Japanese built-in decks
+/// were removed and no default deck set ships yet, so no course has a matching
+/// deck and the button stays hidden. The mapping returns when the default
+/// Bahasa Master decks arrive (docs/TODO.md, Fase 5 and 6).
+List<CourseAnkiDeck> courseAnkiDecks(String type, String level) => const [];
 
 /// App-bar action that opens the Anki deck for the course level, or lets the
 /// user pick when several decks match.

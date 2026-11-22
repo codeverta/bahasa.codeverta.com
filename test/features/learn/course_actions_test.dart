@@ -48,39 +48,20 @@ Future<void> _pump(WidgetTester tester, List<Widget> actions) async {
 }
 
 void main() {
-  test('courses map to the matching built-in Anki decks', () {
-    expect(courseAnkiDecks('kanji', 'N5').map((d) => d.id), ['k_n5']);
-    expect(courseAnkiDecks('kanji', 'N1').map((d) => d.id), ['k_n1']);
-    expect(courseAnkiDecks('vocabulary', 'N5').map((d) => d.id), ['n5', 'n5m']);
-    expect(courseAnkiDecks('vocabulary', 'N3').map((d) => d.id), ['n3']);
-    expect(courseAnkiDecks('grammar', 'N5'), isEmpty);
-    expect(courseAnkiDecks('reading', 'N5'), isEmpty);
-    expect(courseAnkiDecks('kanji', 'JFT'), isEmpty);
+  test('no built-in Anki decks ship yet, so no course maps to a deck', () {
+    for (final type in ['vocabulary', 'grammar', 'reading']) {
+      for (final level in ['N5', 'N3', 'JFT']) {
+        expect(courseAnkiDecks(type, level), isEmpty);
+      }
+    }
   });
 
-  testWidgets('kanji opens its single deck directly', (tester) async {
-    await _pump(tester, const [CourseAnkiButton(type: 'kanji', level: 'N5')]);
-    await tester.tap(find.byKey(const ValueKey('course-anki-button')));
-    await tester.pumpAndSettle();
-    expect(find.text('deck k_n5'), findsOneWidget);
-  });
-
-  testWidgets('vocabulary lets the learner choose between two decks', (
+  testWidgets('the course Anki action is hidden while there are no decks', (
     tester,
   ) async {
     await _pump(tester, const [
       CourseAnkiButton(type: 'vocabulary', level: 'N4'),
     ]);
-    await tester.tap(find.byKey(const ValueKey('course-anki-button')));
-    await tester.pumpAndSettle();
-    expect(find.text('N4 · Bacaan Kosakata'), findsOneWidget);
-    await tester.tap(find.byKey(const ValueKey('course-anki-deck-n4m')));
-    await tester.pumpAndSettle();
-    expect(find.text('deck n4m'), findsOneWidget);
-  });
-
-  testWidgets('grammar has no Anki action', (tester) async {
-    await _pump(tester, const [CourseAnkiButton(type: 'grammar', level: 'N5')]);
     expect(find.byKey(const ValueKey('course-anki-button')), findsNothing);
   });
 }

@@ -60,7 +60,6 @@ void main() {
     expect(dashboard.dailyGoal.completion, 0.5);
     expect(dashboard.categories.single.name, 'Vocabulary from API');
     expect(dashboard.tracks.single.progress, 35);
-    expect(dashboard.exams.single.questionCount, 25);
     expect(dashboard.plans.single.billingType, 'lifetime');
     expect(dashboard.achievements.single.target, 1);
     expect(
@@ -147,17 +146,6 @@ const _response = <String, dynamic>{
         'title': 'JLPT N5',
         'description': 'Fondasi',
         'progress': 35,
-        'requiredTier': 'free',
-      },
-    ],
-    'exams': <Map<String, dynamic>>[
-      {
-        'id': 'exam-1',
-        'system': 'JLPT',
-        'level': 'N5',
-        'title': 'Diagnostic',
-        'questionCount': 25,
-        'durationMinutes': 30,
         'requiredTier': 'free',
       },
     ],

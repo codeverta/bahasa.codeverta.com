@@ -3,13 +3,11 @@ import 'package:bahasa_master/core/ads/ads_config.dart';
 import 'package:bahasa_master/core/ads/completion_ads.dart';
 import 'package:bahasa_master/core/gamification/xp_gain.dart';
 import 'package:bahasa_master/core/localization/app_localizations.dart';
-import 'package:bahasa_master/core/settings/display_preferences.dart';
 import 'package:bahasa_master/core/unlock/locked_content.dart';
 import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
 import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_sheet.dart';
 import 'package:bahasa_master/features/learn/grammar/domain/grammar_models.dart';
 import 'package:bahasa_master/features/learn/grammar/presentation/controllers/grammar_controller.dart';
-import 'package:bahasa_master/shared/presentation/widgets/japanese_ruby_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -87,7 +85,6 @@ class _Study extends ConsumerStatefulWidget {
 class _StudyState extends ConsumerState<_Study> {
   @override
   Widget build(BuildContext context) {
-    final furigana = ref.watch(displayPreferencesProvider).furigana;
     final state = widget.state;
     final controller = widget.controller;
     final point = state.lesson.points[state.pointIndex];
@@ -152,24 +149,6 @@ class _StudyState extends ConsumerState<_Study> {
                 icon: Icons.menu_book_rounded,
               ),
               const SizedBox(height: 22),
-              FilterChip(
-                key: const Key('grammar-furigana-toggle'),
-                label: Text('Furigana'.localized(context)),
-                selected: furigana,
-                showCheckmark: false,
-                selectedColor: colors.secondary,
-                labelStyle: TextStyle(
-                  color: furigana ? colors.onSecondary : colors.onSurface,
-                ),
-                avatar: Icon(
-                  Icons.translate_rounded,
-                  size: 18,
-                  color: furigana ? colors.onSecondary : colors.primary,
-                ),
-                onSelected: (enabled) => ref
-                    .read(displayPreferencesProvider.notifier)
-                    .setFurigana(enabled: enabled),
-              ),
               const SizedBox(height: 12),
               Text(
                 'Contoh kalimat'.localized(context),
@@ -186,35 +165,17 @@ class _StudyState extends ConsumerState<_Study> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        if (furigana)
-                          JapaneseRubyText(
-                            text: example.japanese,
-                            reading: example.reading,
-                            key: Key(
-                              'grammar-example-${state.pointIndex}-$index',
-                            ),
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              height: 1.5,
-                            ),
-                            rubyStyle: TextStyle(
-                              color: colors.primary,
-                              fontSize: 11,
-                            ),
-                          )
-                        else
-                          Text(
-                            example.japanese,
-                            key: Key(
-                              'grammar-example-${state.pointIndex}-$index',
-                            ),
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              height: 1.5,
-                            ),
+                        Text(
+                          example.japanese,
+                          key: Key(
+                            'grammar-example-${state.pointIndex}-$index',
                           ),
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            height: 1.5,
+                          ),
+                        ),
                         const SizedBox(height: 10),
                         Text(example.meaning),
                       ],

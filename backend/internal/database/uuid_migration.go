@@ -22,8 +22,6 @@ var uuidTables = []uuidTable{
 	{"billing_purchases", []string{"purchase_key"}, "billing_purchase_key", true},
 	{"billing_tokens", []string{"user_id"}, "billing_token_user_id", true},
 	{"deleted_demo", []string{"user_id"}, "deleted_demo_user_id", true},
-	{"dictionary_responses", []string{"cache_key"}, "dictionary_cache_key", false},
-	{"dictionary_entries", []string{"source", "source_entry_id"}, "dictionary_entry_source", false},
 }
 
 func textValue(v any) string {
@@ -40,7 +38,7 @@ func textValue(v any) string {
 }
 
 // PrepareUUIDRow is shared by the MariaDB schema migration and legacy importer.
-// External purchase tokens and dictionary source identifiers keep their values.
+// External purchase tokens keep their values.
 func PrepareUUIDRow(table string, row map[string]any) error {
 	switch table {
 	case "billing_purchases":
@@ -52,11 +50,6 @@ func PrepareUUIDRow(table string, row map[string]any) error {
 		if _, exists := row["user_id"]; !exists {
 			row["user_id"] = row["id"]
 			delete(row, "id")
-		}
-	case "dictionary_entries":
-		if old, exists := row["entry_id"]; exists {
-			row["source_entry_id"] = old
-			delete(row, "entry_id")
 		}
 	}
 	if table == "accounts" || table == "billing_purchases" {
@@ -135,9 +128,6 @@ func EnsureUUIDSchema(db *gorm.DB) error {
 			needed = true
 		}
 		if spec.name == "deleted_demo" && !db.Migrator().HasColumn(spec.name, "user_id") {
-			needed = true
-		}
-		if spec.name == "dictionary_entries" && !db.Migrator().HasColumn(spec.name, "source_entry_id") {
 			needed = true
 		}
 	}

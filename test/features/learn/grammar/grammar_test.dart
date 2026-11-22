@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:bahasa_master/core/ads/ads_config.dart';
 import 'package:bahasa_master/core/ads/ads_controller.dart';
@@ -59,76 +57,6 @@ void main() {
     expect(reopened.state.valueOrNull!.pointIndex, 1);
     expect(history.state.length, 1);
   });
-  testWidgets('N2 opens its full catalog and searches Japanese patterns', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(360, 640);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final content =
-        jsonDecode(File('backend/data/grammar/n2.json').readAsStringSync())
-            as List<dynamic>;
-    final lessons = content.indexed.map((entry) {
-      final data = entry.$2 as Map<String, dynamic>;
-      return GrammarLessonSummary(
-        id: 'grammar-n2-${(entry.$1 + 1).toString().padLeft(2, '0')}',
-        level: 'N2',
-        order: entry.$1 + 1,
-        chapter: data['chapter'] as String,
-        title: data['title'] as String,
-        pointCount: (data['points'] as List<dynamic>).length,
-        questionCount: (data['questions'] as List<dynamic>).length,
-        patterns: (data['points'] as List<dynamic>)
-            .map((p) => (p as Map<String, dynamic>)['pattern'] as String)
-            .toList(),
-        bestScore: 0,
-        completed: false,
-      );
-    }).toList();
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(_preferences),
-          authControllerProvider.overrideWith(
-            (ref) => AuthController.test(const AuthenticationState.guest()),
-          ),
-          offlineProvider.overrideWithValue(true),
-          grammarCourseLevelProvider('N2').overrideWith(
-            (ref) async => GrammarCourse(
-              level: 'N2',
-              title: 'Grammar JLPT N2',
-              progress: 0,
-              completedLessons: 0,
-              lessons: lessons,
-            ),
-          ),
-        ],
-        child: const MaterialApp(home: GrammarCourseScreen(initialLevel: 'N2')),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('Grammar JLPT N2'), findsOneWidget);
-    expect(find.text('60 lesson • 120 pola • 300 soal'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-    final search = find.byKey(const ValueKey('grammar-search-N2'));
-    await tester.scrollUntilVisible(
-      search,
-      100,
-      scrollable: find.byType(Scrollable).last,
-    );
-    await tester.enterText(search, 'に先立って');
-    await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.byKey(const Key('grammar-lesson-grammar-n2-59')),
-      100,
-      scrollable: find.byType(Scrollable).last,
-    );
-    expect(find.text('Seolah-olah dan sebelum tahap penting'), findsOneWidget);
-    expect(find.byKey(const Key('grammar-lesson-grammar-n2-01')), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
-
   testWidgets('course displays saved progress and searches lesson titles', (
     tester,
   ) async {
@@ -178,34 +106,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(find.text('Nです'), findsOneWidget);
-      final furiganaToggle = find.byKey(const Key('grammar-furigana-toggle'));
-      expect(tester.widget<FilterChip>(furiganaToggle).selected, isTrue);
+      expect(find.byKey(const Key('grammar-furigana-toggle')), findsNothing);
       final example = find.byKey(const Key('grammar-example-0-0'));
       await tester.scrollUntilVisible(
         example,
         120,
         scrollable: find.byType(Scrollable).first,
       );
-      expect(find.text('わたし'), findsOneWidget);
-      await tester.ensureVisible(furiganaToggle);
-      await tester.tap(furiganaToggle);
-      await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(
-        example,
-        120,
-        scrollable: find.byType(Scrollable).first,
-      );
       expect(find.text('わたし'), findsNothing);
-      await tester.ensureVisible(furiganaToggle);
-      await tester.tap(furiganaToggle);
-      await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(
-        example,
-        120,
-        scrollable: find.byType(Scrollable).first,
-      );
-      expect(find.text('わたし'), findsOneWidget);
-      await tester.ensureVisible(find.text('Hindari kesalahan ini'));
       await tester.scrollUntilVisible(find.text('Hindari kesalahan ini'), 200);
       expect(find.text('Hindari kesalahan ini').hitTestable(), findsOneWidget);
       expect(

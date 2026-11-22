@@ -15,8 +15,4 @@ func TestAssetURLs(t *testing.T) {
 	if got := s.assetURLLocked(""); got != "" {
 		t.Fatalf("empty asset URL = %q", got)
 	}
-	levels := s.VocabularyLevels("user-demo")
-	if levels[0].Lessons[0].ImageURL == "" {
-		t.Fatal("lesson thumbnails require remote URLs")
-	}
 }

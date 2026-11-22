@@ -12,62 +12,20 @@ import (
 
 func passStudyLesson(t *testing.T, s *MemoryStore, user, subject, id string) {
 	t.Helper()
-	switch subject {
-	case "grammar":
-		a, e := s.StartGrammarAttempt(user, id)
-		if e != nil {
+	if subject != "vocabulary" {
+		t.Fatalf("unsupported study subject %q", subject)
+	}
+	a, e := s.StartVocabularyAttempt(user, id)
+	if e != nil {
+		t.Fatal(e)
+	}
+	for _, q := range a.Questions {
+		if _, e = s.AnswerVocabularyQuestion(user, a.ID, q.ID, s.vocabAttempts[a.ID].correct[q.ID]); e != nil {
 			t.Fatal(e)
 		}
-		for _, q := range a.Questions {
-			if _, e = s.AnswerGrammarQuestion(user, a.ID, q.ID, s.grammarAttempts[a.ID].Correct[q.ID]); e != nil {
-				t.Fatal(e)
-			}
-		}
-		if _, e = s.CompleteGrammarAttempt(user, a.ID); e != nil {
-			t.Fatal(e)
-		}
-		if _, e = s.CompleteGrammarAttempt(user, a.ID); e != nil {
-			t.Fatal(e)
-		}
-	case "kanji":
-		a, e := s.StartKanjiAttempt(user, id)
-		if e != nil {
-			t.Fatal(e)
-		}
-		for _, q := range a.Questions {
-			if _, e = s.AnswerKanjiQuestion(user, a.ID, q.ID, s.kanjiAttempts[a.ID].Correct[q.ID]); e != nil {
-				t.Fatal(e)
-			}
-		}
-		if _, e = s.CompleteKanjiAttempt(user, a.ID); e != nil {
-			t.Fatal(e)
-		}
-	case "reading":
-		a, e := s.StartReadingAttempt(user, id)
-		if e != nil {
-			t.Fatal(e)
-		}
-		for _, q := range a.Questions {
-			if _, e = s.AnswerReadingQuestion(user, a.ID, q.ID, s.readingAttempts[a.ID].Correct[q.ID]); e != nil {
-				t.Fatal(e)
-			}
-		}
-		if _, e = s.CompleteReadingAttempt(user, a.ID); e != nil {
-			t.Fatal(e)
-		}
-	case "vocabulary":
-		a, e := s.StartVocabularyAttempt(user, id)
-		if e != nil {
-			t.Fatal(e)
-		}
-		for _, q := range a.Questions {
-			if _, e = s.AnswerVocabularyQuestion(user, a.ID, q.ID, s.vocabAttempts[a.ID].correct[q.ID]); e != nil {
-				t.Fatal(e)
-			}
-		}
-		if _, e = s.CompleteVocabularyAttempt(user, a.ID); e != nil {
-			t.Fatal(e)
-		}
+	}
+	if _, e = s.CompleteVocabularyAttempt(user, a.ID); e != nil {
+		t.Fatal(e)
 	}
 }
 
@@ -88,16 +46,16 @@ func TestGamificationRealLessonRewardsPersistAndDoNotRepeat(t *testing.T) {
 	if err := s.EnableGamificationPersistence(path); err != nil {
 		t.Fatal(err)
 	}
-	lessons := map[string]string{"grammar": "grammar-n4-01", "kanji": "kanji-n4-01", "reading": "reading-n2-01", "vocabulary": "n5-daily"}
+	lessons := map[string]string{"vocabulary": "n5-daily"}
 	for kind, id := range lessons {
 		passStudyLesson(t, s, "c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", kind, id)
 	}
 	summary := s.Gamification("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec")
-	if summary.XP != 200 || summary.LessonsCompleted != 4 || summary.StreakDays != 1 || summary.Level != 1 {
+	if summary.XP != 50 || summary.LessonsCompleted != 1 || summary.StreakDays != 1 || summary.Level != 1 {
 		t.Fatalf("bad summary: %+v", summary)
 	}
 	first := achievementByID(t, summary, "first-lesson")
-	if first.UnlockedAt == nil || achievementByID(t, summary, "all-subjects").UnlockedAt == nil {
+	if first.UnlockedAt == nil {
 		t.Fatal("missing achievement unlock")
 	}
 	if s.Gamification("926ea9c7-89bb-496e-bb5c-c9d4c7d2df6f").XP != 0 {
@@ -115,12 +73,12 @@ func TestGamificationRealLessonRewardsPersistAndDoNotRepeat(t *testing.T) {
 		passStudyLesson(t, reopened, "c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", kind, id)
 	}
 	after := reopened.Gamification("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec")
-	// Passing the same four lessons again pays +10 each (within the daily
-	// repeat cap), never the 50 again.
-	if after.XP != 240 || after.LessonsCompleted != 4 || !achievementByID(t, after, "first-lesson").UnlockedAt.Equal(*first.UnlockedAt) {
+	// Passing the same lesson again pays +10 (within the daily repeat cap),
+	// never the 50 again.
+	if after.XP != 60 || after.LessonsCompleted != 1 || !achievementByID(t, after, "first-lesson").UnlockedAt.Equal(*first.UnlockedAt) {
 		t.Fatal("restart duplicated rewards or lost progress")
 	}
-	if reopened.Profile("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec").XP != 240 || !reopened.GrammarCourse("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", "N4").Lessons[0].Completed {
+	if reopened.Profile("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec").XP != 60 || !reopened.progress["c5056e4a-dc47-4f74-bdb9-44b8c794c9ec"]["n5-daily"].Completed {
 		t.Fatal("profile/course not restored")
 	}
 	if _, err := reopened.SaveProgress("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", domain.LessonProgress{LessonID: "n5-daily", Completion: 100}); !errors.Is(err, ErrInvalid) {
@@ -129,7 +87,7 @@ func TestGamificationRealLessonRewardsPersistAndDoNotRepeat(t *testing.T) {
 	if _, err := reopened.SaveProgress("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", domain.LessonProgress{LessonID: "fake", Completion: 100}); err != nil {
 		t.Fatal(err)
 	}
-	if reopened.Gamification("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec").LessonsCompleted != 4 {
+	if reopened.Gamification("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec").LessonsCompleted != 1 {
 		t.Fatal("manual progress awarded achievement")
 	}
 }
@@ -205,61 +163,20 @@ func TestGamificationConcurrentRewardsAndDatabaseFailure(t *testing.T) {
 	if err := s.Close(); err != nil {
 		t.Fatal(err)
 	}
-	a, err := s.StartGrammarAttempt("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", "grammar-n5-02")
+	a, err := s.StartVocabularyAttempt("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", "n4-plans")
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, q := range a.Questions {
-		if _, err = s.AnswerGrammarQuestion("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", a.ID, q.ID, s.grammarAttempts[a.ID].Correct[q.ID]); err != nil {
+		if _, err = s.AnswerVocabularyQuestion("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", a.ID, q.ID, s.vocabAttempts[a.ID].correct[q.ID]); err != nil {
 			t.Fatal(err)
 		}
 	}
-	if _, err = s.CompleteGrammarAttempt("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", a.ID); err == nil {
+	if _, err = s.CompleteVocabularyAttempt("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", a.ID); err == nil {
 		t.Fatal("closed database reported completion success")
 	}
-	if s.grammarAttempts[a.ID].Result != nil || s.Gamification("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec").XP != 150 || s.progress["c5056e4a-dc47-4f74-bdb9-44b8c794c9ec"]["grammar-n5-02"].Completed {
+	if s.vocabAttempts[a.ID].result != nil || s.Gamification("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec").XP != 150 || s.progress["c5056e4a-dc47-4f74-bdb9-44b8c794c9ec"]["n4-plans"].Completed {
 		t.Fatal("disk failure partially awarded progress")
-	}
-}
-
-func TestGamificationExamRewardsAndEmptyAttempts(t *testing.T) {
-	s := NewMemoryStore()
-	grantTestLifetime(t, s, "c5056e4a-dc47-4f74-bdb9-44b8c794c9ec")
-	for i := 0; i < 2; i++ {
-		a, err := s.StartSimulation("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", "N4")
-		if err != nil {
-			t.Fatal(err)
-		}
-		state := s.simulationAttempts[a.ID]
-		for _, section := range []string{"vocabulary", "grammar"} {
-			for _, q := range state.questions {
-				if q.Section == section {
-					if err = s.SaveSimulationAnswer("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", a.ID, q.ID, state.correct[q.ID], false); err != nil {
-						t.Fatal(err)
-					}
-				}
-			}
-			if _, err = s.SubmitSimulationSection("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec", a.ID, section); err != nil {
-				t.Fatal(err)
-			}
-		}
-	}
-	// First pass pays 100 XP, a later completion scoring >= 50% pays 20.
-	if summary := s.Gamification("c5056e4a-dc47-4f74-bdb9-44b8c794c9ec"); summary.XP != 120 || summary.ExamsCompleted != 1 || achievementByID(t, summary, "exam-ready").UnlockedAt == nil {
-		t.Fatal("exam reward duplicated or missing")
-	}
-	grantTestLifetime(t, s, "926ea9c7-89bb-496e-bb5c-c9d4c7d2df6f")
-	empty, err := s.StartSimulation("926ea9c7-89bb-496e-bb5c-c9d4c7d2df6f", "N4")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, section := range []string{"vocabulary", "grammar"} {
-		if _, err = s.SubmitSimulationSection("926ea9c7-89bb-496e-bb5c-c9d4c7d2df6f", empty.ID, section); err != nil {
-			t.Fatal(err)
-		}
-	}
-	if summary := s.Gamification("926ea9c7-89bb-496e-bb5c-c9d4c7d2df6f"); summary.XP != 0 || summary.ActiveDays != 0 || summary.ExamsCompleted != 0 {
-		t.Fatal("unanswered exam earned progress")
 	}
 }
 

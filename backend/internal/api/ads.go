@@ -39,10 +39,8 @@ type AdPlacement struct {
 // switch; each placement can also be turned off individually. The app never
 // shows ads to Premium or Lifetime users regardless of this configuration.
 type AdsConfig struct {
-	Enabled    bool        `json:"enabled"`
-	Banner     AdPlacement `json:"banner"`
-	NewsNative AdPlacement `json:"newsNative"`
-	JobsNative AdPlacement `json:"jobsNative"`
+	Enabled bool        `json:"enabled"`
+	Banner  AdPlacement `json:"banner"`
 	// AIChatRewarded is the opt-in rewarded ad that unlocks one AI chat
 	// message after the daily free quota.
 	AIChatRewarded AdPlacement `json:"aiChatRewarded"`
@@ -50,8 +48,6 @@ type AdsConfig struct {
 	// once the user has used the app for Every minutes since the last
 	// full-screen ad. Never mid-activity.
 	Interstitial AdPlacement `json:"interstitial"`
-	// DictionaryNative is inserted every N dictionary search results.
-	DictionaryNative AdPlacement `json:"dictionaryNative"`
 	// QuizResultBanner sits on lesson quiz and exam result screens.
 	QuizResultBanner AdPlacement `json:"quizResultBanner"`
 	// UnlockRewarded is the opt-in rewarded ad that opens one locked item
@@ -67,21 +63,13 @@ type AdsConfig struct {
 	// UnlockKinds switches the ad offer per kind of item. An item opened
 	// earlier stays open when its kind is switched off later.
 	UnlockKinds UnlockKinds `json:"unlockKinds"`
-	// ContentGates locks content that used to be free. Both start off so a
-	// deploy changes nothing; switch them on only after the app that can
-	// unlock them is out (older apps cannot read a locked article or apply).
-	ContentGates ContentGates `json:"contentGates"`
 	// InterstitialKinds switches the full-screen ad per completion moment.
 	// The ad only ever follows a finished lesson, exam, practice or Anki
 	// session, when the user leaves its result screen.
 	InterstitialKinds CompletionKinds `json:"interstitialKinds"`
-	// ExamTabBanner sits above the bottom navigation on the Exam tab.
-	ExamTabBanner AdPlacement `json:"examTabBanner"`
 	// PracticeResultBanner sits on the end screen of an Anki session, an SSW
 	// practice and a Kaigo lesson.
 	PracticeResultBanner AdPlacement `json:"practiceResultBanner"`
-	// NewsArticleNative is one native ad at the end of a news article.
-	NewsArticleNative AdPlacement `json:"newsArticleNative"`
 	// AnkiSessionMinCards is how many cards an Anki session needs before it
 	// counts as finished. Zero means the default.
 	AnkiSessionMinCards int `json:"ankiSessionMinCards"`
@@ -136,18 +124,8 @@ const defaultAnkiSessionMinCards = 10
 
 // UnlockKinds says which kinds of item may be opened with a rewarded ad.
 type UnlockKinds struct {
-	Lessons    bool `json:"lessons"`    // N3–N1 grammar, kanji, reading, vocabulary
-	Anki       bool `json:"anki"`       // built-in N3–N1 Anki decks
-	Simulation bool `json:"simulation"` // JLPT N3 simulation paper 01, per attempt
-	News       bool `json:"news"`       // one news article
-	Jobs       bool `json:"jobs"`       // one job's application link
-}
-
-// ContentGates locks news articles and job application links for free
-// accounts. Lessons, decks and simulations are locked by BAHASA_OPEN_ACCESS.
-type ContentGates struct {
-	News bool `json:"news"`
-	Jobs bool `json:"jobs"`
+	Lessons bool `json:"lessons"` // N3–N1 grammar, kanji, reading, vocabulary
+	Anki    bool `json:"anki"`    // built-in N3–N1 Anki decks
 }
 
 // unlockOffered reports whether an ad may open an item of kind.
@@ -163,12 +141,6 @@ func (c AdsConfig) unlockOffered(kind unlock.Kind) bool {
 		return c.UnlockKinds.Lessons
 	case kind == unlock.KindAnki:
 		return c.UnlockKinds.Anki
-	case kind == unlock.KindSimulation:
-		return c.UnlockKinds.Simulation
-	case kind == unlock.KindNews:
-		return c.UnlockKinds.News
-	case kind == unlock.KindJob:
-		return c.UnlockKinds.Jobs
 	}
 	return false
 }
@@ -209,19 +181,14 @@ type AdsStore struct {
 func defaultAdsConfig() AdsConfig {
 	return AdsConfig{
 		Banner:           AdPlacement{Enabled: true, UnitID: testBannerAdUnit},
-		NewsNative:       AdPlacement{Enabled: true, UnitID: testNativeAdUnit, Every: 6},
-		JobsNative:       AdPlacement{Enabled: true, UnitID: testNativeAdUnit, Every: 8},
 		AIChatRewarded:   AdPlacement{Enabled: true, UnitID: testRewardedAdUnit},
 		Interstitial:     AdPlacement{Enabled: true, UnitID: testInterstitialAdUnit, Every: defaultInterstitialMinutes},
-		DictionaryNative: AdPlacement{Enabled: true, UnitID: testNativeAdUnit, Every: 8},
 		QuizResultBanner: AdPlacement{Enabled: true, UnitID: testBannerAdUnit},
 		UnlockRewarded:   AdPlacement{Enabled: true, UnitID: testRewardedAdUnit},
 		UnlockDailyCap:   defaultUnlockDailyCap, UnlockFallbackPerDay: defaultUnlockFallbackPerDay,
-		UnlockKinds:          UnlockKinds{Lessons: true, Anki: true, Simulation: true, News: true, Jobs: true},
+		UnlockKinds:          UnlockKinds{Lessons: true, Anki: true},
 		InterstitialKinds:    CompletionKinds{Lessons: true, Exams: true, Practice: true, Anki: true},
-		ExamTabBanner:        AdPlacement{Enabled: true, UnitID: testBannerAdUnit},
 		PracticeResultBanner: AdPlacement{Enabled: true, UnitID: testBannerAdUnit},
-		NewsArticleNative:    AdPlacement{Enabled: true, UnitID: testNativeAdUnit},
 		AnkiSessionMinCards:  defaultAnkiSessionMinCards,
 		XPRepeatDailyCap:     defaultXPRepeatDailyCap,
 		XPBoostRewarded:      AdPlacement{Enabled: true, UnitID: testRewardedAdUnit},
@@ -250,12 +217,12 @@ func (s *Server) ConfigureAds(path, token string) error {
 
 func validateAdsConfig(config AdsConfig) error {
 	placements := map[string]AdPlacement{
-		"banner": config.Banner, "newsNative": config.NewsNative, "jobsNative": config.JobsNative,
+		"banner":         config.Banner,
 		"aiChatRewarded": config.AIChatRewarded, "interstitial": config.Interstitial,
-		"dictionaryNative": config.DictionaryNative, "quizResultBanner": config.QuizResultBanner,
-		"unlockRewarded": config.UnlockRewarded, "examTabBanner": config.ExamTabBanner,
-		"practiceResultBanner": config.PracticeResultBanner, "newsArticleNative": config.NewsArticleNative,
-		"xpBoostRewarded": config.XPBoostRewarded,
+		"quizResultBanner":     config.QuizResultBanner,
+		"unlockRewarded":       config.UnlockRewarded,
+		"practiceResultBanner": config.PracticeResultBanner,
+		"xpBoostRewarded":      config.XPBoostRewarded,
 	}
 	if config.XPBoostDailyCap != 0 && (config.XPBoostDailyCap < 1 || config.XPBoostDailyCap > 50) {
 		return fmt.Errorf("xpBoostDailyCap: batas 2× XP harus 1 sampai 50 per hari")
@@ -279,14 +246,6 @@ func validateAdsConfig(config AdsConfig) error {
 		}
 		if placement.Enabled && placement.UnitID == "" {
 			return fmt.Errorf("%s: isi ID unit iklan sebelum mengaktifkan", name)
-		}
-		if (name == "newsNative" || name == "jobsNative") && (placement.Every < 3 || placement.Every > 30) {
-			return fmt.Errorf("%s: jarak iklan harus 3 sampai 30 item", name)
-		}
-		// Newer placements only need spacing while they are switched on, so an
-		// older admin client that omits them can still save.
-		if name == "dictionaryNative" && placement.Enabled && (placement.Every < 3 || placement.Every > 30) {
-			return fmt.Errorf("%s: jarak iklan harus 3 sampai 30 item", name)
 		}
 		if name == "interstitial" && placement.Enabled && (placement.Every < 5 || placement.Every > 60) {
 			return fmt.Errorf("%s: jeda iklan layar penuh harus 5 sampai 60 menit", name)
@@ -364,20 +323,11 @@ func (s *Server) updateAdsConfig(w http.ResponseWriter, r *http.Request) {
 	if _, ok := sent["unlockKinds"]; !ok {
 		input.UnlockKinds = current.UnlockKinds
 	}
-	if _, ok := sent["contentGates"]; !ok {
-		input.ContentGates = current.ContentGates
-	}
 	if _, ok := sent["interstitialKinds"]; !ok {
 		input.InterstitialKinds = current.InterstitialKinds
 	}
-	if _, ok := sent["examTabBanner"]; !ok {
-		input.ExamTabBanner = current.ExamTabBanner
-	}
 	if _, ok := sent["practiceResultBanner"]; !ok {
 		input.PracticeResultBanner = current.PracticeResultBanner
-	}
-	if _, ok := sent["newsArticleNative"]; !ok {
-		input.NewsArticleNative = current.NewsArticleNative
 	}
 	if _, ok := sent["ankiSessionMinCards"]; !ok {
 		input.AnkiSessionMinCards = current.AnkiSessionMinCards
@@ -426,13 +376,11 @@ const adsAdminHTML = `<!doctype html><html lang="id"><meta charset="utf-8"><meta
 <label for="token">Kunci admin</label><input id="token" type="password" autocomplete="off"><p><button id="load">Buka pengaturan</button></p>
 <form id="form" hidden>
 <p class="master"><label><input type="checkbox" id="enabled"> Iklan aktif untuk semua pengguna gratis</label></p>
-<fieldset><legend>Banner (bawah layar Beranda, Belajar, Kamus)</legend><label><input type="checkbox" id="banner-enabled"> Aktif</label><label for="banner-unit">ID unit iklan</label><input type="text" id="banner-unit"></fieldset>
-<fieldset><legend>Native di daftar Berita</legend><label><input type="checkbox" id="newsNative-enabled"> Aktif</label><label for="newsNative-unit">ID unit iklan</label><input type="text" id="newsNative-unit"><label for="newsNative-every">Tampil setiap N berita (3-30)</label><input type="number" id="newsNative-every" min="3" max="30"></fieldset>
-<fieldset><legend>Native di daftar Lowongan</legend><label><input type="checkbox" id="jobsNative-enabled"> Aktif</label><label for="jobsNative-unit">ID unit iklan</label><input type="text" id="jobsNative-unit"><label for="jobsNative-every">Tampil setiap N lowongan (3-30)</label><input type="number" id="jobsNative-every" min="3" max="30"></fieldset>
+<fieldset><legend>Banner (bawah layar Beranda dan Belajar)</legend><label><input type="checkbox" id="banner-enabled"> Aktif</label><label for="banner-unit">ID unit iklan</label><input type="text" id="banner-unit"></fieldset>
 <fieldset><legend>Rewarded di AI Chat (setelah kuota gratis harian habis)</legend><label><input type="checkbox" id="aiChatRewarded-enabled"> Aktif</label><label for="aiChatRewarded-unit">ID unit iklan rewarded</label><input type="text" id="aiChatRewarded-unit"><small>Jika nonaktif, pengguna gratis yang kuotanya habis diarahkan ke Lifetime.</small></fieldset>
 <p><small>ID uji Google (ca-app-pub-3940256099942544/...) tidak menghasilkan pendapatan. Ganti dengan ID unit iklan asli dari akun AdMob Anda. Build debug selalu memakai ID uji.</small></p>
 <button id="save" type="submit">Simpan</button> <span id="status" role="status"></span></form>
-<script>const el=id=>document.getElementById(id),P=['banner','newsNative','jobsNative','aiChatRewarded'],E=['newsNative','jobsNative'];let loaded=false;
+<script>const el=id=>document.getElementById(id),P=['banner','aiChatRewarded'],E=[];let loaded=false;
 const auth=()=>({Authorization:'Bearer '+el('token').value});
 el('load').onclick=async()=>{el('status').textContent='';try{const r=await fetch('/v1/admin/ads-config',{cache:'no-store',headers:auth()});if(!r.ok){alert(r.status===401?'Kunci admin salah atau belum diatur di server.':'Gagal membuka pengaturan.');return}const c=(await r.json()).data;el('enabled').checked=c.enabled;for(const p of P){const v=c[p]||{};el(p+'-enabled').checked=!!v.enabled;el(p+'-unit').value=v.unitId||'';if(E.includes(p))el(p+'-every').value=v.every||6}loaded=true;el('form').hidden=false}catch(e){alert('Koneksi gagal.')}};
 el('form').onsubmit=async e=>{e.preventDefault();if(!loaded)return;const d={enabled:el('enabled').checked};for(const p of P){d[p]={enabled:el(p+'-enabled').checked,unitId:el(p+'-unit').value.trim()};if(E.includes(p))d[p].every=Number(el(p+'-every').value)}el('save').disabled=true;el('status').textContent='Menyimpan…';try{const r=await fetch('/v1/admin/ads-config',{method:'PUT',headers:{'Content-Type':'application/json',...auth()},body:JSON.stringify(d)});const j=await r.json();el('status').textContent=r.ok?'Tersimpan. Perubahan berlaku saat pengguna membuka aplikasi berikutnya.':(j.error&&j.error.message||'Gagal menyimpan.')}catch(e){el('status').textContent='Koneksi gagal.'}finally{el('save').disabled=false}};</script></html>`

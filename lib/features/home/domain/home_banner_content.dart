@@ -1,6 +1,6 @@
 import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 
-/// Five distinct destinations, even when an older API has no Manga banner yet.
+/// Distinct destinations, even when an older API has no banners yet.
 /// Subscribers see Anki in place of the purchase offer.
 List<HomeBanner> homeBannersFor(
   HomeDashboard data, {
@@ -17,33 +17,7 @@ List<HomeBanner> homeBannersFor(
       action: 'learn',
       buttonLabel: 'Mulai belajar',
     ),
-    HomeBanner(
-      id: 'ssw',
-      title: 'Siap bekerja di Jepang',
-      description:
-          'Kenali bidang SSW, pelajari materi, dan coba simulasi ujiannya.',
-      imageUrl: '',
-      action: 'ssw',
-      buttonLabel: 'Jelajahi SSW',
-    ),
-    HomeBanner(
-      id: 'jobs',
-      title: 'Temukan peluang kariermu',
-      description:
-          'Jelajahi lowongan Jepang sesuai lokasi, bidang, dan kualifikasimu.',
-      imageUrl: '',
-      action: 'jobs',
-      buttonLabel: 'Jelajahi lowongan',
-    ),
   ];
-  const manga = HomeBanner(
-    id: 'manga-reading',
-    title: 'Baca Manga Jepang',
-    description: 'Nikmati cerita dalam bahasa aslinya. Khusus Lifetime Access.',
-    imageUrl: '',
-    action: 'manga',
-    buttonLabel: 'Jelajahi manga',
-  );
   const anki = HomeBanner(
     id: 'anki',
     title: 'Ingat lebih lama dengan Anki',
@@ -74,6 +48,5 @@ List<HomeBanner> homeBannersFor(
     if (offer != null) offer,
     ...defaults.map(configured),
     if (offer == null) configured(anki),
-    configured(manga),
   ];
 }

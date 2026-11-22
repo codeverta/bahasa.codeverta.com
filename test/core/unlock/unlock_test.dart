@@ -101,8 +101,8 @@ void main() {
         ),
         isTrue,
       );
-      expect(const UnlockTarget('job', 'j').group, 'jobs');
-      expect(const UnlockTarget('kanji', 'k').group, 'lessons');
+      expect(const UnlockTarget('grammar', 'g').group, 'lessons');
+      expect(const UnlockTarget('reading', 'r').group, 'lessons');
     });
   });
 

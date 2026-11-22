@@ -39,7 +39,7 @@ func TestAdsConfigIsOffByDefaultAndPublic(t *testing.T) {
 
 func TestAdsConfigUpdateRequiresTokenAndValidates(t *testing.T) {
 	handler, _ := newAdsTestServer(t)
-	valid := `{"enabled":true,"banner":{"enabled":true,"unitId":"` + testBannerAdUnit + `"},"newsNative":{"enabled":true,"unitId":"` + testNativeAdUnit + `","every":6},"jobsNative":{"enabled":false,"unitId":"` + testNativeAdUnit + `","every":8}}`
+	valid := `{"enabled":true,"banner":{"enabled":true,"unitId":"` + testBannerAdUnit + `"},"interstitial":{"enabled":false,"unitId":"","every":10}}`
 	put := func(token, body string) int {
 		req := httptest.NewRequest(http.MethodPut, "/v1/admin/ads-config", strings.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")
@@ -60,7 +60,7 @@ func TestAdsConfigUpdateRequiresTokenAndValidates(t *testing.T) {
 	if code := put("secret-token", bad); code != http.StatusUnprocessableEntity {
 		t.Fatalf("bad unit: %d", code)
 	}
-	tooOften := strings.Replace(valid, `"every":6`, `"every":1`, 1)
+	tooOften := strings.Replace(valid, `"interstitial":{"enabled":false,"unitId":"","every":10}`, `"interstitial":{"enabled":true,"unitId":"`+testInterstitialAdUnit+`","every":1}`, 1)
 	if code := put("secret-token", tooOften); code != http.StatusUnprocessableEntity {
 		t.Fatalf("bad spacing: %d", code)
 	}
@@ -76,7 +76,7 @@ func TestAdsConfigUpdateRequiresTokenAndValidates(t *testing.T) {
 
 func TestAdsConfigPersistsAcrossRestart(t *testing.T) {
 	handler, path := newAdsTestServer(t)
-	body := `{"enabled":true,"banner":{"enabled":true,"unitId":"` + testBannerAdUnit + `"},"newsNative":{"enabled":false,"unitId":"` + testNativeAdUnit + `","every":6},"jobsNative":{"enabled":false,"unitId":"` + testNativeAdUnit + `","every":8}}`
+	body := `{"enabled":true,"banner":{"enabled":true,"unitId":"` + testBannerAdUnit + `"},"interstitial":{"enabled":false,"unitId":"","every":10}}`
 	req := httptest.NewRequest(http.MethodPut, "/v1/admin/ads-config", strings.NewReader(body))
 	req.Header.Set("Authorization", "Bearer secret-token")
 	rec := httptest.NewRecorder()
@@ -101,7 +101,7 @@ func TestAdsConfigNewPlacementsDefaultsAndValidation(t *testing.T) {
 	if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
 		t.Fatal(err)
 	}
-	if body.Data.Interstitial.Every != defaultInterstitialMinutes || body.Data.DictionaryNative.Every != 8 || !body.Data.QuizResultBanner.Enabled {
+	if body.Data.Interstitial.Every != defaultInterstitialMinutes || !body.Data.QuizResultBanner.Enabled {
 		t.Fatalf("defaults = %+v", body.Data)
 	}
 	put := func(payload string) int {
@@ -111,7 +111,7 @@ func TestAdsConfigNewPlacementsDefaultsAndValidation(t *testing.T) {
 		handler.ServeHTTP(rec, req)
 		return rec.Code
 	}
-	base := `"banner":{"enabled":false,"unitId":""},"newsNative":{"enabled":false,"unitId":"","every":6},"jobsNative":{"enabled":false,"unitId":"","every":8}`
+	base := `"banner":{"enabled":false,"unitId":""}`
 	// An older admin client that omits the new placements can still save.
 	if code := put(`{"enabled":true,` + base + `}`); code != http.StatusOK {
 		t.Fatalf("legacy payload: %d", code)
@@ -120,7 +120,7 @@ func TestAdsConfigNewPlacementsDefaultsAndValidation(t *testing.T) {
 	if code := put(tooOften); code != http.StatusUnprocessableEntity {
 		t.Fatalf("interstitial every 2 minutes must be rejected: %d", code)
 	}
-	ok := `{"enabled":true,` + base + `,"interstitial":{"enabled":true,"unitId":"` + testInterstitialAdUnit + `","every":10},"dictionaryNative":{"enabled":true,"unitId":"` + testNativeAdUnit + `","every":5},"quizResultBanner":{"enabled":true,"unitId":"` + testBannerAdUnit + `"}}`
+	ok := `{"enabled":true,` + base + `,"interstitial":{"enabled":true,"unitId":"` + testInterstitialAdUnit + `","every":10},"quizResultBanner":{"enabled":true,"unitId":"` + testBannerAdUnit + `"}}`
 	if code := put(ok); code != http.StatusOK {
 		t.Fatalf("valid payload: %d", code)
 	}

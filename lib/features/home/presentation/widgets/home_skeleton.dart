@@ -1,10 +1,9 @@
 import 'package:bahasa_master/core/widgets/skeleton.dart';
 import 'package:bahasa_master/features/learn/activity/continue_learning_section.dart';
-import 'package:bahasa_master/features/news/presentation/news_screens.dart';
 import 'package:flutter/material.dart';
 
 /// Placeholder shaped like the real Beranda (greeting, banner, progress,
-/// quick menu, news) so a slow API feels like content arriving instead of
+/// quick menu) so a slow API feels like content arriving instead of
 /// an empty screen with a spinner. "Lanjutkan belajar" comes from local
 /// history, so it is shown for real even while the dashboard loads.
 class HomeDashboardSkeleton extends StatelessWidget {
@@ -33,19 +32,6 @@ class HomeDashboardSkeleton extends StatelessWidget {
         ),
         SizedBox(height: 22),
         ContinueLearningSection(),
-        SizedBox(height: 24),
-        SkeletonShimmer(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SkeletonBox(width: 120, height: 18),
-              SizedBox(height: 8),
-              SkeletonBox(width: 200, height: 12),
-              SizedBox(height: 14),
-              NewsPreviewSkeleton(),
-            ],
-          ),
-        ),
       ],
     );
   }

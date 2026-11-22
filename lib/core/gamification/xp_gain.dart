@@ -1,6 +1,5 @@
 import 'package:bahasa_master/core/gamification/double_xp_button.dart';
 import 'package:bahasa_master/core/localization/app_localizations.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 /// What one finished activity earned, as the server reports it with the
@@ -37,26 +36,6 @@ class XpGain {
 
   /// The activity group for double XP: lessons, exams or practice.
   final String kind;
-}
-
-/// Records a finished Kaigo or SSW curriculum lesson for XP and the streak.
-/// Returns null when it could not be recorded (offline, signed out); the
-/// lesson's local progress is kept either way.
-Future<XpGain?> recordPracticeLesson(
-  Dio dio,
-  String sectorId,
-  String lessonId,
-) async {
-  try {
-    final response = await dio.post<Map<String, dynamic>>(
-      '/me/practice-lessons/${Uri.encodeComponent(sectorId)}/${Uri.encodeComponent(lessonId)}/complete',
-    );
-    final data = response.data?['data'];
-    return data is Map ? XpGain.fromJson(data['xp']) : null;
-  } on Object catch (error) {
-    debugPrint('Practice lesson XP not recorded: $error');
-    return null;
-  }
 }
 
 /// "+N XP · N-day streak" on a result screen. Draws nothing without a gain.

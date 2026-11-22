@@ -8,6 +8,7 @@ import (
 
 	"bahasa-master-backend/internal/aichat"
 	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 // maxLessonContextRunes bounds the lesson notes sent to the model so a very
@@ -16,7 +17,7 @@ const maxLessonContextRunes = 12000
 
 var aiLessonIDPattern = regexp.MustCompile(`^[A-Za-z0-9_-]{1,64}$`)
 
-var aiLessonTypes = map[string]bool{"grammar": true, "vocabulary": true, "kanji": true, "reading": true}
+var aiLessonTypes = map[string]bool{"grammar": true, "vocabulary": true, "reading": true}
 
 // aiLessonPath is the public lesson route, reused for premium gating and the
 // English content translation so the AI sees exactly what the app shows.
@@ -38,14 +39,11 @@ func (s *Server) aiLessonContext(userID, lessonType, lessonID, locale string) (a
 		err    error
 	)
 	switch lessonType {
-	case "grammar":
-		lesson, err = s.store.GrammarLesson(userID, lessonID)
 	case "vocabulary":
 		lesson, err = s.store.VocabularyLesson(userID, lessonID)
-	case "kanji":
-		lesson, err = s.store.KanjiLesson(userID, lessonID)
-	case "reading":
-		lesson, err = s.store.ReadingLesson(userID, lessonID)
+	case "grammar", "reading":
+		// Grammar and reading content is rebuilt in a later phase.
+		return aichat.Lesson{}, store.ErrNotFound
 	default:
 		return aichat.Lesson{}, fmt.Errorf("unknown lesson type %q", lessonType)
 	}
@@ -63,25 +61,10 @@ func (s *Server) aiLessonContext(userID, lessonType, lessonID, locale string) (a
 	}
 	var title, content string
 	switch lessonType {
-	case "grammar":
-		var v struct{ Data domain.GrammarLesson }
-		if err = json.Unmarshal(body, &v); err == nil {
-			title, content = v.Data.Title, compactGrammar(v.Data)
-		}
 	case "vocabulary":
 		var v struct{ Data domain.VocabularyLesson }
 		if err = json.Unmarshal(body, &v); err == nil {
 			title, content = v.Data.Title, compactVocabulary(v.Data)
-		}
-	case "kanji":
-		var v struct{ Data domain.KanjiLesson }
-		if err = json.Unmarshal(body, &v); err == nil {
-			title, content = v.Data.Title, compactKanji(v.Data)
-		}
-	case "reading":
-		var v struct{ Data domain.ReadingLesson }
-		if err = json.Unmarshal(body, &v); err == nil {
-			title, content = v.Data.Title, compactReading(v.Data)
 		}
 	}
 	if err != nil {
@@ -128,25 +111,6 @@ func (w *contextWriter) example(japanese, reading, meaning string) {
 	w.WriteString(text + "\n")
 }
 
-func compactGrammar(l domain.GrammarLesson) string {
-	var w contextWriter
-	w.line("Level", l.Level, "·", l.Chapter, "·", l.Title)
-	for _, p := range l.Points {
-		w.WriteString("\n## " + strings.TrimSpace(p.Pattern))
-		if m := strings.TrimSpace(p.Meaning); m != "" {
-			w.WriteString(" — " + m)
-		}
-		w.WriteByte('\n')
-		w.field("Formation", p.Formation)
-		w.field("Explanation", p.Explanation)
-		w.field("Common mistake", p.CommonMistake)
-		for _, e := range p.Examples {
-			w.example(e.Japanese, e.Reading, e.Meaning)
-		}
-	}
-	return w.String()
-}
-
 func compactVocabulary(l domain.VocabularyLesson) string {
 	var w contextWriter
 	w.line("Level", l.Level, "·", l.Title)
@@ -162,41 +126,6 @@ func compactVocabulary(l domain.VocabularyLesson) string {
 		}
 		if n := strings.TrimSpace(word.Note); n != "" {
 			w.WriteString("  note: " + n + "\n")
-		}
-	}
-	return w.String()
-}
-
-func compactKanji(l domain.KanjiLesson) string {
-	var w contextWriter
-	w.line(l.Chapter, "·", l.Title)
-	for _, c := range l.Characters {
-		w.WriteString("\n## " + c.Character + " — " + strings.TrimSpace(c.Meaning) + "\n")
-		w.field("On", c.OnReading)
-		w.field("Kun", c.KunReading)
-		if c.Strokes > 0 {
-			w.field("Strokes", fmt.Sprint(c.Strokes))
-		}
-		w.field("Mnemonic", c.Mnemonic)
-		w.field("Note", c.Note)
-		for _, e := range c.Examples {
-			w.example(e.Japanese, e.Reading, e.Meaning)
-		}
-	}
-	return w.String()
-}
-
-func compactReading(l domain.ReadingLesson) string {
-	var w contextWriter
-	w.line(l.Chapter, "·", l.Title, l.JapaneseTitle)
-	w.line(l.Description)
-	for i, p := range l.Pages {
-		w.WriteString(fmt.Sprintf("\n## Page %d %s\n", i+1, strings.TrimSpace(p.Title)))
-		w.field("Japanese", p.Japanese)
-		w.field("Reading", p.Reading)
-		w.field("Meaning", p.Meaning)
-		for _, v := range p.Vocabulary {
-			w.example(v.Japanese, v.Reading, v.Meaning)
 		}
 	}
 	return w.String()

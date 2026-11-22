@@ -1,13 +1,12 @@
 import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:bahasa_master/features/learn/level_list/data/level_list_repository.dart';
-import 'package:bahasa_master/features/learn/level_list/presentation/level_pdf_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 /// "Daftar Pola": every grammar point of a level, searchable, with a detail
-/// sheet and a Lifetime-only PDF download.
+/// sheet.
 class GrammarLevelList extends ConsumerStatefulWidget {
   const GrammarLevelList({required this.level, this.onLevelChanged, super.key});
 
@@ -52,10 +51,6 @@ class _GrammarLevelListState extends ConsumerState<GrammarLevelList> {
                 searchKey: ValueKey('grammar-list-search-${widget.level}'),
                 hint: 'Cari pola atau arti'.localized(context),
                 onSearch: (value) => setState(() => _query = value),
-                pdf: LevelPdfButton(
-                  kind: LevelListKind.grammar,
-                  level: widget.level,
-                ),
                 level: widget.level,
                 onLevelChanged: widget.onLevelChanged,
                 empty: visible.isEmpty,
@@ -150,14 +145,13 @@ Future<void> showGrammarItemSheet(BuildContext context, GrammarListItem item) {
   );
 }
 
-/// Count, search field and PDF button shared by the grammar and kanji lists.
+/// Count and search field of a level list.
 class LevelListHeader extends StatelessWidget {
   const LevelListHeader({
     required this.count,
     required this.searchKey,
     required this.hint,
     required this.onSearch,
-    required this.pdf,
     required this.empty,
     this.level,
     this.onLevelChanged,
@@ -171,7 +165,6 @@ class LevelListHeader extends StatelessWidget {
   final Key searchKey;
   final String hint;
   final ValueChanged<String> onSearch;
-  final Widget pdf;
   final bool empty;
 
   @override
@@ -195,17 +188,7 @@ class LevelListHeader extends StatelessWidget {
             ),
             const SizedBox(height: 12),
           ],
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  count,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ),
-              pdf,
-            ],
-          ),
+          Text(count, style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 12),
           TextField(
             key: searchKey,

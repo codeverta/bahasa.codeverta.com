@@ -3,15 +3,14 @@ package api
 import "strings"
 
 // translateAccountPayload localizes the app-authored text in the successful
-// JSON responses of the account, billing, jobs, Anki and branding endpoints.
+// JSON responses of the account, billing, Anki and branding endpoints.
 // The payload must be decoded with json.Decoder.UseNumber (maps are
 // map[string]any, arrays []any). It is mutated in place and the result reports
 // whether anything changed.
 //
 // Only display fields are translated, and only through exact lookups: ids,
 // kinds, statuses, tiers and categories that the Flutter client uses as logic
-// keys are never touched, and unknown strings (user content, Japanese source
-// text, external job postings, manga and Anki card content) stay unchanged.
+// keys are never touched, and unknown strings (user content and Anki card content) stay unchanged.
 // The function never panics on unexpected payload shapes.
 func translateAccountPayload(path string, payload any) bool {
 	path = strings.TrimRight(path, "/")
@@ -20,16 +19,14 @@ func translateAccountPayload(path string, payload any) bool {
 		return translateAccountMe(path, payload)
 	case accountPathIs(path, "/v1/plans"), accountPathIs(path, "/v1/pricing"), accountPathIs(path, "/v1/billing"):
 		return translatePlanFeatures(payload)
-	case accountPathIs(path, "/v1/jobs"):
-		return translateJobsPayload(payload)
 	case accountPathIs(path, "/v1/anki"):
 		return translateAnkiPayload(payload)
 	case accountPathIs(path, "/v1/branding"):
 		return translateBrandingPayload(payload)
 	}
-	// /v1/auth/*, /v1/manga* and /v1/app-update-policy carry no app-authored
+	// /v1/auth/* and /v1/app-update-policy carry no app-authored
 	// Indonesian text in successful responses (ids, tokens, profile data,
-	// source-site content and administrator-entered messages only).
+	// and administrator-entered messages only).
 	return false
 }
 
@@ -218,19 +215,11 @@ func translateLearningHistory(payload any) bool {
 			return false
 		}
 		switch kind {
-		case "vocabulary", "grammar", "kanji", "reading":
+		case "vocabulary", "grammar", "reading":
 		default:
 			return false
 		}
-		lessonID, _ := m["lessonId"].(string)
-		materialContextID := ""
-		if kind == "kanji" {
-			parts := strings.Split(lessonID, "-")
-			if len(parts) >= 3 && strings.HasPrefix(parts[1], "n") {
-				materialContextID = "kanji:" + strings.ToUpper(parts[1]) + ":" + lessonID
-			}
-		}
-		translated := translateLearningTextInQuestionContext("title", title, nil, kind, materialContextID)
+		translated := translateLearningText("title", title)
 		return setAccountField(m, "title", translated)
 	})
 }
@@ -275,196 +264,8 @@ func translatePlanFeatures(payload any) bool {
 }
 
 // ---------------------------------------------------------------------------
-// /v1/jobs*
-// ---------------------------------------------------------------------------
-
-// accountJobOptionEnglish is keyed by metadata group and option id (see
-// internal/jobs/metadata.go). The client resolves labels through ids, so only
-// `label` is translated. Prefectures are romanized names and stay unchanged.
-var accountJobOptionEnglish = map[string]map[string]string{
-	"categories": {
-		"engineering":        "IT & Engineering",
-		"office":             "Administration & Corporate",
-		"hospitality":        "Hotels & Tourism",
-		"nursing-care":       "Nursing Care (Kaigo)",
-		"building-cleaning":  "Building Cleaning",
-		"manufacturing":      "Manufacturing",
-		"construction":       "Construction",
-		"agriculture":        "Agriculture & Livestock",
-		"fishery":            "Fishery & Aquaculture",
-		"food-service":       "Restaurants",
-		"food-manufacturing": "Food Production",
-		"logistics":          "Logistics & Warehousing",
-		"transportation":     "Transportation",
-		"education":          "Education",
-		"creative":           "Design & Creative",
-		"sales":              "Sales & Marketing",
-		"finance":            "Finance",
-		"healthcare":         "Healthcare",
-		"general":            "Other",
-	},
-	"employmentTypes": {
-		"full-time":  "Full-time",
-		"part-time":  "Part-time",
-		"contract":   "Contract",
-		"temporary":  "Temporary",
-		"internship": "Internship",
-		"unknown":    "Not specified",
-	},
-	"japaneseLevels": {
-		"N1":           "JLPT N1",
-		"N2":           "JLPT N2",
-		"N3":           "JLPT N3",
-		"N4":           "JLPT N4",
-		"N5":           "JLPT N5",
-		"not-required": "Japanese not required",
-		"unknown":      "Not specified",
-	},
-	"visaOptions": {
-		"sponsored":            "Sponsorship mentioned",
-		"ssw":                  "SSW mentioned",
-		"work-permit-required": "Work permit required",
-		"unknown":              "Not specified",
-	},
-	"sectors": {
-		"nursing-care":             "Nursing Care (Kaigo)",
-		"building-cleaning":        "Building Cleaning",
-		"linen-supply":             "Linen Processing",
-		"industrial-manufacturing": "Industrial Product Manufacturing",
-		"construction":             "Construction",
-		"shipbuilding":             "Shipbuilding & Ship Machinery",
-		"automobile-maintenance":   "Automobile Maintenance",
-		"aviation":                 "Aviation",
-		"accommodation":            "Accommodation",
-		"road-transport":           "Road Transportation",
-		"railway":                  "Railway",
-		"logistics-warehouse":      "Logistics Warehousing",
-		"agriculture":              "Agriculture",
-		"fishery":                  "Fishery",
-		"food-manufacturing":       "Food Production",
-		"food-service":             "Food Service",
-		"forestry":                 "Forestry",
-		"wood-industry":            "Wood Industry",
-		"resource-recycling":       "Recycling",
-	},
-	"remoteOptions": {
-		"onsite":  "On-site",
-		"hybrid":  "Hybrid",
-		"remote":  "Remote",
-		"unknown": "Not specified",
-	},
-}
-
-// accountJobSourceSuffixEnglish translates the app-authored suffix after
-// " · " in source names such as "TokyoDev · lowongan teknologi". The company or
-// site name before the separator is a proper name and stays unchanged.
-var accountJobSourceSuffixEnglish = map[string]string{
-	"lowongan teknologi":  "tech jobs",
-	"lowongan agrikultur": "agriculture jobs",
-	"lowongan umum":       "general jobs",
-	"Karier resmi":        "Official careers",
-	"Karier Jepang resmi": "Official Japan careers",
-}
-
-var accountJobSourceScopeEnglish = map[string]string{
-	"Seluruh Jepang":                      "All of Japan",
-	"Jepang":                              "Japan",
-	"Tokyo":                               "Tokyo",
-	"Lowongan Jepang pada perusahaan ini": "Job listings in Japan from this company",
-	"Sampel lowongan publik Jepang":       "Sample of public job listings in Japan",
-}
-
-var accountJobSourceReasonEnglish = map[string]string{
-	"Tersedia sebagai direktori. Pengambilan lowongan otomatis dari situs ini belum tersedia.":                            "Available as a directory. Automatic job fetching from this site is not available yet.",
-	"Direktori pencarian dan dukungan kerja. Buka situs sumber untuk informasi terkini.":                                  "Job search and employment support directory. Visit the source website for current information.",
-	"Koneksi ke situs belum berhasil diverifikasi. Silakan buka situs sumber.":                                            "The connection to the site could not be verified yet. Please visit the source website.",
-	"Situs melarang crawler umum melalui robots.txt. Lowongan dapat dibuka langsung di situs sumber.":                     "The site disallows general crawlers through robots.txt. Listings can be opened directly on the source website.",
-	"Akses otomatis mendapat pembatasan HTTP 403. Gunakan situs sumber untuk melihat lowongan.":                           "Automated access is restricted (HTTP 403). Use the source website to view listings.",
-	"Akses otomatis dibatasi. Lowongan tersedia melalui situs sumber.":                                                    "Automated access is restricted. Listings are available through the source website.",
-	"Akses otomatis dibatasi oleh situs. Silakan buka lowongan melalui LinkedIn.":                                         "Automated access is restricted by the site. Please open listings through LinkedIn.",
-	"Alamat pencarian lowongan lama tidak tersedia. Gunakan situs sumber untuk informasi terbaru.":                        "The old job search address is no longer available. Use the source website for the latest information.",
-	"Akses lowongan memerlukan akun pada situs sumber.":                                                                   "Accessing listings requires an account on the source website.",
-	"Layanan ketenagakerjaan pemerintah. Gunakan pencarian pada situs sumber.":                                            "Government employment service. Use the search on the source website.",
-	"Detail lowongan yang diperiksa mengalihkan akses. Gunakan situs sumber dan ikuti proses registrasinya.":              "The listing details we checked redirect access. Use the source website and follow its registration process.",
-	"Layanan pencocokan kandidat dan perusahaan. Informasi tersedia pada situs sumber.":                                   "Candidate and employer matching service. Information is available on the source website.",
-	"Akses lowongan memerlukan registrasi dan verifikasi profil atau sertifikat.":                                         "Accessing listings requires registration and verification of your profile or certificate.",
-	"Layanan pelatihan dan pendampingan kerja. Hubungi sumber untuk informasi lowongan.":                                  "Job training and support service. Contact the source for listing information.",
-	"Portal informasi dan pendampingan kerja dengan rujukan ke layanan lowongan.":                                         "Employment information and support portal with referrals to job listing services.",
-	"Informasi resmi SSW, ujian, prosedur, dan acara rekrutmen.":                                                          "Official information on SSW, exams, procedures, and recruitment events.",
-	"Lowongan perawat berlisensi. Persyaratan berbeda dari pekerjaan kaigo SSW.":                                          "Licensed nurse positions. Requirements differ from SSW kaigo work.",
-	"Lowongan pengemudi; SIM dan kelayakan kerja mengikuti persyaratan tiap posisi.":                                      "Driver positions; driver's license and work eligibility follow each position's requirements.",
-	"Pengambilan terbatas setiap minggu; lihat situs sumber untuk seluruh lowongan.":                                      "Fetching is limited each week; visit the source website for all listings.",
-	"Halaman publik belum menyediakan data lowongan yang dapat dibaca. Buka situs sumber untuk melihat seluruh lowongan.": "The public page does not provide readable job data. Visit the source website to see all listings.",
-	"Situs membatasi akses otomatis. Pengambilan dihentikan sampai jadwal berikutnya.":                                    "The site limits automated access. Fetching is paused until the next scheduled run.",
-	"Pembaruan terakhir belum berhasil. Data tersimpan tetap tersedia selama masih berlaku.":                              "The latest update failed. Saved data remains available while it is still valid.",
-}
-
-const accountSourceNameSeparator = " · "
-
-func translateJobSourceName(name string) (string, bool) {
-	index := strings.LastIndex(name, accountSourceNameSeparator)
-	if index < 0 {
-		return name, false
-	}
-	translated, ok := accountJobSourceSuffixEnglish[name[index+len(accountSourceNameSeparator):]]
-	if !ok {
-		return name, false
-	}
-	return name[:index] + accountSourceNameSeparator + translated, true
-}
-
-// translateJobsPayload localizes /v1/jobs/meta option labels, the directory
-// source list (`name` suffix, `scope`, `reason`) and `sourceName` on listings.
-// Job titles, companies, descriptions, qualifications, benefits, salary text
-// and locations come from external postings and are never translated; `status`
-// and `mode` are client logic keys.
-func translateJobsPayload(payload any) bool {
-	return walkAccountMaps(payload, func(m map[string]any) bool {
-		changed := false
-		for group, labels := range accountJobOptionEnglish {
-			options, ok := m[group].([]any)
-			if !ok {
-				continue
-			}
-			for _, item := range options {
-				option, ok := item.(map[string]any)
-				if !ok {
-					continue
-				}
-				id, ok := option["id"].(string)
-				if !ok {
-					continue
-				}
-				if label, found := labels[id]; found {
-					changed = setAccountField(option, "label", label) || changed
-				}
-			}
-		}
-		if name, ok := m["sourceName"].(string); ok {
-			if translated, found := translateJobSourceName(name); found {
-				m["sourceName"] = translated
-				changed = true
-			}
-		}
-		if _, isSource := m["mode"].(string); isSource {
-			if name, ok := m["name"].(string); ok {
-				if translated, found := translateJobSourceName(name); found {
-					m["name"] = translated
-					changed = true
-				}
-			}
-			changed = translateAccountField(m, "scope", accountJobSourceScopeEnglish) || changed
-			changed = translateAccountField(m, "reason", accountJobSourceReasonEnglish) || changed
-		}
-		return changed
-	})
-}
-
-// ---------------------------------------------------------------------------
 // /v1/anki*
 // ---------------------------------------------------------------------------
-
-var accountAnkiDeckFields = []string{"title", "description", "instructions", "unavailableReason", "meaningLanguage"}
 
 // accountAnkiPersonalEnglish covers the only app-authored text of a personal
 // (imported) deck; its title and description belong to the user.
@@ -484,21 +285,7 @@ var accountAnkiNoticeEnglish = map[string]string{
 // their user-entered title and description.
 func translateAnkiPayload(payload any) bool {
 	return walkAccountMaps(payload, func(m map[string]any) bool {
-		changed := false
-		personal, _ := m["personal"].(bool)
-		for _, key := range []string{"id", "deckId"} {
-			if id, ok := m[key].(string); ok && strings.HasPrefix(id, "user-") {
-				personal = true
-			}
-		}
-		if personal {
-			changed = translateAccountField(m, "instructions", accountAnkiPersonalEnglish) || changed
-		} else {
-			for _, key := range accountAnkiDeckFields {
-				changed = translateAccountField(m, key, accountAnkiCatalogEnglish) || changed
-			}
-			changed = translateAccountField(m, "instructions", accountAnkiPersonalEnglish) || changed
-		}
+		changed := translateAccountField(m, "instructions", accountAnkiPersonalEnglish)
 		changed = translateAccountField(m, "notice", accountAnkiNoticeEnglish) || changed
 		if intervals, ok := m["intervals"].(map[string]any); ok {
 			for rating, value := range intervals {

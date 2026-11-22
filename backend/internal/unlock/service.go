@@ -158,11 +158,6 @@ func (s *Service) Fallback(ctx context.Context, userID, contentKey string) (Unlo
 	return s.Repo.Fallback(ctx, userID, contentKey, Day(now), limits.DailyCap, limits.FallbackPerDay, now)
 }
 
-// Convert consumes the one-time credit fromKey and grants toKey instead.
-func (s *Service) Convert(ctx context.Context, userID, fromKey, toKey string) (bool, error) {
-	return s.Repo.Convert(ctx, userID, fromKey, toKey)
-}
-
 // ConsumeVerified uses up a verified intent without recording an unlock.
 func (s *Service) ConsumeVerified(ctx context.Context, userID, nonce string) (Intent, error) {
 	return s.Repo.ConsumeVerified(ctx, userID, nonce, s.now())

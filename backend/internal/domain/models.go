@@ -27,16 +27,6 @@ type LearningTrack struct {
 	RequiredTier AccessTier `json:"requiredTier"`
 }
 
-type Exam struct {
-	ID            string     `json:"id"`
-	System        string     `json:"system"`
-	Level         string     `json:"level"`
-	Title         string     `json:"title"`
-	QuestionCount int        `json:"questionCount"`
-	DurationMin   int        `json:"durationMinutes"`
-	RequiredTier  AccessTier `json:"requiredTier"`
-}
-
 type Plan struct {
 	ID          string   `json:"id"`
 	Name        string   `json:"name"`
@@ -87,14 +77,6 @@ type Achievement struct {
 	UnlockedAt  *time.Time `json:"unlockedAt,omitempty"`
 }
 
-type ExamAttempt struct {
-	ID        string    `json:"id"`
-	ExamID    string    `json:"examId"`
-	UserID    string    `json:"userId"`
-	Status    string    `json:"status"`
-	StartedAt time.Time `json:"startedAt"`
-}
-
 type DailyGoal struct {
 	MinutesLearned int `json:"minutesLearned"`
 	TargetMinutes  int `json:"targetMinutes"`
@@ -108,7 +90,6 @@ type Dashboard struct {
 	DailyGoal       DailyGoal          `json:"dailyGoal"`
 	Categories      []LearningCategory `json:"categories"`
 	Tracks          []LearningTrack    `json:"tracks"`
-	Exams           []Exam             `json:"exams"`
 	Plans           []Plan             `json:"plans"`
 	Achievements    []Achievement      `json:"achievements"`
 }

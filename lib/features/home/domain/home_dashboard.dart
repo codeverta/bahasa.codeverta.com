@@ -7,7 +7,6 @@ class HomeDashboard {
     required this.dailyGoal,
     required this.categories,
     required this.tracks,
-    required this.exams,
     required this.plans,
     required this.achievements,
     this.banners = const [],
@@ -34,7 +33,6 @@ class HomeDashboard {
       dailyGoal: HomeDailyGoal.fromJson(_map(json['dailyGoal'])),
       categories: _list(json['categories'], LearningCategory.fromJson),
       tracks: _list(json['tracks'], LearningTrack.fromJson),
-      exams: _list(json['exams'], HomeExam.fromJson),
       plans: _list(json['plans'], SubscriptionPlan.fromJson),
       achievements: _list(json['achievements'], Achievement.fromJson),
       banners: _list(json['banners'], HomeBanner.fromJson),
@@ -49,7 +47,6 @@ class HomeDashboard {
   final HomeDailyGoal dailyGoal;
   final List<LearningCategory> categories;
   final List<LearningTrack> tracks;
-  final List<HomeExam> exams;
   final List<SubscriptionPlan> plans;
   final List<Achievement> achievements;
   final List<HomeBanner> banners;
@@ -204,38 +201,6 @@ class LearningTrack {
   final String title;
   final String description;
   final int progress;
-  final String requiredTier;
-  bool get isPremium => requiredTier == 'premium';
-}
-
-@immutable
-class HomeExam {
-  const HomeExam({
-    required this.id,
-    required this.system,
-    required this.level,
-    required this.title,
-    required this.questionCount,
-    required this.durationMinutes,
-    required this.requiredTier,
-  });
-
-  factory HomeExam.fromJson(Map<String, dynamic> json) => HomeExam(
-    id: json['id'] as String? ?? '',
-    system: json['system'] as String? ?? '',
-    level: json['level'] as String? ?? '',
-    title: json['title'] as String? ?? '',
-    questionCount: json['questionCount'] as int? ?? 0,
-    durationMinutes: json['durationMinutes'] as int? ?? 0,
-    requiredTier: json['requiredTier'] as String? ?? 'free',
-  );
-
-  final String id;
-  final String system;
-  final String level;
-  final String title;
-  final int questionCount;
-  final int durationMinutes;
   final String requiredTier;
   bool get isPremium => requiredTier == 'premium';
 }

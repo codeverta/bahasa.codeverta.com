@@ -6,8 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// One locked item that an ad or Lifetime Access can open. [kind] uses the
-/// server's names: grammar, kanji, reading, vocabulary, anki, simulation,
-/// news, job.
+/// server's names: grammar, reading, vocabulary, anki.
 @immutable
 class UnlockTarget {
   const UnlockTarget(this.kind, this.itemId);
@@ -53,8 +52,7 @@ class UnlockTarget {
 
   /// The group used by the remote switches and the gate flags.
   String get group => switch (kind) {
-    'grammar' || 'kanji' || 'reading' || 'vocabulary' => 'lessons',
-    'job' => 'jobs',
+    'grammar' || 'reading' || 'vocabulary' => 'lessons',
     _ => kind,
   };
 
@@ -108,7 +106,7 @@ class UnlockStatus {
 
   final Set<String> items;
 
-  /// Which groups (lessons, news, jobs) are locked for free accounts.
+  /// Which groups (lessons) are locked for free accounts.
   final Map<String, bool> gates;
 
   /// Which groups an ad may open.
