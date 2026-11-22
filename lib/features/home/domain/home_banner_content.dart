@@ -1,4 +1,4 @@
-import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 
 /// Five distinct destinations, even when an older API has no Manga banner yet.
 /// Subscribers see Anki in place of the purchase offer.

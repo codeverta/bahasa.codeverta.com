@@ -6,10 +6,10 @@ import (
 	"github.com/google/uuid"
 	"mime/multipart"
 	"net/http/httptest"
-	"nihongo-master-backend/internal/ankitransfer"
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/ankitransfer"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/store"
 	"testing"
 )
 

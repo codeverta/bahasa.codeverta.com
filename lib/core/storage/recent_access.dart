@@ -1,8 +1,8 @@
 import 'dart:convert';
 
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 @immutable
@@ -79,7 +79,11 @@ class RecentAccess extends StateNotifier<Map<String, RecentEntry>> {
 }
 
 final recentAccessProvider =
-    StateNotifierProvider.family<RecentAccess, Map<String, RecentEntry>, String>(
+    StateNotifierProvider.family<
+      RecentAccess,
+      Map<String, RecentEntry>,
+      String
+    >(
       (ref, scope) => RecentAccess(ref.watch(sharedPreferencesProvider), scope),
     );
 

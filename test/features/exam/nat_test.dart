@@ -1,11 +1,11 @@
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/data/simulation_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/simulation_attempt_screen.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/simulation_intro_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/data/simulation_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/simulation_attempt_screen.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/simulation_intro_screen.dart';
 
 import 'simulation_test.dart' show FakeSimulation;
 
@@ -36,16 +36,18 @@ void main() {
     expect(requests[1].method, 'POST');
     expect(requests[1].data, {'examId': 'nat-5q-full-1'});
   });
-  testWidgets('NAT grammar and reading keeps the full 40 minute timer',
-      (tester) async {
+  testWidgets('NAT grammar and reading keeps the full 40 minute timer', (
+    tester,
+  ) async {
     final repository = FakeSimulation()
       ..active = 'grammar'
       ..durationSeconds = 2400;
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          simulationLevelRepositoryProvider('NAT')
-              .overrideWithValue(repository),
+          simulationLevelRepositoryProvider(
+            'NAT',
+          ).overrideWithValue(repository),
         ],
         child: const MaterialApp(
           home: SimulationAttemptScreen(attemptId: 'nat', level: 'NAT'),
@@ -55,15 +57,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('NAT 5Q Exam 1'), findsOneWidget);
     expect(find.text('Bagian 2 · 文法・読解'), findsOneWidget);
-    final timer =
-        tester.widget<Text>(find.byKey(const Key('simulation-timer')));
+    final timer = tester.widget<Text>(
+      find.byKey(const Key('simulation-timer')),
+    );
     expect(timer.data, startsWith('40:'));
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('NAT intro shows both sections and reading content on a phone',
-      (tester) async {
+  testWidgets('NAT intro shows both sections and reading content on a phone', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(360, 740);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);

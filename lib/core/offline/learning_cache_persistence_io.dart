@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:nihongo_master/core/offline/learning_cache_persistence_base.dart';
+import 'package:bahasa_master/core/offline/learning_cache_persistence_base.dart';
 import 'package:path_provider/path_provider.dart';
 
 LearningCachePersistence createLearningCachePersistence({

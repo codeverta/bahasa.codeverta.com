@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"errors"
 	"net/http"
-	"nihongo-master-backend/internal/dictionary"
+	"bahasa-master-backend/internal/dictionary"
 	"strconv"
 	"unicode/utf8"
 )

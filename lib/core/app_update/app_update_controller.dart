@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bahasa_master/core/app_update/app_update_policy.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/app_update/app_update_policy.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
 
 class AppUpdateState {
   const AppUpdateState({
@@ -35,37 +35,42 @@ class AppUpdateState {
 
 final appUpdateControllerProvider =
     StateNotifierProvider<AppUpdateController, AppUpdateState>((ref) {
-  final dio = ref.read(dioProvider);
-  final mobile = !kIsWeb &&
-      {TargetPlatform.android, TargetPlatform.iOS}
-          .contains(defaultTargetPlatform);
-  return AppUpdateController(
-    deviceInfo: () async {
-      if (!mobile) return null;
-      const channel = MethodChannel('com.codeverta.nihongomaster/app_info');
-      final info = await channel.invokeMapMethod<String, dynamic>('getAppInfo');
-      return AppDeviceInfo.fromJson(info!);
-    },
-    fetchPolicy: () async {
-      final token = CancelToken();
-      final timer = Timer(const Duration(seconds: 4), token.cancel);
-      try {
-        final response = await dio.get<Map<String, dynamic>>(
-          '/app-update-policy',
-          cancelToken: token,
-          options: Options(headers: {'Cache-Control': 'no-cache'}),
-        );
-        return response.data!['data'] as Map<String, dynamic>;
-      } finally {
-        timer.cancel();
-      }
-    },
-  );
-});
+      final dio = ref.read(dioProvider);
+      final mobile =
+          !kIsWeb &&
+          {
+            TargetPlatform.android,
+            TargetPlatform.iOS,
+          }.contains(defaultTargetPlatform);
+      return AppUpdateController(
+        deviceInfo: () async {
+          if (!mobile) return null;
+          const channel = MethodChannel('com.codeverta.bahasa/app_info');
+          final info = await channel.invokeMapMethod<String, dynamic>(
+            'getAppInfo',
+          );
+          return AppDeviceInfo.fromJson(info!);
+        },
+        fetchPolicy: () async {
+          final token = CancelToken();
+          final timer = Timer(const Duration(seconds: 4), token.cancel);
+          try {
+            final response = await dio.get<Map<String, dynamic>>(
+              '/app-update-policy',
+              cancelToken: token,
+              options: Options(headers: {'Cache-Control': 'no-cache'}),
+            );
+            return response.data!['data'] as Map<String, dynamic>;
+          } finally {
+            timer.cancel();
+          }
+        },
+      );
+    });
 
 class AppUpdateController extends StateNotifier<AppUpdateState> {
   AppUpdateController({required this.deviceInfo, required this.fetchPolicy})
-      : super(const AppUpdateState());
+    : super(const AppUpdateState());
 
   final Future<AppDeviceInfo?> Function() deviceInfo;
   final Future<Map<String, dynamic>> Function() fetchPolicy;
@@ -93,7 +98,8 @@ class AppUpdateController extends StateNotifier<AppUpdateState> {
         device: device,
         policy: policy,
         requirement: requirement,
-        dismissed: requirement == AppUpdateRequirement.unsupportedAllowed &&
+        dismissed:
+            requirement == AppUpdateRequirement.unsupportedAllowed &&
             _dismissedPolicy == _policyKey,
       );
     } on Object {
@@ -120,16 +126,15 @@ class AppUpdateController extends StateNotifier<AppUpdateState> {
     bool? checking,
     bool? dismissed,
     String? error,
-  }) =>
-      AppUpdateState(
-        device: state.device,
-        policy: state.policy,
-        requirement: state.requirement,
-        initialized: initialized ?? state.initialized,
-        checking: checking ?? state.checking,
-        dismissed: dismissed ?? state.dismissed,
-        error: error,
-      );
+  }) => AppUpdateState(
+    device: state.device,
+    policy: state.policy,
+    requirement: state.requirement,
+    initialized: initialized ?? state.initialized,
+    checking: checking ?? state.checking,
+    dismissed: dismissed ?? state.dismissed,
+    error: error,
+  );
 }
 
 class AppUpdateBackDispatcher extends RootBackButtonDispatcher {
@@ -141,8 +146,9 @@ class AppUpdateBackDispatcher extends RootBackButtonDispatcher {
       shouldIntercept() || await super.didPopRoute();
 }
 
-final appUpdateBackDispatcherProvider =
-    Provider<AppUpdateBackDispatcher>((ref) {
+final appUpdateBackDispatcherProvider = Provider<AppUpdateBackDispatcher>((
+  ref,
+) {
   return AppUpdateBackDispatcher(
     () => ref.read(appUpdateControllerProvider).interceptBack,
   );

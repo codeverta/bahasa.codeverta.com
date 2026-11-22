@@ -1,9 +1,9 @@
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/ads_controller.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/ads/ads_controller.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 
 /// Adaptive banner. Renders nothing unless ads are on, the user is free, and
 /// consent allows ad requests, so the layout never reserves empty space.

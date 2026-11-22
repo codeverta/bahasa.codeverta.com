@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/features/anki/domain/anki_models.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/features/anki/domain/anki_models.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 
 final ankiTransferRepositoryProvider = Provider(
   (ref) => AnkiTransferRepository(

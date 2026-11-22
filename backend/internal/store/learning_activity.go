@@ -3,8 +3,8 @@ package store
 import (
 	"encoding/json"
 	"gorm.io/gorm/clause"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
 	"sort"
 	"time"
 )

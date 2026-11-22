@@ -20,11 +20,11 @@ Temuan saat menguji di MariaDB nyata: klaim bersamaan sempat kena `Deadlock foun
 
 Pengulangan hanya tersisa sebagai cadangan terakhir. Tes MariaDB menjalankan **semua skenario dengan pengulangan dimatikan**, sehingga satu deadlock saja membuat tes gagal. Skenario stres mencakup 40 klaim bersamaan, 8 akun bersamaan, klaim dan cadangan bercampur, serta 12 permintaan bersamaan untuk pelajaran yang sama. Saat kunci baris pemakaian sengaja dilepas, empat skenario langsung gagal (batas terlampaui). Setelah dipasang kembali, tes lulus 5 kali berturut-turut.
 
-**Aman di-deploy sekarang.** Selama `NIHONGO_OPEN_ACCESS` tidak diatur `false`, semua N3–N1 tetap terbuka dan tidak ada perilaku yang berubah bagi pengguna. Yang bertambah hanya endpoint baru, tiga tabel, dan `/v1/ads/ssv`. Gerbang baru berlaku setelah langkah rilis (lihat "Risiko rilis").
+**Aman di-deploy sekarang.** Selama `BAHASA_OPEN_ACCESS` tidak diatur `false`, semua N3–N1 tetap terbuka dan tidak ada perilaku yang berubah bagi pengguna. Yang bertambah hanya endpoint baru, tiga tabel, dan `/v1/ads/ssv`. Gerbang baru berlaku setelah langkah rilis (lihat "Risiko rilis").
 
 Syarat operasional sebelum SSV bisa bekerja:
 1. Server harus bisa **keluar** ke `https://www.gstatic.com` (kunci verifikasi Google), dan `/v1/ads/ssv` harus bisa dijangkau Google dari luar (jangan ditantang oleh aturan bot Cloudflare).
-2. Unit AdMob `nm_rewarded_unlock` harus dibuat dengan callback `https://nihongo.codeverta.com/v1/ads/ssv`, lalu ID-nya diisi ke `unlockRewarded.unitId` (default sementara memakai unit uji Google).
+2. Unit AdMob `nm_rewarded_unlock` harus dibuat dengan callback `https://bahasa.codeverta.com/v1/ads/ssv`, lalu ID-nya diisi ke `unlockRewarded.unitId` (default sementara memakai unit uji Google).
 3. Config default memakai unit uji Google dan jatah 20 per hari, 2 cadangan per hari.
 
 ## Konsep
@@ -73,7 +73,7 @@ Temuan yang mengubah cakupan:
 - **Simulasi JLPT N3 paket 02–10 ternyata sudah gratis.** Yang terkunci hanya paket 01, jadi "simulasi N3 dengan iklan" berarti `jlpt-n3-simulation-1`. Paket 01 N2 dan N1, JFT, NAT, dan SSW tetap Lifetime. Menambahkan N2/N1 paket 01 cukup satu baris di `adUnlockableExams`.
 - Deskripsi lowongan dari sumber bisa saja memuat tautan di dalam teksnya. Itu tidak disaring.
 
-**Aman di-deploy sekarang.** Kedua gerbang konten default mati dan `NIHONGO_OPEN_ACCESS` belum diubah, jadi tidak ada perilaku pengguna yang berubah. Gerbang berita dan lowongan baru boleh dinyalakan setelah versi aplikasi yang bisa membuka keduanya beredar dan versi minimum dinaikkan. Klien lama yang membaca berita akan melihat error, dan tombol lamarnya akan nonaktif.
+**Aman di-deploy sekarang.** Kedua gerbang konten default mati dan `BAHASA_OPEN_ACCESS` belum diubah, jadi tidak ada perilaku pengguna yang berubah. Gerbang berita dan lowongan baru boleh dinyalakan setelah versi aplikasi yang bisa membuka keduanya beredar dan versi minimum dinaikkan. Klien lama yang membaca berita akan melihat error, dan tombol lamarnya akan nonaktif.
 
 ## Hasil fase 3 (admin)
 
@@ -124,7 +124,7 @@ Belum dicoba di perangkat atau emulator.
 
 | Temuan | Rujukan | Dampak |
 |---|---|---|
-| **Semua N3–N1 terbuka untuk semua akun yang login.** `openLearningAccess` aktif secara default; gerbang Lifetime baru berlaku bila `NIHONGO_OPEN_ACCESS=false`. | `backend/internal/store/billing.go` | Fitur ini mengaktifkan kembali pembatasan. Pengguna yang sekarang belajar gratis akan terkena. |
+| **Semua N3–N1 terbuka untuk semua akun yang login.** `openLearningAccess` aktif secara default; gerbang Lifetime baru berlaku bila `BAHASA_OPEN_ACCESS=false`. | `backend/internal/store/billing.go` | Fitur ini mengaktifkan kembali pembatasan. Pengguna yang sekarang belajar gratis akan terkena. |
 | Gerbang pelajaran ada di satu titik: `authorizePremium` (dipanggil dari `requireAuth`) memakai `PremiumRequest`. | `billing.go`, `server.go` | Titik tunggal untuk menambah "atau sudah dibuka lewat iklan". |
 | Katalog level (`/course`) N3–N1 ikut digembok. | `PremiumRequest` | Pengguna tidak bisa melihat daftar yang mau dibuka. Perlu diubah. |
 | **Gerbang apply lowongan hanya di klien.** `GET /v1/jobs/{id}` publik, di-cache publik 60 detik, dan mengirim `applyUrl` dan `sourceUrl` ke siapa pun. | `api/jobs.go`, `job_apply_button.dart` | Gerbang bisa dilewati dengan memanggil API. Harus dipindah ke server. |
@@ -197,7 +197,7 @@ Jalur cadangan (iklan tidak tersedia setelah dua kali gagal memuat): `POST /v1/u
 
 ### AdMob
 
-- Buat unit **`nm_rewarded_unlock`** (Rewarded). Di **Advanced settings → Server-side verification**, isi callback `https://nihongo.codeverta.com/v1/ads/ssv`. Pengaturan ini tidak bisa dipakai pada unit dengan partner bidding.
+- Buat unit **`nm_rewarded_unlock`** (Rewarded). Di **Advanced settings → Server-side verification**, isi callback `https://bahasa.codeverta.com/v1/ads/ssv`. Pengaturan ini tidak bisa dipakai pada unit dengan partner bidding.
 - Jangan memakai ulang `nm_rewarded_ai`: Tanya AI memakai alur klaim klien dan statistiknya harus terpisah.
 - Pastikan Cloudflare tidak memblokir request Google ke `/v1/ads/ssv` (jangan ada tantangan bot pada path itu).
 
@@ -235,7 +235,7 @@ Jalur cadangan (iklan tidak tersedia setelah dua kali gagal memuat): `POST /v1/u
 | 3 | Admin: placement, sakelar per jenis, statistik | 1–2 hari |
 | 4 | Aplikasi: sheet unlock, alur rewarded + SSV, gembok di daftar, berita, lowongan, kebijakan cache, string ID/EN, tes widget | 5–6 hari |
 | 5 | Uji internal Play dengan unit asli, verifikasi callback SSV nyata | 1–2 hari |
-| 6 | Rilis app → versi minimum → aktifkan `NIHONGO_OPEN_ACCESS=false` → nyalakan jenis demi jenis di admin, pantau retensi dan konversi | bertahap |
+| 6 | Rilis app → versi minimum → aktifkan `BAHASA_OPEN_ACCESS=false` → nyalakan jenis demi jenis di admin, pantau retensi dan konversi | bertahap |
 
 Total perkiraan: sekitar 15–20 hari kerja sebelum rilis bertahap.
 

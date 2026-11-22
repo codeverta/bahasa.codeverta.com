@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/learn/kana/domain/stroke_matcher.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/learn/kana/domain/stroke_matcher.dart';
 
 /// Stroke order data derived from KanjiVG (CC BY-SA 3.0).
 const kanaStrokesAsset = 'assets/content/kana/kana_strokes.json';

@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:math';
+
+import 'package:bahasa_master/features/anki/data/anki_repository.dart';
+import 'package:bahasa_master/features/anki/domain/anki_models.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/features/anki/data/anki_repository.dart';
-import 'package:nihongo_master/features/anki/domain/anki_models.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 
 final ankiStudyProvider = StateNotifierProvider.autoDispose
     .family<AnkiStudyController, AnkiStudyState, String>((ref, id) {

@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"nihongo-master-backend/internal/billing"
+	"bahasa-master-backend/internal/billing"
 )
 
 func main() {

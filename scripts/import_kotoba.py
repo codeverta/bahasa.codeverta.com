@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1] / "backend/internal/anki/resources"
 def fetch(url):
     for attempt in range(4):
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "NihongoMaster-resource-import", "Accept-Encoding": "gzip"}), timeout=90) as response:
+            with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "BahasaMaster-resource-import", "Accept-Encoding": "gzip"}), timeout=90) as response:
                 data = response.read()
                 return gzip.decompress(data) if response.headers.get("Content-Encoding") == "gzip" else data
         except Exception:

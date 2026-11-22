@@ -1,5 +1,5 @@
+import 'package:bahasa_master/features/learn/kana/domain/stroke_matcher.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/features/learn/kana/domain/stroke_matcher.dart';
 
 /// Paints a practice square: grid, faint guide, finished strokes, the
 /// highlighted next stroke and the learner's live stroke. All strokes are in

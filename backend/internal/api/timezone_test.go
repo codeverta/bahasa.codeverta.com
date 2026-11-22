@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 )
 
 func TestStudyTimezoneInitializesOnceAndCanBeChanged(t *testing.T) {

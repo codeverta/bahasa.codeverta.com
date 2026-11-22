@@ -8,9 +8,9 @@ import (
 	"log"
 	"os"
 
-	"nihongo-master-backend/internal/config"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/config"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/store"
 )
 
 func main() {

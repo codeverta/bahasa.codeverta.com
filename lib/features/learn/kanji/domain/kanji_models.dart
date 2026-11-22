@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
-import 'package:nihongo_master/core/gamification/xp_gain.dart';
-import 'package:nihongo_master/features/learn/vocabulary/domain/vocabulary_models.dart'
+import 'package:bahasa_master/core/gamification/xp_gain.dart';
+import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart'
     show AnswerFeedback, QuizOption;
+import 'package:flutter/foundation.dart';
 
 @immutable
 class KanjiLessonSummary {

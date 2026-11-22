@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/features/learn/kanji/domain/kanji_models.dart';
+import 'package:bahasa_master/features/learn/offline/offline_practice.dart';
 import 'package:dio/dio.dart';
-import 'package:nihongo_master/features/learn/kanji/domain/kanji_models.dart';
-import 'package:nihongo_master/features/learn/offline/offline_practice.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
 
 class KanjiException implements Exception {
   const KanjiException(this.message);

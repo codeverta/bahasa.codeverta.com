@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
 
 /// A Japanese example line: text, reading and meaning.
 class LevelListExample {
@@ -105,7 +105,7 @@ enum LevelListKind {
   final String listSegment;
   final String fileLabel;
 
-  String fileName(String level) => 'NihongoMaster-$fileLabel-$level.pdf';
+  String fileName(String level) => 'BahasaMaster-$fileLabel-$level.pdf';
 
   String pdfPath(String level) => this == simulation
       ? '/simulation-pdf/${Uri.encodeComponent(level)}'

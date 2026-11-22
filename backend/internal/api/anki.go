@@ -3,9 +3,9 @@ package api
 import (
 	"errors"
 	"net/http"
-	"nihongo-master-backend/internal/anki"
-	"nihongo-master-backend/internal/store"
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/anki"
+	"bahasa-master-backend/internal/store"
+	"bahasa-master-backend/internal/unlock"
 	"strconv"
 	"strings"
 )

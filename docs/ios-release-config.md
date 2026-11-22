@@ -22,10 +22,10 @@ Actions**, tab **Variables** atau **Secrets**.
 
 | Nama | Arti | Contoh | Asal nilai |
 |---|---|---|---|
-| `API_BASE_URL` | Alamat API backend production. Dipasang ke aplikasi lewat `--dart-define`. Wajib diawali `https://`. | `https://nihongo.codeverta.com/v1` | URL backend production yang sudah live. Dipakai juga oleh workflow Android. |
+| `API_BASE_URL` | Alamat API backend production. Dipasang ke aplikasi lewat `--dart-define`. Wajib diawali `https://`. | `https://bahasa.codeverta.com/v1` | URL backend production yang sudah live. Dipakai juga oleh workflow Android. |
 | `GOOGLE_SERVER_CLIENT_ID` | Web OAuth Client ID Google. Aplikasi memakainya untuk meminta ID token Google Sign-In yang audience-nya adalah backend. Wajib berakhiran `.apps.googleusercontent.com`. | `1234567890-abc.apps.googleusercontent.com` | Google Cloud Console > APIs & Services > Credentials, client bertipe **Web application**. Harus sama persis dengan `GOOGLE_CLIENT_ID` di `backend/.env` production. |
 | `OFFLINE_ACCESS_PUBLIC_KEY` | Public key Ed25519 (Base64, tepat 32 byte) untuk memverifikasi lease akses offline premium. Ini bagian publik, aman disimpan sebagai variable. Jika kosong atau salah, fitur offline premium ditolak. | `q3Fh...=` (44 karakter Base64) | Jalankan `go run ./cmd/offline-keys` di folder `backend`. Salin nilai `OFFLINE_ACCESS_PUBLIC_KEY=` yang dicetak. Harus pasangan dari private key di server. |
-| `IOS_BUNDLE_ID` | ID unik aplikasi iOS, seperti `applicationId` di Android. Harus sama di Xcode project, Apple Developer, provisioning profile, dan App Store Connect. Tidak boleh `com.example...`. | `com.codeverta.nihongomaster` | Ditentukan sendiri, lalu didaftarkan sebagai App ID di developer.apple.com. Lihat catatan penting di bawah. |
+| `IOS_BUNDLE_ID` | ID unik aplikasi iOS, seperti `applicationId` di Android. Harus sama di Xcode project, Apple Developer, provisioning profile, dan App Store Connect. Tidak boleh `com.example...`. | `com.codeverta.bahasa` | Ditentukan sendiri, lalu didaftarkan sebagai App ID di developer.apple.com. Lihat catatan penting di bawah. |
 | `IOS_TEAM_ID` | ID tim Apple Developer, 10 karakter huruf besar dan angka. | `A1B2C3D4E5` | developer.apple.com > Account > Membership details > Team ID. |
 
 ## Secrets
@@ -47,7 +47,7 @@ Mengubah file ke Base64 (jalankan lalu tempel hasil clipboard ke GitHub):
 
 ```bash
 base64 -i ios-distribution.p12 | pbcopy
-base64 -i nihongo-master-appstore.mobileprovision | pbcopy
+base64 -i bahasa-master-appstore.mobileprovision | pbcopy
 ```
 
 Linux: `base64 -w 0 nama-file`. Windows PowerShell:
@@ -56,8 +56,8 @@ Linux: `base64 -w 0 nama-file`. Windows PowerShell:
 ## Catatan: Bundle ID project
 
 Target **Runner** di `ios/Runner.xcodeproj/project.pbxproj` memakai
-`com.codeverta.nihongomaster` (sama dengan `applicationId` Android), dan target
-test memakai `com.codeverta.nihongomaster.RunnerTests`. Workflow menolak
+`com.codeverta.bahasa` (sama dengan `applicationId` Android), dan target
+test memakai `com.codeverta.bahasa.RunnerTests`. Workflow menolak
 `com.example...` dan memeriksa bahwa `IOS_BUNDLE_ID` sama persis dengan Bundle ID
 target Runner. Jika Bundle ID diganti lagi, ubah `PRODUCT_BUNDLE_IDENTIFIER`
 di file tersebut dan variable `IOS_BUNDLE_ID` bersamaan.
@@ -71,10 +71,10 @@ masuk `.gitignore`, namun sebaiknya tetap di luar repo.
 
 ```dotenv
 # ---------- GitHub Actions > Variables ----------
-API_BASE_URL=https://nihongo.codeverta.com/v1
+API_BASE_URL=https://bahasa.codeverta.com/v1
 GOOGLE_SERVER_CLIENT_ID=YOUR_WEB_CLIENT_ID.apps.googleusercontent.com
 OFFLINE_ACCESS_PUBLIC_KEY=BASE64_32_BYTE_ED25519_PUBLIC_KEY
-IOS_BUNDLE_ID=com.codeverta.nihongomaster
+IOS_BUNDLE_ID=com.codeverta.bahasa
 IOS_TEAM_ID=ABCDE12345
 
 # ---------- GitHub Actions > Secrets (jangan commit) ----------
@@ -87,8 +87,8 @@ IOS_PROVISIONING_PROFILE_BASE64=
 Nilai yang sama bisa dimasukkan lewat GitHub CLI:
 
 ```bash
-gh variable set API_BASE_URL --body "https://nihongo.codeverta.com/v1"
-gh variable set IOS_BUNDLE_ID --body "com.codeverta.nihongomaster"
+gh variable set API_BASE_URL --body "https://bahasa.codeverta.com/v1"
+gh variable set IOS_BUNDLE_ID --body "com.codeverta.bahasa"
 base64 -i ios-distribution.p12 | gh secret set IOS_CERTIFICATE_BASE64
 gh secret set IOS_CERTIFICATE_PASSWORD
 ```

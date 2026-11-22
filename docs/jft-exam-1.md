@@ -1,6 +1,6 @@
 # JFT Exam 1
 
-Latihan tertulis orisinal Nihongo Master, tersedia pada Ujian → JFT Test → JFT Exam 1 untuk pemilik Lifetime Access.
+Latihan tertulis orisinal Bahasa Master, tersedia pada Ujian → JFT Test → JFT Exam 1 untuk pemilik Lifetime Access.
 
 | Bagian | Soal |
 | --- | ---: |

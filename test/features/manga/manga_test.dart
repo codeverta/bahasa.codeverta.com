@@ -1,13 +1,13 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/manga/data/manga_repository.dart';
+import 'package:bahasa_master/features/manga/presentation/manga_screens.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/manga/data/manga_repository.dart';
-import 'package:nihongo_master/features/manga/presentation/manga_screens.dart';
 
 const _series = MangaSeries(
   id: 'one',

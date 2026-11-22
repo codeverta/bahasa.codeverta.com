@@ -1,7 +1,7 @@
 package store
 
 // Original N1 written practice paper using JLPT-style item formats. The
-// questions and passages are authored for Nihongo Master.
+// questions and passages are authored for Bahasa Master.
 func simulationN1Content() []simulationItem {
 	type question struct {
 		prompt      string

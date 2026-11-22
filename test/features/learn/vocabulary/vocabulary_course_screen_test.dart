@@ -1,15 +1,15 @@
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/learn/vocabulary/data/vocabulary_repository.dart';
+import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/screens/vocabulary_course_screen.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/screens/vocabulary_lesson_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/learn/vocabulary/data/vocabulary_repository.dart';
-import 'package:nihongo_master/features/learn/vocabulary/domain/vocabulary_models.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/screens/vocabulary_course_screen.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/screens/vocabulary_lesson_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

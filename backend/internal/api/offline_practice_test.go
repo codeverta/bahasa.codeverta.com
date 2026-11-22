@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 func offlinePracticeServer(memory *store.MemoryStore, verifier fakeGoogleVerifier) http.Handler {
@@ -139,7 +139,7 @@ func TestOfflineSSWPracticePackageSyncIsVerifiedWithoutXP(t *testing.T) {
 	}
 	if err = memory.SaveVerifiedPurchase(database.DemoUserID, domain.Purchase{
 		Platform: "android", ID: "offline-ssw-purchase",
-		ProductID: "nihongo_master_lifetime", AccountToken: accountToken,
+		ProductID: "bahasa_master_lifetime", AccountToken: accountToken,
 		Proof: "offline-ssw-purchase", State: "purchased", CheckedAt: time.Now(),
 	}); err != nil {
 		t.Fatal(err)

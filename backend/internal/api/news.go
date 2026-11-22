@@ -19,8 +19,8 @@ import (
 	"strconv"
 	"time"
 
-	"nihongo-master-backend/internal/imageopt"
-	"nihongo-master-backend/internal/news"
+	"bahasa-master-backend/internal/imageopt"
+	"bahasa-master-backend/internal/news"
 )
 
 //go:embed news_admin.html

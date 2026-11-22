@@ -1,10 +1,10 @@
+import 'package:bahasa_master/core/localization/app_language.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/settings/display_settings_screen.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/localization/app_language.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/settings/display_settings_screen.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

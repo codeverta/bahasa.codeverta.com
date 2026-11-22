@@ -3,7 +3,7 @@ package api
 import (
 	"errors"
 	"net/http"
-	"nihongo-master-backend/internal/dictionary"
+	"bahasa-master-backend/internal/dictionary"
 	"strconv"
 )
 

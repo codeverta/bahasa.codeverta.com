@@ -7,12 +7,12 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/manga"
-	"nihongo-master-backend/internal/store"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/manga"
+	"bahasa-master-backend/internal/store"
+	"bahasa-master-backend/internal/testdb"
 )
 
 func TestMangaLifetimeCacheAndEditorialRoutes(t *testing.T) {

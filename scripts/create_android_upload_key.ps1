@@ -4,7 +4,7 @@ $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $androidRoot = Join-Path $repositoryRoot 'android'
 $secretDirectory = Join-Path $androidRoot '.signing-secrets'
 $keystorePath = Join-Path $secretDirectory 'upload-key.jks'
-$alias = 'nihongo-master-upload'
+$alias = 'bahasa-master-upload'
 
 if (Test-Path -LiteralPath $keystorePath) {
     throw "Keystore already exists at $keystorePath. Refusing to overwrite a signing identity."
@@ -36,7 +36,7 @@ try {
     & $keytoolCommand.Source -genkeypair -keystore $keystorePath -storetype JKS `
         -storepass:file $storePasswordFile -keypass:file $keyPasswordFile `
         -alias $alias -keyalg RSA -keysize 2048 -validity 10000 `
-        -dname 'CN=Nihongo Master, OU=Android, O=Nihongo Master, C=ID' -noprompt *> $null
+        -dname 'CN=Bahasa Master, OU=Android, O=Bahasa Master, C=ID' -noprompt *> $null
     if ($LASTEXITCODE -ne 0) {
         throw "keytool failed with exit code $LASTEXITCODE."
     }

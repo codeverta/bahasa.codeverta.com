@@ -141,7 +141,7 @@ Tetap di awal: rewarded opsional untuk N3–N1, Anki, simulasi N3, berita, dan l
 1. Tombol opsional di layar hasil, "Tonton iklan untuk 2× XP (+N XP)". Tidak pernah muncul otomatis, dan hanya tampil bila penyelesaian itu memberi XP lebih dari 0.
 2. Yang digandakan adalah seluruh XP dari penyelesaian itu, termasuk bonus lulus pertama.
 3. **Diverifikasi server lewat SSV**, sekali per penyelesaian, dan bisa diklaim maksimal 30 menit setelah selesai.
-4. Unit baru `nm_rewarded_xp` (Rewarded, SSV ke `https://nihongo.codeverta.com/v1/ads/ssv`).
+4. Unit baru `nm_rewarded_xp` (Rewarded, SSV ke `https://bahasa.codeverta.com/v1/ads/ssv`).
 5. Maksimal 10 per hari, bisa diatur di admin. Batas ini terpisah dari batas buka konten. XP penggandaan tidak masuk batas 200 XP pengulangan.
 6. Tidak ada jalur cadangan: bila iklan gagal dimuat, pengguna bisa mencoba lagi.
 7. Pengguna Lifetime bisa menekan "Klaim 2× XP" tanpa iklan, dengan batas harian yang sama.

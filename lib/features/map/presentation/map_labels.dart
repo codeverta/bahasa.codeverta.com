@@ -1,5 +1,5 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 
 /// Language for spot text: English only when the app runs in English.
 String mapLanguage(BuildContext context) =>

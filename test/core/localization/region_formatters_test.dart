@@ -1,6 +1,6 @@
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:bahasa_master/core/localization/region_formatters.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/localization/region_formatters.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   test('dates and numbers use the device region pattern', () async {

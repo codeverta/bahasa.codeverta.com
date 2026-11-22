@@ -1,6 +1,6 @@
+import 'package:bahasa_master/features/anki/data/offline_anki_reviews.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/features/anki/data/offline_anki_reviews.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

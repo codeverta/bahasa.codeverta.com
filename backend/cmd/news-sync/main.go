@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"nihongo-master-backend/internal/config"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/media"
-	"nihongo-master-backend/internal/news"
+	"bahasa-master-backend/internal/config"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/media"
+	"bahasa-master-backend/internal/news"
 )
 
 func main() {

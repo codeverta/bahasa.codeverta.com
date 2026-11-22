@@ -1,16 +1,16 @@
 import 'dart:convert';
 
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/rewarded_ads.dart';
+import 'package:bahasa_master/core/analytics/analytics_service.dart';
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
+import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_sheet.dart';
+import 'package:bahasa_master/features/ai_chat/presentation/ai_markdown.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/ads/rewarded_ads.dart';
-import 'package:nihongo_master/core/analytics/analytics_service.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/features/ai_chat/data/ai_chat_repository.dart';
-import 'package:nihongo_master/features/ai_chat/presentation/ai_chat_sheet.dart';
-import 'package:nihongo_master/features/ai_chat/presentation/ai_markdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 typedef _Sent = ({AiChip? chip, String message});

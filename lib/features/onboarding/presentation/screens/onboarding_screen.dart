@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/notifications/push_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/notifications/push_notifications.dart';
 
 const _ink = Color(0xFF24285C);
 const _red = Color(0xFFD84942);
@@ -186,7 +186,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'Nihongo\nMaster',
+                          'Bahasa\nMaster',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.titleSmall
@@ -561,7 +561,7 @@ class _NotificationPage extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              'Aktifkan notifikasi untuk menerima pengumuman, materi baru, dan info penting dari Nihongo Master. Tanpa spam, dan bisa dimatikan kapan saja di Pengaturan.'
+              'Aktifkan notifikasi untuk menerima pengumuman, materi baru, dan info penting dari Bahasa Master. Tanpa spam, dan bisa dimatikan kapan saja di Pengaturan.'
                   .localized(context),
               style: theme.textTheme.bodyMedium?.copyWith(
                 height: 1.65,

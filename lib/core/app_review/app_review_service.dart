@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/app_review/app_review_policy.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:nihongo_master/core/app_review/app_review_policy.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// App Store ID (angka setelah `id` pada URL App Store). Isi setelah aplikasi

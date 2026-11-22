@@ -1,3 +1,10 @@
+import 'package:bahasa_master/core/routing/app_router.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/dictionary/data/dictionary_repository.dart';
+import 'package:bahasa_master/features/dictionary/domain/dictionary_models.dart';
+import 'package:bahasa_master/features/news/data/news_repository.dart';
+import 'package:bahasa_master/features/news/presentation/furigana_text.dart';
+import 'package:bahasa_master/features/news/presentation/news_screens.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,13 +12,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:nihongo_master/core/routing/app_router.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/dictionary/data/dictionary_repository.dart';
-import 'package:nihongo_master/features/dictionary/domain/dictionary_models.dart';
-import 'package:nihongo_master/features/news/data/news_repository.dart';
-import 'package:nihongo_master/features/news/presentation/furigana_text.dart';
-import 'package:nihongo_master/features/news/presentation/news_screens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const text = '😀東京で食べました。東京の文化について読みます。';
@@ -87,7 +87,7 @@ final article = NewsArticle({
   'fetchedAt': '2026-10-19T11:00:00Z',
   'license': 'CC BY 3.0',
   'licenseUrl': 'https://creativecommons.org/licenses/by/3.0/',
-  'changes': 'Furigana ditambahkan oleh Nihongo Master.',
+  'changes': 'Furigana ditambahkan oleh Bahasa Master.',
   'credits': [
     {
       'name': 'Author',

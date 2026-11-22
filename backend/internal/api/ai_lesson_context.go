@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"nihongo-master-backend/internal/aichat"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/aichat"
+	"bahasa-master-backend/internal/domain"
 )
 
 // maxLessonContextRunes bounds the lesson notes sent to the model so a very

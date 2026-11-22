@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 
 void main() {
   test('English copy includes dictionary, Anki, and learning labels', () {

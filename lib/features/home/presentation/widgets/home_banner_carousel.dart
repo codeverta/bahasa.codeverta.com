@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/shared/presentation/widgets/brand_artwork.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
-import 'package:nihongo_master/shared/presentation/widgets/brand_artwork.dart';
 
 class HomeBannerCarousel extends StatefulWidget {
   const HomeBannerCarousel({
@@ -321,7 +321,7 @@ const _buttonStyle = TextStyle(
 );
 
 String _eyebrow(String action) => switch (action) {
-  'premium' => 'NIHONGO PREMIUM',
+  'premium' => 'BAHASA PREMIUM',
   'manga' => 'PREMIUM · LIFETIME ACCESS',
   'anki' => 'REVIEW SEDIKIT, INGAT LEBIH LAMA',
   'ssw' => 'KETERAMPILAN UNTUK JEPANG',
@@ -572,9 +572,7 @@ class _BannerDot extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: active
-            ? (showProgress
-                  ? scheme.surfaceContainerHighest
-                  : scheme.primary)
+            ? (showProgress ? scheme.surfaceContainerHighest : scheme.primary)
             : scheme.outlineVariant,
         borderRadius: BorderRadius.circular(6),
       ),

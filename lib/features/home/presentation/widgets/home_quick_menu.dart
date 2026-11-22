@@ -1,9 +1,9 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/shared/presentation/widgets/motion.dart';
 
 /// Beranda quick menu: a 4×2 icon grid that replaces the large explore cards
 /// and the old "Mulai belajar" section so every feature is reachable without
@@ -88,7 +88,8 @@ class HomeQuickMenu extends StatelessWidget {
         // Four columns on phones; tablets get one row of eight.
         final columns = constraints.maxWidth >= 600 ? 8 : 4;
         final spacing = constraints.maxWidth < 330 ? 2.0 : 6.0;
-        final width = (constraints.maxWidth - spacing * (columns - 1)) / columns;
+        final width =
+            (constraints.maxWidth - spacing * (columns - 1)) / columns;
         return Wrap(
           key: const Key('home-quick-menu'),
           spacing: spacing,
@@ -177,7 +178,9 @@ class _QuickMenuTile extends StatelessWidget {
                       children: [
                         Positioned.fill(
                           child: ColoredBox(
-                            color: color.withValues(alpha: isDark ? 0.16 : 0.12),
+                            color: color.withValues(
+                              alpha: isDark ? 0.16 : 0.12,
+                            ),
                           ),
                         ),
                         // Soft "pressed edge" along the bottom of the tile.
@@ -251,7 +254,11 @@ class _PremiumCrown extends StatelessWidget {
         border: Border.all(color: ring, width: 2.5),
       ),
       alignment: Alignment.center,
-      child: Icon(Icons.workspace_premium_rounded, size: 12, color: sakura.onGold),
+      child: Icon(
+        Icons.workspace_premium_rounded,
+        size: 12,
+        color: sakura.onGold,
+      ),
     );
   }
 }

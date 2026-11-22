@@ -15,10 +15,10 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/aichat"
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/aichat"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 type fakeCompleter struct {
@@ -108,7 +108,7 @@ func newAITestEnv(t *testing.T, adsEnabled bool) *aiTestEnv {
 
 func aiLogin(t *testing.T, handler http.Handler) domain.AuthSession {
 	t.Helper()
-	request := httptest.NewRequest(http.MethodPost, "/v1/auth/login", strings.NewReader(`{"email":"demo@nihongomaster.app","password":"Demo123!"}`))
+	request := httptest.NewRequest(http.MethodPost, "/v1/auth/login", strings.NewReader(`{"email":"demo@bahasa.codeverta.com","password":"Demo123!"}`))
 	request.Header.Set("Content-Type", "application/json")
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
@@ -138,7 +138,7 @@ func (e *aiTestEnv) makeLifetime(t *testing.T) {
 		t.Fatal(err)
 	}
 	if err := e.memory.SaveVerifiedPurchase(e.userID, domain.Purchase{
-		Platform: "android", ID: "ai-test-" + e.userID, ProductID: "nihongo_master_lifetime",
+		Platform: "android", ID: "ai-test-" + e.userID, ProductID: "bahasa_master_lifetime",
 		AccountToken: token, Proof: "ai-test", State: "purchased", CheckedAt: time.Now(),
 	}); err != nil {
 		t.Fatal(err)

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/store"
 )
 
 func newAdsTestServer(t *testing.T) (http.Handler, string) {

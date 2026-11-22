@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 func TestMangaLifetimeGuardAndRevocation(t *testing.T) {

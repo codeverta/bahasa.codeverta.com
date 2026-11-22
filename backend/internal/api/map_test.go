@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"nihongo-master-backend/internal/places"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/places"
+	"bahasa-master-backend/internal/store"
 )
 
 func newMapServer(t *testing.T) (*Server, http.Handler, *places.Service) {

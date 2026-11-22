@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/features/map/data/map_repository.dart';
+import 'package:bahasa_master/features/map/domain/prefecture_living.dart';
+import 'package:bahasa_master/features/map/domain/prefecture_profile.dart';
+import 'package:bahasa_master/features/map/presentation/prefecture_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/features/map/data/map_repository.dart';
-import 'package:nihongo_master/features/map/domain/prefecture_living.dart';
-import 'package:nihongo_master/features/map/domain/prefecture_profile.dart';
-import 'package:nihongo_master/features/map/presentation/prefecture_profile_screen.dart';
 
 /// The backend's bundled data, so the app is tested against real profiles.
 final _profiles = PrefectureProfiles.fromJson(

@@ -3,14 +3,14 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <application
-        android:label="Nihongo Master"
+        android:label="Bahasa Master"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-        <!-- Nihongo Master AdMob App ID. Debug builds still request Google test ad units. -->
+        <!-- Bahasa Master AdMob App ID. Debug builds still request Google test ad units. -->
         <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-2242816010232507~4088088589" />
         <meta-data android:name="firebase_messaging_auto_init_enabled" android:value="false" />
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
-        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="nihongo_announcements" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="bahasa_announcements" />
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_notification" />
         <activity
             android:name=".MainActivity"

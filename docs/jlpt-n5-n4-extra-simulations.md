@@ -1,7 +1,7 @@
 # JLPT N5 dan N4 Paket 02–10 (dengan furigana)
 
 Tambahan latihan ujian **gratis** untuk N5 dan N4: N5 Paket 02–10 (masing-masing 38 soal) serta
-N4 Paket 02–10 (masing-masing 57 soal). Soal orisinal Nihongo Master; hanya struktur dan jenis soal
+N4 Paket 02–10 (masing-masing 57 soal). Soal orisinal Bahasa Master; hanya struktur dan jenis soal
 yang mengikuti pedoman resmi JLPT. Listening dilewati, dan N5 juga melewati dokkai seperti Paket 01.
 
 ## Struktur

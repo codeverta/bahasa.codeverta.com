@@ -7,8 +7,8 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
 	"os"
 	"strings"
 	"time"
@@ -60,7 +60,7 @@ func (s *MemoryStore) EnableBillingPersistence() error {
 	}
 
 	if deleted > 0 {
-		delete(s.accounts, "demo@nihongomaster.app")
+		delete(s.accounts, "demo@bahasa.codeverta.com")
 		delete(s.profiles, database.DemoUserID)
 	}
 	s.billingEnabled = true
@@ -220,15 +220,15 @@ func (s *MemoryStore) UpdateVerifiedPurchase(p domain.Purchase) error {
 // openLearningAccess unlocks every study and exam feature (N3-N1 lessons, all
 // simulations, SSW practice, Anki JLPT decks) for any signed-in account. Guests
 // are still rejected because those endpoints require a session. Set the
-// environment variable NIHONGO_OPEN_ACCESS=false to restore the Lifetime Access
+// environment variable BAHASA_OPEN_ACCESS=false to restore the Lifetime Access
 // gates. Manga, jobs and offline downloads keep their own Lifetime rules.
-var openLearningAccess = !strings.EqualFold(strings.TrimSpace(os.Getenv("NIHONGO_OPEN_ACCESS")), "false")
+var openLearningAccess = !strings.EqualFold(strings.TrimSpace(os.Getenv("BAHASA_OPEN_ACCESS")), "false")
 
 // OpenLearningAccess reports whether study and exam content is open to every signed-in account.
 func OpenLearningAccess() bool { return openLearningAccess }
 
 // SetOpenLearningAccess switches open study/exam access and returns the previous
-// value. It exists for tests; production code configures it with NIHONGO_OPEN_ACCESS.
+// value. It exists for tests; production code configures it with BAHASA_OPEN_ACCESS.
 func SetOpenLearningAccess(open bool) bool {
 	previous := openLearningAccess
 	openLearningAccess = open

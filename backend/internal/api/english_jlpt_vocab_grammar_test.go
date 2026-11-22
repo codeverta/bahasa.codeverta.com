@@ -7,7 +7,7 @@ import (
 	"testing"
 	"unicode"
 
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/store"
 )
 
 func TestEnglishJLPTVocabularyAndGrammarCatalog(t *testing.T) {

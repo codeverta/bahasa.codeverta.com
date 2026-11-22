@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/analytics/analytics_service.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/analytics/analytics_service.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 
 /// Where the skippable Lifetime screen was opened from.
 enum LifetimeOfferSource {

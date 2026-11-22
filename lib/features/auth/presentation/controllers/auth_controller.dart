@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/core/auth/session_expiration.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:nihongo_master/core/auth/offline_access.dart';
-import 'package:nihongo_master/core/auth/session_expiration.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum AuthenticationStatus { checking, guest, authenticated }

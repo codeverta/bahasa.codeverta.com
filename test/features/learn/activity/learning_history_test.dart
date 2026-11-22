@@ -1,12 +1,13 @@
 import 'dart:async';
+
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/learn/activity/continue_learning_section.dart';
+import 'package:bahasa_master/features/learn/activity/learning_history.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/learn/activity/continue_learning_section.dart';
-import 'package:nihongo_master/features/learn/activity/learning_history.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FakeHistory extends LearningHistoryRepository {

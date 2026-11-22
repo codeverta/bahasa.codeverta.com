@@ -1,9 +1,9 @@
 package store
 
 import (
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/testdb"
 	"testing"
 )
 

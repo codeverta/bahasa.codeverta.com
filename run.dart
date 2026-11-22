@@ -58,11 +58,11 @@ Future<void> main(List<String> args) async {
         final port = _backendPort(env);
         stdout.writeln('Membangun backend Go ...');
         backendBuildDirectory = await Directory.systemTemp.createTemp(
-          'nihongo-master-',
+          'bahasa-master-',
         );
         final executableName = Platform.isWindows
-            ? 'nihongo-api.exe'
-            : 'nihongo-api';
+            ? 'bahasa-api.exe'
+            : 'bahasa-api';
         final backendExecutable = File(
           '${backendBuildDirectory.path}${Platform.pathSeparator}$executableName',
         );

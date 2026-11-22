@@ -573,7 +573,7 @@ func TestExportLocalizationCoverage(t *testing.T) {
 			}
 			addText("ssw-paper:"+form, "SSW simulation", "SSW simulation", "", level, form, "", "", "Section label · "+section.ID, section.Name, "backend/internal/store/ssw_resources/assessments.json", ids)
 		}
-		addText("ssw-paper:"+form, "SSW simulation", "SSW simulation", "", level, form, "", "", "Instructions", "Pilih satu jawaban paling tepat. Soal orisinal Nihongo Master.", "backend/internal/store/ssw.go", paperIDs)
+		addText("ssw-paper:"+form, "SSW simulation", "SSW simulation", "", level, form, "", "", "Instructions", "Pilih satu jawaban paling tepat. Soal orisinal Bahasa Master.", "backend/internal/store/ssw.go", paperIDs)
 	}
 
 	if len(bundle.Questions) == 0 {

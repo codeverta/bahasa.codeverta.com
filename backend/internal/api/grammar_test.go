@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 	"strings"
 	"testing"
 )

@@ -1,10 +1,10 @@
+import 'package:bahasa_master/core/ads/ad_widgets.dart';
+import 'package:bahasa_master/core/gamification/xp_gain.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/ads/ad_widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
-import 'package:nihongo_master/core/gamification/xp_gain.dart';
 
 class DiagnosticResultView extends StatefulWidget {
   const DiagnosticResultView({required this.result, super.key});

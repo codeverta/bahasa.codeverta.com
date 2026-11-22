@@ -1,9 +1,9 @@
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/ads_controller.dart';
+import 'package:bahasa_master/core/ads/interstitial_ads.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/ads/ads_controller.dart';
-import 'package:nihongo_master/core/ads/interstitial_ads.dart';
 
 class _FakeGateway implements InterstitialAdGateway {
   bool loaded = false;

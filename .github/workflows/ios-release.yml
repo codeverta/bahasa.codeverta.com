@@ -82,7 +82,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          KEYCHAIN_PATH="$RUNNER_TEMP/nihongo-signing.keychain-db"
+          KEYCHAIN_PATH="$RUNNER_TEMP/bahasa-signing.keychain-db"
           KEYCHAIN_PASSWORD="$(openssl rand -hex 24)"
           CERTIFICATE_PATH="$RUNNER_TEMP/ios-distribution.p12"
           PROFILE_PATH="$RUNNER_TEMP/ios-appstore.mobileprovision"
@@ -195,13 +195,13 @@ jobs:
           mkdir -p release-output
           IPA_PATH="$(find build/ios/ipa -maxdepth 1 -name '*.ipa' -print -quit)"
           test -n "$IPA_PATH"
-          cp "$IPA_PATH" release-output/nihongo-master.ipa
-          (cd release-output && shasum -a 256 nihongo-master.ipa > SHA256SUMS)
+          cp "$IPA_PATH" release-output/bahasa-master.ipa
+          (cd release-output && shasum -a 256 bahasa-master.ipa > SHA256SUMS)
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: nihongo-master-ios-${{ github.ref_name }}
+          name: bahasa-master-ios-${{ github.ref_name }}
           path: release-output/*
           if-no-files-found: error
           retention-days: 30
@@ -216,7 +216,7 @@ jobs:
             gh release upload "$GITHUB_REF_NAME" release-output/* --clobber
           else
             gh release create "$GITHUB_REF_NAME" release-output/* \
-              --title "Nihongo Master $GITHUB_REF_NAME" \
+              --title "Bahasa Master $GITHUB_REF_NAME" \
               --generate-notes
           fi
 

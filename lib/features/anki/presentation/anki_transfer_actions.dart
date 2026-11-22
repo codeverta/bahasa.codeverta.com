@@ -1,13 +1,13 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/anki/data/anki_repository.dart';
+import 'package:bahasa_master/features/anki/data/anki_transfer_repository.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/anki/data/anki_repository.dart';
-import 'package:nihongo_master/features/anki/data/anki_transfer_repository.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:share_plus/share_plus.dart' hide XFile;
 
 class AnkiExportButton extends ConsumerStatefulWidget {
@@ -80,7 +80,7 @@ class _ExportState extends ConsumerState<AnkiExportButton> {
       if (!mounted || ref.read(authControllerProvider).user?.id != user.id) {
         return;
       }
-      final name = 'nihongo-deck-${widget.deckId}.$format';
+      final name = 'bahasa-deck-${widget.deckId}.$format';
       await saveAnkiExport(context, bytes, name, format);
     } on Object catch (error) {
       if (mounted) {

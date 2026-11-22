@@ -1,9 +1,9 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
 
 class DiagnosticIntroScreen extends ConsumerStatefulWidget {
   const DiagnosticIntroScreen({super.key});
@@ -58,7 +58,8 @@ class _DiagnosticIntroState extends ConsumerState<DiagnosticIntroScreen> {
                     DiagnosticHero(
                       title: 'Kenali titik\nawal belajarmu.'.localized(context),
                       subtitle:
-                          'Kerjakan dengan kemampuanmu saat ini. Hasilnya membantu memilih materi belajar berikutnya.'.localized(context),
+                          'Kerjakan dengan kemampuanmu saat ini. Hasilnya membantu memilih materi belajar berikutnya.'
+                              .localized(context),
                     ),
                     const SizedBox(height: 20),
                     ExamPanel(
@@ -75,7 +76,11 @@ class _DiagnosticIntroState extends ConsumerState<DiagnosticIntroScreen> {
                             '${exam['durationMinutes']}',
                             'menit'.localized(context),
                           ),
-                          _stat(Icons.lock_open_rounded, 'Gratis'.localized(context), 'akses'.localized(context)),
+                          _stat(
+                            Icons.lock_open_rounded,
+                            'Gratis'.localized(context),
+                            'akses'.localized(context),
+                          ),
                         ],
                       ),
                     ),
@@ -132,12 +137,14 @@ class _DiagnosticIntroState extends ConsumerState<DiagnosticIntroScreen> {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            '• Pilih satu jawaban untuk setiap soal.\n• Kamu boleh kembali dan mengubah jawaban.\n• Tandai soal yang ingin diperiksa lagi.\n• Jawaban disimpan saat koneksi tersedia.\n• Waktu tetap berjalan saat keluar dari sesi.\n• Soal kosong dihitung salah.'.localized(context),
+                            '• Pilih satu jawaban untuk setiap soal.\n• Kamu boleh kembali dan mengubah jawaban.\n• Tandai soal yang ingin diperiksa lagi.\n• Jawaban disimpan saat koneksi tersedia.\n• Waktu tetap berjalan saat keluar dari sesi.\n• Soal kosong dihitung salah.'
+                                .localized(context),
                             style: const TextStyle(height: 1.8),
                           ),
                           SizedBox(height: 12),
                           Text(
-                            'Latihan buatan Nihongo Master. Hasil berupa persentase jawaban benar, bukan skor atau prediksi kelulusan resmi JLPT.'.localized(context),
+                            'Latihan buatan Bahasa Master. Hasil berupa persentase jawaban benar, bukan skor atau prediksi kelulusan resmi JLPT.'
+                                .localized(context),
                             style: const TextStyle(fontSize: 12, height: 1.5),
                           ),
                         ],
@@ -176,7 +183,9 @@ class _DiagnosticIntroState extends ConsumerState<DiagnosticIntroScreen> {
                               )
                             : const Icon(Icons.play_arrow_rounded),
                         label: Text(
-                          active ? 'Lanjutkan sesi'.localized(context) : 'Mulai diagnostic'.localized(context),
+                          active
+                              ? 'Lanjutkan sesi'.localized(context)
+                              : 'Mulai diagnostic'.localized(context),
                         ),
                       ),
                     ],
@@ -191,20 +200,20 @@ class _DiagnosticIntroState extends ConsumerState<DiagnosticIntroScreen> {
   }
 
   Widget _stat(IconData icon, String value, String label) => Column(
-        children: [
-          Icon(icon, color: examInk),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900),
-          ),
-          Text(label),
-        ],
-      );
+    children: [
+      Icon(icon, color: examInk),
+      const SizedBox(height: 8),
+      Text(
+        value,
+        style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900),
+      ),
+      Text(label),
+    ],
+  );
   IconData _icon(String name) => switch (name) {
-        'Kosakata' => Icons.translate_rounded,
-        'Kanji' => Icons.brush_rounded,
-        'Grammar' => Icons.account_tree_outlined,
-        _ => Icons.auto_stories_outlined
-      };
+    'Kosakata' => Icons.translate_rounded,
+    'Kanji' => Icons.brush_rounded,
+    'Grammar' => Icons.account_tree_outlined,
+    _ => Icons.auto_stories_outlined,
+  };
 }

@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 )
 
 func TestOfflineLeaseIsSignedAccountBoundAndFixedToVerifiedAt(t *testing.T) {
@@ -26,7 +26,7 @@ func TestOfflineLeaseIsSignedAccountBoundAndFixedToVerifiedAt(t *testing.T) {
 	verifiedAt := time.Date(2026, 10, 23, 1, 2, 3, 0, time.UTC)
 	now := verifiedAt.Add(time.Hour)
 	purchase := domain.Purchase{
-		Platform: "android", ID: "store-123", ProductID: "nihongo_master_lifetime",
+		Platform: "android", ID: "store-123", ProductID: "bahasa_master_lifetime",
 		UserID: "account-1", State: "purchased", CheckedAt: verifiedAt,
 	}
 

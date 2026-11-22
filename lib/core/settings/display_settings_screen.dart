@@ -1,10 +1,10 @@
+import 'package:bahasa_master/core/localization/app_language.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/settings/display_preferences.dart';
+import 'package:bahasa_master/core/settings/theme_mode_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_language.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/settings/display_preferences.dart';
-import 'package:nihongo_master/core/settings/theme_mode_preference.dart';
 
 class DisplaySettingsScreen extends ConsumerWidget {
   const DisplaySettingsScreen({super.key});

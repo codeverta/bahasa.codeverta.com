@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const furiganaPreferenceKey = 'display_furigana_enabled';

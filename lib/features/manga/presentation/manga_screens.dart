@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/localization/region_formatters.dart';
+import 'package:bahasa_master/core/network/remote_asset_image.dart';
+import 'package:bahasa_master/features/manga/data/manga_repository.dart';
+import 'package:bahasa_master/shared/presentation/widgets/explore_feature_card.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/localization/region_formatters.dart';
-import 'package:nihongo_master/core/network/remote_asset_image.dart';
-import 'package:nihongo_master/features/manga/data/manga_repository.dart';
-import 'package:nihongo_master/shared/presentation/widgets/explore_feature_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _ink = Color(0xFF232667);

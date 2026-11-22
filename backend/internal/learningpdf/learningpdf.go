@@ -12,7 +12,7 @@ import (
 
 	"github.com/go-pdf/fpdf"
 
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 )
 
 var (
@@ -27,7 +27,7 @@ const (
 	pageWidth  = 210.0
 	margin     = 14.0
 	contentW   = pageWidth - 2*margin
-	footerSite = "Nihongo Master · nihongo.codeverta.com"
+	footerSite = "Bahasa Master · bahasa.codeverta.com"
 )
 
 type labels struct {
@@ -86,8 +86,8 @@ func newPDF(l labels, title string) (*fpdf.Fpdf, error) {
 		return nil, err
 	}
 	pdf.SetTitle(title, true)
-	pdf.SetAuthor("Nihongo Master", true)
-	pdf.SetCreator("Nihongo Master", true)
+	pdf.SetAuthor("Bahasa Master", true)
+	pdf.SetCreator("Bahasa Master", true)
 	pdf.AliasNbPages("{nb}")
 	pdf.SetFooterFunc(func() {
 		pdf.SetY(-11)

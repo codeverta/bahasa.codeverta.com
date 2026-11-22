@@ -1,9 +1,9 @@
 import 'dart:ui' as ui;
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/jobs/domain/job_models.dart';
+import 'package:bahasa_master/features/ssw/presentation/ssw_visuals.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/jobs/domain/job_models.dart';
-import 'package:nihongo_master/features/ssw/presentation/ssw_visuals.dart';
 
 /// Warm, editorial introduction to the Japan job board.
 class JobBoardHero extends StatelessWidget {

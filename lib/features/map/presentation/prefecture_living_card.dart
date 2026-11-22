@@ -1,8 +1,8 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/map/data/map_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/map/data/map_repository.dart';
 
 String formatYen(int yen) =>
     '¥${NumberFormat.decimalPattern('id').format(yen)}';

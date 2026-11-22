@@ -1,15 +1,15 @@
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/ads_controller.dart';
+import 'package:bahasa_master/core/ads/interstitial_ads.dart';
+import 'package:bahasa_master/core/gamification/xp_gain.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/core/unlock/unlock_flow.dart';
+import 'package:bahasa_master/core/unlock/unlock_repository.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/ads/ads_controller.dart';
-import 'package:nihongo_master/core/ads/interstitial_ads.dart';
-import 'package:nihongo_master/core/gamification/xp_gain.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
-import 'package:nihongo_master/core/unlock/unlock_flow.dart';
-import 'package:nihongo_master/core/unlock/unlock_repository.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:nihongo_master/features/profile/data/gamification_repository.dart';
 
 /// The double XP placement when an ad can be offered right now (Android, ads
 /// on, consent given, free plan); null otherwise.

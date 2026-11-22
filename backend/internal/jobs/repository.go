@@ -20,8 +20,8 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/jobfetch"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/jobfetch"
 )
 
 //go:embed resources/sources.json
@@ -89,7 +89,7 @@ func requestBudget(s jobfetch.Source) int {
 	return 1
 }
 func stableID(s string) string {
-	return uuid.NewSHA1(uuid.NameSpaceURL, []byte("nihongo-master:jobs:"+s)).String()
+	return uuid.NewSHA1(uuid.NameSpaceURL, []byte("bahasa-master:jobs:"+s)).String()
 }
 func hash(s string) string { sum := sha256.Sum256([]byte(s)); return hex.EncodeToString(sum[:]) }
 

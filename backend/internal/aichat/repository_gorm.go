@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"nihongo-master-backend/internal/database"
+	"bahasa-master-backend/internal/database"
 )
 
 type usageRow struct {

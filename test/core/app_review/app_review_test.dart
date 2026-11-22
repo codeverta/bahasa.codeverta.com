@@ -1,8 +1,8 @@
+import 'package:bahasa_master/core/app_review/app_review_policy.dart';
+import 'package:bahasa_master/core/app_review/app_review_service.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/app_review/app_review_policy.dart';
-import 'package:nihongo_master/core/app_review/app_review_service.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FakeStoreReview implements StoreReviewClient {
@@ -16,6 +16,7 @@ class FakeStoreReview implements StoreReviewClient {
   Future<void> requestReview() async {
     requests++;
   }
+
   @override
   Future<void> openStoreListing({String? appStoreId}) async {
     opened = true;

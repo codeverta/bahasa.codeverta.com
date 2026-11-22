@@ -8,8 +8,8 @@ import (
 	"sync"
 
 	"gorm.io/gorm/clause"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
 )
 
 //go:embed ssw_resources/assessments.json
@@ -65,7 +65,7 @@ func sswSimulationPaper(level string) (simulationPaperConfig, bool) {
 				n++
 			}
 		}
-		items = append(items, simulationItem{q.Section, q.Group, "Pilih satu jawaban paling tepat. Soal orisinal Nihongo Master.", q.Passage, q.Prompt, choices, q.Explanation})
+		items = append(items, simulationItem{q.Section, q.Group, "Pilih satu jawaban paling tepat. Soal orisinal Bahasa Master.", q.Passage, q.Prompt, choices, q.Explanation})
 	}
 	omitted := p.Omitted
 	if omitted == nil {

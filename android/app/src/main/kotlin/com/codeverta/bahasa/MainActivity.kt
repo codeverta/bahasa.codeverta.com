@@ -1,4 +1,4 @@
-package com.codeverta.nihongomaster
+package com.codeverta.bahasa
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -10,7 +10,7 @@ import android.provider.Settings
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.codeverta.nihongomaster/app_info")
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.codeverta.bahasa/app_info")
             .setMethodCallHandler { call, result ->
                 if (call.method == "openNotificationSettings") {
                     try {

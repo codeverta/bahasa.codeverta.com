@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/learn/kana/domain/stroke_matcher.dart';
+import 'package:bahasa_master/features/learn/kana/presentation/widgets/kana_stroke_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/learn/kana/domain/stroke_matcher.dart';
-import 'package:nihongo_master/features/learn/kana/presentation/widgets/kana_stroke_painter.dart';
 
 /// Animated stroke order with a step-by-step mode (◀ ▶).
 class StrokeOrderPlayer extends StatefulWidget {

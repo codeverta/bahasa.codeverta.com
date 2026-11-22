@@ -1,17 +1,17 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/core/widgets/skeleton.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
+import 'package:bahasa_master/features/news/data/news_repository.dart';
+import 'package:bahasa_master/features/news/presentation/news_screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/core/widgets/skeleton.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:nihongo_master/features/home/presentation/screens/dashboard_screen.dart';
-import 'package:nihongo_master/features/news/data/news_repository.dart';
-import 'package:nihongo_master/features/news/presentation/news_screens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _pumpLoadingDashboard(

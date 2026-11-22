@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 
 /// Ads are only ever shown to signed-in or guest users on the free plan.
 /// Premium and Lifetime accounts never see them.

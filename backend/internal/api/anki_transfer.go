@@ -11,10 +11,10 @@ import (
 	"unicode/utf8"
 
 	"github.com/google/uuid"
-	"nihongo-master-backend/internal/anki"
-	"nihongo-master-backend/internal/ankitransfer"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/anki"
+	"bahasa-master-backend/internal/ankitransfer"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 const ankiUploadLimit = 20 << 20
@@ -178,7 +178,7 @@ func (s *Server) exportAnkiDeck(w http.ResponseWriter, r *http.Request) {
 	if format == "json" {
 		mime = "application/json; charset=utf-8"
 	}
-	filename := "nihongo-deck-" + r.PathValue("deckID") + "." + format
+	filename := "bahasa-deck-" + r.PathValue("deckID") + "." + format
 	w.Header().Set("Content-Type", mime)
 	w.Header().Set("Content-Disposition", "attachment; filename*=UTF-8''"+url.PathEscape(filename))
 	w.Header().Set("Cache-Control", "private, no-store")

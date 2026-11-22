@@ -20,8 +20,8 @@ import (
 	"strings"
 	"sync"
 
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/imageopt"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/imageopt"
 )
 
 const maxBannerImageBytes = 5 << 20

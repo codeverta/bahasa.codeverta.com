@@ -1,7 +1,7 @@
 package store
 
 import (
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/testdb"
 	"testing"
 )
 

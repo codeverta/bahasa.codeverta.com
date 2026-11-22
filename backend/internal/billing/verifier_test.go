@@ -6,8 +6,8 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 	"strings"
 	"testing"
 	"time"
@@ -32,13 +32,13 @@ func TestGoogleProductV2Validation(t *testing.T) {
 			calls := 0
 			client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
 				calls++
-				if r.URL.Host != "androidpublisher.googleapis.com" || !strings.Contains(r.URL.Path, "/applications/com.codeverta.nihongomaster/") {
+				if r.URL.Host != "androidpublisher.googleapis.com" || !strings.Contains(r.URL.Path, "/applications/com.codeverta.bahasa/") {
 					t.Fatal("wrong verification endpoint")
 				}
 				raw, _ := json.Marshal(map[string]any{"productLineItem": []any{map[string]any{"productId": tc.product, "productOfferDetails": map[string]any{"refundableQuantity": tc.refundable, "consumptionState": tc.consumed}}}, "purchaseStateContext": map[string]string{"purchaseState": tc.state}, "obfuscatedExternalAccountId": "bound-account", "acknowledgementState": "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED"})
 				return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(string(raw)))}, nil
 			})}
-			v := &StoreVerifier{ProductID: "lifetime", PackageID: "com.codeverta.nihongomaster", googleClient: client}
+			v := &StoreVerifier{ProductID: "lifetime", PackageID: "com.codeverta.bahasa", googleClient: client}
 			p, err := v.Verify(context.Background(), domain.PurchaseProof{Platform: "android", ProductID: "lifetime", VerificationData: "token"})
 			if tc.expected == "invalid" {
 				if !errors.Is(err, ErrInvalid) {
@@ -111,7 +111,7 @@ func TestGooglePromoPurchaseWithoutAccountIsAccepted(t *testing.T) {
 		raw, _ := json.Marshal(map[string]any{"productLineItem": []any{map[string]any{"productId": "lifetime", "productOfferDetails": map[string]any{"refundableQuantity": 1, "consumptionState": "CONSUMPTION_STATE_YET_TO_BE_CONSUMED"}}}, "purchaseStateContext": map[string]string{"purchaseState": "PURCHASED"}, "acknowledgementState": "ACKNOWLEDGEMENT_STATE_PENDING"})
 		return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(string(raw)))}, nil
 	})}
-	v := &StoreVerifier{ProductID: "lifetime", PackageID: "com.codeverta.nihongomaster", googleClient: client}
+	v := &StoreVerifier{ProductID: "lifetime", PackageID: "com.codeverta.bahasa", googleClient: client}
 	p, err := v.Verify(context.Background(), domain.PurchaseProof{Platform: "android", ProductID: "lifetime", VerificationData: "promo-token"})
 	if err != nil || p.State != "purchased" || p.AccountToken != "" || p.Acknowledged {
 		t.Fatalf("redeemed promo purchase rejected: %+v %v", p, err)

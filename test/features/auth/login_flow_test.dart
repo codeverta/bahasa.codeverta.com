@@ -1,14 +1,14 @@
+import 'package:bahasa_master/core/analytics/analytics_service.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/news/data/news_repository.dart';
+import 'package:bahasa_master/main.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/analytics/analytics_service.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:nihongo_master/features/news/data/news_repository.dart';
-import 'package:nihongo_master/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -23,7 +23,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const NihongoMasterApp(),
+        child: const BahasaMasterApp(),
       ),
     );
     await tester.pumpAndSettle();
@@ -37,9 +37,7 @@ void main() {
       'user@example.com',
     );
     await tester.enterText(find.byType(TextFormField).at(1), 'password123');
-    await tester.ensureVisible(
-      find.widgetWithText(ElevatedButton, 'Masuk'),
-    );
+    await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Masuk'));
     await tester.tap(find.widgetWithText(ElevatedButton, 'Masuk'));
     await tester.pumpAndSettle();
 
@@ -66,7 +64,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const NihongoMasterApp(),
+        child: const BahasaMasterApp(),
       ),
     );
     await tester.pumpAndSettle();
@@ -78,9 +76,7 @@ void main() {
       'user@example.com',
     );
     await tester.enterText(find.byType(TextFormField).at(1), 'wrongpass');
-    await tester.ensureVisible(
-      find.widgetWithText(ElevatedButton, 'Masuk'),
-    );
+    await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Masuk'));
     await tester.tap(find.widgetWithText(ElevatedButton, 'Masuk'));
     await tester.pumpAndSettle();
 

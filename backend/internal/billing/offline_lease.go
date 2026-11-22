@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,8 +17,8 @@ import (
 const OfflineLeaseDuration = 30 * 24 * time.Hour
 
 const (
-	offlineLeaseIssuer   = "nihongo-master"
-	offlineLeaseAudience = "nihongo-master-offline-premium"
+	offlineLeaseIssuer   = "bahasa-master"
+	offlineLeaseAudience = "bahasa-master-offline-premium"
 	offlineLeaseKeyID    = "offline-access-v1"
 )
 

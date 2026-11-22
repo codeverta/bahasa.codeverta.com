@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:ui' show FontFeature;
 
+import 'package:bahasa_master/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
 
 /// Membungkus area yang bisa diketuk dengan umpan balik "tekan": mengecil
 /// sedikit lalu memantul kembali. Tidak mengubah perilaku [onTap].

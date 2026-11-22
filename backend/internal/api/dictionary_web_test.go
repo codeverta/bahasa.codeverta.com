@@ -10,8 +10,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"nihongo-master-backend/internal/store"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/store"
+	"bahasa-master-backend/internal/testdb"
 )
 
 const webDictionaryFixture = `{"meta":{"status":200},"data":[{"slug":"猫","is_common":true,"tags":[],"jlpt":["jlpt-n5"],"japanese":[{"word":"猫","reading":"ねこ"},{"word":"ネコ"}],"senses":[{"english_definitions":["cat","<script>alert(1)</script>"],"parts_of_speech":["Noun"],"tags":["Usually written using kana alone"],"info":[],"see_also":["犬 1"],"antonyms":[]}]}]}`
@@ -45,7 +45,7 @@ func TestDictionaryWebIndexIsIndexable(t *testing.T) {
 	if w.Code != 200 || calls.Load() != 0 {
 		t.Fatalf("index: %d calls=%d", w.Code, calls.Load())
 	}
-	if !strings.Contains(body, `<link rel="canonical" href="https://nihongo.codeverta.com/kamus">`) || strings.Contains(body, "noindex") {
+	if !strings.Contains(body, `<link rel="canonical" href="https://bahasa.codeverta.com/kamus">`) || strings.Contains(body, "noindex") {
 		t.Fatal("dictionary index must be canonical and indexable")
 	}
 	if !strings.Contains(body, `action="/kamus"`) || !strings.Contains(body, "jisho.org") {
@@ -169,7 +169,7 @@ func TestDictionaryWebUpstreamFailure(t *testing.T) {
 func TestRobotsAndSitemap(t *testing.T) {
 	_, h, _ := newWebDictionaryServer(t, 200, webDictionaryFixture)
 	robots := webGet(h, "/robots.txt", "").Body.String()
-	for _, want := range []string{"Disallow: /kamus?", "Disallow: /v1/", "Sitemap: https://nihongo.codeverta.com/sitemap.xml"} {
+	for _, want := range []string{"Disallow: /kamus?", "Disallow: /v1/", "Sitemap: https://bahasa.codeverta.com/sitemap.xml"} {
 		if !strings.Contains(robots, want) {
 			t.Errorf("robots.txt missing %q", want)
 		}
@@ -178,7 +178,7 @@ func TestRobotsAndSitemap(t *testing.T) {
 		t.Errorf("app-ads.txt = %q", got)
 	}
 	w := webGet(h, "/sitemap.xml", "")
-	if w.Code != 200 || !strings.Contains(w.Body.String(), "<loc>https://nihongo.codeverta.com/kamus</loc>") {
+	if w.Code != 200 || !strings.Contains(w.Body.String(), "<loc>https://bahasa.codeverta.com/kamus</loc>") {
 		t.Fatalf("sitemap: %d %s", w.Code, w.Body.String())
 	}
 }
@@ -226,7 +226,7 @@ func TestDictionaryWebWordPagesFromDatabase(t *testing.T) {
 		t.Fatal("archived word pages should be indexable")
 	}
 	sitemap := webGet(h, "/sitemap.xml", "").Body.String()
-	if !strings.Contains(sitemap, "https://nihongo.codeverta.com/kamus/kata/%E7%8C%AB") {
+	if !strings.Contains(sitemap, "https://bahasa.codeverta.com/kamus/kata/%E7%8C%AB") {
 		t.Fatalf("sitemap should list archived words: %s", sitemap)
 	}
 }

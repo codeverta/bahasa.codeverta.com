@@ -1,19 +1,20 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/map/data/map_repository.dart';
+import 'package:bahasa_master/features/map/domain/map_models.dart';
+import 'package:bahasa_master/features/map/presentation/map_image.dart';
+import 'package:bahasa_master/features/map/presentation/map_labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/map/data/map_repository.dart';
-import 'package:nihongo_master/features/map/domain/map_models.dart';
-import 'package:nihongo_master/features/map/presentation/map_image.dart';
-import 'package:nihongo_master/features/map/presentation/map_labels.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Uri googleMapsUri(MapSpot spot) => Uri.https('www.google.com', '/maps/search/', {
-  'api': '1',
-  'query': '${spot.lat},${spot.lng}',
-});
+Uri googleMapsUri(MapSpot spot) => Uri.https(
+  'www.google.com',
+  '/maps/search/',
+  {'api': '1', 'query': '${spot.lat},${spot.lng}'},
+);
 
 Future<void> _open(String url) async {
   final uri = Uri.tryParse(url);
@@ -88,8 +89,8 @@ class _SpotDetail extends StatelessWidget {
         ),
       ),
     );
-    Widget fallbackNote(LocalizedText text) => text.sourceLang == 'en' &&
-            lang != 'en'
+    Widget fallbackNote(LocalizedText text) =>
+        text.sourceLang == 'en' && lang != 'en'
         ? Padding(
             padding: const EdgeInsets.only(bottom: 6),
             child: Text(
@@ -257,7 +258,7 @@ class _SpotDetail extends StatelessWidget {
                     ),
                   const SizedBox(height: 4),
                   Text(
-                    'Teks dari Wikipedia dan Wikivoyage berlisensi CC BY-SA 4.0; perubahan dapat dilakukan oleh tim Nihongo Master.'
+                    'Teks dari Wikipedia dan Wikivoyage berlisensi CC BY-SA 4.0; perubahan dapat dilakukan oleh tim Bahasa Master.'
                         .localized(context),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
@@ -295,7 +296,9 @@ class _Attribution extends StatelessWidget {
       if (image.author.isNotEmpty) '© ${image.author}',
       if (image.license.isNotEmpty) image.license,
     ].join(' · ');
-    final link = image.sourceUrl.isNotEmpty ? image.sourceUrl : image.licenseUrl;
+    final link = image.sourceUrl.isNotEmpty
+        ? image.sourceUrl
+        : image.licenseUrl;
     return InkWell(
       onTap: link.isEmpty ? null : () => unawaited(_open(link)),
       child: Text(

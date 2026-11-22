@@ -1,4 +1,4 @@
-# Panduan Menjalankan Nihongo Master
+# Panduan Menjalankan Bahasa Master
 
 Project ini terdiri dari backend Go dan aplikasi Flutter. Satu launcher
 menjalankan keduanya supaya konfigurasi Google Sign-In ikut masuk ke Flutter.
@@ -118,7 +118,7 @@ Pastikan output terminal menunjukkan backend aktif. Emulator Android memakai
 ## Akun demo
 
 ```text
-Email: demo@nihongomaster.app
+Email: demo@bahasa.codeverta.com
 Password: Demo123!
 ```
 

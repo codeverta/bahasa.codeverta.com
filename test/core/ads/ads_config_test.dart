@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/ads_controller.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/ads/ads_controller.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 
 AuthenticatedUser _user({bool premium = false, bool lifetime = false}) =>
     AuthenticatedUser(

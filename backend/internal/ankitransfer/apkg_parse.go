@@ -96,7 +96,7 @@ func parseAPKG(filename string, raw []byte) (Document, error) {
 	}
 	doc.Version = DocumentVersion
 	doc.Media = media
-	if entry, ok := entries["nihongo-master.json"]; ok {
+	if entry, ok := entries["bahasa-master.json"]; ok {
 		raw, err := readZipEntry(entry.file, 128<<10)
 		if err != nil {
 			return Document{}, err

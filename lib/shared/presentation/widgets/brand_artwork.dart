@@ -1,6 +1,6 @@
+import 'package:bahasa_master/core/branding/app_branding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/branding/app_branding.dart';
 
 /// The same application identity used by startup, with immediate asset fallback.
 class BrandEmblem extends ConsumerWidget {

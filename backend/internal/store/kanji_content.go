@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"nihongo-master-backend/data/kanji"
+	"bahasa-master-backend/data/kanji"
 )
 
 func seedKanji() []kanjiLessonContent {

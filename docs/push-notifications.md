@@ -8,15 +8,15 @@ Versi pertama untuk Android: pengguna memilih ikon lonceng di Beranda atau tombo
 ## Pengaturan Android / Firebase
 
 - Project: `firstproject-ad87e`, nomor `798568705597`.
-- Package: `com.codeverta.nihongomaster`.
+- Package: `com.codeverta.bahasa`.
 - File konfigurasi klien: `android/app/google-services.json`. File ini berisi identitas/config publik aplikasi; bukan private service-account key.
 - Plugin Google Services dideklarasikan di `android/settings.gradle.kts` sesuai struktur Flutter. Plugin diterapkan di `android/app/build.gradle.kts`.
 - Firebase Core 4.15 / Messaging 16.7 dipilih agar kompatibel dengan Google Sign-In iOS yang sudah digunakan. Keduanya memakai native Firebase iOS SDK 12.19. Firebase Core 5 / Messaging 17 memakai SDK iOS 13 dengan dependensi yang berbenturan dengan Google Sign-In iOS 9.
 - `firebase_core` dan `firebase_messaging` mengelola Firebase Android BoM dan library native yang kompatibel; tidak menambahkan Firebase Analytics atau BoM native kedua secara manual.
 - SDK Flutter minimum mengikuti plugin: Flutter 3.38.1 / Dart 3.10; CI memakai Flutter 3.44.6.
 - Android memerlukan Google Play services. Tidak ada perubahan akun Google Sign-In atau tanda tangan aplikasi.
-- Channel Android: `nihongo_announcements`; ikon putih `ic_notification` dipertahankan oleh resource shrinker.
-- Semua install yang berlangganan topik `nihongo_announcements` menerima pengumuman, termasuk install dari track testing. Ini bukan pesan privat, bukan bukti pemberian akses premium, dan bukan notifikasi berdasarkan akun.
+- Channel Android: `bahasa_announcements`; ikon putih `ic_notification` dipertahankan oleh resource shrinker.
+- Semua install yang berlangganan topik `bahasa_announcements` menerima pengumuman, termasuk install dari track testing. Ini bukan pesan privat, bukan bukti pemberian akses premium, dan bukan notifikasi berdasarkan akun.
 
 ## Pengirim backend
 

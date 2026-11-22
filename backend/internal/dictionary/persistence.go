@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"net/url"
-	"nihongo-master-backend/internal/database"
+	"bahasa-master-backend/internal/database"
 	"strconv"
 	"strings"
 	"time"

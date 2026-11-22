@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/ssw/domain/kaigo_curriculum.dart';
+import 'package:bahasa_master/features/ssw/domain/ssw_sector.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/localization/app_language.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/ssw/domain/kaigo_curriculum.dart';
-import 'package:nihongo_master/features/ssw/domain/ssw_sector.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final kaigoCurriculumProvider = FutureProvider<KaigoCurriculum>((ref) async {

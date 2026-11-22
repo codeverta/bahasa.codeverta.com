@@ -1,9 +1,9 @@
+import 'package:bahasa_master/core/gamification/xp_gain.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/core/gamification/xp_gain.dart';
 
 /// One locked item that an ad or Lifetime Access can open. [kind] uses the
 /// server's names: grammar, kanji, reading, vocabulary, anki, simulation,

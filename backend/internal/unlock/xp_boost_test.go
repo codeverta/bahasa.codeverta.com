@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/unlock"
 )
 
 func scenarioXPBoostIntentIsConsumedOnce(t *testing.T, h *harness) {

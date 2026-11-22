@@ -1,4 +1,4 @@
-module nihongo-master-backend
+module bahasa-master-backend
 
 go 1.22
 

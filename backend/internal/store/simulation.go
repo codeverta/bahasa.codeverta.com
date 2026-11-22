@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 )
 
 type simulationAttemptState struct {
@@ -333,7 +333,7 @@ func (s *MemoryStore) advanceSimulationLocked(state *simulationAttemptState, at 
 		result.ScoringNote = "Skor latihan tertulis = persentase jawaban benar. Listening belum termasuk. Soal orisinal; bukan skor berskala atau keputusan kelulusan resmi NAT-TEST."
 	}
 	if strings.HasPrefix(state.session.PaperID, "ssw-") {
-		result.ScoringNote = "Soal orisinal Nihongo Master. Nilai adalah persentase benar, bukan hasil resmi SSW. Penilaian praktik di aplikasi memakai skenario teks, tanpa demonstrasi alat atau seluruh variasi visual resmi."
+		result.ScoringNote = "Soal orisinal Bahasa Master. Nilai adalah persentase benar, bukan hasil resmi SSW. Penilaian praktik di aplikasi memakai skenario teks, tanpa demonstrasi alat atau seluruh variasi visual resmi."
 		if strings.HasPrefix(state.session.PaperID, "ssw-agriculture-") {
 			result.ScoringNote += " Adaptasi tertulis: komponen audio instruksi Jepang belum tersedia; hasil tidak mengukur kemampuan mendengar."
 		}

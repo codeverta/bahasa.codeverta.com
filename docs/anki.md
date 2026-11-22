@@ -22,7 +22,7 @@ Data di-embed ke binary Go, sehingga tidak perlu request GitHub saat pengguna me
 
 ## Jadwal review dan persistensi
 
-Pengguna mengingat jawaban sebelum membalik kartu, kemudian memilih **Belum hafal**, **Sulit**, **Ingat**, atau **Mudah**. Jawaban alternatif ditampilkan lengkap; daftar yang sangat panjang dilipat agar mudah dibaca. Ini merupakan sistem flashcard dengan pengulangan terjadwal dalam Nihongo Master, bukan sinkronisasi AnkiWeb, import `.apkg`, atau implementasi FSRS.
+Pengguna mengingat jawaban sebelum membalik kartu, kemudian memilih **Belum hafal**, **Sulit**, **Ingat**, atau **Mudah**. Jawaban alternatif ditampilkan lengkap; daftar yang sangat panjang dilipat agar mudah dibaca. Ini merupakan sistem flashcard dengan pengulangan terjadwal dalam Bahasa Master, bukan sinkronisasi AnkiWeb, import `.apkg`, atau implementasi FSRS.
 
 Backend mendahulukan kartu jatuh tempo, kemudian kartu baru. Penjadwalan awal: 1 menit / 6 jam / 1 hari / 4 hari. Review berikutnya menyesuaikan interval dan faktor kemudahan; interval dibatasi maksimum 365 hari. Jam server menentukan jatuh tempo, bukan jam perangkat.
 

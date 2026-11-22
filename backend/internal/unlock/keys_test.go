@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/unlock"
 )
 
 // keyServer serves verifier keys in the format Google publishes them.

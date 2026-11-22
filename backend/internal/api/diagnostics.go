@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"nihongo-master-backend/internal/diagnostics"
+	"bahasa-master-backend/internal/diagnostics"
 )
 
 //go:embed diagnostics_admin.html

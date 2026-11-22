@@ -16,8 +16,8 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/testdb"
 )
 
 const testURL = "https://rawkuma.net/manga/safe-story/"
@@ -64,7 +64,7 @@ func TestURLAndRobotsGuards(t *testing.T) {
 	if !ValidSeriesURL(testURL) || allowedURL("https://rawkuma.net/wp-admin/admin-ajax.php") || allowedURL("https://cdn.rawkuma.com@127.0.0.1/page.jpg") {
 		t.Fatal("URL rules")
 	}
-	rules := "User-agent: *\nDisallow: /\nUser-agent: NihongoMasterManga\nAllow: /manga/*\nDisallow: /manga/private/\n"
+	rules := "User-agent: *\nDisallow: /\nUser-agent: BahasaMasterManga\nAllow: /manga/*\nDisallow: /manga/private/\n"
 	if !robotsAllow(rules, "/manga/safe/") || robotsAllow(rules, "/manga/private/") {
 		t.Fatal("specific robots group ignored")
 	}

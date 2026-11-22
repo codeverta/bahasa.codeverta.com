@@ -19,7 +19,7 @@ func TestMariaDBConfigDefaultsAndPasswordEscaping(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if cfg.Addr != "127.0.0.1:3306" || cfg.DBName != "nihongo_master" || cfg.User != "nihongo_master" || cfg.Passwd != "colon:@slash/?#日本語" || !strings.Contains(dsn, "charset=utf8mb4") {
+	if cfg.Addr != "127.0.0.1:3306" || cfg.DBName != "bahasa_master" || cfg.User != "bahasa_master" || cfg.Passwd != "colon:@slash/?#日本語" || !strings.Contains(dsn, "charset=utf8mb4") {
 		t.Fatal("invalid database configuration")
 	}
 }

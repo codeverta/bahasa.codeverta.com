@@ -17,8 +17,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
 )
 
 func (s *MemoryStore) AuthenticateEmail(email, password string) (domain.Profile, error) {
@@ -94,7 +94,7 @@ func (s *MemoryStore) ConfigurePlayReviewAccount(email, password string) error {
 	if err != nil || parsed.Address != email {
 		return fmt.Errorf("PLAY_REVIEW_EMAIL must be a valid email address")
 	}
-	if email == "demo@nihongomaster.app" {
+	if email == "demo@bahasa.codeverta.com" {
 		return fmt.Errorf("PLAY_REVIEW_EMAIL must be different from the development demo account")
 	}
 	if strings.TrimSpace(password) != password || len([]byte(password)) > 72 {
@@ -104,7 +104,7 @@ func (s *MemoryStore) ConfigurePlayReviewAccount(email, password string) error {
 	if err != nil {
 		return fmt.Errorf("hash Play review password: %w", err)
 	}
-	userID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("nihongo-master:play-review:"+email)).String()
+	userID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("bahasa-master:play-review:"+email)).String()
 	configuredAccount := account{
 		ID:           userID,
 		Email:        email,
@@ -139,7 +139,7 @@ func (s *MemoryStore) ConfigureAdminLoginAccount(email, password string) error {
 	if err != nil || parsed.Address != email {
 		return fmt.Errorf("ADMIN_LOGIN_EMAIL must be a valid email address")
 	}
-	if email == "demo@nihongomaster.app" {
+	if email == "demo@bahasa.codeverta.com" {
 		return fmt.Errorf("ADMIN_LOGIN_EMAIL must be different from the development demo account")
 	}
 	if strings.TrimSpace(password) != password || len([]byte(password)) < 12 || len([]byte(password)) > 72 {
@@ -149,7 +149,7 @@ func (s *MemoryStore) ConfigureAdminLoginAccount(email, password string) error {
 	if err != nil {
 		return fmt.Errorf("hash admin password: %w", err)
 	}
-	userID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("nihongo-master:admin-login:"+email)).String()
+	userID := uuid.NewSHA1(uuid.NameSpaceURL, []byte("bahasa-master:admin-login:"+email)).String()
 	configured := account{ID: userID, Email: email, DisplayName: "Admin", PasswordHash: hash}
 
 	s.mu.Lock()
@@ -249,7 +249,7 @@ func (s *MemoryStore) seedDemoAccount() {
 	}
 	account := account{
 		ID:           database.DemoUserID,
-		Email:        "demo@nihongomaster.app",
+		Email:        "demo@bahasa.codeverta.com",
 		DisplayName:  "Demo Learner",
 		PasswordHash: hash,
 	}

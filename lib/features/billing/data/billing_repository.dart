@@ -1,5 +1,5 @@
+import 'package:bahasa_master/core/auth/offline_access.dart';
 import 'package:dio/dio.dart';
-import 'package:nihongo_master/core/auth/offline_access.dart';
 
 class BillingAccount {
   const BillingAccount({

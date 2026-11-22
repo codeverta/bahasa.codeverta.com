@@ -1,23 +1,23 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/ads/ad_widgets.dart';
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/completion_ads.dart';
+import 'package:bahasa_master/core/gamification/xp_gain.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/settings/display_preferences.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
+import 'package:bahasa_master/features/ssw/data/kaigo_repository.dart';
+import 'package:bahasa_master/features/ssw/domain/kaigo_curriculum.dart';
+import 'package:bahasa_master/features/ssw/domain/ssw_sector.dart';
+import 'package:bahasa_master/shared/presentation/widgets/japanese_ruby_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/settings/display_preferences.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/ssw/data/kaigo_repository.dart';
-import 'package:nihongo_master/features/ssw/domain/kaigo_curriculum.dart';
-import 'package:nihongo_master/features/ssw/domain/ssw_sector.dart';
-import 'package:nihongo_master/shared/presentation/widgets/japanese_ruby_text.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:nihongo_master/core/ads/completion_ads.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/ads/ad_widgets.dart';
-import 'package:nihongo_master/core/gamification/xp_gain.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/features/profile/data/gamification_repository.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
 
 String kaigoLessonPath(String id) =>
     '/ssw/nursing-care/lessons/${Uri.encodeComponent(id)}';
@@ -706,7 +706,7 @@ class _StudyNote extends StatelessWidget {
   const _StudyNote();
   @override
   Widget build(BuildContext context) => Text(
-    'Materi persiapan SSW ditulis untuk Nihongo Master. Keterampilan lapangan memerlukan pelatihan dan supervisi. Ikuti SOP, spesifikasi produk, serta arahan petugas berwenang.'
+    'Materi persiapan SSW ditulis untuk Bahasa Master. Keterampilan lapangan memerlukan pelatihan dan supervisi. Ikuti SOP, spesifikasi produk, serta arahan petugas berwenang.'
         .localized(context),
     style: TextStyle(
       height: 1.6,

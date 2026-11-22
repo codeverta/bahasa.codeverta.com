@@ -1,4 +1,4 @@
-# Nihongo Master Backend
+# Bahasa Master Backend
 
 Backend Go untuk guest catalog, email login, Google OAuth, revocable session,
 learning progress, exam entitlement, plans, profile, dan achievement.
@@ -90,7 +90,7 @@ Server default: `http://localhost:8080`
 Demo account:
 
 ```text
-Email: demo@nihongomaster.app
+Email: demo@bahasa.codeverta.com
 Password: Demo123!
 ```
 
@@ -101,7 +101,7 @@ $session = Invoke-RestMethod `
   -Method Post `
   -Uri http://localhost:8080/v1/auth/login `
   -ContentType application/json `
-  -Body '{"email":"demo@nihongomaster.app","password":"Demo123!"}'
+  -Body '{"email":"demo@bahasa.codeverta.com","password":"Demo123!"}'
 
 $headers = @{
   Authorization = "Bearer $($session.data.token)"

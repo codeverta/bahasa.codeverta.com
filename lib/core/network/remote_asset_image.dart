@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/offline/learning_asset.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/core/offline/learning_asset.dart';
 
 /// Resolve backend-relative image URLs against the configured API origin.
 String resolveAssetImageUrl(String apiBaseUrl, String url, String asset) {

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Nihongo Master Admin</title>
+<title>Bahasa Master Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
@@ -369,9 +369,9 @@ textarea.input{font:inherit}
 <div id="login" class="login hidden">
   <section class="art">
     <span class="big jp">管</span>
-    <div class="brand"><span class="seal">日</span>Nihongo Master</div>
+    <div class="brand"><span class="seal">日</span>Bahasa Master</div>
     <div>
-      <h1>Dashboard admin untuk tim Nihongo Master.</h1>
+      <h1>Dashboard admin untuk tim Bahasa Master.</h1>
       <p>Pantau pengguna dan aktivitas belajar mereka, lalu kelola konten aplikasi dari satu tempat.</p>
     </div>
     <small style="opacity:.6">管理 · kanri · pengelolaan</small>
@@ -393,7 +393,7 @@ textarea.input{font:inherit}
 <!-- ====== APP ====== -->
 <div id="app" class="shell hidden">
   <aside class="side" id="side">
-    <div class="brand"><span class="seal">日</span><div>Nihongo Master<small>Admin dashboard</small></div></div>
+    <div class="brand"><span class="seal">日</span><div>Bahasa Master<small>Admin dashboard</small></div></div>
     <a class="nav" href="#/overview" data-route="overview"><svg class="i" viewBox="0 0 24 24"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/></svg>Ringkasan</a>
     <a class="nav" href="#/users" data-route="users"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c1-4 4-6 7-6s6 2 7 6M16 4a4 4 0 0 1 0 8M19 15c2 1 3 3 3 6"/></svg>Pengguna<span class="count" id="userCount">–</span></a>
     <div class="navlabel">KONTEN</div>
@@ -514,7 +514,7 @@ function route(){if(!state.me)return;if(typeof viewCleanup==='function'){try{vie
   if(h==='users')return viewUsers();
   if(h.indexOf('tools/')===0){var t=ALL.find(function(x){return 'tools/'+x.id===h});if(t)return viewTool(t)}
   viewOverview()}
-function setTitle(t,c){$('title').textContent=t;$('crumb').textContent=c||'Admin';document.title=t+' · Nihongo Master Admin'}
+function setTitle(t,c){$('title').textContent=t;$('crumb').textContent=c||'Admin';document.title=t+' · Bahasa Master Admin'}
 
 function loadUsers(){if(state.users)return Promise.resolve(state.users);return api('/v1/admin/users').then(function(d){state.users=d.users||[];$('userCount').textContent=state.users.length;return state.users})}
 
@@ -591,7 +591,7 @@ function renderTable(){var list=filtered(),wrap=$('tableWrap');if(!wrap)return;
 function exportCsv(){var rows=[['Nama','Email','Paket','Masuk via','Level','XP','Streak','Lesson selesai','Ujian selesai','Hari aktif','Aktivitas terakhir','Waktu aktivitas terakhir (UTC)']];
   filtered().forEach(function(u){rows.push([u.displayName,u.email,u.plan,u.provider,u.level,u.xp,u.streakDays,u.lessonsCompleted,u.examsCompleted,u.activeDays,u.lastActivity,u.lastActiveAt||''])});
   var csv=rows.map(function(r){return r.map(function(c){c=String(c==null?'':c);if(/^[=+\-@]/.test(c))c="'"+c;return '"'+c.replace(/"/g,'""')+'"'}).join(',')}).join('\r\n');
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}));a.download='pengguna-nihongo-master.csv';a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},1000);toast('CSV diunduh')}
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}));a.download='pengguna-bahasa-master.csv';a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},1000);toast('CSV diunduh')}
 
 /* ---------- drawer ---------- */
 function openUser(id){var u=(state.users||[]).find(function(x){return x.id===id});if(!u)return;
@@ -1294,7 +1294,7 @@ NM.view('notifications',function(root){
       NM.el('label',{class:'field wide'},[NM.el('span',{},['Judul notifikasi',tc]),title,NM.el('small',{class:'help',text:'Maksimal 80 karakter. Judul singkat lebih mudah dibaca di layar HP.'})]),
       NM.el('label',{class:'field wide'},[NM.el('span',{},['Isi pesan',bc]),body,NM.el('small',{class:'help',text:'Maksimal 500 karakter. Simpan draft dahulu untuk memeriksa pesan sebelum mengirim.'})]),
       NM.el('label',{class:'field wide'},[NM.el('span',{text:'Halaman saat notifikasi diketuk'}),route,NM.el('small',{class:'help',text:'Aplikasi membuka halaman ini. Pengguna tetap perlu login atau memiliki akses premium untuk fitur yang memerlukannya.'})])]),
-    NM.el('div',{class:'nt-preview'},[NM.el('small',{class:'muted',text:'PRATINJAU • Nihongo Master'}),pt,pb]),
+    NM.el('div',{class:'nt-preview'},[NM.el('small',{class:'muted',text:'PRATINJAU • Bahasa Master'}),pt,pb]),
     NM.el('div',{class:'row',style:'margin-top:16px'},[saveBtn,NM.el('button',{class:'btn ghost',type:'button',text:'Draft baru',on:{click:reset}})])]);
   var composeCard=NM.el('div',{class:'card'},[NM.el('div',{class:'panelh'},[edLabel]),form]);
   wrap.appendChild(composeCard);
@@ -1309,7 +1309,7 @@ NM.view('notifications',function(root){
     var sendBtn=NM.el('button',{class:'btn solid',type:'button',text:'Kirim sekarang'});
     var cancel=NM.el('button',{class:'btn ghost',type:'button',text:'Batal'});
     var b=NM.el('div',{class:'stack'},[
-      NM.el('p',{class:'muted',text:'Tujuan: semua pengguna Android yang berlangganan pengumuman Nihongo Master. Setelah dikirim, pesan tidak dapat ditarik kembali.'}),
+      NM.el('p',{class:'muted',text:'Tujuan: semua pengguna Android yang berlangganan pengumuman Bahasa Master. Setelah dikirim, pesan tidak dapat ditarik kembali.'}),
       NM.el('div',{class:'nt-preview'},[NM.el('b',{class:'nt-t',text:a.title}),NM.el('div',{class:'nt-b',text:a.body})]),
       NM.el('p',{text:'Halaman tujuan: '+a.route}),
       NM.el('div',{class:'row'},[cancel,sendBtn])]);
@@ -1390,7 +1390,7 @@ NM.view('pricing',function(root){
         setMsg('Harga tersimpan. Tarik untuk memperbarui atau buka ulang aplikasi.','ok');NM.toast('Harga tersimpan');
       }).catch(function(er){setMsg(er.message||'Harga tidak dapat disimpan','err')}).then(function(){btn.disabled=false});
     }}},[
-      NM.el('p',{class:'muted',text:'Atur nominal rupiah yang ditampilkan di aplikasi Nihongo Master. Harga Google Play dan App Store tetap diatur manual di masing-masing store.'}),
+      NM.el('p',{class:'muted',text:'Atur nominal rupiah yang ditampilkan di aplikasi Bahasa Master. Harga Google Play dan App Store tetap diatur manual di masing-masing store.'}),
       NM.el('label',{class:'field'},[NM.el('span',{text:'Harga Lifetime (IDR)'}),inp,NM.el('small',{class:'help',text:'Minimal Rp1.000, maksimal Rp100.000.000.'})]),
       NM.el('div',{},[NM.el('small',{class:'muted',text:'Tampil di aplikasi'}),prev]),
       NM.el('h3',{text:'Tawaran Lifetime'}),
@@ -1431,9 +1431,9 @@ NM.view('ads',function(root){
   // "How to create this ad unit": the same AdMob steps for every format, plus
   // the extras a format needs (reward settings, server-side verification).
   var guide=function(p){
-    var steps=['Buka AdMob, pilih Apps → Nihongo Master → Ad units → Add ad unit.','Pilih format '+p.fmt+'.','Isi nama unit: '+p.unit+'.','Jangan centang "Partner bidding". Pengaturan itu tidak bisa diubah setelah unit dibuat.'];
+    var steps=['Buka AdMob, pilih Apps → Bahasa Master → Ad units → Add ad unit.','Pilih format '+p.fmt+'.','Isi nama unit: '+p.unit+'.','Jangan centang "Partner bidding". Pengaturan itu tidak bisa diubah setelah unit dibuat.'];
     if(p.fmt==='Rewarded')steps.push('Di Reward settings isi jumlah 1 dan item coin. Nilainya tidak dipakai aplikasi.');
-    if(p.ssv)steps.push('Buka Advanced settings → Server-side verification, isi callback URL https://nihongo.codeverta.com/v1/ads/ssv, lalu simpan. Tanpa ini iklan ditonton tetapi konten tidak pernah terbuka.');
+    if(p.ssv)steps.push('Buka Advanced settings → Server-side verification, isi callback URL https://bahasa.codeverta.com/v1/ads/ssv, lalu simpan. Tanpa ini iklan ditonton tetapi konten tidak pernah terbuka.');
     steps.push('Klik Create ad unit. Salin Ad unit ID yang berbentuk ca-app-pub-…/… (bukan App ID yang memakai tanda ~), tempel di kolom ID unit iklan di atas, lalu Simpan.');
     var share=P.filter(function(o){return o.fmt===p.fmt&&o.k!==p.k&&!!o.ssv===!!p.ssv&&o.fmt!=='Rewarded'}).map(function(o){return o.t});
     return NM.el('details',{class:'guide'},[NM.el('summary',{text:'Cara membuat unit iklan ini'}),
@@ -1541,7 +1541,7 @@ NM.view('ads',function(root){
     var gateNews=NM.el('input',{type:'checkbox',id:'ads-gate-news'});gateNews.checked=wasGate.news;
     var gateJobs=NM.el('input',{type:'checkbox',id:'ads-gate-jobs'});gateJobs.checked=wasGate.jobs;
     wrap.appendChild(NM.el('div',{class:'card'},[
-      NM.el('div',{class:'panelh'},[NM.el('div',{},[NM.el('h3',{text:'Kunci konten gratis'}),NM.el('p',{text:'Mengunci konten yang sebelumnya gratis bagi akun non-Lifetime. Materi N3–N1, Anki, dan simulasi dikunci lewat NIHONGO_OPEN_ACCESS di server, bukan di sini.'})])]),
+      NM.el('div',{class:'panelh'},[NM.el('div',{},[NM.el('h3',{text:'Kunci konten gratis'}),NM.el('p',{text:'Mengunci konten yang sebelumnya gratis bagi akun non-Lifetime. Materi N3–N1, Anki, dan simulasi dikunci lewat BAHASA_OPEN_ACCESS di server, bukan di sini.'})])]),
       NM.el('div',{class:'pad'},[
         NM.el('label',{class:'check'},[gateNews,'Kunci isi artikel berita (wajib login, lalu Lifetime atau iklan)']),
         NM.el('label',{class:'check'},[gateJobs,'Kunci tautan lamar lowongan (Lifetime atau iklan)']),
@@ -1732,7 +1732,7 @@ NM.view('app-updates',function(root){
   var alive=true,loaded=null,inputs={},panels={},tabBtns={},current='android';
   root.innerHTML='<div class="v-app-updates">'+NM.skeleton(3)+'</div>';
 
-  function storeHelp(p){return p==='android'?'Tautan resmi Play Store: https://play.google.com/store/apps/details?id=com.codeverta.nihongomaster. Dipakai tombol “Update aplikasi”.':'Tautan resmi App Store, contoh https://apps.apple.com/id/app/id1234567890. Ganti dengan ID aplikasi asli. Biarkan kosong selama iOS nonaktif.'}
+  function storeHelp(p){return p==='android'?'Tautan resmi Play Store: https://play.google.com/store/apps/details?id=com.codeverta.bahasa. Dipakai tombol “Update aplikasi”.':'Tautan resmi App Store, contoh https://apps.apple.com/id/app/id1234567890. Ganti dengan ID aplikasi asli. Biarkan kosong selama iOS nonaktif.'}
 
   function buildField(p,k){
     var id='au-'+p+'-'+k,input;
@@ -1819,7 +1819,7 @@ NM.view('app-updates',function(root){
     });
     var form=NM.el('form',{novalidate:false},[]);
     var hint=NM.el('div',{class:'msg',html:'<b>Contoh:</b> rilis <b>1.0.2+3</b> berarti nama versi <b>1.0.2</b> dan nomor build <b>3</b>. Jika build minimum diisi 3, pengguna dengan build 1 atau 2 akan diminta update. Isi <b>0</b> jika belum ingin mewajibkan update.<br><b>Pastikan rilis tersedia di Play Store untuk semua pengguna terkait sebelum menaikkan batas minimum.</b>'});
-    card.appendChild(NM.el('div',{class:'panelh'},[NM.el('div',{},[NM.el('h3',{text:'Aturan versi per platform'}),NM.el('p',{text:'Atur kapan pengguna harus memperbarui Nihongo Master.'})]),tabs]));
+    card.appendChild(NM.el('div',{class:'panelh'},[NM.el('div',{},[NM.el('h3',{text:'Aturan versi per platform'}),NM.el('p',{text:'Atur kapan pengguna harus memperbarui Bahasa Master.'})]),tabs]));
     card.appendChild(panels.android);card.appendChild(panels.ios);
     card.appendChild(NM.el('div',{class:'pad row between',style:'padding-top:0'},[NM.el('span',{class:'muted',style:'font-size:12px',text:'Aplikasi memeriksa lagi saat dibuka, kembali dari store, atau setiap lima menit.'}),save]));
     form.appendChild(card);

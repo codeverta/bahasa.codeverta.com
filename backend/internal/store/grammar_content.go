@@ -2,7 +2,7 @@ package store
 
 import (
 	"fmt"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 )
 
 // All explanations, examples and practice questions are authored for this app.

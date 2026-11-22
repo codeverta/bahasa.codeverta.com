@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"nihongo-master-backend/internal/jobfetch"
+	"bahasa-master-backend/internal/jobfetch"
 )
 
 type Fetcher interface {

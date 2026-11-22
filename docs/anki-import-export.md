@@ -4,7 +4,7 @@
 
 1. Masuk ke akun, buka **Anki**, lalu tekan ikon **Import deck** di kanan atas.
 2. Pilih file `.apkg`, `.csv`, atau `.json`. Periksa jumlah kartu/media serta contoh kartu, ubah nama jika perlu, lalu konfirmasi impor.
-3. Deck muncul sebagai deck pribadi di katalog akun. Deck bawaan tetap tersedia. Belajar dan penilaian kartu memakai SRS Nihongo Master dengan jadwal baru.
+3. Deck muncul sebagai deck pribadi di katalog akun. Deck bawaan tetap tersedia. Belajar dan penilaian kartu memakai SRS Bahasa Master dengan jadwal baru.
 4. Untuk backup, buka detail deck dan tekan **Export deck**. Pilih format, lalu simpan atau bagikan file melalui dialog perangkat.
 5. Deck pribadi dapat dihapus dari detailnya setelah konfirmasi. Ekspor backup dahulu bila diperlukan.
 
@@ -15,10 +15,10 @@ Impor/ekspor dan pemuatan media pribadi memerlukan koneksi internet. Jangan menu
 | Format | Kartu | Media | Catatan |
 | --- | --- | --- | --- |
 | APKG | Pertanyaan/jawaban dasar, arti | Gambar/audio yang dibundel | Ekspor memakai koleksi SQLite legacy agar kompatibel. Impor juga membaca kemasan modern zstd. |
-| JSON | Semua jawaban dan metadata | Base64 dalam file | Format backup Nihongo Master versi 1, bukan format JSON arbitrer dari aplikasi lain. |
+| JSON | Semua jawaban dan metadata | Base64 dalam file | Format backup Bahasa Master versi 1, bukan format JSON arbitrer dari aplikasi lain. |
 | CSV UTF-8 | `front,answers,meaning,imageUrl,audio` | Hanya URL eksternal | `back` diterima sebagai alias jawaban. Referensi media lokal dikosongkan saat ekspor. |
 
-Ekspor CSV menyertakan baris komentar `#nihongo-master:` berisi metadata base64 JSON sebelum header. Baris ini dibaca kembali oleh Nihongo Master; hapus baris tersebut bila aplikasi spreadsheet lain menganggapnya data. `answers` bisa berupa teks biasa atau array JSON; CSV mengutip koma, tanda kutip, dan baris baru sesuai aturan CSV.
+Ekspor CSV menyertakan baris komentar `#bahasa-master:` berisi metadata base64 JSON sebelum header. Baris ini dibaca kembali oleh Bahasa Master; hapus baris tersebut bila aplikasi spreadsheet lain menganggapnya data. `answers` bisa berupa teks biasa atau array JSON; CSV mengutip koma, tanda kutip, dan baris baru sesuai aturan CSV.
 
 Contoh CSV sederhana yang dapat diimpor:
 

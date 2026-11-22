@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/notifications/push_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/notifications/push_notifications.dart';
 
 class NotificationSettingsScreen extends ConsumerWidget {
   const NotificationSettingsScreen({super.key});
@@ -17,7 +17,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
           const Icon(Icons.notifications_outlined, size: 52),
           const SizedBox(height: 16),
           Text(
-            'Pengumuman Nihongo Master'.localized(context),
+            'Pengumuman Bahasa Master'.localized(context),
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
@@ -33,7 +33,8 @@ class NotificationSettingsScreen extends ConsumerWidget {
               state.enabled && state.granted && !state.pendingSync
                   ? 'Aktif pada perangkat ini'.localized(context)
                   : state.enabled
-                  ? 'Dipilih aktif; periksa izin dan koneksi perangkat'.localized(context)
+                  ? 'Dipilih aktif; periksa izin dan koneksi perangkat'
+                        .localized(context)
                   : 'Nonaktif'.localized(context),
             ),
             value: state.enabled,

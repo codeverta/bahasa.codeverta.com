@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/features/learn/offline/offline_practice.dart';
+import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
 import 'package:dio/dio.dart';
-import 'package:nihongo_master/features/learn/offline/offline_practice.dart';
-import 'package:nihongo_master/features/learn/vocabulary/domain/vocabulary_models.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
 
 class VocabularyRepository {
   const VocabularyRepository(

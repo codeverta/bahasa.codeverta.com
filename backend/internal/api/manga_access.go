@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 )
 
 type MangaAccessChecker func(context.Context, string) (domain.Entitlement, error)

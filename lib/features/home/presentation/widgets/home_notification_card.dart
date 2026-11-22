@@ -1,10 +1,10 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/notifications/notification_prompt.dart';
+import 'package:bahasa_master/core/notifications/push_notifications.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/notifications/notification_prompt.dart';
-import 'package:nihongo_master/core/notifications/push_notifications.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/shared/presentation/widgets/motion.dart';
 
 /// One-time card for people who never saw the onboarding page (existing
 /// installs, or onboarding skipped): "Aktifkan notifikasi?". Any answer hides

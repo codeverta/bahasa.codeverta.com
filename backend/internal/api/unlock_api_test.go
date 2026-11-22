@@ -18,10 +18,10 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
+	"bahasa-master-backend/internal/unlock"
 )
 
 const (
@@ -178,7 +178,7 @@ func (e *unlockEnv) makeLifetime(t *testing.T) {
 		t.Fatal(err)
 	}
 	if err := e.memory.SaveVerifiedPurchase(e.userID, domain.Purchase{
-		Platform: "android", ID: "unlock-test-" + e.userID, ProductID: "nihongo_master_lifetime",
+		Platform: "android", ID: "unlock-test-" + e.userID, ProductID: "bahasa_master_lifetime",
 		AccountToken: token, Proof: "unlock-test", State: "purchased", CheckedAt: time.Now(),
 	}); err != nil {
 		t.Fatal(err)

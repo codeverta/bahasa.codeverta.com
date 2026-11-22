@@ -1,18 +1,18 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/core/auth/session_expiration.dart';
+import 'package:bahasa_master/core/diagnostics/error_reporter.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
+import 'package:bahasa_master/core/localization/device_timezone.dart';
+import 'package:bahasa_master/core/network/api_base_url.dart';
+import 'package:bahasa_master/core/offline/learning_cache.dart';
+import 'package:bahasa_master/core/offline/learning_cache_interceptor.dart';
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/core/offline/offline_providers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/auth/offline_access.dart';
-import 'package:nihongo_master/core/auth/session_expiration.dart';
-import 'package:nihongo_master/core/diagnostics/error_reporter.dart';
-import 'package:nihongo_master/core/localization/app_language.dart';
-import 'package:nihongo_master/core/localization/device_timezone.dart';
-import 'package:nihongo_master/core/network/api_base_url.dart';
-import 'package:nihongo_master/core/offline/learning_cache.dart';
-import 'package:nihongo_master/core/offline/learning_cache_interceptor.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/core/offline/offline_providers.dart';
 
 final apiBaseUrlProvider = Provider<String>((ref) {
   return resolveApiBaseUrl(configuredApiBaseUrl, defaultTargetPlatform);

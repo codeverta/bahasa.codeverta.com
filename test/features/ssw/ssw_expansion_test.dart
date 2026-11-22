@@ -1,26 +1,26 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/core/routing/app_router.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/data/simulation_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/simulation_attempt_screen.dart';
+import 'package:bahasa_master/features/ssw/data/kaigo_repository.dart';
+import 'package:bahasa_master/features/ssw/domain/kaigo_curriculum.dart';
+import 'package:bahasa_master/features/ssw/domain/ssw_sector.dart';
+import 'package:bahasa_master/features/ssw/presentation/kaigo_screens.dart';
+import 'package:bahasa_master/features/ssw/presentation/ssw_assessment_screens.dart';
+import 'package:bahasa_master/features/ssw/presentation/ssw_screens.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/core/routing/app_router.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/data/simulation_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/simulation_attempt_screen.dart';
-import 'package:nihongo_master/features/ssw/data/kaigo_repository.dart';
-import 'package:nihongo_master/features/ssw/domain/kaigo_curriculum.dart';
-import 'package:nihongo_master/features/ssw/domain/ssw_sector.dart';
-import 'package:nihongo_master/features/ssw/presentation/kaigo_screens.dart';
-import 'package:nihongo_master/features/ssw/presentation/ssw_assessment_screens.dart';
-import 'package:nihongo_master/features/ssw/presentation/ssw_screens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

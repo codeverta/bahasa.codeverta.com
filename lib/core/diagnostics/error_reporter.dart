@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bahasa_master/core/network/api_base_url.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:nihongo_master/core/network/api_base_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Sends bounded, sanitized diagnostics without user credentials or request data.

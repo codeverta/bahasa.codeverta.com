@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// The public marketing page for nihongo.codeverta.com. Everything it needs
+// The public marketing page for bahasa.codeverta.com. Everything it needs
 // (HTML, CSS, JS, images, fonts) is embedded in the binary and served from
 // the same origin, so the CSP can stay at 'self'.
 //

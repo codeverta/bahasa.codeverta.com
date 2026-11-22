@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/offline/network_status.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
 
 bool requireOnlineExam(BuildContext context, WidgetRef ref) {
   if (!ref.read(offlineProvider)) return true;

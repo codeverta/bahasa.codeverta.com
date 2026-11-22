@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/testdb"
 	"os"
 	"sort"
 	"strings"

@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/app_review/app_review_service.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/app_review/app_review_service.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 
 /// Tombol "Beri rating aplikasi" yang membuka halaman aplikasi di store.
 /// Disembunyikan di platform yang tidak punya halaman store (web, desktop,

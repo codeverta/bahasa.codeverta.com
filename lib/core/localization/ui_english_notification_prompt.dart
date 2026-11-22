@@ -3,8 +3,8 @@
 const uiEnglishNotificationPrompt = <String, String>{
   'TETAP TERHUBUNG': 'STAY IN THE LOOP',
   'Jangan ketinggalan kabar penting': 'Never miss important news',
-  'Aktifkan notifikasi untuk menerima pengumuman, materi baru, dan info penting dari Nihongo Master. Tanpa spam, dan bisa dimatikan kapan saja di Pengaturan.':
-      'Turn on notifications to get announcements, new lessons and important info from Nihongo Master. No spam, and you can turn them off any time in Settings.',
+  'Aktifkan notifikasi untuk menerima pengumuman, materi baru, dan info penting dari Bahasa Master. Tanpa spam, dan bisa dimatikan kapan saja di Pengaturan.':
+      'Turn on notifications to get announcements, new lessons and important info from Bahasa Master. No spam, and you can turn them off any time in Settings.',
   'Pengumuman': 'Announcements',
   'Materi baru': 'New lessons',
   'Info penting': 'Important info',

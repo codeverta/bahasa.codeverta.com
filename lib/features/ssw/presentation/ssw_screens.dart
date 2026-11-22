@@ -1,15 +1,15 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/storage/recent_access.dart';
+import 'package:bahasa_master/features/ssw/domain/ssw_sector.dart';
+import 'package:bahasa_master/features/ssw/presentation/kaigo_screens.dart';
+import 'package:bahasa_master/features/ssw/presentation/ssw_assessment_screens.dart';
+import 'package:bahasa_master/features/ssw/presentation/ssw_visuals.dart';
+import 'package:bahasa_master/shared/presentation/widgets/explore_feature_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/storage/recent_access.dart';
-import 'package:nihongo_master/features/ssw/domain/ssw_sector.dart';
-import 'package:nihongo_master/features/ssw/presentation/kaigo_screens.dart';
-import 'package:nihongo_master/features/ssw/presentation/ssw_assessment_screens.dart';
-import 'package:nihongo_master/features/ssw/presentation/ssw_visuals.dart';
-import 'package:nihongo_master/shared/presentation/widgets/explore_feature_card.dart';
 
 class SswEntryCard extends StatelessWidget {
   const SswEntryCard({super.key, this.exams = false});
@@ -135,9 +135,9 @@ class _SswHubState extends ConsumerState<SswHubScreen> {
                 color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
               onTap: () {
-                ref.read(recentAccessProvider('ssw').notifier).record(
-                  'nursing-care',
-                );
+                ref
+                    .read(recentAccessProvider('ssw').notifier)
+                    .record('nursing-care');
                 unawaited(
                   context.push(
                     '/ssw/nursing-care${widget.exams ? '?tab=test' : ''}',
@@ -226,9 +226,9 @@ class _SswHubState extends ConsumerState<SswHubScreen> {
                 ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
-                  ref.read(recentAccessProvider('ssw').notifier).record(
-                    sector.id,
-                  );
+                  ref
+                      .read(recentAccessProvider('ssw').notifier)
+                      .record(sector.id);
                   unawaited(
                     context.push(
                       '/ssw/${sector.id}${widget.exams ? '?tab=test' : ''}',

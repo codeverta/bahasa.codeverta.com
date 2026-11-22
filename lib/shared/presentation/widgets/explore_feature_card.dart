@@ -1,5 +1,5 @@
+import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/shared/presentation/widgets/motion.dart';
 
 /// Illustrated entry point shared by the home career cards.
 class ExploreFeatureCard extends StatelessWidget {

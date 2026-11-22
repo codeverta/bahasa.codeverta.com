@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-Nihongo Master currently presents its user-facing experience primarily in Indonesian and is deployed for an Indonesian audience. People who use English or another device language cannot comfortably navigate the app, understand lessons and questions, or evaluate the product before installing it. Translating interface labels alone would leave substantial parts of the experience unusable because learning materials, exercises, public pages, store information, notifications, and legal documents also need an English version.
+Bahasa Master currently presents its user-facing experience primarily in Indonesian and is deployed for an Indonesian audience. People who use English or another device language cannot comfortably navigate the app, understand lessons and questions, or evaluate the product before installing it. Translating interface labels alone would leave substantial parts of the experience unusable because learning materials, exercises, public pages, store information, notifications, and legal documents also need an English version.
 
 The app also needs a predictable language choice: new users should get a language that makes sense for their device, while people already using the Indonesian app should not have their experience unexpectedly changed by an update.
 

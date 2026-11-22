@@ -1,12 +1,12 @@
+import 'package:bahasa_master/core/notifications/notification_lifecycle.dart';
+import 'package:bahasa_master/core/notifications/notification_settings_screen.dart';
+import 'package:bahasa_master/core/notifications/push_notifications.dart';
+import 'package:bahasa_master/core/routing/app_router.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/notifications/notification_lifecycle.dart';
-import 'package:nihongo_master/core/notifications/notification_settings_screen.dart';
-import 'package:nihongo_master/core/notifications/push_notifications.dart';
-import 'package:nihongo_master/core/routing/app_router.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FakePush extends PushNotificationController {

@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:bahasa_master/core/offline/learning_asset.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/offline/learning_asset.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
 
 void main() {
   testWidgets('failed vocabulary image keeps the cropped panel visible', (

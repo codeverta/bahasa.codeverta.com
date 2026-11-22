@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 )
 
 const (

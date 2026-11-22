@@ -140,7 +140,7 @@ func (c *Client) boardGet(ctx context.Context, raw string, result *Result) (*htt
 		return nil, err
 	}
 	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8")
-	req.Header.Set("User-Agent", "NihongoMasterJobSync/1.0 (weekly public listing cache)")
+	req.Header.Set("User-Agent", "BahasaMasterJobSync/1.0 (weekly public listing cache)")
 	result.Requests++
 	return c.http.Do(req)
 }
@@ -519,7 +519,7 @@ func robotsAllows(text string, target *url.URL) bool {
 			}
 		}
 	}
-	const productToken = "nihongomasterjobsync/1.0"
+	const productToken = "bahasamasterjobsync/1.0"
 	bestAgent := -1
 	var rules []robotRule
 	for _, group := range groups {

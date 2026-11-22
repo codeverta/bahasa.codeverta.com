@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"nihongo-master-backend/internal/prefinfo"
+	"bahasa-master-backend/internal/prefinfo"
 )
 
 // ConfigurePrefectureLiving enables the per-prefecture wage and living-cost

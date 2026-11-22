@@ -21,12 +21,12 @@ import (
 
 	_ "golang.org/x/image/webp"
 
-	"nihongo-master-backend/internal/imageopt"
+	"bahasa-master-backend/internal/imageopt"
 )
 
 // DefaultUserAgent follows the Wikimedia User-Agent policy: an honest client
 // name and a contact page. Override with MAP_SOURCE_USER_AGENT.
-const DefaultUserAgent = "NihongoMaster/1.0 (+https://nihongo.codeverta.com/support)"
+const DefaultUserAgent = "BahasaMaster/1.0 (+https://bahasa.codeverta.com/support)"
 
 const (
 	maxJSONBytes  = 4 << 20

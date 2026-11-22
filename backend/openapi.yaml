@@ -1,15 +1,15 @@
 openapi: 3.1.0
 info:
-  title: Nihongo Master API
+  title: Bahasa Master API
   version: 1.0.0
-  description: Contract for the Nihongo Master mobile application.
+  description: Contract for the Bahasa Master mobile application.
 servers:
   - url: http://localhost:8080/v1
     description: Local development
 paths:
   /anki/import/preview:
     post:
-      summary: Preview an APKG, CSV, or Nihongo Master JSON deck without saving it
+      summary: Preview an APKG, CSV, or Bahasa Master JSON deck without saving it
       security: [{bearerAuth: []}]
       requestBody:
         required: true
@@ -330,7 +330,7 @@ paths:
         '409': {description: Sent or uncertain message cannot be edited or retried}
   /admin/notifications/{id}/send:
     post:
-      summary: Dispatch a saved draft once to the public Nihongo announcement topic
+      summary: Dispatch a saved draft once to the public Bahasa announcement topic
       parameters:
         - {in: path, name: id, required: true, schema: {type: string}}
       requestBody:
@@ -579,7 +579,7 @@ paths:
               required: [platform, productId, verificationData]
               properties:
                 platform: {type: string, enum: [android, ios]}
-                productId: {type: string, example: nihongo_master_lifetime}
+                productId: {type: string, example: bahasa_master_lifetime}
                 verificationData: {type: string, description: Google purchase token or Apple StoreKit 2 signed JWS}
                 transactionId: {type: string}
       responses:

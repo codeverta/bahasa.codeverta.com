@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/widgets/skeleton.dart';
+import 'package:bahasa_master/features/learn/activity/continue_learning_section.dart';
+import 'package:bahasa_master/features/news/presentation/news_screens.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/widgets/skeleton.dart';
-import 'package:nihongo_master/features/learn/activity/continue_learning_section.dart';
-import 'package:nihongo_master/features/news/presentation/news_screens.dart';
 
 /// Placeholder shaped like the real Beranda (greeting, banner, progress,
 /// quick menu, news) so a slow API feels like content arriving instead of

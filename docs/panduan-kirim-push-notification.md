@@ -1,6 +1,6 @@
 # Panduan mengirim push notification ke pengguna
 
-Panduan ini untuk pemilik/operator Nihongo Master. Pengiriman sehari-hari dilakukan lewat panel admin backend, jadi tidak perlu mengubah kode atau membuat APK baru untuk setiap pengumuman.
+Panduan ini untuk pemilik/operator Bahasa Master. Pengiriman sehari-hari dilakukan lewat panel admin backend, jadi tidak perlu mengubah kode atau membuat APK baru untuk setiap pengumuman.
 
 **Fitur saat ini:** broadcast ke perangkat **Android** yang mengaktifkan pengumuman. Belum ada pilihan satu akun, segmen premium/gratis, penjadwalan, atau pengiriman iOS/web. Pengguna yang belum login juga dapat menerima jika perangkatnya berlangganan pengumuman.
 
@@ -43,7 +43,7 @@ Gunakan hanya jika konten yang disebut memang sudah tersedia di aplikasi.
 | Mengumumkan materi | Materi grammar siap dipelajari | Buka materi grammar dan pilih level yang sesuai dengan kemampuanmu. | Tata bahasa |
 | Mengenalkan fitur | Ulangi kosakata dengan Anki | Pilih deck dan mulai sesi kartu untuk mengingat kembali kata yang sudah dipelajari. | Anki |
 | Mengajak latihan | Sudah siap mencoba ujian N5? | Ukur kemampuanmu lewat latihan dan simulasi yang tersedia di halaman ujian. | Ujian N5 |
-| Informasi aplikasi | Ada kabar dari Nihongo Master | Buka aplikasi untuk melihat materi dan fitur belajar yang tersedia. | Beranda |
+| Informasi aplikasi | Ada kabar dari Bahasa Master | Buka aplikasi untuk melihat materi dan fitur belajar yang tersedia. | Beranda |
 
 Judul dibatasi **80 karakter**, isi **500 karakter**. Backend juga membatasi ukuran payload; jika ditolak karena terlalu besar, pendekkan pesan atau kurangi emoji. Tidak ada field gambar pada pengumuman versi ini.
 
@@ -70,7 +70,7 @@ Panel belum mendukung URL website luar, detail lesson tertentu, atau detail lowo
 
 Pada perangkat Android penerima:
 
-1. Pasang versi Nihongo Master yang sudah memiliki fitur push notification dan buka aplikasinya.
+1. Pasang versi Bahasa Master yang sudah memiliki fitur push notification dan buka aplikasinya.
 2. Ketuk ikon **lonceng di Beranda**, atau buka **Profil → tombol pengaturan notifikasi**.
 3. Aktifkan **Terima pengumuman**.
 4. Jika Android menampilkan permintaan izin notifikasi, pilih **Izinkan**. Android 13 ke atas memakai izin runtime `POST_NOTIFICATIONS`; lihat [panduan Android FCM](https://firebase.google.com/docs/cloud-messaging/android/get-started).
@@ -89,7 +89,7 @@ Lewati bagian ini jika **Periksa koneksi Firebase** sudah berhasil.
 
 ### A. Siapkan project dan kredensial server
 
-Project yang tercatat pada konfigurasi Android repository adalah `firstproject-ad87e`, dengan package `com.codeverta.nihongomaster`. Pastikan build yang dipasang dan backend pengirim memakai project Firebase yang sama.
+Project yang tercatat pada konfigurasi Android repository adalah `firstproject-ad87e`, dengan package `com.codeverta.bahasa`. Pastikan build yang dipasang dan backend pengirim memakai project Firebase yang sama.
 
 1. Buka [Firebase Console](https://console.firebase.google.com/) dan pilih project aplikasi.
 2. Pastikan **Firebase Cloud Messaging API (HTTP v1)** aktif. Jika perlu, buka bagian Cloud Messaging pada pengaturan project dan ikuti tautan pengelolaan API.

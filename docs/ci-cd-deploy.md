@@ -4,7 +4,7 @@ Kedua API dibangun oleh GitHub Actions sebagai binary Linux amd64. Setelah perub
 
 ## Satu kali konfigurasi
 
-Lakukan konfigurasi berikut untuk kedua repository: `codeverta/nihongo.codeverta.com` dan `codeverta/fitapp.codeverta.com`.
+Lakukan konfigurasi berikut untuk kedua repository: `codeverta/bahasa.codeverta.com` dan `codeverta/fitapp.codeverta.com`.
 
 1. Salin `ops/deploy-api-from-ci` ke `/home/rabihutomo/apps/codeverta-api/deploy-api-from-ci` di server dan beri izin eksekusi. Skrip ini hanya menerima perintah deploy/rollback untuk API Nihongo atau Fitapp. Contoh setup satu kali dari komputer yang sudah punya SSH alias `serverku`:
 

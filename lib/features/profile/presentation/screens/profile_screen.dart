@@ -1,19 +1,19 @@
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/app_review/rate_app_link.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/widgets/legal_links.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
+import 'package:bahasa_master/features/profile/presentation/screens/attributions_screen.dart';
+import 'package:bahasa_master/features/profile/presentation/widgets/gamification_widgets.dart';
+import 'package:bahasa_master/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:nihongo_master/core/app_review/rate_app_link.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/widgets/legal_links.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:nihongo_master/features/profile/data/gamification_repository.dart';
-import 'package:nihongo_master/features/profile/presentation/screens/attributions_screen.dart';
-import 'package:nihongo_master/features/profile/presentation/widgets/gamification_widgets.dart';
-import 'package:nihongo_master/features/profile/presentation/widgets/profile_avatar.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -303,7 +303,7 @@ class _ProfileHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                user?.displayName ?? 'Nihongo Learner',
+                user?.displayName ?? 'Bahasa Learner',
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),

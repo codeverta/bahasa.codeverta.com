@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/features/dictionary/domain/dictionary_models.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/features/dictionary/domain/dictionary_models.dart';
 
 final dictionaryRepositoryProvider = Provider<DictionaryRepository>((ref) {
   return DictionaryRepository(ref.watch(dioProvider));

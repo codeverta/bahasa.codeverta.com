@@ -16,8 +16,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
 )
 
 var (
@@ -493,7 +493,7 @@ func (s *MemoryStore) ensureProfileLocked(userID string) domain.Profile {
 	}
 	profile := domain.Profile{
 		ID:          userID,
-		DisplayName: "Nihongo Learner",
+		DisplayName: "Bahasa Learner",
 		Email:       userID + "@example.local",
 		Target:      "JLPT N5",
 		Level:       1,

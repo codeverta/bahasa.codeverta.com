@@ -1,6 +1,6 @@
+import 'package:bahasa_master/features/home/domain/home_banner_content.dart';
+import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/features/home/domain/home_banner_content.dart';
-import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
 
 void main() {
   test('English home offer does not present the Indonesian-only price', () {

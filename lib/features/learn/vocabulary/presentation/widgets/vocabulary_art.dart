@@ -1,6 +1,6 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/network/remote_asset_image.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/network/remote_asset_image.dart';
 
 /// A generated 4 x 2 sheet supplies eight independent word illustrations.
 class VocabularyArt extends StatelessWidget {

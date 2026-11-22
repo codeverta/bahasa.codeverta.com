@@ -7,8 +7,8 @@ import (
 )
 
 func TestLoadEnvFile(t *testing.T) {
-	const loadedKey = "NIHONGO_TEST_ENV_LOADED"
-	const existingKey = "NIHONGO_TEST_ENV_EXISTING"
+	const loadedKey = "BAHASA_TEST_ENV_LOADED"
+	const existingKey = "BAHASA_TEST_ENV_EXISTING"
 	previous, hadPrevious := os.LookupEnv(loadedKey)
 	if err := os.Unsetenv(loadedKey); err != nil {
 		t.Fatal(err)

@@ -1,5 +1,5 @@
+import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
 import 'package:dio/dio.dart';
-import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
 
 class HomeRepository {
   const HomeRepository(this._dio);

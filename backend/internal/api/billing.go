@@ -7,10 +7,10 @@ import (
 	"google.golang.org/api/idtoken"
 	"log"
 	"net/http"
-	"nihongo-master-backend/internal/anki"
-	"nihongo-master-backend/internal/billing"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/anki"
+	"bahasa-master-backend/internal/billing"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 	"strings"
 	"time"
 )
@@ -30,7 +30,7 @@ func (s *Server) billingStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	platforms := []string{}
-	product := "nihongo_master_lifetime"
+	product := "bahasa_master_lifetime"
 	if s.billing != nil {
 		platforms = s.billing.Verifier.Platforms()
 		product = s.billing.ProductID

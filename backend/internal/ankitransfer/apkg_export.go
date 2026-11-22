@@ -97,7 +97,7 @@ func exportAPKG(doc Document) ([]byte, error) {
 		return nil, err
 	}
 	metadata, _ := json.Marshal(csvMetadata{Version: doc.Version, Title: doc.Title, Description: doc.Description, SourceURL: doc.SourceURL, SourceID: doc.SourceID, Level: doc.Level})
-	metadataEntry, err := z.Create("nihongo-master.json")
+	metadataEntry, err := z.Create("bahasa-master.json")
 	if err != nil {
 		_ = z.Close()
 		return nil, err
@@ -197,7 +197,7 @@ func makeBasicModel(modelID, deckID, now int64) map[string]any {
 	}
 	tmpl := map[string]any{"name": "Card 1", "ord": 0, "qfmt": "{{Front}}", "afmt": "{{FrontSide}}<hr id=answer>{{Back}}{{#Meaning}}<br><br>{{Meaning}}{{/Meaning}}", "bqfmt": "", "bafmt": "", "did": deckID, "bfont": "", "bsize": 0}
 	return map[string]any{
-		"id": modelID, "name": "Nihongo Master Transfer", "type": 0, "mod": now, "usn": -1,
+		"id": modelID, "name": "Bahasa Master Transfer", "type": 0, "mod": now, "usn": -1,
 		"sortf": 0, "did": deckID, "tmpls": []any{tmpl},
 		"flds":      []any{field("Front", 0), field("Back", 1), field("Meaning", 2)},
 		"css":       ".card { font-family: arial; font-size: 20px; text-align: center; color: black; background-color: white; }",

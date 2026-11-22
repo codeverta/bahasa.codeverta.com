@@ -1,10 +1,10 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _legalBaseUrl = String.fromEnvironment(
   'LEGAL_BASE_URL',
-  defaultValue: 'https://nihongo.codeverta.com',
+  defaultValue: 'https://bahasa.codeverta.com',
 );
 
 const _legalPages = {
@@ -25,7 +25,9 @@ Future<void> openLegalPage(BuildContext context, String path) async {
   if (context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Halaman tidak dapat dibuka. Coba lagi.'.localized(context)),
+        content: Text(
+          'Halaman tidak dapat dibuka. Coba lagi.'.localized(context),
+        ),
       ),
     );
   }

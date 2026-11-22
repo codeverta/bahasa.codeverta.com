@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/aichat"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/aichat"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/testdb"
 )
 
 const testUser = "11111111-1111-4111-8111-111111111111"

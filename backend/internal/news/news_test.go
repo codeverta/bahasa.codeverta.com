@@ -12,8 +12,8 @@ import (
 
 	"golang.org/x/net/html"
 	"gorm.io/gorm"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/testdb"
 )
 
 func TestCalendarWeekdaysAndTimezones(t *testing.T) {

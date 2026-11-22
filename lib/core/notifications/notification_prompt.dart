@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/analytics/analytics_service.dart';
+import 'package:bahasa_master/core/notifications/push_notifications.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/analytics/analytics_service.dart';
-import 'package:nihongo_master/core/notifications/push_notifications.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _answeredKey = 'notification_prompt_answered_v1';

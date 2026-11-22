@@ -63,6 +63,6 @@ const uiEnglishKana = <String, String>{
   'Lanjut ke tahap berikutnya': 'Go to the next step',
   'Ulangi': 'Try again',
   'Hiragana & katakana': 'Hiragana & katakana',
-  'Data urutan goresan hiragana dan katakana © Ulrich Apel, lisensi CC BY-SA 3.0. Diubah menjadi titik-titik goresan oleh Nihongo Master; data turunannya dibagikan dengan lisensi yang sama.':
-      'Hiragana and katakana stroke order data © Ulrich Apel, CC BY-SA 3.0. Converted to stroke points by Nihongo Master; the derived data is shared under the same licence.',
+  'Data urutan goresan hiragana dan katakana © Ulrich Apel, lisensi CC BY-SA 3.0. Diubah menjadi titik-titik goresan oleh Bahasa Master; data turunannya dibagikan dengan lisensi yang sama.':
+      'Hiragana and katakana stroke order data © Ulrich Apel, CC BY-SA 3.0. Converted to stroke points by Bahasa Master; the derived data is shared under the same licence.',
 };

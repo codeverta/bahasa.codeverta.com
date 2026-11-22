@@ -1,4 +1,4 @@
-name: nihongo-master-production
+name: bahasa-master-production
 
 services:
   backend:

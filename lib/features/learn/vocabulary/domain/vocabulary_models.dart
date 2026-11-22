@@ -1,5 +1,5 @@
+import 'package:bahasa_master/core/gamification/xp_gain.dart';
 import 'package:flutter/foundation.dart';
-import 'package:nihongo_master/core/gamification/xp_gain.dart';
 
 @immutable
 class VocabularyLevel {

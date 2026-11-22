@@ -1,21 +1,21 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/core/offline/offline_providers.dart';
+import 'package:bahasa_master/features/anki/data/anki_repository.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/billing/presentation/billing_controller.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/learn/activity/learning_history.dart';
+import 'package:bahasa_master/features/learn/grammar/presentation/controllers/grammar_controller.dart';
+import 'package:bahasa_master/features/learn/kanji/presentation/controllers/kanji_controller.dart';
+import 'package:bahasa_master/features/learn/offline/offline_practice.dart';
+import 'package:bahasa_master/features/learn/reading/presentation/controllers/reading_controller.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
+import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/core/offline/offline_providers.dart';
-import 'package:nihongo_master/features/anki/data/anki_repository.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/billing/presentation/billing_controller.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:nihongo_master/features/learn/activity/learning_history.dart';
-import 'package:nihongo_master/features/learn/grammar/presentation/controllers/grammar_controller.dart';
-import 'package:nihongo_master/features/learn/kanji/presentation/controllers/kanji_controller.dart';
-import 'package:nihongo_master/features/learn/offline/offline_practice.dart';
-import 'package:nihongo_master/features/learn/reading/presentation/controllers/reading_controller.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
-import 'package:nihongo_master/features/profile/data/gamification_repository.dart';
 
 class OfflineLifecycle extends ConsumerStatefulWidget {
   const OfflineLifecycle({required this.child, super.key});

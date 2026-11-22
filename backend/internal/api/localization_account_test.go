@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"nihongo-master-backend/internal/anki"
-	"nihongo-master-backend/internal/jobfetch"
-	"nihongo-master-backend/internal/jobs"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/anki"
+	"bahasa-master-backend/internal/jobfetch"
+	"bahasa-master-backend/internal/jobs"
+	"bahasa-master-backend/internal/store"
 )
 
 func decodeAccountPayload(t *testing.T, raw string) any {
@@ -116,8 +116,8 @@ func TestTranslateAccountPayloadCases(t *testing.T) {
 		{
 			name:    "billing status is unchanged",
 			path:    "/v1/billing",
-			input:   `{"data":{"productId":"nihongo_master_lifetime","accountToken":"token","priceIdr":99000,"billingType":"lifetime","platforms":["android","ios"],"entitlement":{"tier":"premium","isLifetime":true}}}`,
-			want:    `{"data":{"productId":"nihongo_master_lifetime","accountToken":"token","priceIdr":99000,"billingType":"lifetime","platforms":["android","ios"],"entitlement":{"tier":"premium","isLifetime":true}}}`,
+			input:   `{"data":{"productId":"bahasa_master_lifetime","accountToken":"token","priceIdr":99000,"billingType":"lifetime","platforms":["android","ios"],"entitlement":{"tier":"premium","isLifetime":true}}}`,
+			want:    `{"data":{"productId":"bahasa_master_lifetime","accountToken":"token","priceIdr":99000,"billingType":"lifetime","platforms":["android","ios"],"entitlement":{"tier":"premium","isLifetime":true}}}`,
 			changed: false,
 		},
 		{
@@ -238,8 +238,8 @@ func TestTranslateAccountPayloadCases(t *testing.T) {
 		{
 			name:    "branding default tagline",
 			path:    "/v1/branding",
-			input:   `{"data":{"appName":"Nihongo Master","tagline":"Selangkah lebih dekat dengan Jepang","iconUrl":"","splashUrl":"","backgroundColor":"#FAFAFA"}}`,
-			want:    `{"data":{"appName":"Nihongo Master","tagline":"One step closer to Japan","iconUrl":"","splashUrl":"","backgroundColor":"#FAFAFA"}}`,
+			input:   `{"data":{"appName":"Bahasa Master","tagline":"Selangkah lebih dekat dengan Jepang","iconUrl":"","splashUrl":"","backgroundColor":"#FAFAFA"}}`,
+			want:    `{"data":{"appName":"Bahasa Master","tagline":"One step closer to Japan","iconUrl":"","splashUrl":"","backgroundColor":"#FAFAFA"}}`,
 			changed: true,
 		},
 		{

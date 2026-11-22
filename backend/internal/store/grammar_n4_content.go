@@ -3,7 +3,7 @@ package store
 import (
 	"encoding/json"
 	"fmt"
-	grammarData "nihongo-master-backend/data/grammar"
+	grammarData "bahasa-master-backend/data/grammar"
 )
 
 func seedGrammarN4() []grammarLessonContent {

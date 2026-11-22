@@ -1,19 +1,19 @@
+import 'package:bahasa_master/core/localization/anki_english_part_a.dart';
+import 'package:bahasa_master/core/localization/anki_english_part_b.dart';
+import 'package:bahasa_master/core/localization/anki_english_part_c.dart';
+import 'package:bahasa_master/core/localization/ui_english_ai_chat.dart';
+import 'package:bahasa_master/core/localization/ui_english_kana.dart';
+import 'package:bahasa_master/core/localization/ui_english_leaderboard.dart';
+import 'package:bahasa_master/core/localization/ui_english_level_list.dart';
+import 'package:bahasa_master/core/localization/ui_english_notification_prompt.dart';
+import 'package:bahasa_master/core/localization/ui_english_redesign.dart';
+import 'package:bahasa_master/core/localization/ui_english_unlock.dart';
+import 'package:bahasa_master/core/localization/ui_english_wave1_core.dart';
+import 'package:bahasa_master/core/localization/ui_english_wave1_exam.dart';
+import 'package:bahasa_master/core/localization/ui_english_wave1_learn.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:nihongo_master/core/localization/anki_english_part_a.dart';
-import 'package:nihongo_master/core/localization/anki_english_part_b.dart';
-import 'package:nihongo_master/core/localization/anki_english_part_c.dart';
-import 'package:nihongo_master/core/localization/ui_english_ai_chat.dart';
-import 'package:nihongo_master/core/localization/ui_english_kana.dart';
-import 'package:nihongo_master/core/localization/ui_english_leaderboard.dart';
-import 'package:nihongo_master/core/localization/ui_english_level_list.dart';
-import 'package:nihongo_master/core/localization/ui_english_notification_prompt.dart';
-import 'package:nihongo_master/core/localization/ui_english_unlock.dart';
-import 'package:nihongo_master/core/localization/ui_english_redesign.dart';
-import 'package:nihongo_master/core/localization/ui_english_wave1_core.dart';
-import 'package:nihongo_master/core/localization/ui_english_wave1_exam.dart';
-import 'package:nihongo_master/core/localization/ui_english_wave1_learn.dart';
 
 /// Lightweight app localization catalog. Japanese source text remains as-is;
 /// only app-owned Indonesian copy is translated for English users.
@@ -736,8 +736,8 @@ const _englishCopy = <String, String>{
       'Deck processing is busy. Try again shortly.',
   'Transfer belum selesai. Periksa koneksi dan coba lagi.':
       'Transfer has not finished. Check your connection and try again.',
-  'Pilih APKG dari Anki, CSV, atau JSON Nihongo Master. Maksimal 20 MB dan 10.000 kartu per deck. File dipratinjau dahulu sebelum disimpan.':
-      'Choose an Anki APKG, CSV, or Nihongo Master JSON file. Maximum 20 MB and 10,000 cards per deck. Preview the file before saving.',
+  'Pilih APKG dari Anki, CSV, atau JSON Bahasa Master. Maksimal 20 MB dan 10.000 kartu per deck. File dipratinjau dahulu sebelum disimpan.':
+      'Choose an Anki APKG, CSV, or Bahasa Master JSON file. Maximum 20 MB and 10,000 cards per deck. Preview the file before saving.',
   'Deck pribadi disimpan pada akunmu. Deck bawaan tidak ditimpa. Jadwal review dimulai baru; progres dari Anki tidak dipindahkan.':
       'Personal decks are saved to your account without replacing built-in decks. Review schedules start fresh; Anki progress is not transferred.',
   'CSV memakai kolom front, answers, meaning, imageUrl, audio. Answers dapat berupa teks atau array JSON. APKG/JSON membawa media yang dibundel; URL media eksternal tetap berupa tautan. Template HTML diubah menjadi teks. Deck cloze atau template yang tidak didukung akan ditolak dengan penjelasan.':
@@ -981,7 +981,7 @@ const _englishCopy = <String, String>{
   'Mulai dari kata yang ingin kamu pahami.':
       'Start with a word you want to understand.',
   'Mulai Exam': 'Start Exam',
-  'Nihongo Master': 'Nihongo Master',
+  'Bahasa Master': 'Bahasa Master',
   'Semua materi N5–N1 gratis. Masuk untuk mulai belajar.':
       'All N5–N1 materials are free. Sign in to start learning.',
   'N5–N4 gratis. Materi N3–N1 memerlukan Lifetime Access.':
@@ -1133,8 +1133,8 @@ const _englishCopy = <String, String>{
       'Words: Jisho.org, using JMdict/JMnedict from the Electronic Dictionary Research and Development Group (EDRDG), and DBpedia for encyclopedia definitions. Kanji details: kanjiapi.dev, using KANJIDIC2. EDRDG data is used under its license (CC BY-SA). DBpedia has similar attribution and share-alike requirements.',
   'Favorit menyimpan salinan entri di perangkat, terpisah untuk setiap akun. Favorit dapat dibaca tanpa internet; pencarian dan detail kanji memerlukan koneksi. Riwayat bisa dihapus. Maksimal 60 favorit dan 20 pencarian terakhir.':
       'Favorites save a copy of each entry on this device, separately for each account. Saved words are available offline; search and kanji details require a connection. Search history can be cleared. You can save up to 60 favorites and keep 20 recent searches.',
-  'Kamus ini memakai sumber gratis tanpa API key. Ketersediaannya mengikuti layanan sumber. Contoh kalimat lengkap, pencarian radikal, dan diagram goresan dibuka di Jisho. Nihongo Master tidak berafiliasi dengan Jisho.org.':
-      'This dictionary uses free sources without an API key. Availability depends on those services. Full example sentences, radical search, and stroke diagrams open on Jisho. Nihongo Master is not affiliated with Jisho.org.',
+  'Kamus ini memakai sumber gratis tanpa API key. Ketersediaannya mengikuti layanan sumber. Contoh kalimat lengkap, pencarian radikal, dan diagram goresan dibuka di Jisho. Bahasa Master tidak berafiliasi dengan Jisho.org.':
+      'This dictionary uses free sources without an API key. Availability depends on those services. Full example sentences, radical search, and stroke diagrams open on Jisho. Bahasa Master is not affiliated with Jisho.org.',
   'Jisho.org & sumber data': 'Jisho.org & data sources',
   'EDRDG & lisensi kamus': 'EDRDG & dictionary license',
   'Zona waktu belajar': 'Study time zone',
@@ -1603,8 +1603,8 @@ const _englishCopy = <String, String>{
       'All answers are correct. You can view all explanations.',
   'Selesaikan kurikulum': 'Complete curriculum',
   'Simpan & lanjutkan': 'Save & continue',
-  'Materi persiapan SSW ditulis untuk Nihongo Master. Keterampilan lapangan memerlukan pelatihan dan supervisi. Ikuti SOP, spesifikasi produk, serta arahan petugas berwenang.':
-      'SSW preparation materials were written for Nihongo Master. Field skills require training and supervision. Follow SOPs, product specifications, and instructions from authorized staff.',
+  'Materi persiapan SSW ditulis untuk Bahasa Master. Keterampilan lapangan memerlukan pelatihan dan supervisi. Ikuti SOP, spesifikasi produk, serta arahan petugas berwenang.':
+      'SSW preparation materials were written for Bahasa Master. Field skills require training and supervision. Follow SOPs, product specifications, and instructions from authorized staff.',
   'Referensi dan cakupan materi': 'References and topic coverage',
   'Cakupan disusun berdasarkan referensi di bawah. Materi dan soal aplikasi ditulis mandiri, bukan salinan buku atau bank soal resmi. Pembaruan SSW: 17 Oktober 2026.':
       'Coverage is based on the references below. App lessons and questions are original and are not copied from books or official question banks. SSW updated: October 17, 2026.',
@@ -1665,8 +1665,8 @@ const _englishCopy = <String, String>{
   'Kosakata & frasa': 'Words & phrases',
   'Buka di Google Maps': 'Open in Google Maps',
   'Lowongan di prefektur ini': 'Jobs in this prefecture',
-  'Teks dari Wikipedia dan Wikivoyage berlisensi CC BY-SA 4.0; perubahan dapat dilakukan oleh tim Nihongo Master.':
-      'Text from Wikipedia and Wikivoyage is licensed under CC BY-SA 4.0; the Nihongo Master team may have edited it.',
+  'Teks dari Wikipedia dan Wikivoyage berlisensi CC BY-SA 4.0; perubahan dapat dilakukan oleh tim Bahasa Master.':
+      'Text from Wikipedia and Wikivoyage is licensed under CC BY-SA 4.0; the Bahasa Master team may have edited it.',
   'Foto': 'Photo',
   'BUDAYA, TEMPAT, DAN LOWONGAN': 'CULTURE, PLACES, AND JOBS',
   'Kenali budaya tiap daerah dan lihat lowongan kerja di peta Jepang':
@@ -1675,20 +1675,20 @@ const _englishCopy = <String, String>{
   'Peta belum dapat dimuat. Periksa koneksi dan coba lagi.':
       'The map could not be loaded. Check your connection and try again.',
   'Dibangun bersama banyak sumber': 'Built with many sources',
-  'Terima kasih kepada penerbit, pembuat dataset, dan komunitas yang menjadi sumber konten Nihongo Master. Hak cipta tetap milik masing-masing pemilik.':
-      'Thank you to the publishers, dataset creators, and communities that provide content for Nihongo Master. Copyright remains with each respective owner.',
+  'Terima kasih kepada penerbit, pembuat dataset, dan komunitas yang menjadi sumber konten Bahasa Master. Hak cipta tetap milik masing-masing pemilik.':
+      'Thank you to the publishers, dataset creators, and communities that provide content for Bahasa Master. Copyright remains with each respective owner.',
   'Sumber katalog, metadata, dan panel manga berbahasa Jepang. Karya tetap milik penulis dan penerbit masing-masing.':
       'Source of the Japanese-language manga catalog, metadata, and panels. Works remain the property of their respective authors and publishers.',
   'Berita & informasi Jepang': 'Japanese news & information',
-  'Berita Jepang · CC BY 3.0. Furigana ditambahkan oleh Nihongo Master. Kredit penulis, penerjemah, dan gambar tersedia pada setiap artikel.':
-      'Japanese news · CC BY 3.0. Furigana added by Nihongo Master. Author, translator, and image credits are available on each article.',
-  'Informasi publik Jepang. Ketentuan penggunaan Osaka City kompatibel dengan CC BY 4.0; furigana ditambahkan oleh Nihongo Master.':
-      'Japanese public information. Osaka City’s terms of use are compatible with CC BY 4.0; furigana added by Nihongo Master.',
+  'Berita Jepang · CC BY 3.0. Furigana ditambahkan oleh Bahasa Master. Kredit penulis, penerjemah, dan gambar tersedia pada setiap artikel.':
+      'Japanese news · CC BY 3.0. Furigana added by Bahasa Master. Author, translator, and image credits are available on each article.',
+  'Informasi publik Jepang. Ketentuan penggunaan Osaka City kompatibel dengan CC BY 4.0; furigana ditambahkan oleh Bahasa Master.':
+      'Japanese public information. Osaka City’s terms of use are compatible with CC BY 4.0; furigana added by Bahasa Master.',
   '大阪市 · Pemerintah Kota Osaka': 'Osaka City · Osaka City Government',
   '首相官邸 · Kantor Perdana Menteri Jepang':
       '首相官邸 · Prime Minister’s Office of Japan',
-  'Berita resmi pemerintah Jepang · 公共データ利用規約 (PDL1.0), kompatibel dengan CC BY 4.0. Sumber: 首相官邸ホームページ; teks diolah (furigana ditambahkan) oleh Nihongo Master.':
-      'Official Japanese government news · Public Data License (PDL1.0), compatible with CC BY 4.0. Source: 首相官邸ホームページ; text edited (furigana added) by Nihongo Master.',
+  'Berita resmi pemerintah Jepang · 公共データ利用規約 (PDL1.0), kompatibel dengan CC BY 4.0. Sumber: 首相官邸ホームページ; teks diolah (furigana ditambahkan) oleh Bahasa Master.':
+      'Official Japanese government news · Public Data License (PDL1.0), compatible with CC BY 4.0. Source: 首相官邸ホームページ; text edited (furigana added) by Bahasa Master.',
   'Hasil pencarian kata dan bacaan Jepang melalui API Jisho. Atribusi dataset yang mendasari entri mengikuti informasi dari Jisho.':
       'Japanese word and reading search results via the Jisho API. Attribution for the datasets behind entries follows Jisho’s information.',
   'Informasi kanji dan bacaannya melalui kanjiapi.dev.':
@@ -1728,7 +1728,7 @@ const _englishCopy = <String, String>{
   'Pilih deck favorit dan bangun kebiasaan review kosakata.':
       'Choose a deck and build a vocabulary review habit.',
   'Jelajahi deck': 'Explore decks',
-  'NIHONGO PREMIUM': 'NIHONGO PREMIUM',
+  'BAHASA PREMIUM': 'BAHASA PREMIUM',
   'PREMIUM · LIFETIME ACCESS': 'PREMIUM · LIFETIME ACCESS',
 
   // Learn and exam navigation, instructions, and results.
@@ -1796,8 +1796,8 @@ const _englishCopy = <String, String>{
   'Lanjutkan cerita': 'Continue story',
   'Latih arti dan cara baca kanji dasar, lalu gunakan contoh kata untuk mengingatnya.':
       'Practice the meanings and readings of basic kanji, then use example words to help remember them.',
-  'Latihan buatan Nihongo Master. Hasil berupa persentase jawaban benar, bukan skor atau prediksi kelulusan resmi JLPT.':
-      'A Nihongo Master practice test. Results show the percentage of correct answers, not an official JLPT score or pass prediction.',
+  'Latihan buatan Bahasa Master. Hasil berupa persentase jawaban benar, bukan skor atau prediksi kelulusan resmi JLPT.':
+      'A Bahasa Master practice test. Results show the percentage of correct answers, not an official JLPT score or pass prediction.',
   'Latihan pemahaman': 'Comprehension practice',
   'Latihan tertulis · Tanpa listening': 'Written practice · No listening',
   'Lesson dikuasai!': 'Lesson mastered!',
@@ -1899,10 +1899,10 @@ const _englishCopy = <String, String>{
       'Original NAT-TEST 5Q practice questions. Two written sessions: 21 vocabulary/kanji questions in 20 minutes, then 17 grammar and 5 reading questions in 40 minutes. Listening is not included. Results are a percentage of correct answers, not a scaled score or official NAT-TEST pass result.',
   'Latihan orisinal dengan jenis soal N3. Waktu kosakata 30 menit dan grammar + reading 70 menit. Listening dilewati. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.':
       'Original practice using N3 question types. Vocabulary time is 30 minutes, and grammar + reading time is 70 minutes. Listening is omitted. Results are a percentage of correct answers, not a scaled score or official JLPT pass result.',
-  'Struktur mengikuti jenis soal N4 dan perkiraan jumlah setelah revisi 2020. Waktu kosakata 25 menit dan grammar + reading 55 menit. Listening dilewati. Soal orisinal Nihongo Master. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.':
-      'The structure follows N4 question types and estimated counts after the 2020 revision. Vocabulary time is 25 minutes, and grammar + reading time is 55 minutes. Listening is omitted. Questions are original to Nihongo Master. Results are a percentage of correct answers, not a scaled score or official JLPT pass result.',
-  'Struktur mengikuti jenis soal N5 dan perkiraan jumlah resmi setelah revisi 2020. Grammar teks termasuk bunpou, bukan tes pemahaman dokkai. Waktu grammar disesuaikan menjadi 20 menit karena dokkai dilewati; waktu resmi grammar + dokkai adalah 40 menit. Soal orisinal Nihongo Master. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.':
-      'The structure follows N5 question types and estimated official counts after the 2020 revision. Text grammar is bunpou, not a dokkai comprehension test. Grammar time is set to 20 minutes because dokkai is omitted; the official grammar + dokkai time is 40 minutes. Questions are original to Nihongo Master. Results are a percentage of correct answers, not a scaled score or official JLPT pass result.',
+  'Struktur mengikuti jenis soal N4 dan perkiraan jumlah setelah revisi 2020. Waktu kosakata 25 menit dan grammar + reading 55 menit. Listening dilewati. Soal orisinal Bahasa Master. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.':
+      'The structure follows N4 question types and estimated counts after the 2020 revision. Vocabulary time is 25 minutes, and grammar + reading time is 55 minutes. Listening is omitted. Questions are original to Bahasa Master. Results are a percentage of correct answers, not a scaled score or official JLPT pass result.',
+  'Struktur mengikuti jenis soal N5 dan perkiraan jumlah resmi setelah revisi 2020. Grammar teks termasuk bunpou, bukan tes pemahaman dokkai. Waktu grammar disesuaikan menjadi 20 menit karena dokkai dilewati; waktu resmi grammar + dokkai adalah 40 menit. Soal orisinal Bahasa Master. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.':
+      'The structure follows N5 question types and estimated official counts after the 2020 revision. Text grammar is bunpou, not a dokkai comprehension test. Grammar time is set to 20 minutes because dokkai is omitted; the official grammar + dokkai time is 40 minutes. Questions are original to Bahasa Master. Results are a percentage of correct answers, not a scaled score or official JLPT pass result.',
   '7 bacaan kanji · 5 penulisan · 8 konteks · 4 padanan makna · 4 penggunaan kata':
       '7 kanji readings · 5 writing questions · 8 context questions · 4 meaning matches · 4 word usage questions',
   '7 bacaan kanji · 5 penulisan · 6 konteks · 3 padanan makna':
@@ -1927,8 +1927,8 @@ const _englishCopy = <String, String>{
       '1. 文字と語彙 — 12 vocabulary and kanji questions\n2. 会話と表現 — 12 grammar and expression questions\n3. 読解 — 12 messages, notices, and information-search questions',
   '• Waktu total 45 menit, dibagi sendiri untuk ketiga bagian.\n• Jawaban dapat diubah selama bagian masih aktif. Gunakan tanda ragu dan peta soal.\n• Setelah mengirim bagian, kamu tidak dapat kembali. Timer terus berjalan.\n• Timer tetap berjalan saat aplikasi ditutup. Jawaban tersimpan setelah dikonfirmasi server.\n• Soal kosong dihitung salah. Pembahasan tersedia setelah selesai.':
       '• The total time is 45 minutes; manage it across the three sections.\n• You can change answers while a section is active. Use the unsure flag and question map.\n• You cannot return to a section after submitting it. The timer keeps running.\n• The timer keeps running while the app is closed. Answers are saved after server confirmation.\n• Unanswered questions count as incorrect. Explanations are available after you finish.',
-  'Soal orisinal Nihongo Master untuk latihan kehidupan sehari-hari. JFT-Basic resmi memiliki empat bagian, sekitar 50 soal, dan waktu 60 menit. Paket ini hanya mencakup tiga bagian tertulis dengan waktu latihan 45 menit. Skor adalah persentase benar, bukan skor berskala atau kelulusan resmi JFT-Basic.':
-      'Original Nihongo Master questions for everyday-life practice. The official JFT-Basic has four sections, around 50 questions, and a 60-minute time limit. This set covers only three written sections with 45 minutes of practice time. The score is a percentage of correct answers, not a scaled score or official JFT-Basic pass result.',
+  'Soal orisinal Bahasa Master untuk latihan kehidupan sehari-hari. JFT-Basic resmi memiliki empat bagian, sekitar 50 soal, dan waktu 60 menit. Paket ini hanya mencakup tiga bagian tertulis dengan waktu latihan 45 menit. Skor adalah persentase benar, bukan skor berskala atau kelulusan resmi JFT-Basic.':
+      'Original Bahasa Master questions for everyday-life practice. The official JFT-Basic has four sections, around 50 questions, and a 60-minute time limit. This set covers only three written sections with 45 minutes of practice time. The score is a percentage of correct answers, not a scaled score or official JFT-Basic pass result.',
   'Format dan cakupan kemampuan mengacu pada panduan publik Japan Foundation. Tema komunikasi sehari-hari merujuk secara umum pada Irodori; semua soal di aplikasi ditulis orisinal.':
       'The format and skill coverage refer to public Japan Foundation guidance. Everyday communication themes are broadly based on Irodori; all questions in the app are original.',
 

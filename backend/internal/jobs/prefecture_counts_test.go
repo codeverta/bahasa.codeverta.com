@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/jobfetch"
+	"bahasa-master-backend/internal/jobfetch"
 )
 
 func TestPrefectureCountsOnlyCountActiveJobs(t *testing.T) {

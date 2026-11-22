@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 
 const _cacheKey = 'app_branding_v1';
 
 class AppBranding {
   const AppBranding({
-    this.appName = 'Nihongo Master',
+    this.appName = 'Bahasa Master',
     this.tagline = 'Selangkah lebih dekat dengan Jepang',
     this.iconUrl = '',
     this.splashUrl = '',
@@ -31,7 +31,7 @@ class AppBranding {
 
     final hex = value('backgroundColor', '#FAFAFA');
     return AppBranding(
-      appName: value('appName', 'Nihongo Master'),
+      appName: value('appName', 'Bahasa Master'),
       tagline: value('tagline', 'Selangkah lebih dekat dengan Jepang'),
       iconUrl: imageUrl('iconUrl'),
       splashUrl: imageUrl('splashUrl'),
@@ -65,9 +65,7 @@ final appBrandingProvider = FutureProvider<AppBranding>((ref) async {
   try {
     final response = await ref
         .read(dioProvider)
-        .get<Map<String, dynamic>>(
-          '/branding',
-        )
+        .get<Map<String, dynamic>>('/branding')
         .timeout(const Duration(milliseconds: 1800));
     final data = response.data?['data'] as Map<String, dynamic>;
     final branding = AppBranding.fromJson(data);
@@ -88,11 +86,11 @@ class BrandIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget fallback() => Image.asset(
-          'assets/images/app-icon-small.webp',
-          width: size,
-          height: size,
-          fit: BoxFit.contain,
-        );
+      'assets/images/app-icon-small.webp',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
     if (branding.iconUrl.isEmpty) return fallback();
     return Image.network(
       branding.iconUrl,
@@ -139,7 +137,8 @@ class _BrandStartupState extends ConsumerState<BrandStartup> {
 
   @override
   Widget build(BuildContext context) {
-    final branding = ref.watch(appBrandingProvider).valueOrNull ??
+    final branding =
+        ref.watch(appBrandingProvider).valueOrNull ??
         ref.watch<AppBranding>(cachedBrandingProvider);
     return Stack(
       fit: StackFit.expand,
@@ -148,7 +147,8 @@ class _BrandStartupState extends ConsumerState<BrandStartup> {
         if (!_complete)
           Positioned.fill(
             child: Semantics(
-              label: '${branding.appName}, ${'membuka aplikasi'.localized(context)}',
+              label:
+                  '${branding.appName}, ${'membuka aplikasi'.localized(context)}',
               child: Material(
                 color: branding.backgroundColor,
                 child: Stack(
@@ -197,30 +197,30 @@ class AppSplashArtwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              BrandIcon(branding: branding, size: 160),
-              const SizedBox(height: 24),
-              Text(
-                branding.appName,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF1D2088),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                branding.tagline,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
-              ),
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          BrandIcon(branding: branding, size: 160),
+          const SizedBox(height: 24),
+          Text(
+            branding.appName,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF1D2088),
+            ),
           ),
-        ),
-      );
+          const SizedBox(height: 12),
+          Text(
+            branding.tagline,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
+          ),
+        ],
+      ),
+    ),
+  );
 }

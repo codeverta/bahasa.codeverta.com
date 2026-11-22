@@ -13,22 +13,22 @@ import (
 	"syscall"
 	"time"
 
-	"nihongo-master-backend/internal/aichat"
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/auth"
-	"nihongo-master-backend/internal/billing"
-	"nihongo-master-backend/internal/config"
-	"nihongo-master-backend/internal/diagnostics"
-	"nihongo-master-backend/internal/jobfetch"
-	"nihongo-master-backend/internal/jobs"
-	"nihongo-master-backend/internal/manga"
-	"nihongo-master-backend/internal/media"
-	"nihongo-master-backend/internal/news"
-	"nihongo-master-backend/internal/notifications"
-	"nihongo-master-backend/internal/places"
-	"nihongo-master-backend/internal/prefinfo"
-	"nihongo-master-backend/internal/store"
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/aichat"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/auth"
+	"bahasa-master-backend/internal/billing"
+	"bahasa-master-backend/internal/config"
+	"bahasa-master-backend/internal/diagnostics"
+	"bahasa-master-backend/internal/jobfetch"
+	"bahasa-master-backend/internal/jobs"
+	"bahasa-master-backend/internal/manga"
+	"bahasa-master-backend/internal/media"
+	"bahasa-master-backend/internal/news"
+	"bahasa-master-backend/internal/notifications"
+	"bahasa-master-backend/internal/places"
+	"bahasa-master-backend/internal/prefinfo"
+	"bahasa-master-backend/internal/store"
+	"bahasa-master-backend/internal/unlock"
 )
 
 func main() {
@@ -373,7 +373,7 @@ func main() {
 		IdleTimeout:       60 * time.Second,
 	}
 
-	log.Printf("nihongo master API listening on http://localhost:%s", port)
+	log.Printf("bahasa master API listening on http://localhost:%s", port)
 	shutdownSignal, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	shutdownDone := make(chan struct{})

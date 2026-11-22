@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"nihongo-master-backend/internal/manga"
+	"bahasa-master-backend/internal/manga"
 )
 
 //go:embed manga_admin.html

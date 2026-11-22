@@ -1,14 +1,14 @@
 import 'dart:convert';
 
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/map/domain/map_models.dart';
+import 'package:bahasa_master/features/map/domain/prefecture_living.dart';
+import 'package:bahasa_master/features/map/domain/prefecture_profile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/map/domain/map_models.dart';
-import 'package:nihongo_master/features/map/domain/prefecture_living.dart';
-import 'package:nihongo_master/features/map/domain/prefecture_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final mapRepositoryProvider = Provider(

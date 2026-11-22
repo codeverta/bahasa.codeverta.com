@@ -19,7 +19,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/tencentyun/cos-go-sdk-v5"
 	xdraw "golang.org/x/image/draw"
-	"nihongo-master-backend/internal/imageopt"
+	"bahasa-master-backend/internal/imageopt"
 )
 
 const (

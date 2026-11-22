@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"nihongo-master-backend/internal/database"
+	"bahasa-master-backend/internal/database"
 )
 
 type Repository struct{ db *gorm.DB }

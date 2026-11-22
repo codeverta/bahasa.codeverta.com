@@ -3,7 +3,7 @@ package testdb
 
 import (
 	"database/sql"
-	"nihongo-master-backend/internal/config"
+	"bahasa-master-backend/internal/config"
 	"os"
 	"testing"
 
@@ -32,7 +32,7 @@ func DSN(t *testing.T) string {
 	if err != nil {
 		t.Fatal(err)
 	}
-	name := "nihongo_test_" + uuid.NewString()[:8]
+	name := "bahasa_test_" + uuid.NewString()[:8]
 	if _, err := db.Exec("CREATE DATABASE `" + name + "` CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"); err != nil {
 		db.Close()
 		t.Fatal(err)

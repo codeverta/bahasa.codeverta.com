@@ -1,6 +1,6 @@
+import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
+import 'package:bahasa_master/shared/presentation/widgets/japanese_ruby_text.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/features/learn/vocabulary/domain/vocabulary_models.dart';
-import 'package:nihongo_master/shared/presentation/widgets/japanese_ruby_text.dart';
 
 /// Adds ruby readings to Japanese vocabulary and example text known by a lesson.
 ///

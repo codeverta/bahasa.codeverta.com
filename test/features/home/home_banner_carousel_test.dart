@@ -1,15 +1,15 @@
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
+import 'package:bahasa_master/features/home/presentation/widgets/home_banner_carousel.dart';
+import 'package:bahasa_master/features/news/data/news_repository.dart';
+import 'package:bahasa_master/shared/presentation/widgets/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:nihongo_master/features/home/presentation/screens/dashboard_screen.dart';
-import 'package:nihongo_master/features/home/presentation/widgets/home_banner_carousel.dart';
-import 'package:nihongo_master/features/news/data/news_repository.dart';
-import 'package:nihongo_master/shared/presentation/widgets/auth_gate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const banners = [

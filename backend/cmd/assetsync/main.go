@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/tencentyun/cos-go-sdk-v5"
-	"nihongo-master-backend/internal/config"
+	"bahasa-master-backend/internal/config"
 )
 
 func main() {

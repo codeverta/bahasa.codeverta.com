@@ -11,7 +11,7 @@ const uiEnglishWave1Core = <String, String>{
       'Open Settings > System > System update. Menu names may differ by brand.',
   'Buka Pengaturan > Umum > Pembaruan Perangkat Lunak.':
       'Open Settings > General > Software Update.',
-  'Perbarui Nihongo Master': 'Update Nihongo Master',
+  'Perbarui Bahasa Master': 'Update Bahasa Master',
   'Perangkat belum mendukung versi baru':
       'Your device does not support the new version',
   'Versi aplikasi ini sudah tidak didukung.':
@@ -31,7 +31,7 @@ const uiEnglishWave1Core = <String, String>{
       'If the update does not appear in the store, check your store account and whether the release is available for your device. Contact rabih@codeverta.com if your device is reported as incompatible.',
   'Membuka store…': 'Opening store…',
   'Update sekarang': 'Update now',
-  'Pengumuman Nihongo Master': 'Nihongo Master announcements',
+  'Pengumuman Bahasa Master': 'Bahasa Master announcements',
   'Berlaku untuk tampilan aplikasi, materi, dan notifikasi.':
       'Applies to the app, lessons, and notifications.',
   'Berita aplikasi dan informasi belajar yang Anda aktifkan.':
@@ -61,8 +61,8 @@ const uiEnglishWave1Core = <String, String>{
       'Permission was not granted. Turn it on in Android settings if you want to receive announcements.',
   'Pengaturan belum dapat diperbarui. Silakan coba lagi.':
       'Settings could not be updated. Please try again.',
-  'Buka Pengaturan Android → Aplikasi → Nihongo Master → Notifikasi.':
-      'Open Android Settings → Apps → Nihongo Master → Notifications.',
+  'Buka Pengaturan Android → Aplikasi → Bahasa Master → Notifikasi.':
+      'Open Android Settings → Apps → Bahasa Master → Notifications.',
   'Hapus materi tersimpan?': 'Delete saved lessons?',
   'Materi perlu diunduh kembali untuk digunakan offline. Progres belajar dan penilaian yang menunggu sinkronisasi tetap disimpan.':
       'Lessons will need to be downloaded again to use offline. Your study progress and ratings waiting to sync are kept.',

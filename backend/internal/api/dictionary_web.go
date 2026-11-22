@@ -19,7 +19,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"nihongo-master-backend/internal/dictionary"
+	"bahasa-master-backend/internal/dictionary"
 )
 
 // Public, server-rendered dictionary pages on the landing domain. Cached words
@@ -28,8 +28,8 @@ import (
 // web cannot flood the upstream sources or starve the mobile app.
 
 const (
-	publicSiteURL              = "https://nihongo.codeverta.com"
-	playStoreURL               = "https://play.google.com/store/apps/details?id=com.codeverta.nihongomaster"
+	publicSiteURL              = "https://bahasa.codeverta.com"
+	playStoreURL               = "https://play.google.com/store/apps/details?id=com.codeverta.bahasa"
 	webDictionaryPerIPPerHour  = 20
 	webDictionaryGlobalPerHour = 300
 	sitemapWordLimit           = 22000
@@ -128,8 +128,8 @@ type dictionaryCopy struct {
 
 var dictionaryIndonesian = dictionaryCopy{
 	Lang: "id", Base: "/kamus", WordBase: "/kamus/kata/", KanjiBase: "/kamus/kanji/", Home: "/",
-	Skip: "Langsung ke isi", NavLabel: "Navigasi utama", HomeLabel: "Nihongo Master, beranda", HomeNav: "Beranda", Dictionary: "Kamus",
-	IndexTitle:        "Kamus bahasa Jepang online gratis · Nihongo Master",
+	Skip: "Langsung ke isi", NavLabel: "Navigasi utama", HomeLabel: "Bahasa Master, beranda", HomeNav: "Beranda", Dictionary: "Kamus",
+	IndexTitle:        "Kamus bahasa Jepang online gratis · Bahasa Master",
 	IndexDescription:  "Cari arti kosakata dan kanji Jepang dengan kanji, kana, romaji, atau kata Inggris. Gratis, tanpa login.",
 	Heading:           "Kamus bahasa Jepang.",
 	Lede:              "Cari dengan kanji, kana, romaji, atau kata Inggris. Definisi berbahasa Inggris dari Jisho.org.",
@@ -138,7 +138,7 @@ var dictionaryIndonesian = dictionaryCopy{
 	SearchButton:      "Cari",
 	ModeLabel:         "Mode", ModeAuto: "Otomatis", ModeJapanese: "Jepang (romaji)", ModeEnglish: "Inggris",
 	LevelLabel: "Level", AllLevels: "Semua level", CommonOnly: "Kata umum saja", Common: "Umum",
-	SearchTitle:     "“%s” · Kamus Jepang · Nihongo Master",
+	SearchTitle:     "“%s” · Kamus Jepang · Bahasa Master",
 	ResultsHeading:  "Hasil untuk “%s”",
 	PageSuffix:      " · halaman %d",
 	NoResults:       "Tidak ada hasil untuk “%s”.",
@@ -147,19 +147,19 @@ var dictionaryIndonesian = dictionaryCopy{
 	Invalid:         "Kata kunci tidak valid. Gunakan maksimal 100 karakter. Untuk mode Inggris, jangan pakai tanda kutip.",
 	Limited:         "Kata ini belum ada di kamus kami dan batas pencarian baru sedang tercapai. Coba lagi nanti, cari di aplikasi, atau buka di Jisho.",
 	Unavailable:     "Sumber kamus sedang tidak tersedia. Coba lagi sebentar atau buka di Jisho.",
-	WordTitle:       "Arti %s · Kamus Jepang · Nihongo Master",
+	WordTitle:       "Arti %s · Kamus Jepang · Bahasa Master",
 	WordDescription: "Arti %s dalam bahasa Jepang: %s. Lihat semua makna, bentuk lain, dan kanjinya.",
 	WordMissing:     "Kata ini belum ada di kamus kami.",
 	SearchThis:      "Cari “%s”",
 	Meanings:        "Makna", OtherForms: "Bentuk lain", KanjiInWord: "Kanji dalam kata ini", SeeAlso: "Lihat juga", Antonyms: "Antonim",
 	OpenJisho:        "Buka di Jisho.org",
-	KanjiTitle:       "Kanji %s: arti, onyomi, kunyomi · Kamus Jepang · Nihongo Master",
+	KanjiTitle:       "Kanji %s: arti, onyomi, kunyomi · Kamus Jepang · Bahasa Master",
 	KanjiDescription: "Kanji %s: %s. Jumlah goresan, onyomi, kunyomi, dan kata yang memakainya.",
 	Meaning:          "Arti", Strokes: "Jumlah goresan", Onyomi: "Onyomi", Kunyomi: "Kunyomi", NameReadings: "Bacaan nama",
 	Grade: "Grade sekolah", OldJLPT: "JLPT lama", Frequency: "Peringkat frekuensi koran",
 	WordsWithKanji: "Cari kata dengan kanji ini",
 	KanjiMissing:   "Kanji ini tidak ditemukan.",
-	AppCTA:         "Simpan kata favorit dan belajar kosakata per level di aplikasi Nihongo Master.",
+	AppCTA:         "Simpan kata favorit dan belajar kosakata per level di aplikasi Bahasa Master.",
 	AppButton:      "Download gratis",
 	Privacy:        "Privasi", Terms: "Ketentuan", Support: "Bantuan", FooterLabel: "Informasi dan kebijakan",
 	Source: "Sumber",
@@ -167,8 +167,8 @@ var dictionaryIndonesian = dictionaryCopy{
 
 var dictionaryEnglish = dictionaryCopy{
 	Lang: "en", Base: "/en/dictionary", WordBase: "/en/dictionary/word/", KanjiBase: "/en/dictionary/kanji/", Home: "/en/",
-	Skip: "Skip to content", NavLabel: "Main navigation", HomeLabel: "Nihongo Master, home", HomeNav: "Home", Dictionary: "Dictionary",
-	IndexTitle:        "Free online Japanese dictionary · Nihongo Master",
+	Skip: "Skip to content", NavLabel: "Main navigation", HomeLabel: "Bahasa Master, home", HomeNav: "Home", Dictionary: "Dictionary",
+	IndexTitle:        "Free online Japanese dictionary · Bahasa Master",
 	IndexDescription:  "Look up Japanese words and kanji by kanji, kana, romaji, or English. Free, no sign-in needed.",
 	Heading:           "Japanese dictionary.",
 	Lede:              "Search by kanji, kana, romaji, or English. Definitions from Jisho.org.",
@@ -177,7 +177,7 @@ var dictionaryEnglish = dictionaryCopy{
 	SearchButton:      "Search",
 	ModeLabel:         "Mode", ModeAuto: "Automatic", ModeJapanese: "Japanese (romaji)", ModeEnglish: "English",
 	LevelLabel: "Level", AllLevels: "All levels", CommonOnly: "Common words only", Common: "Common",
-	SearchTitle:     "“%s” · Japanese dictionary · Nihongo Master",
+	SearchTitle:     "“%s” · Japanese dictionary · Bahasa Master",
 	ResultsHeading:  "Results for “%s”",
 	PageSuffix:      " · page %d",
 	NoResults:       "No results for “%s”.",
@@ -186,19 +186,19 @@ var dictionaryEnglish = dictionaryCopy{
 	Invalid:         "Invalid search. Use at most 100 characters. In English mode, leave out quotation marks.",
 	Limited:         "This word is not in our dictionary yet and the limit for new searches has been reached. Try again later, search in the app, or open Jisho.",
 	Unavailable:     "The dictionary source is unavailable right now. Try again shortly or open Jisho.",
-	WordTitle:       "%s meaning · Japanese dictionary · Nihongo Master",
+	WordTitle:       "%s meaning · Japanese dictionary · Bahasa Master",
 	WordDescription: "%s in Japanese: %s. See every meaning, other forms, and its kanji.",
 	WordMissing:     "This word is not in our dictionary yet.",
 	SearchThis:      "Search “%s”",
 	Meanings:        "Meanings", OtherForms: "Other forms", KanjiInWord: "Kanji in this word", SeeAlso: "See also", Antonyms: "Antonyms",
 	OpenJisho:        "Open on Jisho.org",
-	KanjiTitle:       "Kanji %s: meaning and readings · Japanese dictionary · Nihongo Master",
+	KanjiTitle:       "Kanji %s: meaning and readings · Japanese dictionary · Bahasa Master",
 	KanjiDescription: "Kanji %s: %s. Stroke count, on'yomi, kun'yomi, and words that use it.",
 	Meaning:          "Meaning", Strokes: "Strokes", Onyomi: "On'yomi", Kunyomi: "Kun'yomi", NameReadings: "Name readings",
 	Grade: "School grade", OldJLPT: "Old JLPT", Frequency: "Newspaper frequency rank",
 	WordsWithKanji: "Search words with this kanji",
 	KanjiMissing:   "This kanji was not found.",
-	AppCTA:         "Save favourite words and study vocabulary by level in the Nihongo Master app.",
+	AppCTA:         "Save favourite words and study vocabulary by level in the Bahasa Master app.",
 	AppButton:      "Download free",
 	Privacy:        "Privacy", Terms: "Terms", Support: "Support", FooterLabel: "Information and policies",
 	Source: "Source",

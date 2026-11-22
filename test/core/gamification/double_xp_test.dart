@@ -1,15 +1,15 @@
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/interstitial_ads.dart';
+import 'package:bahasa_master/core/ads/rewarded_ads.dart';
+import 'package:bahasa_master/core/gamification/double_xp_button.dart';
+import 'package:bahasa_master/core/gamification/xp_gain.dart';
+import 'package:bahasa_master/core/unlock/unlock_flow.dart';
+import 'package:bahasa_master/core/unlock/unlock_repository.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/ads/interstitial_ads.dart';
-import 'package:nihongo_master/core/ads/rewarded_ads.dart';
-import 'package:nihongo_master/core/gamification/double_xp_button.dart';
-import 'package:nihongo_master/core/gamification/xp_gain.dart';
-import 'package:nihongo_master/core/unlock/unlock_flow.dart';
-import 'package:nihongo_master/core/unlock/unlock_repository.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 
 const _gain = XpGain(
   awarded: 50,

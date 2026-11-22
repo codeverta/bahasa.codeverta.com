@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/learningpdf"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/learningpdf"
+	"bahasa-master-backend/internal/store"
 )
 
 func TestRendersEveryLevelAsPDF(t *testing.T) {

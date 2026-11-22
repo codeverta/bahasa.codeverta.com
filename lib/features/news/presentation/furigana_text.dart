@@ -1,9 +1,9 @@
 import 'dart:math' as math;
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/news/data/news_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/news/data/news_repository.dart';
 
 /// Ruby is painted over actual native selection boxes. The selectable string
 /// contains only source text, so copying and UTF-16 selection offsets stay intact.

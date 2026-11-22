@@ -1,13 +1,13 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/auth/session_expiration.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/billing/presentation/lifetime_offer.dart';
+import 'package:bahasa_master/shared/presentation/widgets/brand_artwork.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/auth/session_expiration.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/billing/presentation/lifetime_offer.dart';
-import 'package:nihongo_master/shared/presentation/widgets/brand_artwork.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({this.from, super.key});

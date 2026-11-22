@@ -1,19 +1,19 @@
+import 'package:bahasa_master/core/analytics/analytics_service.dart';
+import 'package:bahasa_master/core/localization/app_language.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/exam_hub_screen.dart';
+import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/home/presentation/widgets/home_banner_carousel.dart';
+import 'package:bahasa_master/features/news/data/news_repository.dart';
+import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
+import 'package:bahasa_master/main.dart';
+import 'package:bahasa_master/shared/presentation/widgets/main_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/analytics/analytics_service.dart';
-import 'package:nihongo_master/core/localization/app_language.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/exam_hub_screen.dart';
-import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:nihongo_master/features/home/presentation/widgets/home_banner_carousel.dart';
-import 'package:nihongo_master/features/news/data/news_repository.dart';
-import 'package:nihongo_master/features/profile/data/gamification_repository.dart';
-import 'package:nihongo_master/main.dart';
-import 'package:nihongo_master/shared/presentation/widgets/main_scaffold.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -58,7 +58,7 @@ void main() {
           deviceLocaleProvider.overrideWithValue(const Locale('id', 'ID')),
           analyticsBootstrapProvider.overrideWith((ref) {}),
         ],
-        child: const NihongoMasterApp(),
+        child: const BahasaMasterApp(),
       ),
     );
     await tester.pumpAndSettle();
@@ -188,7 +188,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('NIHONGO PREMIUM'), findsNothing);
+    expect(find.text('BAHASA PREMIUM'), findsNothing);
     expect(find.text('Lihat paket'), findsNothing);
   });
 
@@ -281,7 +281,7 @@ void main() {
                 const NewsPage(items: [], total: 0, page: 1, sources: []),
           ),
         ],
-        child: const NihongoMasterApp(),
+        child: const BahasaMasterApp(),
       ),
     );
     await tester.pumpAndSettle();

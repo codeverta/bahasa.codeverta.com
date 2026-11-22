@@ -15,7 +15,7 @@ ARG TARGETOS=linux
 ARG TARGETARCH=amd64
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build -trimpath -buildvcs=false -ldflags="-s -w" \
-    -o /out/nihongo-master-api ./cmd/api
+    -o /out/bahasa-master-api ./cmd/api
 
 FROM alpine:3.22
 
@@ -27,7 +27,7 @@ RUN apk add --no-cache ca-certificates tzdata \
 
 WORKDIR /app
 
-COPY --from=builder --chown=10001:10001 /out/nihongo-master-api ./backend-app
+COPY --from=builder --chown=10001:10001 /out/bahasa-master-api ./backend-app
 COPY --chown=10001:10001 backend/assets/ ./assets/
 COPY --chown=10001:10001 backend/third_party/ ./third_party/
 

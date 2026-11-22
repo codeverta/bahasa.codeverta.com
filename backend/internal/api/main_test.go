@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/store"
 )
 
 // The API tests cover the Lifetime Access gates, so they run with open access off.

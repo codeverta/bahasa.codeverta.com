@@ -14,8 +14,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 const offlinePracticeSchemaVersion = 1
@@ -36,7 +36,7 @@ func (s *Server) ConfigureOfflinePracticeSigningKey(secret string) {
 		s.offlinePracticeSigningKey = nil
 		return
 	}
-	sum := sha256.Sum256([]byte("nihongo-master:offline-practice:" + secret))
+	sum := sha256.Sum256([]byte("bahasa-master:offline-practice:" + secret))
 	s.offlinePracticeSigningKey = sum[:]
 }
 
@@ -48,7 +48,7 @@ func defaultOfflinePracticeSigningKey(configured, databasePassword string) []byt
 	if secret == "" {
 		return nil
 	}
-	sum := sha256.Sum256([]byte("nihongo-master:offline-practice:" + secret))
+	sum := sha256.Sum256([]byte("bahasa-master:offline-practice:" + secret))
 	return sum[:]
 }
 

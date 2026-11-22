@@ -1,7 +1,7 @@
 # JLPT N5 Diagnostic
 
 Buka **Ujian → Buka diagnostic N5 → Mulai diagnostic** setelah login.
-Ini latihan original Nihongo Master untuk menentukan fokus belajar, bukan
+Ini latihan original Bahasa Master untuk menentukan fokus belajar, bukan
 simulasi lengkap atau penilaian kelulusan resmi JLPT.
 
 ## Alur dan tampilan

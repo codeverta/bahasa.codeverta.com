@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"nihongo-master-backend/internal/notifications"
+	"bahasa-master-backend/internal/notifications"
 )
 
 //go:embed notifications_admin.html
@@ -138,7 +138,7 @@ func (s *Server) listAnnouncements(w http.ResponseWriter, r *http.Request) {
 	n := s.notifications
 	n.mu.Lock()
 	defer n.mu.Unlock()
-	writeData(w, 200, map[string]any{"ready": n.sender != nil, "items": n.items, "audience": "Pengguna Android yang mengaktifkan pengumuman Nihongo Master"})
+	writeData(w, 200, map[string]any{"ready": n.sender != nil, "items": n.items, "audience": "Pengguna Android yang mengaktifkan pengumuman Bahasa Master"})
 }
 func (s *Server) createAnnouncement(w http.ResponseWriter, r *http.Request) {
 	var m notifications.Message
@@ -273,7 +273,7 @@ func (s *Server) checkNotificationSender(w http.ResponseWriter, r *http.Request)
 		writeError(w, 503, "not_configured", "Pengirim Firebase belum diaktifkan di server.")
 		return
 	}
-	_, err := n.sender.Send(r.Context(), notifications.Message{Title: "Pemeriksaan koneksi", Body: "Validasi konfigurasi pengirim Nihongo Master.", Route: "/home"}, "configuration-check", true)
+	_, err := n.sender.Send(r.Context(), notifications.Message{Title: "Pemeriksaan koneksi", Body: "Validasi konfigurasi pengirim Bahasa Master.", Route: "/home"}, "configuration-check", true)
 	if err != nil {
 		writeError(w, 502, "fcm_error", err.Error())
 		return

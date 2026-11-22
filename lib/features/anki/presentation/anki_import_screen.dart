@@ -1,15 +1,15 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/anki/data/anki_repository.dart';
+import 'package:bahasa_master/features/anki/data/anki_transfer_repository.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/anki/data/anki_repository.dart';
-import 'package:nihongo_master/features/anki/data/anki_transfer_repository.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 
 class AnkiImportScreen extends ConsumerStatefulWidget {
   const AnkiImportScreen({super.key});
@@ -191,7 +191,7 @@ class _AnkiImportState extends ConsumerState<AnkiImportScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Pilih APKG dari Anki, CSV, atau JSON Nihongo Master. Maksimal 20 MB dan 10.000 kartu per deck. File dipratinjau dahulu sebelum disimpan.'
+              'Pilih APKG dari Anki, CSV, atau JSON Bahasa Master. Maksimal 20 MB dan 10.000 kartu per deck. File dipratinjau dahulu sebelum disimpan.'
                   .localized(context),
             ),
             const SizedBox(height: 18),

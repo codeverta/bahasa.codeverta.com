@@ -16,8 +16,8 @@ func TestLandingPage(t *testing.T) {
 	}
 	body := response.Body.String()
 	for _, required := range []string{
-		"Nihongo Master",
-		"https://play.google.com/store/apps/details?id=com.codeverta.nihongomaster",
+		"Bahasa Master",
+		"https://play.google.com/store/apps/details?id=com.codeverta.bahasa",
 		"/privacy-policy", "/delete-account", "/support",
 		"contact@codeverta.com", "<nav", "<main",
 	} {

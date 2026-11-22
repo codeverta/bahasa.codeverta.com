@@ -9,13 +9,13 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/anki"
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/jobfetch"
-	"nihongo-master-backend/internal/jobs"
-	"nihongo-master-backend/internal/news"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/anki"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/jobfetch"
+	"bahasa-master-backend/internal/jobs"
+	"bahasa-master-backend/internal/news"
+	"bahasa-master-backend/internal/testdb"
 )
 
 // Phase 2 of docs/rewarded-unlock-spec.md: Anki decks, the N3 simulation,

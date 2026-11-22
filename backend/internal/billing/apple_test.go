@@ -15,7 +15,7 @@ import (
 	"io"
 	"math/big"
 	"net/http"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 	"strings"
 	"testing"
 	"time"

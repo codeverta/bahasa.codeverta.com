@@ -1,12 +1,12 @@
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/learn/kanji/data/kanji_repository.dart';
+import 'package:bahasa_master/features/learn/kanji/domain/kanji_models.dart';
+import 'package:bahasa_master/features/learn/kanji/presentation/controllers/kanji_controller.dart';
+import 'package:bahasa_master/features/learn/kanji/presentation/screens/kanji_lesson_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/learn/kanji/data/kanji_repository.dart';
-import 'package:nihongo_master/features/learn/kanji/domain/kanji_models.dart';
-import 'package:nihongo_master/features/learn/kanji/presentation/controllers/kanji_controller.dart';
-import 'package:nihongo_master/features/learn/kanji/presentation/screens/kanji_lesson_screen.dart';
 
 void main() {
   testWidgets('kanji lesson shows furigana above the kanji by default', (

@@ -1,5 +1,5 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 
 class SswArtwork extends StatelessWidget {
   const SswArtwork({super.key});

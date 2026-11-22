@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/interstitial_ads.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/ads/interstitial_ads.dart';
 
 /// Marks a "finished studying" result screen. While it is mounted, a
 /// full-screen ad may load in the background; when the user leaves it (back,

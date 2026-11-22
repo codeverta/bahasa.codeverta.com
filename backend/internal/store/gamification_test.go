@@ -3,8 +3,8 @@ package store
 import (
 	"errors"
 	"fmt"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/testdb"
 	"sync"
 	"testing"
 	"time"

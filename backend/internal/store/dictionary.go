@@ -1,6 +1,6 @@
 package store
 
-import "nihongo-master-backend/internal/dictionary"
+import "bahasa-master-backend/internal/dictionary"
 
 // DictionaryCache reuses the existing connection, including its exclusive
 // MariaDB writer lock. Call during startup, before HTTP traffic is accepted.

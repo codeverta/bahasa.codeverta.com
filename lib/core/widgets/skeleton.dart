@@ -1,5 +1,5 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 
 /// Animates a soft shimmer across every [SkeletonBox] below it. Uses one
 /// controller for the whole group so all placeholders move together, and

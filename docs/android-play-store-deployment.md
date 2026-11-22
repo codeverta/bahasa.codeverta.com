@@ -1,6 +1,6 @@
 # Panduan Deploy Android ke Google Play Store
 
-Panduan ini berlaku untuk project Flutter **Nihongo Master** dan diperbarui
+Panduan ini berlaku untuk project Flutter **Bahasa Master** dan diperbarui
 pada **10 Oktober 2026**. Menu Play Console dapat berubah; gunakan
 tautan dokumentasi resmi pada bagian akhir jika nama menu berbeda.
 
@@ -9,7 +9,7 @@ tautan dokumentasi resmi pada bagian akhir jika nama menu berbeda.
 Jangan mengunggah build sebelum signing key dan API production dikonfigurasi.
 Status project:
 
-- `applicationId` sudah `com.codeverta.nihongomaster` dan nama aplikasi sudah `Nihongo Master`.
+- `applicationId` sudah `com.codeverta.bahasa` dan nama aplikasi sudah `Bahasa Master`.
 - Release Gradle memakai upload key jika dikonfigurasi; fallback debug hanya
   untuk preview lokal. Workflow GitHub menolak build tanpa upload key.
 - Default API Flutter masih `http://10.0.2.2:8080/v1`, yang hanya berlaku pada
@@ -52,7 +52,7 @@ Package ID bersifat unik dan praktis permanen setelah aplikasi dibuat di Play
 Console. Saat ini project memakai:
 
 ```text
-com.codeverta.nihongomaster
+com.codeverta.bahasa
 ```
 
 Pilih ID final milik developer/organisasi, misalnya pola:
@@ -88,7 +88,7 @@ Pada `android/app/src/main/AndroidManifest.xml`, ubah:
 
 ```xml
 <application
-    android:label="Nihongo Master"
+    android:label="Bahasa Master"
     ...>
 ```
 
@@ -131,7 +131,7 @@ sekali dari PowerShell pada folder utama repository:
 .\scripts\create_android_upload_key.ps1
 ```
 
-Script membuat JKS, password acak, alias `nihongo-master-upload`, fingerprint,
+Script membuat JKS, password acak, alias `bahasa-master-upload`, fingerprint,
 dan konfigurasi lokal `android/key.properties`. File signing tersimpan di
 `android/.signing-secrets/`; Git sudah mengabaikan folder ini. Simpan backup JKS
 dan password di password manager atau penyimpanan terenkripsi. Jika keystore
@@ -263,7 +263,7 @@ secrets/variables bagian 7 terisi:
 3. Klik **Run workflow**. Untuk patch/minor/major, workflow menaikkan build
    number, memperbarui `pubspec.yaml`, mengirim commit versi dan tag `vX.Y.Z`,
    lalu membuat GitHub Release dengan AAB dan APK terlampir.
-4. Buka **Releases**, unduh `nihongo-master.aab`, lalu unggah ke Play Console.
+4. Buka **Releases**, unduh `bahasa-master.aab`, lalu unggah ke Play Console.
 
 Pilihan `build` menghasilkan artifact yang tersedia di halaman run selama 30
 hari. Tag versi `v*` yang dibuat manual tetap menjalankan workflow; pastikan
@@ -274,7 +274,7 @@ disiapkan. Keystore tidak dimasukkan ke artifact atau repository.
 ## 11. Buat aplikasi di Play Console
 
 1. Buka Play Console > **Home > Create app**.
-2. Pilih bahasa default dan nama **Nihongo Master**.
+2. Pilih bahasa default dan nama **Bahasa Master**.
 3. Pilih **App**, lalu tentukan gratis/berbayar.
 4. Masukkan email support.
 5. Setujui deklarasi kebijakan, export laws, dan Play App Signing.
@@ -355,7 +355,7 @@ Play Console. Perubahan konfigurasi memerlukan restart/rebuild backend.
 Isi detail Play Console dalam bahasa Inggris:
 
 ```text
-Name: Nihongo Master review account
+Name: Bahasa Master review account
 Username: nilai PLAY_REVIEW_EMAIL
 Password: nilai PLAY_REVIEW_PASSWORD
 Any other information required to access your app:
@@ -385,7 +385,7 @@ regional yang berlaku dipenuhi.
 
 Sebelum mengaktifkan tombol pembelian:
 
-1. Buat one-time product `nihongo_master_lifetime`, opsi Buy. Atur harga Google Play agar sama dengan harga tampilan yang disimpan di Admin → Harga Lifetime Access; harga tampilan awal backend adalah Rp99.000.
+1. Buat one-time product `bahasa_master_lifetime`, opsi Buy. Atur harga Google Play agar sama dengan harga tampilan yang disimpan di Admin → Harga Lifetime Access; harga tampilan awal backend adalah Rp99.000.
 2. Integrasi Flutter dan verifikasi backend sudah tersedia; isi kredensial server dan aktifkan RTDN sesuai [panduan lifetime billing](lifetime-billing.md).
 3. Uji cancel, pending, refund, restore, acknowledgment, pindah akun, dan account deletion memakai license tester serta testing track.
 4. Lifetime tidak mempunyai renewal atau expiry subscription; paket bulanan/tahunan sudah dihapus.

@@ -1,4 +1,4 @@
-# PowerShell Script - Nihongo Master Scaffold Generator
+# PowerShell Script - Bahasa Master Scaffold Generator
 # Menghasilkan struktur Feature-First Clean Architecture di folder lib/
 
 $libPath = ".\lib"
@@ -83,4 +83,4 @@ foreach ($folder in $folders) {
     }
 }
 
-Write-Host "`nStruktur direktori Nihongo Master berhasil dibuat!" -ForegroundColor Cyan
+Write-Host "`nStruktur direktori Bahasa Master berhasil dibuat!" -ForegroundColor Cyan

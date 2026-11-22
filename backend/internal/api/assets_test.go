@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/store"
 )
 
 func TestLearningAssets(t *testing.T) {

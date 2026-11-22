@@ -1,7 +1,7 @@
+import 'package:bahasa_master/features/home/presentation/widgets/home_quick_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/features/home/presentation/widgets/home_quick_menu.dart';
 
 void main() {
   Future<List<String>> pumpMenu(
@@ -58,9 +58,12 @@ void main() {
       expect(find.byKey(Key('home-quick-$id')), findsOneWidget);
     }
     final firstRow = tester.getTopLeft(find.byKey(const Key('home-quick-jft')));
-    final lastOfFirstRow =
-        tester.getTopLeft(find.byKey(const Key('home-quick-anki')));
-    final secondRow = tester.getTopLeft(find.byKey(const Key('home-quick-ssw')));
+    final lastOfFirstRow = tester.getTopLeft(
+      find.byKey(const Key('home-quick-anki')),
+    );
+    final secondRow = tester.getTopLeft(
+      find.byKey(const Key('home-quick-ssw')),
+    );
     expect(lastOfFirstRow.dy, firstRow.dy);
     expect(secondRow.dy, greaterThan(firstRow.dy));
     expect(find.byKey(const Key('home-quick-premium')), findsOneWidget);

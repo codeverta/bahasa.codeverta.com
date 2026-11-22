@@ -1,6 +1,6 @@
-# Nihongo Master
+# Bahasa Master
 
-Nihongo Master adalah aplikasi pembelajaran bahasa Jepang berbasis Flutter
+Bahasa Master adalah aplikasi pembelajaran bahasa Jepang berbasis Flutter
 dengan backend Go.
 
 ## Menjalankan aplikasi
@@ -23,7 +23,7 @@ http://192.168.1.20:8080/v1 -d <DEVICE_ID>`.
 ## Struktur proyek
 
 ```text
-nihongo_master/
+bahasa_master/
 |- android, ios, web, ...  Flutter platform projects
 |- assets/                 Gambar, ikon, dan vector
 |- lib/                    Source code Flutter

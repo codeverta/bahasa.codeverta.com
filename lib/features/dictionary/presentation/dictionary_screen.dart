@@ -1,13 +1,14 @@
 import 'dart:async';
+
+import 'package:bahasa_master/core/ads/ad_widgets.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/features/dictionary/domain/dictionary_models.dart';
+import 'package:bahasa_master/features/dictionary/presentation/dictionary_controller.dart';
+import 'package:bahasa_master/features/dictionary/presentation/dictionary_details.dart';
+import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/ads/ad_widgets.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/features/dictionary/domain/dictionary_models.dart';
-import 'package:nihongo_master/features/dictionary/presentation/dictionary_controller.dart';
-import 'package:nihongo_master/features/dictionary/presentation/dictionary_details.dart';
-import 'package:nihongo_master/shared/presentation/widgets/motion.dart';
 
 class DictionaryScreen extends ConsumerStatefulWidget {
   const DictionaryScreen({

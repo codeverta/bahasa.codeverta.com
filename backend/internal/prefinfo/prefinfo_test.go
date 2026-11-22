@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/prefinfo"
+	"bahasa-master-backend/internal/prefinfo"
 )
 
 func TestBundledDataCoversAllPrefectures(t *testing.T) {

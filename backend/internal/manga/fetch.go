@@ -174,7 +174,7 @@ func (f *HTTPFetcher) get(ctx context.Context, raw, referer string, limit int64,
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "NihongoMasterManga/1.0 (weekly curated Japanese manga cache)")
+	req.Header.Set("User-Agent", "BahasaMasterManga/1.0 (weekly curated Japanese manga cache)")
 	if referer != "" {
 		req.Header.Set("Referer", referer)
 	}
@@ -241,7 +241,7 @@ func robotsAllow(text, target string) bool {
 			if a == "*" && score < 0 {
 				score = 0
 			}
-			if a != "" && a != "*" && strings.Contains("nihongomastermanga", a) && len(a) > score {
+			if a != "" && a != "*" && strings.Contains("bahasamastermanga", a) && len(a) > score {
 				score = len(a)
 			}
 		}

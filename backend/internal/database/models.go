@@ -13,7 +13,7 @@ func UserUUID(id string) string {
 	if parsed, err := uuid.Parse(id); err == nil {
 		return parsed.String()
 	}
-	return uuid.NewSHA1(uuid.NameSpaceOID, []byte("nihongo-master:user:"+id)).String()
+	return uuid.NewSHA1(uuid.NameSpaceOID, []byte("bahasa-master:user:"+id)).String()
 }
 func setUUID(id *string) error {
 	if *id == "" {

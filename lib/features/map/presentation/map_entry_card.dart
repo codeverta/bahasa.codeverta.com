@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/shared/presentation/widgets/explore_feature_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/shared/presentation/widgets/explore_feature_card.dart';
 
 class MapEntryCard extends StatelessWidget {
   const MapEntryCard({super.key});

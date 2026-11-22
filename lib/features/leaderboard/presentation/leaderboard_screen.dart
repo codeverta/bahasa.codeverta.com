@@ -1,14 +1,14 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/leaderboard/data/leaderboard_repository.dart';
+import 'package:bahasa_master/features/leaderboard/presentation/leaderboard_copy.dart';
+import 'package:bahasa_master/features/profile/presentation/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/leaderboard/data/leaderboard_repository.dart';
-import 'package:nihongo_master/features/leaderboard/presentation/leaderboard_copy.dart';
-import 'package:nihongo_master/features/profile/presentation/widgets/profile_avatar.dart';
 
 /// Global XP leaderboard: "Minggu ini" (default) and "Sepanjang masa".
 class LeaderboardScreen extends StatelessWidget {

@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/offline/download_preferences.dart';
+import 'package:bahasa_master/core/offline/learning_cache.dart';
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/core/offline/offline_providers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/offline/download_preferences.dart';
-import 'package:nihongo_master/core/offline/learning_cache.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/core/offline/offline_providers.dart';
 
 /// Only public learning illustrations use this cache. Profile photos and manga
 /// pages must not be placed in the shared illustration namespace.

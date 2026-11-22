@@ -10,9 +10,9 @@ import (
 	"strings"
 	"sync"
 
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/learningpdf"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/learningpdf"
+	"bahasa-master-backend/internal/store"
 )
 
 // Level-wide grammar and kanji lists (every signed-in account) and their PDF
@@ -96,7 +96,7 @@ func (s *Server) simulationPDF(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "pdf_failed", "PDF belum dapat dibuat. Coba lagi.")
 		return
 	}
-	writePDF(w, "NihongoMaster-Simulasi-"+level+".pdf", pdf)
+	writePDF(w, "BahasaMaster-Simulasi-"+level+".pdf", pdf)
 }
 
 // learningListLevel validates the level and applies the same study gate as
@@ -198,7 +198,7 @@ func (s *Server) learningLevelPDF(kind string) http.HandlerFunc {
 			writeError(w, http.StatusInternalServerError, "pdf_failed", "PDF belum dapat dibuat. Coba lagi.")
 			return
 		}
-		name := fmt.Sprintf("NihongoMaster-%s-%s.pdf", map[string]string{"grammar": "Grammar", "kanji": "Kanji"}[kind], level)
+		name := fmt.Sprintf("BahasaMaster-%s-%s.pdf", map[string]string{"grammar": "Grammar", "kanji": "Kanji"}[kind], level)
 		writePDF(w, name, pdf)
 	}
 }

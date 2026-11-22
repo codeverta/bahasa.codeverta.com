@@ -5,8 +5,8 @@ import (
 	"testing"
 	"unicode"
 
-	"nihongo-master-backend/data/kanji"
-	"nihongo-master-backend/data/reading"
+	"bahasa-master-backend/data/kanji"
+	"bahasa-master-backend/data/reading"
 )
 
 func TestTranslateJLPTKanjiReadingText(t *testing.T) {

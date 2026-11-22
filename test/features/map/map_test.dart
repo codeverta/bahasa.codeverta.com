@@ -2,16 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/jobs/domain/job_models.dart';
+import 'package:bahasa_master/features/map/data/map_repository.dart';
+import 'package:bahasa_master/features/map/domain/map_models.dart';
+import 'package:bahasa_master/features/map/presentation/japan_map_screen.dart';
+import 'package:bahasa_master/features/map/presentation/spot_detail_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/jobs/domain/job_models.dart';
-import 'package:nihongo_master/features/map/data/map_repository.dart';
-import 'package:nihongo_master/features/map/domain/map_models.dart';
-import 'package:nihongo_master/features/map/presentation/japan_map_screen.dart';
-import 'package:nihongo_master/features/map/presentation/spot_detail_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final geometry = JapanGeometry.fromJson(
@@ -34,11 +34,7 @@ Map<String, dynamic> spotJson({
   'reading': 'ふしみいなりたいしゃ',
   'summary': {
     'id': summaryId.isEmpty
-        ? {
-            'text': 'Head shrine of Inari.',
-            'sourceLang': 'en',
-            'manual': false,
-          }
+        ? {'text': 'Head shrine of Inari.', 'sourceLang': 'en', 'manual': false}
         : {'text': summaryId, 'sourceLang': 'id', 'manual': true},
     'en': {
       'text': 'Head shrine of Inari.',
@@ -46,7 +42,10 @@ Map<String, dynamic> spotJson({
       'manual': false,
     },
   },
-  'tips': {'id': {'text': ''}, 'en': {'text': ''}},
+  'tips': {
+    'id': {'text': ''},
+    'en': {'text': ''},
+  },
   'phrases': [
     {
       'japanese': '鳥居',
@@ -89,14 +88,14 @@ Widget app(
   Locale locale = const Locale('id'),
   List<Override> overrides = const [],
 }) => ProviderScope(
-      overrides: overrides,
-      child: MaterialApp(
-        locale: locale,
-        supportedLocales: AppLocalizations.supportedLocales,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        home: child,
-      ),
-    );
+  overrides: overrides,
+  child: MaterialApp(
+    locale: locale,
+    supportedLocales: AppLocalizations.supportedLocales,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    home: child,
+  ),
+);
 
 void main() {
   group('models', () {

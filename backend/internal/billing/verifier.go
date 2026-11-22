@@ -18,7 +18,7 @@ import (
 	"math/big"
 	"net/http"
 	"net/url"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 	"os"
 	"strings"
 	"time"
@@ -46,10 +46,10 @@ type StoreVerifier struct {
 func NewStoreVerifier(ctx context.Context) (*StoreVerifier, error) {
 	v := &StoreVerifier{ProductID: os.Getenv("LIFETIME_PRODUCT_ID"), PackageID: os.Getenv("ANDROID_PACKAGE_ID"), BundleID: os.Getenv("APPLE_BUNDLE_ID"), AppleIssuer: os.Getenv("APPLE_ISSUER_ID"), AppleKeyID: os.Getenv("APPLE_KEY_ID"), AppleEnvironment: os.Getenv("APPLE_ENVIRONMENT"), appleClient: &http.Client{Timeout: 12 * time.Second}, roots: x509.NewCertPool()}
 	if v.ProductID == "" {
-		v.ProductID = "nihongo_master_lifetime"
+		v.ProductID = "bahasa_master_lifetime"
 	}
 	if v.PackageID == "" {
-		v.PackageID = "com.codeverta.nihongomaster"
+		v.PackageID = "com.codeverta.bahasa"
 	}
 	if v.AppleEnvironment == "" {
 		v.AppleEnvironment = "Production"

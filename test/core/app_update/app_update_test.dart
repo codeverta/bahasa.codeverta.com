@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/app_update/app_update_controller.dart';
+import 'package:bahasa_master/core/app_update/app_update_gate.dart';
+import 'package:bahasa_master/core/app_update/app_update_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/app_update/app_update_controller.dart';
-import 'package:nihongo_master/core/app_update/app_update_gate.dart';
-import 'package:nihongo_master/core/app_update/app_update_policy.dart';
 
 const android = AppDeviceInfo(
   platform: 'android',
@@ -37,7 +37,7 @@ Map<String, dynamic> policy({
   'minimumAndroidApi': api,
   'minimumIOSVersion': ios,
   'storeUrl':
-      'https://play.google.com/store/apps/details?id=com.codeverta.nihongomaster',
+      'https://play.google.com/store/apps/details?id=com.codeverta.bahasa',
   'unsupportedDevicePolicy': legacy,
   'message': '',
 };

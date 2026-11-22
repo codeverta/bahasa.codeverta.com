@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/store"
 )
 
 func TestAppUpdatePolicyAdminPersistenceAndRollback(t *testing.T) {
@@ -72,10 +72,10 @@ func TestAppUpdatePolicyAdminPersistenceAndRollback(t *testing.T) {
 func TestAppUpdatePolicyRejectsUnsafeAndIncompleteStoreSettings(t *testing.T) {
 	for _, raw := range []string{
 		"https://example.com/app",
-		"http://play.google.com/store/apps/details?id=com.codeverta.nihongomaster",
+		"http://play.google.com/store/apps/details?id=com.codeverta.bahasa",
 		"https://play.google.com/store/apps/details?id=com.example.other",
-		"https://play.google.com:443/store/apps/details?id=com.codeverta.nihongomaster",
-		"https://play.google.com/store/apps/details?id=com.codeverta.nihongomaster&id=other",
+		"https://play.google.com:443/store/apps/details?id=com.codeverta.bahasa",
+		"https://play.google.com/store/apps/details?id=com.codeverta.bahasa&id=other",
 	} {
 		p := defaultAppUpdatePolicy()
 		p.Android.StoreURL = raw

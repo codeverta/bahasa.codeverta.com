@@ -1,15 +1,15 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/billing/data/billing_repository.dart';
+import 'package:bahasa_master/features/billing/presentation/billing_controller.dart';
+import 'package:bahasa_master/features/billing/presentation/premium_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/billing/data/billing_repository.dart';
-import 'package:nihongo_master/features/billing/presentation/billing_controller.dart';
-import 'package:nihongo_master/features/billing/presentation/premium_screen.dart';
 
 void main() {
   testWidgets(

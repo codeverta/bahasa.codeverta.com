@@ -1,5 +1,5 @@
+import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/features/home/presentation/screens/dashboard_screen.dart';
 
 /// Compatibility wrapper untuk pemanggil lama.
 ///
@@ -18,8 +18,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DashboardScreen(
-        openLearn: openLearn,
-        openExam: openExam,
-        openProfile: openProfile,
-      );
+    openLearn: openLearn,
+    openExam: openExam,
+    openProfile: openProfile,
+  );
 }

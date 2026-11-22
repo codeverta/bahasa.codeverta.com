@@ -3,7 +3,7 @@ package api
 import (
 	"errors"
 	"net/http"
-	"nihongo-master-backend/internal/jobs"
+	"bahasa-master-backend/internal/jobs"
 )
 
 func (s *Server) ConfigureJobs(repository *jobs.Repository) { s.jobs = repository }

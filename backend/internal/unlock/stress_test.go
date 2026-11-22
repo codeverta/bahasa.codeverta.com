@@ -7,7 +7,7 @@ import (
 	"sync"
 	"testing"
 
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/unlock"
 )
 
 // These scenarios hammer the repository from many goroutines at once. On

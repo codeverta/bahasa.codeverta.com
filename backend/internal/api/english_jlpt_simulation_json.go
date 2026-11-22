@@ -1,6 +1,6 @@
 package api
 
-import "nihongo-master-backend/internal/store"
+import "bahasa-master-backend/internal/store"
 
 // englishJLPTSimulationJSONText returns the English explanation of a JSON-backed
 // JLPT practice question (papers 06 and later), keyed by the Indonesian text.

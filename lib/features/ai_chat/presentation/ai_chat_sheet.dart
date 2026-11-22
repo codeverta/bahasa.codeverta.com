@@ -1,14 +1,14 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
+import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_controller.dart';
+import 'package:bahasa_master/features/ai_chat/presentation/ai_markdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/features/ai_chat/data/ai_chat_repository.dart';
-import 'package:nihongo_master/features/ai_chat/presentation/ai_chat_controller.dart';
-import 'package:nihongo_master/features/ai_chat/presentation/ai_markdown.dart';
 
 /// Maximum characters per message; the server enforces the same limit.
 const aiMaxMessageLength = 500;

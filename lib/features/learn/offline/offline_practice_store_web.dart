@@ -1,11 +1,11 @@
 import 'dart:convert';
 
+import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/features/learn/offline/offline_practice_store_base.dart';
 import 'package:cryptography/cryptography.dart';
-import 'package:nihongo_master/core/auth/offline_access.dart';
-import 'package:nihongo_master/features/learn/offline/offline_practice_store_base.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-export 'package:nihongo_master/features/learn/offline/offline_practice_store_base.dart';
+export 'package:bahasa_master/features/learn/offline/offline_practice_store_base.dart';
 
 /// Encrypted browser storage for the offline attempt outbox.
 class EncryptedOfflinePracticeLocalStore implements OfflinePracticeLocalStore {

@@ -27,7 +27,7 @@ type BrandingStore struct {
 }
 
 func defaultBranding() Branding {
-	return Branding{AppName: "Nihongo Master", Tagline: "Selangkah lebih dekat dengan Jepang", BackgroundColor: "#FAFAFA"}
+	return Branding{AppName: "Bahasa Master", Tagline: "Selangkah lebih dekat dengan Jepang", BackgroundColor: "#FAFAFA"}
 }
 
 // ConfigureBranding loads durable settings. An empty token disables admin writes.
@@ -122,7 +122,7 @@ func (s *Server) updateBranding(w http.ResponseWriter, r *http.Request) {
 	writeData(w, 200, input)
 }
 
-const brandingAdminHTML = `<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Branding • Nihongo Master</title>
+const brandingAdminHTML = `<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Branding • Bahasa Master</title>
 <style>body{font:16px system-ui;background:#fafafa;color:#181933;max-width:640px;margin:40px auto;padding:24px}h1{color:#1d2088}label{display:block;margin-top:20px}input{box-sizing:border-box;width:100%;padding:12px;border:1px solid #ccc;border-radius:8px}button{margin-top:24px;padding:14px 24px;background:#1d2088;color:white;border:0;border-radius:8px}small{color:#666}img{max-width:120px;max-height:180px;margin:16px}#preview{border-radius:12px;margin-top:24px;text-align:center;padding:20px}</style>
 <h1>Branding aplikasi</h1><p>Upload PNG/JPG ke COS atau CDN, lalu masukkan URL HTTPS publik. Kosongkan URL untuk memakai gambar default.</p>
 <form id="form"><label>Admin token<input id="token" type="password" required autocomplete="off"></label><label>Nama aplikasi<input id="appName" maxlength="50" required></label><label>Tagline<input id="tagline" maxlength="120"></label><label>URL ikon<input id="iconUrl" type="url" placeholder="https://..."></label><label>URL splash<input id="splashUrl" type="url" placeholder="https://..."></label><label>Warna latar splash<input id="backgroundColor" pattern="#[0-9a-fA-F]{6}" required></label><button>Simpan branding</button></form>

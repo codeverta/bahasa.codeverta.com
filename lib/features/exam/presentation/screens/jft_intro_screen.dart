@@ -1,13 +1,13 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/data/simulation_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/online_exam_gate.dart';
+import 'package:bahasa_master/features/learn/level_list/data/level_list_repository.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_pdf_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/data/simulation_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/online_exam_gate.dart';
-import 'package:nihongo_master/features/learn/level_list/data/level_list_repository.dart';
-import 'package:nihongo_master/features/learn/level_list/presentation/level_pdf_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class JftIntroScreen extends ConsumerStatefulWidget {
@@ -125,7 +125,7 @@ class _JftIntroState extends ConsumerState<JftIntroScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Soal orisinal Nihongo Master untuk latihan kehidupan sehari-hari. '
+                        'Soal orisinal Bahasa Master untuk latihan kehidupan sehari-hari. '
                                 'JFT-Basic resmi memiliki empat bagian, sekitar 50 soal, dan waktu 60 menit. '
                                 'Paket ini hanya mencakup tiga bagian tertulis dengan waktu latihan 45 menit. '
                                 'Skor adalah persentase benar, bukan skor berskala atau kelulusan resmi JFT-Basic.'

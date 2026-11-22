@@ -3,11 +3,11 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:bahasa_master/core/branding/app_branding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/branding/app_branding.dart';
 
 void main() {
   testWidgets('export default splash artwork', (tester) async {
@@ -46,8 +46,9 @@ void main() {
     await tester.runAsync(() async {
       final image = await boundary.toImage(pixelRatio: 3);
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-      await File('output/play-store/splash-default.png')
-          .writeAsBytes(bytes!.buffer.asUint8List());
+      await File(
+        'output/play-store/splash-default.png',
+      ).writeAsBytes(bytes!.buffer.asUint8List());
       image.dispose();
     });
   });

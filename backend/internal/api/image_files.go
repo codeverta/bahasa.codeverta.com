@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"nihongo-master-backend/internal/imageopt"
+	"bahasa-master-backend/internal/imageopt"
 )
 
 // optimizeStoredImage upgrades an existing PNG or oversized JPEG to the

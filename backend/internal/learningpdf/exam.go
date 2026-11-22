@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-pdf/fpdf"
 
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 )
 
 // ExamPaper is a printable simulation paper. Reviews carry each question,

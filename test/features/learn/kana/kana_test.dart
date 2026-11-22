@@ -1,18 +1,18 @@
 import 'dart:io';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/routing/app_router.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/learn/kana/data/kana_repository.dart';
+import 'package:bahasa_master/features/learn/kana/domain/kana_models.dart';
+import 'package:bahasa_master/features/learn/kana/domain/stroke_matcher.dart';
+import 'package:bahasa_master/features/learn/kana/presentation/kana_chart_screen.dart';
+import 'package:bahasa_master/features/learn/kana/presentation/kana_detail_screen.dart';
+import 'package:bahasa_master/features/learn/kana/presentation/kana_practice_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/routing/app_router.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/learn/kana/data/kana_repository.dart';
-import 'package:nihongo_master/features/learn/kana/domain/kana_models.dart';
-import 'package:nihongo_master/features/learn/kana/domain/stroke_matcher.dart';
-import 'package:nihongo_master/features/learn/kana/presentation/kana_chart_screen.dart';
-import 'package:nihongo_master/features/learn/kana/presentation/kana_detail_screen.dart';
-import 'package:nihongo_master/features/learn/kana/presentation/kana_practice_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final KanaStrokeData strokeData = parseKanaStrokes(

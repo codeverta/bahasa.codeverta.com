@@ -1,7 +1,7 @@
+import 'package:bahasa_master/shared/presentation/widgets/japanese_ruby_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/shared/presentation/widgets/japanese_ruby_text.dart';
 
 void main() {
   testWidgets('ruby keeps kanji aligned with the surrounding reading line', (

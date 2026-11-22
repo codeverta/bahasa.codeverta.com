@@ -1,15 +1,15 @@
+import 'package:bahasa_master/core/analytics/analytics_service.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/billing/data/billing_repository.dart';
+import 'package:bahasa_master/features/billing/presentation/billing_controller.dart';
+import 'package:bahasa_master/features/billing/presentation/lifetime_offer.dart';
+import 'package:bahasa_master/features/billing/presentation/premium_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/analytics/analytics_service.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/billing/data/billing_repository.dart';
-import 'package:nihongo_master/features/billing/presentation/billing_controller.dart';
-import 'package:nihongo_master/features/billing/presentation/lifetime_offer.dart';
-import 'package:nihongo_master/features/billing/presentation/premium_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 AuthenticationState _user({

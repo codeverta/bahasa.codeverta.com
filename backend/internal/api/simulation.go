@@ -2,7 +2,7 @@ package api
 
 import (
 	"net/http"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/store"
 	"strconv"
 	"strings"
 )

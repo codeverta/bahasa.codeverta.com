@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/offline/learning_cache.dart';
+import 'package:bahasa_master/core/offline/learning_cache_interceptor.dart';
+import 'package:bahasa_master/core/offline/learning_cache_persistence_memory.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/offline/learning_cache.dart';
-import 'package:nihongo_master/core/offline/learning_cache_interceptor.dart';
-import 'package:nihongo_master/core/offline/learning_cache_persistence_memory.dart';
 
 void main() {
   group('PersistentLearningCache', () {
@@ -49,7 +49,7 @@ void main() {
       'reopens encrypted-cache storage from disk after a cold reload',
       () async {
         final directory = await Directory.systemTemp.createTemp(
-          'nihongo-learning-cache-',
+          'bahasa-learning-cache-',
         );
         try {
           final firstRun = await PersistentLearningCache.open(

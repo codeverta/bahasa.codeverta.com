@@ -3,10 +3,10 @@ package api_test
 import (
 	"encoding/json"
 	"net/http/httptest"
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 	"strings"
 	"testing"
 	"time"
@@ -40,7 +40,7 @@ func TestSSWAPIAuthEntitlementValidationAndRevocation(t *testing.T) {
 		}
 	}
 	account, _ := memory.BillingAccountToken(user)
-	purchase := domain.Purchase{Platform: "android", ID: "ssw-api-test", ProductID: "nihongo_master_lifetime", AccountToken: account, Proof: "ssw-api-test", State: "purchased", CheckedAt: time.Now()}
+	purchase := domain.Purchase{Platform: "android", ID: "ssw-api-test", ProductID: "bahasa_master_lifetime", AccountToken: account, Proof: "ssw-api-test", State: "purchased", CheckedAt: time.Now()}
 	if err := memory.SaveVerifiedPurchase(user, purchase); err != nil {
 		t.Fatal(err)
 	}

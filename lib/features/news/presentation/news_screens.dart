@@ -1,19 +1,19 @@
+import 'package:bahasa_master/core/ads/ad_widgets.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/settings/display_preferences.dart';
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/core/unlock/unlock_repository.dart';
+import 'package:bahasa_master/core/widgets/skeleton.dart';
+import 'package:bahasa_master/features/dictionary/data/dictionary_repository.dart';
+import 'package:bahasa_master/features/dictionary/domain/dictionary_models.dart';
+import 'package:bahasa_master/features/dictionary/presentation/dictionary_details.dart';
+import 'package:bahasa_master/features/news/data/news_repository.dart';
+import 'package:bahasa_master/features/news/presentation/furigana_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:nihongo_master/core/ads/ad_widgets.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/core/settings/display_preferences.dart';
-import 'package:nihongo_master/core/widgets/skeleton.dart';
-import 'package:nihongo_master/features/dictionary/data/dictionary_repository.dart';
-import 'package:nihongo_master/features/dictionary/domain/dictionary_models.dart';
-import 'package:nihongo_master/features/dictionary/presentation/dictionary_details.dart';
-import 'package:nihongo_master/features/news/data/news_repository.dart';
-import 'package:nihongo_master/features/news/presentation/furigana_text.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
-import 'package:nihongo_master/core/unlock/unlock_repository.dart';
 
 const newsFuriganaPreferenceKey = legacyNewsFuriganaPreferenceKey;
 

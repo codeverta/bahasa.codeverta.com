@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"sync"
 
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/unlock"
 )
 
 // Google's public AdMob test units. They never serve real ads or earn revenue.
@@ -144,7 +144,7 @@ type UnlockKinds struct {
 }
 
 // ContentGates locks news articles and job application links for free
-// accounts. Lessons, decks and simulations are locked by NIHONGO_OPEN_ACCESS.
+// accounts. Lessons, decks and simulations are locked by BAHASA_OPEN_ACCESS.
 type ContentGates struct {
 	News bool `json:"news"`
 	Jobs bool `json:"jobs"`
@@ -420,7 +420,7 @@ func (s *Server) updateAdsConfig(w http.ResponseWriter, r *http.Request) {
 	writeData(w, http.StatusOK, input)
 }
 
-const adsAdminHTML = `<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Iklan • Nihongo Master</title>
+const adsAdminHTML = `<!doctype html><html lang="id"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Iklan • Bahasa Master</title>
 <style>body{font:16px system-ui;background:#fafafa;color:#181933;max-width:720px;margin:32px auto;padding:24px}fieldset{border:1px solid #ddd;border-radius:12px;margin:20px 0;padding:16px 20px}label{display:block;margin:12px 0 6px}input[type=text],input[type=password],input[type=number]{width:100%;box-sizing:border-box;padding:10px;border:1px solid #bbb;border-radius:8px}button{padding:10px 18px;border:0;border-radius:8px;background:#4f46e5;color:#fff;font-size:16px;cursor:pointer}button:disabled{opacity:.5}.master{font-size:18px;font-weight:700}small{color:#555}</style>
 <h1>Iklan</h1><p>Nyalakan atau matikan iklan di aplikasi tanpa rilis ulang. Pengguna Premium dan Lifetime tidak pernah melihat iklan.</p>
 <label for="token">Kunci admin</label><input id="token" type="password" autocomplete="off"><p><button id="load">Buka pengaturan</button></p>

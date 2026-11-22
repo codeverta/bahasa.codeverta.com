@@ -110,7 +110,7 @@ func TestRobotsAgentGroupsWildcardAndAllowTie(t *testing.T) {
 	if !robotsAllows(emptyRule, emptyRuleURL) {
 		t.Fatal("empty disallow merged unrelated bot groups")
 	}
-	robots := "User-agent: *\nDisallow: /\n\nUser-agent: NihongoMasterJobSync\nAllow: /jobs/*\nDisallow: /jobs/private\n"
+	robots := "User-agent: *\nDisallow: /\n\nUser-agent: BahasaMasterJobSync\nAllow: /jobs/*\nDisallow: /jobs/private\n"
 	public, _ := url.Parse("https://www.tokyodev.com/jobs/public")
 	private, _ := url.Parse("https://www.tokyodev.com/jobs/private/role")
 	if !robotsAllows(robots, public) || robotsAllows(robots, private) {

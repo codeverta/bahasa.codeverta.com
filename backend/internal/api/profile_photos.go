@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"nihongo-master-backend/internal/media"
+	"bahasa-master-backend/internal/media"
 )
 
 const maxProfilePhotoRequestBytes = media.MaxProfilePhotoUploadBytes + (1 << 20)

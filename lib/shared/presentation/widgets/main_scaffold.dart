@@ -1,19 +1,19 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/ads/ad_widgets.dart';
+import 'package:bahasa_master/core/analytics/analytics_service.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/billing/presentation/lifetime_offer.dart';
+import 'package:bahasa_master/features/dictionary/presentation/dictionary_screen.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/exam_hub_screen.dart';
+import 'package:bahasa_master/features/home/presentation/screens/dashboard_screen.dart';
+import 'package:bahasa_master/features/learn/presentation/screens/learn_hub_screen.dart';
+import 'package:bahasa_master/features/profile/presentation/screens/profile_screen.dart';
+import 'package:bahasa_master/shared/presentation/widgets/auth_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/ads/ad_widgets.dart';
-import 'package:nihongo_master/core/analytics/analytics_service.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/billing/presentation/lifetime_offer.dart';
-import 'package:nihongo_master/features/dictionary/presentation/dictionary_screen.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/exam_hub_screen.dart';
-import 'package:nihongo_master/features/home/presentation/screens/dashboard_screen.dart';
-import 'package:nihongo_master/features/learn/presentation/screens/learn_hub_screen.dart';
-import 'package:nihongo_master/features/profile/presentation/screens/profile_screen.dart';
-import 'package:nihongo_master/shared/presentation/widgets/auth_gate.dart';
 
 class MainScaffold extends ConsumerStatefulWidget {
   const MainScaffold({super.key});

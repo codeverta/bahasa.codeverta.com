@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 func TestEnglishCatalogCoversExtraJLPTPapers(t *testing.T) {
@@ -17,7 +17,7 @@ func TestEnglishCatalogCoversExtraJLPTPapers(t *testing.T) {
 		t.Fatal(err)
 	}
 	if err := s.SaveVerifiedPurchase(user, domain.Purchase{
-		Platform: "android", ID: user, ProductID: "nihongo_master_lifetime",
+		Platform: "android", ID: user, ProductID: "bahasa_master_lifetime",
 		AccountToken: token, Proof: "coverage-test", State: "purchased", CheckedAt: time.Now(),
 	}); err != nil {
 		t.Fatal(err)

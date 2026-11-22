@@ -33,7 +33,7 @@ enum AppUpdateRequirement {
   supported,
   update,
   unsupportedAllowed,
-  unsupportedBlocked
+  unsupportedBlocked,
 }
 
 class AppUpdatePolicy {
@@ -102,7 +102,7 @@ class AppUpdatePolicy {
           uri.path == '/store/apps/details' &&
           uri.queryParametersAll.length == 1 &&
           uri.queryParametersAll['id']?.length == 1 &&
-          uri.queryParameters['id'] == 'com.codeverta.nihongomaster';
+          uri.queryParameters['id'] == 'com.codeverta.bahasa';
     }
     return platform == 'ios' &&
         uri.host == 'apps.apple.com' &&
@@ -117,7 +117,7 @@ class AppUpdatePolicy {
     final compatible = device.platform == 'android'
         ? device.androidApi >= minimumAndroidApi
         : minimumIOSVersion.isEmpty ||
-            _atLeast(device.osVersion, minimumIOSVersion);
+              _atLeast(device.osVersion, minimumIOSVersion);
     if (compatible) return AppUpdateRequirement.update;
     return unsupportedDevicePolicy == 'allow'
         ? AppUpdateRequirement.unsupportedAllowed

@@ -8,10 +8,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"nihongo-master-backend/internal/anki"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/anki"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/testdb"
 )
 
 // leaderboardClock is Wednesday 2026-11-18 10:00 WIB.

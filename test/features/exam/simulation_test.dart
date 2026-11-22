@@ -1,13 +1,13 @@
 import 'dart:async';
 
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/data/simulation_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/simulation_attempt_screen.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/simulation_intro_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/data/simulation_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/simulation_attempt_screen.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/simulation_intro_screen.dart';
 
 void main() {
   test('N4 repository uses its own overview and exam ID', () async {
@@ -36,8 +36,9 @@ void main() {
     expect(requests[1].method, 'POST');
     expect(requests[1].data, {'examId': 'jlpt-n4-simulation-1'});
   });
-  testWidgets('N4 grammar and reading keeps the full 55 minute timer',
-      (tester) async {
+  testWidgets('N4 grammar and reading keeps the full 55 minute timer', (
+    tester,
+  ) async {
     final repository = FakeSimulation()
       ..active = 'grammar'
       ..durationSeconds = 3300;
@@ -54,15 +55,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('JLPT N4 Simulation'), findsOneWidget);
     expect(find.text('Bagian 2 · 文法・読解'), findsOneWidget);
-    final timer =
-        tester.widget<Text>(find.byKey(const Key('simulation-timer')));
+    final timer = tester.widget<Text>(
+      find.byKey(const Key('simulation-timer')),
+    );
     expect(timer.data, startsWith('55:'));
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('N4 intro shows both sections and reading content on a phone',
-      (tester) async {
+  testWidgets('N4 intro shows both sections and reading content on a phone', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(360, 740);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -71,10 +74,7 @@ void main() {
       ProviderScope(
         overrides: [
           simulationLevelOverviewProvider('N4').overrideWith(
-            (ref) async => {
-              'activeAttemptId': '',
-              'history': <Json>[],
-            },
+            (ref) async => {'activeAttemptId': '', 'history': <Json>[]},
           ),
         ],
         child: const MaterialApp(home: SimulationIntroScreen(level: 'N4')),
@@ -120,8 +120,9 @@ void main() {
     expect(requests[1].method, 'POST');
     expect(requests[1].data, {'examId': 'jlpt-n3-simulation-1'});
   });
-  testWidgets('N3 grammar and reading keeps the full 70 minute timer',
-      (tester) async {
+  testWidgets('N3 grammar and reading keeps the full 70 minute timer', (
+    tester,
+  ) async {
     final repository = FakeSimulation()
       ..active = 'grammar'
       ..durationSeconds = 4200;
@@ -138,15 +139,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('JLPT N3 Simulation'), findsOneWidget);
     expect(find.text('Bagian 2 · 文法・読解'), findsOneWidget);
-    final timer =
-        tester.widget<Text>(find.byKey(const Key('simulation-timer')));
+    final timer = tester.widget<Text>(
+      find.byKey(const Key('simulation-timer')),
+    );
     expect(timer.data, startsWith('70:'));
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('N3 intro shows both sections and reading content on a phone',
-      (tester) async {
+  testWidgets('N3 intro shows both sections and reading content on a phone', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(360, 740);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -155,10 +158,7 @@ void main() {
       ProviderScope(
         overrides: [
           simulationLevelOverviewProvider('N3').overrideWith(
-            (ref) async => {
-              'activeAttemptId': '',
-              'history': <Json>[],
-            },
+            (ref) async => {'activeAttemptId': '', 'history': <Json>[]},
           ),
         ],
         child: const MaterialApp(home: SimulationIntroScreen(level: 'N3')),
@@ -186,83 +186,88 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [simulationRepositoryProvider.overrideWithValue(repository)],
-        child:
-            const MaterialApp(home: SimulationAttemptScreen(attemptId: 'test')),
+        child: const MaterialApp(
+          home: SimulationAttemptScreen(attemptId: 'test'),
+        ),
       ),
     );
     await tester.pumpAndSettle();
   }
 
-  testWidgets('small phone saves choice and mark, locks section, then reviews',
-      (tester) async {
-    final repository = FakeSimulation();
-    await open(tester, repository);
-    expect(find.text('Bagian 1 · 文字・語彙'), findsOneWidget);
-    expect(find.text('Jawaban benar: あ'), findsNothing);
-    final option = find.byKey(const ValueKey('simulation-option-v1-b'));
-    await tester.ensureVisible(option);
-    await tester.tap(option);
-    await tester.pumpAndSettle();
-    expect(repository.answers['v1'], 'v1-b');
-    final flag = find.text('Tandai ragu');
-    await tester.ensureVisible(flag);
-    await tester.tap(flag);
-    await tester.pumpAndSettle();
-    expect(repository.flags, contains('v1'));
+  testWidgets(
+    'small phone saves choice and mark, locks section, then reviews',
+    (tester) async {
+      final repository = FakeSimulation();
+      await open(tester, repository);
+      expect(find.text('Bagian 1 · 文字・語彙'), findsOneWidget);
+      expect(find.text('Jawaban benar: あ'), findsNothing);
+      final option = find.byKey(const ValueKey('simulation-option-v1-b'));
+      await tester.ensureVisible(option);
+      await tester.tap(option);
+      await tester.pumpAndSettle();
+      expect(repository.answers['v1'], 'v1-b');
+      final flag = find.text('Tandai ragu');
+      await tester.ensureVisible(flag);
+      await tester.tap(flag);
+      await tester.pumpAndSettle();
+      expect(repository.flags, contains('v1'));
 
-    await tester.tap(find.byTooltip('Peta soal'));
-    await tester.pumpAndSettle();
-    expect(find.text('1/2 dijawab · 1 ditandai'), findsOneWidget);
-    await tester.tap(find.widgetWithText(FilledButton, '2'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Kirim bagian'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('1 soal kosong'), findsOneWidget);
-    await tester.tap(find.text('Kirim bagian').last);
-    await tester.pumpAndSettle();
-    expect(find.text('Bagian 2 · 文法'), findsOneWidget);
-    expect(repository.submissions, ['vocabulary']);
-    expect(find.textContaining('Kosakata dikunci.'), findsOneWidget);
-    expect(find.text('Jawaban benar: あ'), findsNothing);
-    await tester.tap(find.text('Kirim bagian'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Kirim bagian').last);
-    await tester.pumpAndSettle();
-    expect(repository.submissions, ['vocabulary', 'grammar']);
-    expect(find.text('Simulasi selesai.'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox());
-  });
+      await tester.tap(find.byTooltip('Peta soal'));
+      await tester.pumpAndSettle();
+      expect(find.text('1/2 dijawab · 1 ditandai'), findsOneWidget);
+      await tester.tap(find.widgetWithText(FilledButton, '2'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Kirim bagian'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('1 soal kosong'), findsOneWidget);
+      await tester.tap(find.text('Kirim bagian').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Bagian 2 · 文法'), findsOneWidget);
+      expect(repository.submissions, ['vocabulary']);
+      expect(find.textContaining('Kosakata dikunci.'), findsOneWidget);
+      expect(find.text('Jawaban benar: あ'), findsNothing);
+      await tester.tap(find.text('Kirim bagian'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Kirim bagian').last);
+      await tester.pumpAndSettle();
+      expect(repository.submissions, ['vocabulary', 'grammar']);
+      expect(find.text('Simulasi selesai.'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 
   testWidgets(
-      'failed save is not shown as saved and confirmed server answer reloads',
-      (tester) async {
-    final repository = FakeSimulation()..failSave = true;
-    await open(tester, repository);
-    final option = find.byKey(const ValueKey('simulation-option-v1-b'));
-    await tester.ensureVisible(option);
-    await tester.tap(option);
-    await tester.pumpAndSettle();
-    expect(repository.answers, isEmpty);
-    expect(
-      find.textContaining('Pilihan belum dikonfirmasi tersimpan.'),
-      findsOneWidget,
-    );
-    repository.failSave = false;
-    await tester.ensureVisible(option);
-    await tester.tap(option);
-    await tester.pumpAndSettle();
-    expect(repository.answers['v1'], 'v1-b');
-    expect(
-      find.textContaining('Pilihan belum dikonfirmasi tersimpan.'),
-      findsNothing,
-    );
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox());
-  });
+    'failed save is not shown as saved and confirmed server answer reloads',
+    (tester) async {
+      final repository = FakeSimulation()..failSave = true;
+      await open(tester, repository);
+      final option = find.byKey(const ValueKey('simulation-option-v1-b'));
+      await tester.ensureVisible(option);
+      await tester.tap(option);
+      await tester.pumpAndSettle();
+      expect(repository.answers, isEmpty);
+      expect(
+        find.textContaining('Pilihan belum dikonfirmasi tersimpan.'),
+        findsOneWidget,
+      );
+      repository.failSave = false;
+      await tester.ensureVisible(option);
+      await tester.tap(option);
+      await tester.pumpAndSettle();
+      expect(repository.answers['v1'], 'v1-b');
+      expect(
+        find.textContaining('Pilihan belum dikonfirmasi tersimpan.'),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 
-  testWidgets('expiry sync opens grammar without submitting it',
-      (tester) async {
+  testWidgets('expiry sync opens grammar without submitting it', (
+    tester,
+  ) async {
     final repository = FakeSimulation()..expiredFirst = true;
     await open(tester, repository);
     await tester.pump(const Duration(seconds: 1));
@@ -273,8 +278,9 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('late network response after disposal does not update screen',
-      (tester) async {
+  testWidgets('late network response after disposal does not update screen', (
+    tester,
+  ) async {
     final repository = FakeSimulation();
     await open(tester, repository);
     repository.pending = Completer<void>();
@@ -302,18 +308,18 @@ class FakeSimulation extends SimulationRepository {
   Completer<void>? pending;
 
   Json question(String id, int number) => {
-        'id': id,
-        'number': number,
-        'section': active,
-        'group': active == 'vocabulary' ? '文字・語彙 問題1' : '文法 問題2',
-        'instructions': 'いちばん よい ものを ひとつ えらんで ください。',
-        'prompt': 'これは [[本]]です。',
-        'passage': '',
-        'options': [
-          for (final value in ['a', 'b', 'c', 'd'])
-            {'id': '$id-$value', 'text': value == 'a' ? 'あ' : value},
-        ],
-      };
+    'id': id,
+    'number': number,
+    'section': active,
+    'group': active == 'vocabulary' ? '文字・語彙 問題1' : '文法 問題2',
+    'instructions': 'いちばん よい ものを ひとつ えらんで ください。',
+    'prompt': 'これは [[本]]です。',
+    'passage': '',
+    'options': [
+      for (final value in ['a', 'b', 'c', 'd'])
+        {'id': '$id-$value', 'text': value == 'a' ? 'あ' : value},
+    ],
+  };
 
   @override
   Future<Json> session(String id) async {
@@ -327,9 +333,7 @@ class FakeSimulation extends SimulationRepository {
       'serverTime': now.toIso8601String(),
       'expiresAt': now
           .add(
-            Duration(
-              seconds: expiredFirst && calls == 1 ? 0 : durationSeconds,
-            ),
+            Duration(seconds: expiredFirst && calls == 1 ? 0 : durationSeconds),
           )
           .toIso8601String(),
       'questions': active == 'vocabulary'

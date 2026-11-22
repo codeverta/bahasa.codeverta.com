@@ -1,17 +1,17 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/localization/region_formatters.dart';
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/core/unlock/unlock_sheet.dart';
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/data/simulation_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/online_exam_gate.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/simulation_text.dart';
+import 'package:bahasa_master/features/learn/level_list/data/level_list_repository.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_pdf_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/localization/region_formatters.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/data/simulation_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/online_exam_gate.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/simulation_text.dart';
-import 'package:nihongo_master/features/learn/level_list/data/level_list_repository.dart';
-import 'package:nihongo_master/features/learn/level_list/presentation/level_pdf_button.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
-import 'package:nihongo_master/core/unlock/unlock_sheet.dart';
 
 class SimulationIntroScreen extends ConsumerStatefulWidget {
   const SimulationIntroScreen({super.key, this.level = 'N5'});
@@ -204,12 +204,12 @@ class _IntroState extends ConsumerState<SimulationIntroScreen> {
                             ? 'Latihan orisinal dengan jenis soal N3. Waktu kosakata 30 menit dan grammar + reading 70 menit. Listening dilewati. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.'
                                   .localized(context)
                             : n4
-                            ? 'Struktur mengikuti jenis soal N4 dan perkiraan jumlah setelah revisi 2020. Waktu kosakata 25 menit dan grammar + reading 55 menit. Listening dilewati. Soal orisinal Nihongo Master. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.'
+                            ? 'Struktur mengikuti jenis soal N4 dan perkiraan jumlah setelah revisi 2020. Waktu kosakata 25 menit dan grammar + reading 55 menit. Listening dilewati. Soal orisinal Bahasa Master. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.'
                                   .localized(context)
                             : 'Struktur mengikuti jenis soal N5 dan perkiraan jumlah resmi setelah revisi 2020. '
                                       'Grammar teks termasuk bunpou, bukan tes pemahaman dokkai. '
                                       'Waktu grammar disesuaikan menjadi 20 menit karena dokkai dilewati; waktu resmi grammar + dokkai adalah 40 menit. '
-                                      'Soal orisinal Nihongo Master. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.'
+                                      'Soal orisinal Bahasa Master. Nilai berupa persentase benar, bukan skor berskala atau kelulusan resmi JLPT.'
                                   .localized(context),
                         style: const TextStyle(fontSize: 12, height: 1.6),
                       ),

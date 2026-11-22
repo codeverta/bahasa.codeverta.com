@@ -2,7 +2,7 @@ package store
 
 import (
 	"errors"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 	"testing"
 )
 
@@ -15,7 +15,7 @@ func TestAdminLoginAccount(t *testing.T) {
 		"missing password": {"admin@example.com", ""},
 		"missing email":    {"", "a-long-unique-password"},
 		"invalid email":    {"not-an-email", "a-long-unique-password"},
-		"demo email":       {"demo@nihongomaster.app", "a-long-unique-password"},
+		"demo email":       {"demo@bahasa.codeverta.com", "a-long-unique-password"},
 		"short password":   {"admin@example.com", "short"},
 		"padded password":  {"admin@example.com", " a-long-unique-password "},
 	} {

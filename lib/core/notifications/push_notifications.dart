@@ -2,19 +2,19 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui' show Locale;
 
+import 'package:bahasa_master/core/localization/app_language.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/localization/app_language.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const announcementTopic = 'nihongo_announcements';
-const announcementTopicEnglish = 'nihongo_announcements_en';
+const announcementTopic = 'bahasa_announcements';
+const announcementTopicEnglish = 'bahasa_announcements_en';
 
 /// Indonesian stays on the original topic so existing installs keep working;
 /// English readers get their own topic with English text.
@@ -112,7 +112,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
 
   AndroidNotificationChannel get _channel => AndroidNotificationChannel(
     announcementTopic,
-    _strings.text('Pengumuman Nihongo Master'),
+    _strings.text('Pengumuman Bahasa Master'),
     description: _strings.text(
       'Berita aplikasi dan informasi belajar yang Anda aktifkan.',
     ),
@@ -386,7 +386,7 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             announcementTopic,
-            _strings.text('Pengumuman Nihongo Master'),
+            _strings.text('Pengumuman Bahasa Master'),
             icon: 'ic_notification',
           ),
         ),
@@ -424,12 +424,12 @@ class PushNotificationController extends StateNotifier<PushNotificationState> {
     if (!supported) return;
     try {
       await const MethodChannel(
-        'com.codeverta.nihongomaster/app_info',
+        'com.codeverta.bahasa/app_info',
       ).invokeMethod<void>('openNotificationSettings');
     } on Object {
       _set(
         message:
-            'Buka Pengaturan Android → Aplikasi → Nihongo Master → Notifikasi.',
+            'Buka Pengaturan Android → Aplikasi → Bahasa Master → Notifikasi.',
       );
     }
   }

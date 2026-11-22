@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/features/learn/offline/offline_practice_store_base.dart';
 import 'package:cryptography/cryptography.dart';
-import 'package:nihongo_master/core/auth/offline_access.dart';
-import 'package:nihongo_master/features/learn/offline/offline_practice_store_base.dart';
 import 'package:path_provider/path_provider.dart';
 
-export 'package:nihongo_master/features/learn/offline/offline_practice_store_base.dart';
+export 'package:bahasa_master/features/learn/offline/offline_practice_store_base.dart';
 
 class EncryptedOfflinePracticeLocalStore implements OfflinePracticeLocalStore {
   EncryptedOfflinePracticeLocalStore({

@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/ads/rewarded_ads.dart';
+import 'package:bahasa_master/core/unlock/unlock_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/ads/rewarded_ads.dart';
-import 'package:nihongo_master/core/unlock/unlock_repository.dart';
 
 enum UnlockOutcome {
   /// The item is open now.

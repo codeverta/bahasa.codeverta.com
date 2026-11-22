@@ -1,6 +1,6 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AttributionsLink extends StatelessWidget {
@@ -34,7 +34,7 @@ class AttributionsScreen extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          'Terima kasih kepada penerbit, pembuat dataset, dan komunitas yang menjadi sumber konten Nihongo Master. Hak cipta tetap milik masing-masing pemilik.'
+          'Terima kasih kepada penerbit, pembuat dataset, dan komunitas yang menjadi sumber konten Bahasa Master. Hak cipta tetap milik masing-masing pemilik.'
               .localized(context),
         ),
         const SizedBox(height: 24),
@@ -53,17 +53,17 @@ class AttributionsScreen extends StatelessWidget {
           sources: [
             (
               'Global Voices 日本語',
-              'Berita Jepang · CC BY 3.0. Furigana ditambahkan oleh Nihongo Master. Kredit penulis, penerjemah, dan gambar tersedia pada setiap artikel.',
+              'Berita Jepang · CC BY 3.0. Furigana ditambahkan oleh Bahasa Master. Kredit penulis, penerjemah, dan gambar tersedia pada setiap artikel.',
               'https://jp.globalvoices.org/',
             ),
             (
               '大阪市 · Pemerintah Kota Osaka',
-              'Informasi publik Jepang. Ketentuan penggunaan Osaka City kompatibel dengan CC BY 4.0; furigana ditambahkan oleh Nihongo Master.',
+              'Informasi publik Jepang. Ketentuan penggunaan Osaka City kompatibel dengan CC BY 4.0; furigana ditambahkan oleh Bahasa Master.',
               'https://www.city.osaka.lg.jp/main/site_policy/0000000124.html',
             ),
             (
               '首相官邸 · Kantor Perdana Menteri Jepang',
-              'Berita resmi pemerintah Jepang · 公共データ利用規約 (PDL1.0), kompatibel dengan CC BY 4.0. Sumber: 首相官邸ホームページ; teks diolah (furigana ditambahkan) oleh Nihongo Master.',
+              'Berita resmi pemerintah Jepang · 公共データ利用規約 (PDL1.0), kompatibel dengan CC BY 4.0. Sumber: 首相官邸ホームページ; teks diolah (furigana ditambahkan) oleh Bahasa Master.',
               'https://www.kantei.go.jp/jp/terms.html',
             ),
           ],
@@ -108,7 +108,7 @@ class AttributionsScreen extends StatelessWidget {
           sources: [
             (
               'KanjiVG',
-              'Data urutan goresan hiragana dan katakana © Ulrich Apel, lisensi CC BY-SA 3.0. Diubah menjadi titik-titik goresan oleh Nihongo Master; data turunannya dibagikan dengan lisensi yang sama.',
+              'Data urutan goresan hiragana dan katakana © Ulrich Apel, lisensi CC BY-SA 3.0. Diubah menjadi titik-titik goresan oleh Bahasa Master; data turunannya dibagikan dengan lisensi yang sama.',
               'https://kanjivg.tagaini.net/',
             ),
           ],
@@ -139,7 +139,7 @@ class AttributionsScreen extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: () => showLicensePage(
             context: context,
-            applicationName: 'Nihongo Master',
+            applicationName: 'Bahasa Master',
           ),
           icon: const Icon(Icons.code_rounded),
           label: Text('Lisensi perangkat lunak open source'.localized(context)),

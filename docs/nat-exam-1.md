@@ -12,7 +12,7 @@ Kosakata: 7 bacaan kanji, 5 penulisan, 6 konteks, 3 padanan makna.
 Grammar: 9 pilihan pola, 4 susunan kalimat ★, 4 grammar teks.
 Reading: 2 soal bacaan pendek, 2 sedang, 1 pencarian informasi.
 
-Waktu dan jumlah soal tertulis mengikuti [format NAT-TEST 5Q](https://nat-test.jp/en/level.html). Soal dibuat khusus untuk Nihongo Master. **Listening belum termasuk**, sehingga ini bukan simulasi seluruh ujian resmi. Skor berupa persentase benar, bukan skor berskala atau keputusan kelulusan resmi NAT-TEST.
+Waktu dan jumlah soal tertulis mengikuti [format NAT-TEST 5Q](https://nat-test.jp/en/level.html). Soal dibuat khusus untuk Bahasa Master. **Listening belum termasuk**, sehingga ini bukan simulasi seluruh ujian resmi. Skor berupa persentase benar, bukan skor berskala atau keputusan kelulusan resmi NAT-TEST.
 
 ## Perilaku dan integrasi
 

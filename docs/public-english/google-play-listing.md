@@ -4,7 +4,7 @@
 
 ## App name
 
-Nihongo Master: Learn Japanese
+Bahasa Master: Learn Japanese
 
 ## Short description
 
@@ -12,7 +12,7 @@ Study Japanese with JLPT lessons, practice tests, stories, kanji, and a dictiona
 
 ## Full description
 
-Learn Japanese step by step with Nihongo Master. Study JLPT vocabulary, kanji, and grammar from N5 through N1, practise with original questions, and keep your progress in one place.
+Learn Japanese step by step with Bahasa Master. Study JLPT vocabulary, kanji, and grammar from N5 through N1, practise with original questions, and keep your progress in one place.
 
 **Choose how you learn**
 
@@ -40,15 +40,15 @@ Learn Japanese step by step with Nihongo Master. Study JLPT vocabulary, kanji, a
 
 N5 and N4 learning materials and N5 tests are available for free. A one-time Lifetime Access purchase unlocks the premium materials and practice tests shown in the app. The store displays the price and currency for your billing region before you confirm. Lifetime Access is not a recurring subscription.
 
-Nihongo Master creates its own practice materials. It is not affiliated with or endorsed by the JLPT, JFT-Basic, NAT, or other exam providers. Practice tests do not provide official exam scores or guarantee a result.
+Bahasa Master creates its own practice materials. It is not affiliated with or endorsed by the JLPT, JFT-Basic, NAT, or other exam providers. Practice tests do not provide official exam scores or guarantee a result.
 
 Support: contact@codeverta.com\
-Privacy policy: https://nihongo.codeverta.com/en/privacy-policy\
-Account deletion: https://nihongo.codeverta.com/en/delete-account
+Privacy policy: https://bahasa.codeverta.com/en/privacy-policy\
+Account deletion: https://bahasa.codeverta.com/en/delete-account
 
 ## Suggested release-note copy
 
-Study Nihongo Master in English or Indonesian. Choose a language in Settings, then continue learning Japanese with translated explanations and original Japanese study text.
+Study Bahasa Master in English or Indonesian. Choose a language in Settings, then continue learning Japanese with translated explanations and original Japanese study text.
 
 ## Suggested App Store subtitle
 

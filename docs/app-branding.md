@@ -55,7 +55,7 @@ API publik: `GET /v1/branding`. Pengubahan: `PUT /v1/admin/branding`, memakai
 
 ```json
 {
-  "appName": "Nihongo Master",
+  "appName": "Bahasa Master",
   "tagline": "Selangkah lebih dekat dengan Jepang",
   "iconUrl": "",
   "splashUrl": "",

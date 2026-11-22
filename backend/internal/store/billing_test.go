@@ -2,8 +2,8 @@ package store
 
 import (
 	"errors"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/testdb"
 	"testing"
 	"time"
 )
@@ -14,7 +14,7 @@ func grantTestLifetime(t *testing.T, s *MemoryStore, user string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = s.SaveVerifiedPurchase(user, domain.Purchase{Platform: "android", ID: "test-" + user, ProductID: "nihongo_master_lifetime", AccountToken: token, Proof: "test-" + user, State: "purchased", CheckedAt: time.Now()}); err != nil {
+	if err = s.SaveVerifiedPurchase(user, domain.Purchase{Platform: "android", ID: "test-" + user, ProductID: "bahasa_master_lifetime", AccountToken: token, Proof: "test-" + user, State: "purchased", CheckedAt: time.Now()}); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -54,7 +54,7 @@ func TestPromoPurchaseBindsToFirstVerifier(t *testing.T) {
 	second, _ := s.AuthenticateGoogle(domain.GoogleIdentity{Subject: "b", Email: "zz@example.com", DisplayName: "B"})
 	s.BillingAccountToken(first.ID)
 	s.BillingAccountToken(second.ID)
-	promo := domain.Purchase{Platform: "android", ID: "promo", ProductID: "nihongo_master_lifetime", Proof: "promo", State: "purchased", CheckedAt: time.Now()}
+	promo := domain.Purchase{Platform: "android", ID: "promo", ProductID: "bahasa_master_lifetime", Proof: "promo", State: "purchased", CheckedAt: time.Now()}
 	if err := s.SaveVerifiedPurchase(first.ID, promo); err != nil {
 		t.Fatal("promo purchase without an account token rejected:", err)
 	}
@@ -71,7 +71,7 @@ func TestPromoPurchaseBindsToFirstVerifier(t *testing.T) {
 	}
 	// A purchase bought for the first account names it to the second.
 	token, _ := s.BillingAccountToken(first.ID)
-	bought := domain.Purchase{Platform: "android", ID: "bought", ProductID: "nihongo_master_lifetime", AccountToken: token, State: "purchased", CheckedAt: time.Now()}
+	bought := domain.Purchase{Platform: "android", ID: "bought", ProductID: "bahasa_master_lifetime", AccountToken: token, State: "purchased", CheckedAt: time.Now()}
 	if err := s.SaveVerifiedPurchase(second.ID, bought); !errors.As(err, &owned) || owned.Owner != "ab***@gmail.com" {
 		t.Fatalf("purchase for another live account accepted: %v", err)
 	}

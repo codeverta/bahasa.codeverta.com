@@ -18,7 +18,7 @@ import (
 	"strconv"
 	"strings"
 
-	"nihongo-master-backend/internal/imageopt"
+	"bahasa-master-backend/internal/imageopt"
 
 	_ "golang.org/x/image/webp"
 	"golang.org/x/net/html"

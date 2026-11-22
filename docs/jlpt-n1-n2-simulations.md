@@ -1,6 +1,6 @@
 # Simulasi JLPT N1 dan N2
 
-Aplikasi menyediakan satu simulasi tertulis orisinal untuk masing-masing level N1 dan N2. Bank soal dibuat khusus untuk Nihongo Master. Soal resmi JLPT tidak disalin.
+Aplikasi menyediakan satu simulasi tertulis orisinal untuk masing-masing level N1 dan N2. Bank soal dibuat khusus untuk Bahasa Master. Soal resmi JLPT tidak disalin.
 
 | Level | Soal | Waktu bagian tertulis | Bagian yang belum disertakan |
 | --- | ---: | ---: | --- |

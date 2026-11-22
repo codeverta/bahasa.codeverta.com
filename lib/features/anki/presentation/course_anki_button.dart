@@ -1,6 +1,6 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 
 /// A built-in Anki deck that drills the same material as a course.
 class CourseAnkiDeck {

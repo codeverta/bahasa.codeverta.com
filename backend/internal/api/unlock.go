@@ -11,12 +11,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"nihongo-master-backend/internal/aichat"
-	"nihongo-master-backend/internal/anki"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/jobs"
-	"nihongo-master-backend/internal/store"
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/aichat"
+	"bahasa-master-backend/internal/anki"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/jobs"
+	"bahasa-master-backend/internal/store"
+	"bahasa-master-backend/internal/unlock"
 )
 
 // Opening a locked item by watching a rewarded ad. See

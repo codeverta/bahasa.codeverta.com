@@ -9,7 +9,7 @@ offline, dan data lokal privat per akun; katalog dan konten publik tetap tersedi
 ## Lease premium
 
 Premium offline memakai JWT ber-algoritma Ed25519 yang ditandatangani backend.
-Claims memuat issuer dan audience Nihongo Master, ID akun, tier premium,
+Claims memuat issuer dan audience Bahasa Master, ID akun, tier premium,
 `isLifetime: true`, waktu verifikasi terakhir, expiry, serta ID purchase.
 Expiry tetap 30 hari setelah waktu verifikasi store yang otoritatif. Meminta
 `GET /v1/billing` berulang kali tidak mengubah waktu itu. Jika batas verifikasi

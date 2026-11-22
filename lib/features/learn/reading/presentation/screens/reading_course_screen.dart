@@ -1,14 +1,14 @@
+import 'package:bahasa_master/core/app_review/app_review_service.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/routing/app_router.dart';
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/core/unlock/unlock_repository.dart';
+import 'package:bahasa_master/features/learn/reading/domain/reading_models.dart';
+import 'package:bahasa_master/features/learn/reading/presentation/controllers/reading_controller.dart';
+import 'package:bahasa_master/features/learn/reading/presentation/widgets/reading_illustration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/app_review/app_review_service.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/routing/app_router.dart';
-import 'package:nihongo_master/features/learn/reading/domain/reading_models.dart';
-import 'package:nihongo_master/features/learn/reading/presentation/controllers/reading_controller.dart';
-import 'package:nihongo_master/features/learn/reading/presentation/widgets/reading_illustration.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
-import 'package:nihongo_master/core/unlock/unlock_repository.dart';
 
 class ReadingCourseScreen extends ConsumerStatefulWidget {
   const ReadingCourseScreen({super.key, this.level = 'N5'});
@@ -33,9 +33,7 @@ class _ReadingCourseScreenState extends ConsumerState<ReadingCourseScreen> {
     final provider = readingCourseProvider(widget.level);
     final course = ref.watch(provider);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Reading JLPT ${widget.level}'),
-      ),
+      appBar: AppBar(title: Text('Reading JLPT ${widget.level}')),
       body: course.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, s) => Center(

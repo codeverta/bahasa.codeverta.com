@@ -1,18 +1,18 @@
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/learn/level_list/data/level_list_repository.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/grammar_level_list.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/kanji_level_list.dart';
+import 'package:bahasa_master/features/learn/level_list/presentation/level_pdf_button.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/learn/level_list/data/level_list_repository.dart';
-import 'package:nihongo_master/features/learn/level_list/presentation/grammar_level_list.dart';
-import 'package:nihongo_master/features/learn/level_list/presentation/kanji_level_list.dart';
-import 'package:nihongo_master/features/learn/level_list/presentation/level_pdf_button.dart';
 
 class _FakeRepository extends LevelListRepository {
   _FakeRepository({this.pdfError}) : super(Dio());
@@ -277,7 +277,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('level-pdf-button')));
     await tester.pumpAndSettle();
     expect(repository.pdfCalls, [(LevelListKind.grammar, 'N5')]);
-    expect(saves, [(name: 'NihongoMaster-Grammar-N5.pdf', length: 3)]);
+    expect(saves, [(name: 'BahasaMaster-Grammar-N5.pdf', length: 3)]);
     expect(find.byKey(const ValueKey('level-pdf-upsell')), findsNothing);
   });
 
@@ -294,7 +294,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('level-pdf-button')));
     await tester.pumpAndSettle();
     expect(repository.pdfCalls, [(LevelListKind.simulation, 'JFT-2')]);
-    expect(saves, [(name: 'NihongoMaster-Simulasi-JFT-2.pdf', length: 3)]);
+    expect(saves, [(name: 'BahasaMaster-Simulasi-JFT-2.pdf', length: 3)]);
   });
 
   test('simulation PDFs use their own endpoint', () {

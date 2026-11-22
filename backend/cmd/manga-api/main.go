@@ -11,10 +11,10 @@ import (
 	"syscall"
 	"time"
 
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/config"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/manga"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/config"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/manga"
 )
 
 func main() {

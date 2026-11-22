@@ -1,20 +1,20 @@
+import 'package:bahasa_master/core/ads/ad_widgets.dart';
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/completion_ads.dart';
+import 'package:bahasa_master/core/gamification/xp_gain.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/settings/display_preferences.dart';
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
+import 'package:bahasa_master/features/ai_chat/presentation/ai_chat_sheet.dart';
+import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/screens/vocabulary_study_view.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_ruby_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/ads/ad_widgets.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/settings/display_preferences.dart';
-import 'package:nihongo_master/features/ai_chat/data/ai_chat_repository.dart';
-import 'package:nihongo_master/features/ai_chat/presentation/ai_chat_sheet.dart';
-import 'package:nihongo_master/features/learn/vocabulary/domain/vocabulary_models.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/screens/vocabulary_study_view.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/widgets/vocabulary_ruby_text.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
-import 'package:nihongo_master/core/ads/completion_ads.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/gamification/xp_gain.dart';
 
 class VocabularyLessonScreen extends ConsumerWidget {
   const VocabularyLessonScreen({required this.lessonId, super.key});

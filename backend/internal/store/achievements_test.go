@@ -8,8 +8,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"nihongo-master-backend/internal/anki"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/anki"
+	"bahasa-master-backend/internal/domain"
 )
 
 func achievementsByID(items []domain.Achievement) map[string]domain.Achievement {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"nihongo-master-backend/internal/aichat"
+	"bahasa-master-backend/internal/aichat"
 )
 
 // leaderboardRequestsPerMinute bounds each account (or guest address).

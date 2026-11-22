@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/unlock"
 )
 
 func scenarioStatsCountActivityByDayAndGroup(t *testing.T, h *harness) {

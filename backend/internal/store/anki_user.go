@@ -15,10 +15,10 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"nihongo-master-backend/internal/anki"
-	"nihongo-master-backend/internal/ankitransfer"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/anki"
+	"bahasa-master-backend/internal/ankitransfer"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
 )
 
 const (

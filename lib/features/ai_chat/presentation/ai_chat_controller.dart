@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/interstitial_ads.dart';
+import 'package:bahasa_master/core/ads/rewarded_ads.dart';
+import 'package:bahasa_master/core/analytics/analytics_service.dart';
+import 'package:bahasa_master/features/ai_chat/data/ai_chat_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
-import 'package:nihongo_master/core/ads/interstitial_ads.dart';
-import 'package:nihongo_master/core/ads/rewarded_ads.dart';
-import 'package:nihongo_master/core/analytics/analytics_service.dart';
-import 'package:nihongo_master/features/ai_chat/data/ai_chat_repository.dart';
 
 typedef AiChatKey = ({AiLessonType type, String lessonId});
 

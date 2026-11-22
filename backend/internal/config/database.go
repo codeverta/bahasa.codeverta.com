@@ -29,11 +29,11 @@ func MariaDBDSN() (string, error) {
 		return "", fmt.Errorf("DB_PASSWORD is required; configure MariaDB in backend/.env")
 	}
 	cfg := mysql.NewConfig()
-	cfg.User = value("DB_USER", "nihongo_master")
+	cfg.User = value("DB_USER", "bahasa_master")
 	cfg.Passwd = password
 	cfg.Net = "tcp"
 	cfg.Addr = net.JoinHostPort(value("DB_HOST", "127.0.0.1"), port)
-	cfg.DBName = value("DB_NAME", "nihongo_master")
+	cfg.DBName = value("DB_NAME", "bahasa_master")
 	cfg.ParseTime = true
 	cfg.Collation = "utf8mb4_bin"
 	cfg.Params = map[string]string{"charset": "utf8mb4"}

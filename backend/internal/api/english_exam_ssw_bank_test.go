@@ -14,8 +14,8 @@ import (
 	"time"
 	"unicode"
 
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 func TestEnglishExamCatalogCoversDiagnosticIndonesianFields(t *testing.T) {
@@ -96,7 +96,7 @@ func TestEnglishExamCatalogCoversAvailablePaperLabelsAndSharedCopy(t *testing.T)
 	} {
 		assertExamTranslation(t, "ssw.paper.title", source, want)
 	}
-	assertExamTranslation(t, "simulation.instruction", "Pilih satu jawaban paling tepat. Soal orisinal Nihongo Master.", "Choose the single best answer. Original questions by Nihongo Master.")
+	assertExamTranslation(t, "simulation.instruction", "Pilih satu jawaban paling tepat. Soal orisinal Bahasa Master.", "Choose the single best answer. Original questions by Bahasa Master.")
 }
 
 func TestEnglishSSWAssessmentBanksCoverEverySourceFieldAndPreserveJapanese(t *testing.T) {
@@ -1164,7 +1164,7 @@ func TestEnglishJLPTSimulationCatalogCoversEveryIndonesianExplanation(t *testing
 		t.Fatal(err)
 	}
 	if err := s.SaveVerifiedPurchase(user, domain.Purchase{
-		Platform: "android", ID: "english-jlpt-catalog-coverage", ProductID: "nihongo_master_lifetime",
+		Platform: "android", ID: "english-jlpt-catalog-coverage", ProductID: "bahasa_master_lifetime",
 		AccountToken: token, Proof: "coverage-test", State: "purchased", CheckedAt: time.Now(),
 	}); err != nil {
 		t.Fatal(err)

@@ -1,16 +1,16 @@
+import 'package:bahasa_master/core/app_review/app_review_service.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/routing/app_router.dart';
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/core/unlock/unlock_repository.dart';
+import 'package:bahasa_master/features/anki/presentation/course_anki_button.dart';
+import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/app_review/app_review_service.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/routing/app_router.dart';
-import 'package:nihongo_master/features/learn/vocabulary/domain/vocabulary_models.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/controllers/vocabulary_controller.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/widgets/vocabulary_art.dart';
-import 'package:nihongo_master/features/anki/presentation/course_anki_button.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
-import 'package:nihongo_master/core/unlock/unlock_repository.dart';
 
 class VocabularyCourseScreen extends ConsumerStatefulWidget {
   const VocabularyCourseScreen({this.initialLevel = 'N5', super.key});

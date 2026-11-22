@@ -1,7 +1,7 @@
+import 'package:bahasa_master/features/learn/vocabulary/domain/vocabulary_models.dart';
+import 'package:bahasa_master/features/learn/vocabulary/presentation/widgets/vocabulary_ruby_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/features/learn/vocabulary/domain/vocabulary_models.dart';
-import 'package:nihongo_master/features/learn/vocabulary/presentation/widgets/vocabulary_ruby_text.dart';
 
 void main() {
   const words = [

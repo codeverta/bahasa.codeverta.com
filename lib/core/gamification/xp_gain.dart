@@ -1,8 +1,7 @@
+import 'package:bahasa_master/core/gamification/double_xp_button.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/gamification/double_xp_button.dart';
 
 /// What one finished activity earned, as the server reports it with the
 /// result (docs/ads-xp-spec.md). [completionId] names the activity for a

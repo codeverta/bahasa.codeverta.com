@@ -77,7 +77,7 @@ func (c *Client) Fetch(ctx context.Context, sourceID string, v Validators) (Resu
 		return Result{}, err
 	}
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "NihongoMasterJobSync/1.0 (+https://github.com/lever/postings-api; weekly employer feed cache)")
+	req.Header.Set("User-Agent", "BahasaMasterJobSync/1.0 (+https://github.com/lever/postings-api; weekly employer feed cache)")
 	if validHeader(v.ETag) {
 		req.Header.Set("If-None-Match", v.ETag)
 	}

@@ -1,5 +1,5 @@
+import 'package:bahasa_master/shared/presentation/widgets/japanese_ruby_text.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/shared/presentation/widgets/japanese_ruby_text.dart';
 
 void main() {
   group('alignJapaneseRuby', () {

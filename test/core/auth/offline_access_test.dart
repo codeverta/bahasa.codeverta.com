@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/auth/offline_access.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -389,9 +389,9 @@ Future<String> _signedLease({
     'kid': 'offline-access-v1',
   });
   final payload = encode({
-    'iss': 'nihongo-master',
+    'iss': 'bahasa-master',
     'sub': userId,
-    'aud': 'nihongo-master-offline-premium',
+    'aud': 'bahasa-master-offline-premium',
     'tier': 'premium',
     'isLifetime': true,
     'iat': issuedAt.millisecondsSinceEpoch ~/ 1000,

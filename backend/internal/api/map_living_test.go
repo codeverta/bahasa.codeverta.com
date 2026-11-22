@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/prefinfo"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/prefinfo"
+	"bahasa-master-backend/internal/store"
 )
 
 func TestPrefectureLivingIsPublicAndAdminEditable(t *testing.T) {

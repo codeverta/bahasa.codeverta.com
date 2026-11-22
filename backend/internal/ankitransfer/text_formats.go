@@ -57,7 +57,7 @@ func exportJSON(doc Document) ([]byte, error) {
 func exportCSV(doc Document) ([]byte, error) {
 	var buf bytes.Buffer
 	meta, _ := json.Marshal(csvMetadata{Version: doc.Version, Title: doc.Title, Description: doc.Description, SourceURL: doc.SourceURL, SourceID: doc.SourceID, Level: doc.Level})
-	buf.WriteString("#nihongo-master:" + base64.StdEncoding.EncodeToString(meta) + "\n")
+	buf.WriteString("#bahasa-master:" + base64.StdEncoding.EncodeToString(meta) + "\n")
 	w := csv.NewWriter(&buf)
 	w.UseCRLF = false
 	if err := w.Write(csvHeaders); err != nil {
@@ -93,12 +93,12 @@ func parseCSV(filename string, raw []byte) (Document, error) {
 	}
 	var meta *csvMetadata
 	raw = bytes.TrimPrefix(raw, []byte{0xef, 0xbb, 0xbf})
-	if bytes.HasPrefix(raw, []byte("#nihongo-master:")) {
+	if bytes.HasPrefix(raw, []byte("#bahasa-master:")) {
 		line, rest, ok := bytes.Cut(raw, []byte("\n"))
 		if !ok {
 			return Document{}, fmt.Errorf("CSV metadata missing body")
 		}
-		encoded, err := base64.StdEncoding.DecodeString(strings.TrimSpace(string(line[len("#nihongo-master:"):])))
+		encoded, err := base64.StdEncoding.DecodeString(strings.TrimSpace(string(line[len("#bahasa-master:"):])))
 		if err != nil {
 			return Document{}, fmt.Errorf("invalid CSV metadata")
 		}

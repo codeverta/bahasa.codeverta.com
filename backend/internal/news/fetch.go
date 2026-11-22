@@ -24,7 +24,7 @@ const osakaIndex = "https://www.city.osaka.lg.jp/shisei/category/3054-1-2-21-3-4
 // notice and a statement of what was changed.
 const kanteiFeed = "https://www.kantei.go.jp/index-jnews.rdf"
 const kanteiLicenseURL = "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0"
-const kanteiChanges = "Teks dari 首相官邸ホームページ (PDL1.0), diolah oleh Nihongo Master: furigana ditambahkan; foto artikel disalin dan dikonversi ke JPEG bila tersedia."
+const kanteiChanges = "Teks dari 首相官邸ホームページ (PDL1.0), diolah oleh Bahasa Master: furigana ditambahkan; foto artikel disalin dan dikonversi ke JPEG bila tersedia."
 
 var gvPath = regexp.MustCompile(`^/\d{4}/\d{2}/\d{2}/\d+/$`)
 var osakaPath = regexp.MustCompile(`^/[a-z_]+/page/\d+\.html$`)
@@ -84,7 +84,7 @@ func (f *HTTPFetcher) get(ctx context.Context, value string, s Source, condition
 	if err != nil {
 		return nil, nil, false, err
 	}
-	req.Header.Set("User-Agent", "NihongoMasterNews/1.0 (+https://nihongo.codeverta.com)")
+	req.Header.Set("User-Agent", "BahasaMasterNews/1.0 (+https://bahasa.codeverta.com)")
 	if conditional {
 		req.Header.Set("If-None-Match", s.ETag)
 		req.Header.Set("If-Modified-Since", s.LastModified)
@@ -275,7 +275,7 @@ func parseGlobalVoices(data []byte, since time.Time) ([]Article, int, error) {
 			skipped++
 			continue
 		}
-		a := Article{URL: item.URL, Title: strings.TrimSpace(item.Title), TitleTokens: tokenize(item.Title), Paragraphs: paragraphs, References: refs, Credits: credits, PublishedAt: published.UTC(), DateType: "published", License: "CC BY 3.0", LicenseURL: "https://creativecommons.org/licenses/by/3.0/", Changes: "Furigana ditambahkan oleh Nihongo Master; media eksternal tidak disertakan."}
+		a := Article{URL: item.URL, Title: strings.TrimSpace(item.Title), TitleTokens: tokenize(item.Title), Paragraphs: paragraphs, References: refs, Credits: credits, PublishedAt: published.UTC(), DateType: "published", License: "CC BY 3.0", LicenseURL: "https://creativecommons.org/licenses/by/3.0/", Changes: "Furigana ditambahkan oleh Bahasa Master; media eksternal tidak disertakan."}
 		a.Summary = excerpt(paragraphs[0].Text, 160)
 		feedImages := []string{}
 		for _, m := range item.Media {
@@ -290,7 +290,7 @@ func parseGlobalVoices(data []byte, since time.Time) ([]Article, int, error) {
 			}
 		}
 		a.imageCandidates = append(licensedImages(doc), plainImageCandidates(item.URL, feedImages, nil, doc)...)
-		a.Changes = "Furigana ditambahkan oleh Nihongo Master. Gambar artikel disalin ke penyimpanan Nihongo Master dan dikonversi ke JPEG bila tersedia; kredit gambar mengikuti sumber."
+		a.Changes = "Furigana ditambahkan oleh Bahasa Master. Gambar artikel disalin ke penyimpanan Bahasa Master dan dikonversi ke JPEG bila tersedia; kredit gambar mengikuti sumber."
 		items = append(items, a)
 	}
 	sort.Slice(items, func(i, j int) bool { return items[i].PublishedAt.After(items[j].PublishedAt) })
@@ -447,7 +447,7 @@ func parseOsakaArticle(data []byte, link articleLink) (Article, error) {
 	if len(paragraphs) == 0 {
 		return Article{}, fmt.Errorf("Osaka article has no eligible HTML text")
 	}
-	return Article{imageCandidates: append(licensedImages(body), plainImageCandidates(link.URL, nil, doc, body)...), URL: link.URL, Title: link.Title, TitleTokens: tokenize(link.Title), Summary: excerpt(paragraphs[0].Text, 160), Paragraphs: paragraphs, References: refs, Credits: []Credit{{Name: "大阪市", URL: link.URL, Role: "publisher"}}, PublishedAt: link.Date, DateType: "source", License: "CC BY 4.0 compatible (Osaka City terms)", LicenseURL: "https://www.city.osaka.lg.jp/main/site_policy/0000000124.html", Changes: "Teks HTML Osaka City; furigana ditambahkan oleh Nihongo Master. Gambar artikel disalin ke penyimpanan Nihongo Master; lampiran tidak disertakan."}, nil
+	return Article{imageCandidates: append(licensedImages(body), plainImageCandidates(link.URL, nil, doc, body)...), URL: link.URL, Title: link.Title, TitleTokens: tokenize(link.Title), Summary: excerpt(paragraphs[0].Text, 160), Paragraphs: paragraphs, References: refs, Credits: []Credit{{Name: "大阪市", URL: link.URL, Role: "publisher"}}, PublishedAt: link.Date, DateType: "source", License: "CC BY 4.0 compatible (Osaka City terms)", LicenseURL: "https://www.city.osaka.lg.jp/main/site_policy/0000000124.html", Changes: "Teks HTML Osaka City; furigana ditambahkan oleh Bahasa Master. Gambar artikel disalin ke penyimpanan Bahasa Master; lampiran tidak disertakan."}, nil
 }
 func attr(n *html.Node, key string) string {
 	for _, a := range n.Attr {

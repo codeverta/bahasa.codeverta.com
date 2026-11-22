@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/notifications/push_notifications.dart';
+import 'package:bahasa_master/core/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/notifications/push_notifications.dart';
-import 'package:nihongo_master/core/routing/app_router.dart';
 
 class NotificationLifecycle extends ConsumerStatefulWidget {
   const NotificationLifecycle({required this.child, super.key});

@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/news"
-	"nihongo-master-backend/internal/store"
-	"nihongo-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/news"
+	"bahasa-master-backend/internal/store"
+	"bahasa-master-backend/internal/testdb"
 )
 
 type localizedNewsFixtureFetcher struct {
@@ -53,7 +53,7 @@ func TestPublicNewsAPITranslatesEnglishMetadataAndPreservesJapaneseSource(t *tes
 			Kind:   "paragraph",
 			Tokens: []news.Token{{Start: 0, End: 2, Surface: "東京", Base: "東京", Reading: "とうきょう", ReadingSource: "automatic"}},
 		}},
-		Changes:     "Furigana ditambahkan oleh Nihongo Master; media eksternal tidak disertakan.",
+		Changes:     "Furigana ditambahkan oleh Bahasa Master; media eksternal tidak disertakan.",
 		PublishedAt: time.Date(2026, time.October, 14, 9, 0, 0, 0, time.UTC),
 		DateType:    "published",
 		Credits:     []news.Credit{{Name: "Writer", Role: "author"}},
@@ -102,7 +102,7 @@ func TestPublicNewsAPITranslatesEnglishMetadataAndPreservesJapaneseSource(t *tes
 
 	englishResponse := request("en-US,en;q=0.9", "/v1/news/"+id)
 	english := decodeArticle(englishResponse)
-	if english.Changes != "Furigana added by Nihongo Master; external media is not included." {
+	if english.Changes != "Furigana added by Bahasa Master; external media is not included." {
 		t.Fatalf("English metadata was not translated: %q", english.Changes)
 	}
 	if englishResponse.Header().Get("Content-Language") != "en" || !strings.Contains(englishResponse.Header().Get("Vary"), "Accept-Language") || !strings.Contains(englishResponse.Header().Get("Cache-Control"), "no-store") {

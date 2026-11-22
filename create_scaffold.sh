@@ -1,5 +1,5 @@
 #!/bin/bash
-# Bash Script - Nihongo Master Scaffold Generator
+# Bash Script - Bahasa Master Scaffold Generator
 # Menghasilkan struktur Feature-First Clean Architecture di folder lib/
 
 LIB_PATH="./lib"
@@ -77,4 +77,4 @@ for folder in "${folders[@]}"; do
   echo "[CREATED] Folder: $folder"
 done
 
-echo -e "\nStruktur direktori Nihongo Master berhasil dibuat!"
+echo -e "\nStruktur direktori Bahasa Master berhasil dibuat!"

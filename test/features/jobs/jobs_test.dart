@@ -1,14 +1,14 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/jobs/data/jobs_repository.dart';
+import 'package:bahasa_master/features/jobs/domain/job_models.dart';
+import 'package:bahasa_master/features/jobs/presentation/jobs_screens.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/jobs/data/jobs_repository.dart';
-import 'package:nihongo_master/features/jobs/domain/job_models.dart';
-import 'package:nihongo_master/features/jobs/presentation/jobs_screens.dart';
 
 Map<String, dynamic> _job(String id, {String status = 'active'}) => {
   'id': id,

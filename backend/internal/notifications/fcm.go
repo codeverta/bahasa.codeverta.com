@@ -17,12 +17,12 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-const Topic = "nihongo_announcements"
-const Channel = "nihongo_announcements"
+const Topic = "bahasa_announcements"
+const Channel = "bahasa_announcements"
 
 // TopicEnglish receives the English version. Indonesian keeps the original
 // topic so installs that predate language-specific topics still work.
-const TopicEnglish = "nihongo_announcements_en"
+const TopicEnglish = "bahasa_announcements_en"
 
 const LocaleEnglish = "en"
 

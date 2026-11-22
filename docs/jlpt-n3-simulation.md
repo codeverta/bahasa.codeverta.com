@@ -1,7 +1,7 @@
 # JLPT N3 Simulation
 
 Paket `jlpt-n3-simulation-1` tersedia di halaman Ujian untuk Lifetime Access.
-Soal orisinal Nihongo Master, empat pilihan yang diacak oleh server, dengan pembahasan bahasa Indonesia setelah kedua sesi selesai.
+Soal orisinal Bahasa Master, empat pilihan yang diacak oleh server, dengan pembahasan bahasa Indonesia setelah kedua sesi selesai.
 
 | Sesi | Soal | Waktu |
 | --- | ---: | ---: |

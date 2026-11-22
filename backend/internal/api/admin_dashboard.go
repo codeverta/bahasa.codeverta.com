@@ -18,7 +18,7 @@ var adminDashboardHTML string
 const (
 	adminSessionCookie = "nm_admin_session"
 	adminSessionTTL    = 12 * time.Hour
-	defaultAdminEmail  = "demo@nihongomaster.app"
+	defaultAdminEmail  = "demo@bahasa.codeverta.com"
 )
 
 type adminSession struct {

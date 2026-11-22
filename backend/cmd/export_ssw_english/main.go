@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"nihongo-master-backend/internal/api"
+	"bahasa-master-backend/internal/api"
 )
 
 type translationKey struct {

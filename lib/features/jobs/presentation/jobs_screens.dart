@@ -1,16 +1,16 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/ads/ad_widgets.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/localization/region_formatters.dart';
+import 'package:bahasa_master/features/jobs/data/jobs_repository.dart';
+import 'package:bahasa_master/features/jobs/domain/job_models.dart';
+import 'package:bahasa_master/features/jobs/presentation/job_apply_button.dart';
+import 'package:bahasa_master/features/jobs/presentation/jobs_visuals.dart';
+import 'package:bahasa_master/shared/presentation/widgets/explore_feature_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/ads/ad_widgets.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/localization/region_formatters.dart';
-import 'package:nihongo_master/features/jobs/data/jobs_repository.dart';
-import 'package:nihongo_master/features/jobs/domain/job_models.dart';
-import 'package:nihongo_master/features/jobs/presentation/job_apply_button.dart';
-import 'package:nihongo_master/features/jobs/presentation/jobs_visuals.dart';
-import 'package:nihongo_master/shared/presentation/widgets/explore_feature_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class JobsEntryCard extends StatelessWidget {
@@ -293,7 +293,10 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
             }
             final jobIndex = index - 1;
             if (jobIndex < _jobs.length) {
-              final card = _JobCard(job: _jobs[jobIndex], meta: meta.valueOrNull);
+              final card = _JobCard(
+                job: _jobs[jobIndex],
+                meta: meta.valueOrNull,
+              );
               final every = nativeAdEvery(ref, NativeAdPlacement.jobs);
               if (every > 0 && (jobIndex + 1) % every == 0) {
                 return Column(

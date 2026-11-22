@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/features/learn/grammar/data/grammar_repository.dart';
+import 'package:bahasa_master/features/learn/offline/offline_practice.dart';
+import 'package:bahasa_master/features/learn/offline/offline_practice_store_io.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/auth/offline_access.dart';
-import 'package:nihongo_master/features/learn/grammar/data/grammar_repository.dart';
-import 'package:nihongo_master/features/learn/offline/offline_practice.dart';
-import 'package:nihongo_master/features/learn/offline/offline_practice_store_io.dart';
 
 void main() {
   test(

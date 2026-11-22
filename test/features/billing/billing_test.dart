@@ -1,10 +1,11 @@
 import 'dart:async';
+
+import 'package:bahasa_master/core/routing/app_router.dart';
+import 'package:bahasa_master/features/billing/data/billing_repository.dart';
+import 'package:bahasa_master/features/billing/presentation/billing_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:nihongo_master/core/routing/app_router.dart';
-import 'package:nihongo_master/features/billing/data/billing_repository.dart';
-import 'package:nihongo_master/features/billing/presentation/billing_controller.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -225,7 +226,7 @@ void main() {
 }
 
 PurchaseDetails purchase(PurchaseStatus status) => PurchaseDetails(
-  productID: 'nihongo_master_lifetime',
+  productID: 'bahasa_master_lifetime',
   purchaseID: 'transaction',
   verificationData: PurchaseVerificationData(
     localVerificationData: '',
@@ -246,7 +247,7 @@ class FakeBilling extends BillingRepository {
   Completer<String>? delayed;
   @override
   Future<BillingAccount> status({String? userId}) async => BillingAccount(
-    productId: 'nihongo_master_lifetime',
+    productId: 'bahasa_master_lifetime',
     accountToken: 'account-token',
     platforms: ['android', 'ios'],
     premium: premium,

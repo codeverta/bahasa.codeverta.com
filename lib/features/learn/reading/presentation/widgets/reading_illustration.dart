@@ -1,5 +1,5 @@
+import 'package:bahasa_master/core/network/remote_asset_image.dart';
 import 'package:flutter/material.dart';
-import 'package:nihongo_master/core/network/remote_asset_image.dart';
 
 /// Each generated sheet contains three square scenes. The viewport shows one.
 class ReadingIllustration extends StatelessWidget {
@@ -32,7 +32,11 @@ class ReadingIllustration extends StatelessWidget {
               maxWidth: constraints.maxWidth * 3,
               minHeight: constraints.maxWidth,
               maxHeight: constraints.maxWidth,
-              child: RemoteAssetImage(asset: asset, url: url, persistOffline: true),
+              child: RemoteAssetImage(
+                asset: asset,
+                url: url,
+                persistOffline: true,
+              ),
             ),
           ),
         ),

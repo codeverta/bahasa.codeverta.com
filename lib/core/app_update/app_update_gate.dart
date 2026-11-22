@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/app_update/app_update_controller.dart';
+import 'package:bahasa_master/core/app_update/app_update_policy.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/app_update/app_update_controller.dart';
-import 'package:nihongo_master/core/app_update/app_update_policy.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppUpdateGate extends ConsumerStatefulWidget {
@@ -64,7 +64,7 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
       if (state.device!.platform == 'android') {
         try {
           opened = await launchUrl(
-            Uri.parse('market://details?id=com.codeverta.nihongomaster'),
+            Uri.parse('market://details?id=com.codeverta.bahasa'),
             mode: LaunchMode.externalApplication,
           ).timeout(const Duration(seconds: 8));
         } on Object {
@@ -110,9 +110,7 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
           const ModalBarrier(dismissible: false, color: Colors.black54),
           SafeArea(
             child: Center(
-              child: SingleChildScrollView(
-                child: _dialog(context, state),
-              ),
+              child: SingleChildScrollView(child: _dialog(context, state)),
             ),
           ),
         ],
@@ -148,8 +146,8 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
     final androidMinimum = androidVersions[policy.minimumAndroidApi];
     final requirement = device.platform == 'android'
         ? androidMinimum == null
-            ? 'versi Android yang lebih baru'.localized(context)
-            : 'Android $androidMinimum ${'atau lebih baru'.localized(context)}'
+              ? 'versi Android yang lebih baru'.localized(context)
+              : 'Android $androidMinimum ${'atau lebih baru'.localized(context)}'
         : 'iOS ${policy.minimumIOSVersion} ${'atau lebih baru'.localized(context)}';
     final instructions = device.platform == 'android'
         ? 'Buka Pengaturan HP > Sistem > Pembaruan sistem. Nama menu dapat berbeda pada setiap merek.'
@@ -160,7 +158,7 @@ class _AppUpdateGateState extends ConsumerState<AppUpdateGate>
     return AlertDialog(
       title: Text(
         needsUpdate
-            ? 'Perbarui Nihongo Master'.localized(context)
+            ? 'Perbarui Bahasa Master'.localized(context)
             : 'Perangkat belum mendukung versi baru'.localized(context),
       ),
       icon: Icon(needsUpdate ? Icons.system_update : Icons.phonelink_erase),

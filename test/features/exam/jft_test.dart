@@ -1,11 +1,11 @@
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/data/simulation_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/jft_intro_screen.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/simulation_attempt_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/data/simulation_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/jft_intro_screen.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/simulation_attempt_screen.dart';
 
 import 'simulation_test.dart' show FakeSimulation;
 
@@ -54,8 +54,9 @@ void main() {
     expect(requests[1].data, {'examId': 'jft-a2-full-1'});
   });
 
-  testWidgets('JFT phone shows written scope and one shared timer',
-      (tester) async {
+  testWidgets('JFT phone shows written scope and one shared timer', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(320, 740);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -84,14 +85,16 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('JFT moves through all three sections to results',
-      (tester) async {
+  testWidgets('JFT moves through all three sections to results', (
+    tester,
+  ) async {
     final repository = FakeJft();
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          simulationLevelRepositoryProvider('JFT')
-              .overrideWithValue(repository),
+          simulationLevelRepositoryProvider(
+            'JFT',
+          ).overrideWithValue(repository),
         ],
         child: const MaterialApp(
           home: SimulationAttemptScreen(attemptId: 'jft', level: 'JFT'),

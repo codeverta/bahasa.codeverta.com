@@ -1,6 +1,6 @@
 # Authentication and Google OAuth Setup
 
-Nihongo Master menggunakan guest-first navigation. Pengguna dapat membuka
+Bahasa Master menggunakan guest-first navigation. Pengguna dapat membuka
 Beranda tanpa akun, tetapi materi, exam, premium action, tab Belajar, Ujian, dan
 Profil dilindungi auth gate.
 
@@ -49,7 +49,7 @@ Rincian klaim lease dan konfigurasi deployment ada di
 Demo development account:
 
 ```text
-Email: demo@nihongomaster.app
+Email: demo@bahasa.codeverta.com
 Password: Demo123!
 ```
 
@@ -63,7 +63,7 @@ Account demo hanya untuk local development dan harus dihapus sebelum production.
 4. Backend memvalidasi signature, audience, issuer, expiry, subject, dan verified
    email menggunakan official Google API Go client.
 5. Backend membuat atau menghubungkan user lokal.
-6. Backend mengembalikan opaque session token milik Nihongo Master.
+6. Backend mengembalikan opaque session token milik Bahasa Master.
 
 Backend tidak mempercayai Google user ID atau email yang dikirim terpisah oleh
 client. Identitas hanya dibaca dari ID token yang sudah terverifikasi.
@@ -101,7 +101,7 @@ app ini dan tidak boleh dimasukkan ke Flutter, Git, atau APK**.
 1. Buka [Google Cloud Console](https://console.cloud.google.com/).
 2. Gunakan project selector di bagian atas.
 3. Pilih **New Project**.
-4. Beri nama, misalnya `Nihongo Master Development`.
+4. Beri nama, misalnya `Bahasa Master Development`.
 5. Setelah selesai, pastikan project tersebut sedang aktif.
 
 Disarankan membuat project Google Cloud terpisah untuk development dan
@@ -113,7 +113,7 @@ tercampur.
 1. Buka menu **Google Auth Platform**.
 2. Jika tampil tombol **Get Started**, tekan tombol tersebut.
 3. Pada halaman **Branding**, isi:
-   - App name: `Nihongo Master`
+   - App name: `Bahasa Master`
    - User support email: email developer/support
    - Developer contact information: email developer
 4. Pada **Audience**, pilih:
@@ -126,7 +126,7 @@ tercampur.
    - `email`
    - `profile`
 
-Nihongo Master tidak meminta akses Gmail, Drive, Calendar, atau data Google lain.
+Bahasa Master tidak meminta akses Gmail, Drive, Calendar, atau data Google lain.
 
 ## Langkah 3: buat Web OAuth Client ID
 
@@ -135,7 +135,7 @@ Web client inilah yang menghasilkan nilai untuk kedua environment variable.
 1. Buka **Google Auth Platform > Clients**.
 2. Tekan **Create Client**.
 3. Application type: **Web application**.
-4. Name: `Nihongo Master Backend`.
+4. Name: `Bahasa Master Backend`.
 5. Untuk Android-only development, Authorized JavaScript origins dan Authorized
    redirect URIs dapat dibiarkan kosong.
 6. Tekan **Create**.
@@ -159,7 +159,7 @@ Package name dapat dilihat pada `android/app/build.gradle.kts`, bagian
 Nilai proyek saat ini:
 
 ```text
-com.codeverta.nihongomaster
+com.codeverta.bahasa
 ```
 
 Sebelum production, ganti package contoh tersebut dengan application ID resmi,
@@ -216,8 +216,8 @@ Android OAuth client untuk SHA-1 release yang baru.
 1. Kembali ke **Google Auth Platform > Clients**.
 2. Tekan **Create Client**.
 3. Application type: **Android**.
-4. Name: `Nihongo Master Android Debug`.
-5. Package name: `com.codeverta.nihongomaster`.
+4. Name: `Bahasa Master Android Debug`.
+5. Package name: `com.codeverta.bahasa`.
 6. SHA-1: masukkan fingerprint debug di atas.
 7. Tekan **Create**.
 

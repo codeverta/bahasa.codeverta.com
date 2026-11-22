@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"nihongo-master-backend/data/reading"
+	"bahasa-master-backend/data/reading"
 )
 
 func seedReading() []readingLessonContent {

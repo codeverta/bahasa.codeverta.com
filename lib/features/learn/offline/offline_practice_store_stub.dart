@@ -1,6 +1,6 @@
-import 'package:nihongo_master/features/learn/offline/offline_practice_store_base.dart';
+import 'package:bahasa_master/features/learn/offline/offline_practice_store_base.dart';
 
-export 'package:nihongo_master/features/learn/offline/offline_practice_store_base.dart';
+export 'package:bahasa_master/features/learn/offline/offline_practice_store_base.dart';
 
 class EncryptedOfflinePracticeLocalStore implements OfflinePracticeLocalStore {
   @override

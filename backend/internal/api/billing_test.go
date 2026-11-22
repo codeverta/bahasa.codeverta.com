@@ -5,10 +5,10 @@ import (
 	"crypto/ed25519"
 	"encoding/json"
 	"net/http/httptest"
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/billing"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/billing"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 	"strings"
 	"testing"
 	"time"
@@ -26,7 +26,7 @@ func (v *billingVerifier) Verify(_ context.Context, p domain.PurchaseProof) (dom
 	if v.err != nil {
 		return domain.Purchase{}, v.err
 	}
-	if p.VerificationData != "real-proof" || p.ProductID != "nihongo_master_lifetime" {
+	if p.VerificationData != "real-proof" || p.ProductID != "bahasa_master_lifetime" {
 		return domain.Purchase{}, billing.ErrInvalid
 	}
 	checkedAt := v.checkedAt
@@ -47,7 +47,7 @@ func TestBillingAPIUnlockRevokeAndDelete(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	server.ConfigureBilling(&billing.Service{Store: memory, Verifier: verifier, ProductID: "nihongo_master_lifetime", OfflineSigner: signer}, "", "")
+	server.ConfigureBilling(&billing.Service{Store: memory, Verifier: verifier, ProductID: "bahasa_master_lifetime", OfflineSigner: signer}, "", "")
 	handler := server.Handler()
 	token := login(t, handler)
 	for _, endpoint := range []struct{ method, path string }{{"GET", "/v1/billing"}, {"POST", "/v1/billing/verify"}} {
@@ -96,10 +96,10 @@ func TestBillingAPIUnlockRevokeAndDelete(t *testing.T) {
 		t.Fatal("missing billing account")
 	}
 	verifier.token = status.Data.AccountToken
-	if w = call("POST", "/v1/billing/verify", `{"platform":"android","productId":"nihongo_master_lifetime","verificationData":"fake"}`); w.Code != 422 {
+	if w = call("POST", "/v1/billing/verify", `{"platform":"android","productId":"bahasa_master_lifetime","verificationData":"fake"}`); w.Code != 422 {
 		t.Fatal("forged purchase accepted")
 	}
-	body := `{"platform":"android","productId":"nihongo_master_lifetime","verificationData":"real-proof"}`
+	body := `{"platform":"android","productId":"bahasa_master_lifetime","verificationData":"real-proof"}`
 	verifier.state = "pending"
 	if w = call("POST", "/v1/billing/verify", body); w.Code != 202 || memory.Profile(buyer.ID).Entitlement.Tier != domain.TierFree {
 		t.Fatal("pending payment unlocks premium")

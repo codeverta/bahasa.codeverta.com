@@ -31,7 +31,7 @@ Flutter memanggil backend aplikasi; backend hanya mengakses host HTTPS tetap Jis
 
 ## Kamus web publik
 
-Landing page `nihongo.codeverta.com` memiliki kamus web yang dirender server (HTML tanpa JavaScript, `internal/api/dictionary_web.go` dan template `internal/api/site/dictionary.html`). Navigasi landing berisi tautan **Kamus**, dan bagian *extras* memiliki kotak pencarian yang mengarah ke `/kamus`.
+Landing page `bahasa.codeverta.com` memiliki kamus web yang dirender server (HTML tanpa JavaScript, `internal/api/dictionary_web.go` dan template `internal/api/site/dictionary.html`). Navigasi landing berisi tautan **Kamus**, dan bagian *extras* memiliki kotak pencarian yang mengarah ke `/kamus`.
 
 - `/kamus?q=neko&mode=auto&jlpt=N5&common=1&page=2`: hasil pencarian, 20 kata per halaman, tautan "muat lebih banyak". Halaman hasil memakai `noindex`; `/kamus` tanpa query dapat diindeks.
 - `/kamus/kata/{slug}`: detail kata dari tabel `dictionary_entries` saja. Kata yang belum diarsipkan menghasilkan 404 dengan tautan pencarian; halaman ini tidak pernah memanggil Jisho.
@@ -78,7 +78,7 @@ Buka `/admin/dictionary` dari menu admin. Kunci memakai `DICTIONARY_ADMIN_TOKEN`
 
 Backup MariaDB perlu mencakup tabel kamus. Penyimpanan tetap mengikuti lisensi sumber. Lihat hasil pengukuran dan batas cakupan di [laporan performa](dictionary-performance.md).
 
-Route Flutter `/dictionary?q=...` juga bisa membuka pencarian tertentu secara langsung. UI tetap mengikuti tema Nihongo Master; tidak menyalin logo/branding Jisho.
+Route Flutter `/dictionary?q=...` juga bisa membuka pencarian tertentu secara langsung. UI tetap mengikuti tema Bahasa Master; tidak menyalin logo/branding Jisho.
 
 ## Pemeriksaan
 

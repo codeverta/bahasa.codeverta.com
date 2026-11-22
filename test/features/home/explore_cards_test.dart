@@ -1,8 +1,8 @@
+import 'package:bahasa_master/features/anki/presentation/anki_screens.dart';
+import 'package:bahasa_master/features/manga/presentation/manga_screens.dart';
+import 'package:bahasa_master/shared/presentation/widgets/explore_feature_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/features/anki/presentation/anki_screens.dart';
-import 'package:nihongo_master/features/manga/presentation/manga_screens.dart';
-import 'package:nihongo_master/shared/presentation/widgets/explore_feature_card.dart';
 
 void main() {
   testWidgets(

@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/features/manga/data/manga_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/features/manga/data/manga_repository.dart';
 
 void main() {
   test('dedicated Manga client forwards the current account session', () async {

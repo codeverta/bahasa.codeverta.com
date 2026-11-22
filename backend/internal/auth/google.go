@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"google.golang.org/api/idtoken"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/domain"
 )
 
 var (

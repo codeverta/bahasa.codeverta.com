@@ -1,7 +1,7 @@
+import 'package:bahasa_master/core/network/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
 
 List<Map<String, dynamic>> _maps(Object? value) =>
     value is List ? value.whereType<Map<String, dynamic>>().toList() : [];

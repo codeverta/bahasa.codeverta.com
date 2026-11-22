@@ -363,7 +363,7 @@ func (c *Client) fetch(ctx context.Context, endpoint string) ([]byte, error) {
 		return nil, ErrUnavailable
 	}
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "NihongoMaster/1.0 (dictionary lookup)")
+	req.Header.Set("User-Agent", "BahasaMaster/1.0 (dictionary lookup)")
 	c.upstreamCalls.Add(1)
 	res, err := c.HTTP.Do(req)
 	if err != nil {

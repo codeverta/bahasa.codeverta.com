@@ -1,5 +1,5 @@
+import 'package:bahasa_master/core/network/remote_asset_image.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/network/remote_asset_image.dart';
 
 void main() {
   test('learning images resolve against API origin or retain CDN URL', () {

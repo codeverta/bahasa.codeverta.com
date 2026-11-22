@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/features/map/presentation/map_image_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/features/map/presentation/map_image_store.dart';
 
 /// A spot photo kept on disk after it has been shown once, so it stays
 /// visible offline. On the web it falls back to the browser cache.

@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/unlock"
 )
 
 const (

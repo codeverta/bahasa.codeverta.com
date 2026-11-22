@@ -1,6 +1,6 @@
 # Panduan Build iOS dan Upload ke App Store
 
-Panduan ini berlaku untuk project Flutter **Nihongo Master**. GitHub Actions
+Panduan ini berlaku untuk project Flutter **Bahasa Master**. GitHub Actions
 membuat IPA release yang ditandatangani, menyimpan artifact 30 hari, dan
 menambahkan IPA ke GitHub Release saat tag versi `v*` didorong.
 
@@ -8,7 +8,7 @@ menambahkan IPA ke GitHub Release saat tag versi `v*` didorong.
 
 - Workflow ada di `.github/workflows/ios-release.yml` dan memakai runner
   macOS GitHub-hosted.
-- Bundle ID iOS di project sudah `com.codeverta.nihongomaster` (sama dengan
+- Bundle ID iOS di project sudah `com.codeverta.bahasa` (sama dengan
   Android). Pastikan ID ini terdaftar sebagai App ID pada Apple Developer
   Account dan sama dengan variable `IOS_BUNDLE_ID` sebelum build.
 - Workflow Android sudah ada terpisah. Kedua workflow menggunakan lock rilis
@@ -22,7 +22,7 @@ menambahkan IPA ke GitHub Release saat tag versi `v*` didorong.
 Siapkan:
 
 - Keanggotaan Apple Developer Program aktif.
-- App Store Connect dan app record Nihongo Master.
+- App Store Connect dan app record Bahasa Master.
 - Bundle ID permanen, misalnya `com.perusahaan.nihongomaster`.
 - Apple Distribution certificate yang memiliki private key dan diekspor sebagai
   `.p12`.
@@ -107,7 +107,7 @@ sesuai, lalu jalankan perintah berikutnya:
 Setelah menyimpan secret pertama, jalankan ini untuk secret profile:
 
 ```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes('C:\secure\nihongo-master-appstore.mobileprovision')) | Set-Clipboard
+[Convert]::ToBase64String([IO.File]::ReadAllBytes('C:\secure\bahasa-master-appstore.mobileprovision')) | Set-Clipboard
 ```
 
 Di macOS, jalankan satu perintah lalu paste hasil clipboard sebelum perintah
@@ -118,7 +118,7 @@ base64 -i ios-distribution.p12 | pbcopy
 ```
 
 ```bash
-base64 -i nihongo-master-appstore.mobileprovision | pbcopy
+base64 -i bahasa-master-appstore.mobileprovision | pbcopy
 ```
 
 Di Linux dengan GNU coreutils, perintah `base64 -w 0 path-ke-file` mencetak satu
@@ -135,7 +135,7 @@ jangan membagikan nilainya atau menambahkannya ke source control.
 3. Buat tag versi baru seperti `v1.0.1` melalui **Releases > Draft a new
    release**, atau push tag tersebut ke GitHub.
 4. Buka tab **Actions**, tunggu **iOS release build** selesai.
-5. Unduh `nihongo-master.ipa` dari Assets pada GitHub Release. File
+5. Unduh `bahasa-master.ipa` dari Assets pada GitHub Release. File
    `SHA256SUMS` berisi checksum IPA.
 
 Tag yang sama juga memulai workflow Android. Android mengunggah `.aab` dan `.apk`,
@@ -153,7 +153,7 @@ manual tidak membuat atau mengubah GitHub Release.
 GitHub hanya membuat dan menyimpan IPA; workflow ini tidak mengirim file ke
 akun Apple secara otomatis.
 
-1. Unduh `nihongo-master.ipa` dari GitHub Release atau artifact Actions.
+1. Unduh `bahasa-master.ipa` dari GitHub Release atau artifact Actions.
 2. Unggah ke App Store Connect memakai Apple Transporter atau tool upload Apple.
 3. Tunggu Apple memproses build. Setelah tersedia, pilih build di versi app,
    lengkapi metadata, privacy, export compliance, dan persyaratan review.

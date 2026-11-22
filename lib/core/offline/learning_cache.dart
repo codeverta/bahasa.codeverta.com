@@ -3,11 +3,10 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/offline/learning_cache_persistence.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import 'package:nihongo_master/core/offline/learning_cache_persistence.dart';
 
 const int defaultLearningCacheLimitBytes = 100 * 1024 * 1024;
 const Duration learningCacheFreshness = Duration(hours: 24);
@@ -111,7 +110,7 @@ class SecureLearningCacheCipher implements LearningCacheCipher {
   SecureLearningCacheCipher({FlutterSecureStorage? secureStorage})
     : _secureStorage = secureStorage ?? const FlutterSecureStorage();
 
-  static const _keyName = 'nihongo_learning_cache_key_v1';
+  static const _keyName = 'bahasa_learning_cache_key_v1';
   static const _nonceLength = 12;
   static const _macLength = 16;
 

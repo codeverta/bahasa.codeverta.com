@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const cachedAuthProfileStorageKey = 'auth_cached_profile_v1';
@@ -86,8 +86,8 @@ class SignedOfflineEntitlementVerifier implements OfflineEntitlementVerifier {
       if (header['alg'] != 'EdDSA' ||
           header['typ'] != 'JWT' ||
           header['kid'] != 'offline-access-v1' ||
-          claims['iss'] != 'nihongo-master' ||
-          claims['aud'] != 'nihongo-master-offline-premium' ||
+          claims['iss'] != 'bahasa-master' ||
+          claims['aud'] != 'bahasa-master-offline-premium' ||
           claims['sub'] != userId ||
           claims['tier'] != 'premium' ||
           claims['isLifetime'] != true ||

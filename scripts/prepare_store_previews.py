@@ -33,7 +33,7 @@ def main():
         canvas=Image.new('RGB',(1080,1920),PAPER)
         d=ImageDraw.Draw(canvas)
         d.ellipse((900,-100,1200,200),fill=RED)
-        d.text((72,64),'NIHONGO MASTER',font=font(27,True),fill=INDIGO)
+        d.text((72,64),'BAHASA MASTER',font=font(27,True),fill=INDIGO)
         d.multiline_text((72,145),title,font=font(72,True),fill=INDIGO,spacing=4)
         d.text((72,345),subtitle,font=font(30),fill='#606070')
         source=Image.open(OUT/'screenshots'/f'{name}.png').convert('RGB')
@@ -56,7 +56,7 @@ def main():
     d.ellipse((870,-75,1090,145),fill=RED)
     icon=Image.open(OUT/'app-icon-512.png').convert('RGB').resize((94,94),Image.Resampling.LANCZOS)
     feature.paste(icon,(50,42))
-    d.text((158,70),'NIHONGO MASTER',font=font(25,True),fill=INDIGO)
+    d.text((158,70),'BAHASA MASTER',font=font(25,True),fill=INDIGO)
     d.multiline_text((56,172),'Langkah kecil.\nDunia baru.',font=font(55,True),fill=INDIGO,spacing=3)
     d.multiline_text((58,340),'Belajar bahasa Jepang\ndengan gambar, cerita, dan latihan.',font=font(23),fill='#606070',spacing=6)
     for name,x,y in [('03-vocabulary',585,60),('06-reading',796,108)]:

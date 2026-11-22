@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	vocabularyData "nihongo-master-backend/data/vocabulary"
-	"nihongo-master-backend/internal/domain"
+	vocabularyData "bahasa-master-backend/data/vocabulary"
+	"bahasa-master-backend/internal/domain"
 )
 
 type vocabularyAttemptState struct {

@@ -5,9 +5,9 @@ import (
 	"github.com/google/uuid"
 	"net/http"
 	"net/http/httptest"
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/store"
 	"strings"
 	"testing"
 )

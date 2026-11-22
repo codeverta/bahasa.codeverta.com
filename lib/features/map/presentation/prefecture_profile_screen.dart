@@ -1,13 +1,13 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/features/map/data/map_repository.dart';
+import 'package:bahasa_master/features/map/domain/prefecture_profile.dart';
+import 'package:bahasa_master/features/map/presentation/map_labels.dart';
+import 'package:bahasa_master/features/map/presentation/prefecture_living_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/features/map/data/map_repository.dart';
-import 'package:nihongo_master/features/map/domain/prefecture_profile.dart';
-import 'package:nihongo_master/features/map/presentation/map_labels.dart';
-import 'package:nihongo_master/features/map/presentation/prefecture_living_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 String prefectureProfilePath(String code) => '/map/prefecture/$code';

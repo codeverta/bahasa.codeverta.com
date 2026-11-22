@@ -1,8 +1,8 @@
+import 'package:bahasa_master/core/branding/app_branding.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/branding/app_branding.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -33,10 +33,10 @@ void main() {
         ),
       ),
     );
-    expect(find.text('Nihongo Master'), findsOneWidget);
+    expect(find.text('Bahasa Master'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 2300));
     await tester.pump();
-    expect(find.text('Nihongo Master'), findsNothing);
+    expect(find.text('Bahasa Master'), findsNothing);
     expect(find.text('Application content'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

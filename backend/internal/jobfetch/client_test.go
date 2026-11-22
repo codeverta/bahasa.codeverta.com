@@ -19,7 +19,7 @@ func testClient(t *testing.T, status int, body string, headers http.Header) *Cli
 		if r.URL.String() != Sources()[0].Endpoint || r.Method != "GET" {
 			t.Fatalf("unexpected endpoint %s", r.URL)
 		}
-		if !strings.Contains(r.UserAgent(), "NihongoMaster") {
+		if !strings.Contains(r.UserAgent(), "BahasaMaster") {
 			t.Fatal("missing identifying user agent")
 		}
 		return &http.Response{StatusCode: status, Header: headers, Body: io.NopCloser(strings.NewReader(body))}, nil

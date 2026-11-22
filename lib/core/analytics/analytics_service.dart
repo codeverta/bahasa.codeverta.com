@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/localization/app_language.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/localization/app_language.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Maps a route pattern (for example `/learn/kanji/lessons/:lessonId`) to a
@@ -88,10 +88,7 @@ class AnalyticsService {
     final feature = analyticsFeatureForPath(path);
     unawaited(
       _safe(
-        () => _analytics!.logScreenView(
-          screenName: path,
-          screenClass: feature,
-        ),
+        () => _analytics!.logScreenView(screenName: path, screenClass: feature),
       ),
     );
     logEvent('feature_open', {'feature': feature, 'screen': path});
@@ -104,12 +101,16 @@ class AnalyticsService {
 
   void logEvent(String name, [Map<String, Object>? parameters]) {
     if (!_ready) return;
-    unawaited(_safe(() => _analytics!.logEvent(name: name, parameters: parameters)));
+    unawaited(
+      _safe(() => _analytics!.logEvent(name: name, parameters: parameters)),
+    );
   }
 
   void setUserProperty(String name, String? value) {
     if (!_ready) return;
-    unawaited(_safe(() => _analytics!.setUserProperty(name: name, value: value)));
+    unawaited(
+      _safe(() => _analytics!.setUserProperty(name: name, value: value)),
+    );
   }
 
   Future<void> _safe(Future<void> Function() call) async {

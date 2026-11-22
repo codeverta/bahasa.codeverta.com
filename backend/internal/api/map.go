@@ -13,8 +13,8 @@ import (
 	"net/http"
 	"strings"
 
-	"nihongo-master-backend/internal/imageopt"
-	"nihongo-master-backend/internal/places"
+	"bahasa-master-backend/internal/imageopt"
+	"bahasa-master-backend/internal/places"
 )
 
 const maxMapImageBytes = 8 << 20

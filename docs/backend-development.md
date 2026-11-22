@@ -1,14 +1,14 @@
 # Backend Developer Guide
 
 Panduan ini menjelaskan cara menyiapkan, menjalankan, menguji, dan
-mengembangkan backend Nihongo Master pada mesin lokal.
+mengembangkan backend Bahasa Master pada mesin lokal.
 
 ## 1. Technology requirements
 
 Backend menggunakan:
 
 - Go standard library `net/http`
-- Go module bernama `nihongo-master-backend`
+- Go module bernama `bahasa-master-backend`
 - GORM dan MariaDB untuk persistence akun, billing, progress, dan kamus; sesi/attempt aktif masih di memori
 - [Setup database MariaDB](mariadb.md)
 - JSON REST API
@@ -92,7 +92,7 @@ go run ./cmd/api
 Output normal:
 
 ```text
-nihongo master API listening on http://localhost:8080
+bahasa master API listening on http://localhost:8080
 ```
 
 Server tetap berjalan selama terminal tersebut terbuka. Hentikan dengan
@@ -154,7 +154,7 @@ $session = Invoke-RestMethod `
   -Method Post `
   -Uri http://localhost:8080/v1/auth/login `
   -ContentType application/json `
-  -Body '{"email":"demo@nihongomaster.app","password":"Demo123!"}'
+  -Body '{"email":"demo@bahasa.codeverta.com","password":"Demo123!"}'
 
 $authHeaders = @{
   Authorization = "Bearer $($session.data.token)"

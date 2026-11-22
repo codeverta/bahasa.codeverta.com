@@ -33,8 +33,8 @@ Add a **Daftar Pola** tab to the Grammar course screen and a **Daftar Kanji** ta
   - Generated in Go with an embedded, subset Noto Sans JP font (SIL OFL); cached per (type, level, locale, content hash).
   - Grammar PDF: grouped by lesson; pattern, meaning, formation and 1–2 examples (Japanese, reading, meaning). No long explanations or quiz.
   - Kanji PDF: table per lesson; kanji, meaning, on, kun, strokes, 1–2 example words. No mnemonics.
-  - One file per level with a table of contents; footer "Nihongo Master · nihongo.codeverta.com · Halaman X/Y"; no personal data.
-- App delivery reuses the Anki export helper: share sheet on mobile, save dialog on desktop. File names `NihongoMaster-Grammar-N5.pdf`, `NihongoMaster-Kanji-N1.pdf`.
+  - One file per level with a table of contents; footer "Bahasa Master · bahasa.codeverta.com · Halaman X/Y"; no personal data.
+- App delivery reuses the Anki export helper: share sheet on mobile, save dialog on desktop. File names `BahasaMaster-Grammar-N5.pdf`, `BahasaMaster-Kanji-N1.pdf`.
 - Free users: the PDF button shows a lock and opens a Lifetime prompt (no ad option). Offline: the button is disabled with "Butuh koneksi internet".
 - Font license attribution is added to the app's licenses page.
 

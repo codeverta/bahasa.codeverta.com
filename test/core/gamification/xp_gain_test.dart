@@ -1,9 +1,9 @@
+import 'package:bahasa_master/core/gamification/double_xp_button.dart';
+import 'package:bahasa_master/core/gamification/xp_gain.dart';
+import 'package:bahasa_master/features/learn/grammar/domain/grammar_models.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/gamification/xp_gain.dart';
-import 'package:nihongo_master/features/learn/grammar/domain/grammar_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/gamification/double_xp_button.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('reads the XP a result earned, or nothing for older responses', () {

@@ -3,9 +3,9 @@ package unlock_test
 import (
 	"testing"
 
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/testdb"
-	"nihongo-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/testdb"
+	"bahasa-master-backend/internal/unlock"
 )
 
 func newGormRepo(t *testing.T) *unlock.GormRepository {

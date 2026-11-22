@@ -17,7 +17,7 @@ import (
 
 	"github.com/tencentyun/cos-go-sdk-v5"
 	_ "golang.org/x/image/webp"
-	"nihongo-master-backend/internal/imageopt"
+	"bahasa-master-backend/internal/imageopt"
 )
 
 const MaxImageBytes = 12 << 20

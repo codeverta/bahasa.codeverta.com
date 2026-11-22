@@ -10,8 +10,8 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
 	"log"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/domain"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/domain"
 	"regexp"
 	"sort"
 	"strings"
@@ -123,7 +123,7 @@ func (s *MemoryStore) EnableGamificationPersistence(dsn string) error {
 	defer cancel()
 	failed := true
 	var writer *sql.Conn
-	lockName := fmt.Sprintf("nihongo-master:%x", sha256.Sum256([]byte(cfg.DBName)))[:63]
+	lockName := fmt.Sprintf("bahasa-master:%x", sha256.Sum256([]byte(cfg.DBName)))[:63]
 	defer func() {
 		if failed {
 			if writer != nil {

@@ -1,8 +1,8 @@
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/features/jobs/domain/job_models.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/features/jobs/domain/job_models.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
 
 final jobsRepositoryProvider = Provider(
   (ref) => JobsRepository(ref.watch(dioProvider)),

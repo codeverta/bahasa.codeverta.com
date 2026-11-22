@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/api"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/api"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 type listEnv struct {
@@ -46,7 +46,7 @@ func (e *listEnv) makeLifetime(t *testing.T) {
 		t.Fatal(err)
 	}
 	if err := e.memory.SaveVerifiedPurchase(e.session.User.ID, domain.Purchase{
-		Platform: "android", ID: "list-" + e.session.User.ID, ProductID: "nihongo_master_lifetime",
+		Platform: "android", ID: "list-" + e.session.User.ID, ProductID: "bahasa_master_lifetime",
 		AccountToken: token, Proof: "list-test", State: "purchased", CheckedAt: time.Now(),
 	}); err != nil {
 		t.Fatal(err)
@@ -135,7 +135,7 @@ func TestLearningPDFIsLifetimeOnly(t *testing.T) {
 		if response.Code != http.StatusOK || response.Header().Get("Content-Type") != "application/pdf" || !bytes.HasPrefix(response.Body.Bytes(), []byte("%PDF")) {
 			t.Fatalf("%s: %d %q", path, response.Code, response.Header().Get("Content-Type"))
 		}
-		if disposition := response.Header().Get("Content-Disposition"); !strings.Contains(disposition, "NihongoMaster-") {
+		if disposition := response.Header().Get("Content-Disposition"); !strings.Contains(disposition, "BahasaMaster-") {
 			t.Fatalf("disposition = %q", disposition)
 		}
 	}
@@ -155,7 +155,7 @@ func TestSimulationPDFIsLifetimeOnly(t *testing.T) {
 		if response.Code != http.StatusOK || !bytes.HasPrefix(response.Body.Bytes(), []byte("%PDF")) {
 			t.Fatalf("%s: %d %s", level, response.Code, response.Body.String())
 		}
-		if disposition := response.Header().Get("Content-Disposition"); !strings.Contains(disposition, "NihongoMaster-Simulasi-") {
+		if disposition := response.Header().Get("Content-Disposition"); !strings.Contains(disposition, "BahasaMaster-Simulasi-") {
 			t.Fatalf("disposition = %q", disposition)
 		}
 	}

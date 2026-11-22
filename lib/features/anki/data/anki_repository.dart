@@ -1,12 +1,12 @@
+import 'package:bahasa_master/core/auth/offline_access.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/anki/data/offline_anki_reviews.dart';
+import 'package:bahasa_master/features/anki/domain/anki_models.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/auth/offline_access.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/anki/data/offline_anki_reviews.dart';
-import 'package:nihongo_master/features/anki/domain/anki_models.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
 
 final offlineAnkiReviewsProvider = Provider(
   (ref) => OfflineAnkiReviews(

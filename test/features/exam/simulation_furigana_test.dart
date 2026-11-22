@@ -1,9 +1,9 @@
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/data/simulation_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/simulation_text.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/data/simulation_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/simulation_text.dart';
 
 void main() {
   test('parses furigana and underlined tested text', () {
@@ -17,9 +17,7 @@ void main() {
       SimulationSegment('今日', ruby: 'きょう', underlined: true),
       SimulationSegment('は雨', underlined: true),
     ]);
-    expect(parseSimulationText('ひらがなだけ'), const [
-      SimulationSegment('ひらがなだけ'),
-    ]);
+    expect(parseSimulationText('ひらがなだけ'), const [SimulationSegment('ひらがなだけ')]);
     expect(stripSimulationMarkup('{駅|えき}の[[前]]'), '駅の前');
   });
 
@@ -59,8 +57,9 @@ void main() {
     expect(requests[2].path, '/simulation/n4-3');
   });
 
-  testWidgets('shows furigana above kanji and keeps plain text intact',
-      (tester) async {
+  testWidgets('shows furigana above kanji and keeps plain text intact', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(

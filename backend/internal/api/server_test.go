@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"nihongo-master-backend/internal/api"
-	backendAuth "nihongo-master-backend/internal/auth"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/api"
+	backendAuth "bahasa-master-backend/internal/auth"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 type fakeGoogleVerifier struct {
@@ -30,7 +30,7 @@ func newServer(premium ...bool) http.Handler {
 	memory := store.NewMemoryStore()
 	if len(premium) > 0 && premium[0] {
 		token, _ := memory.BillingAccountToken("a5090412-9ab4-5852-8229-c7d19eb5cb1c")
-		if err := memory.SaveVerifiedPurchase("a5090412-9ab4-5852-8229-c7d19eb5cb1c", domain.Purchase{Platform: "android", ID: "test-purchase", ProductID: "nihongo_master_lifetime", AccountToken: token, State: "purchased", CheckedAt: time.Now()}); err != nil {
+		if err := memory.SaveVerifiedPurchase("a5090412-9ab4-5852-8229-c7d19eb5cb1c", domain.Purchase{Platform: "android", ID: "test-purchase", ProductID: "bahasa_master_lifetime", AccountToken: token, State: "purchased", CheckedAt: time.Now()}); err != nil {
 			panic(err)
 		}
 	}
@@ -88,7 +88,7 @@ func TestAuthenticatedHomeIncludesPersonalData(t *testing.T) {
 	if !payload.Data.IsAuthenticated || payload.Data.Profile == nil {
 		t.Fatal("authenticated dashboard must include its profile")
 	}
-	if payload.Data.Profile.Email != "demo@nihongomaster.app" {
+	if payload.Data.Profile.Email != "demo@bahasa.codeverta.com" {
 		t.Fatalf("unexpected profile: %#v", payload.Data.Profile)
 	}
 }
@@ -363,7 +363,7 @@ func completeVocabulary(t *testing.T, server http.Handler, token, attemptID stri
 
 func login(t *testing.T, server http.Handler) string {
 	t.Helper()
-	body := bytes.NewBufferString(`{"email":"demo@nihongomaster.app","password":"Demo123!"}`)
+	body := bytes.NewBufferString(`{"email":"demo@bahasa.codeverta.com","password":"Demo123!"}`)
 	request := httptest.NewRequest(http.MethodPost, "/v1/auth/login", body)
 	request.Header.Set("Content-Type", "application/json")
 	response := httptest.NewRecorder()

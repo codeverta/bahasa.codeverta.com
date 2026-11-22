@@ -17,7 +17,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"nihongo-master-backend/internal/database"
+	"bahasa-master-backend/internal/database"
 )
 
 // XP rules. First passes are in recordStudyLocked; these are the extra sources.
@@ -179,7 +179,7 @@ func lbBetter(aXP int, aAt time.Time, aID string, bXP int, bAt time.Time, bID st
 
 // leaderboardTag is a stable 4-digit number used as "Pelajar #1234".
 func leaderboardTag(userID string) string {
-	sum := sha256.Sum256([]byte("nihongo-master:leaderboard:" + userID))
+	sum := sha256.Sum256([]byte("bahasa-master:leaderboard:" + userID))
 	return fmt.Sprintf("%04d", binary.BigEndian.Uint32(sum[:4])%10000)
 }
 
@@ -187,7 +187,7 @@ func leaderboardTag(userID string) string {
 // placeholders fall back to the tag on the client.
 func leaderboardDisplayName(name string) string {
 	name = strings.TrimSpace(name)
-	if name == "" || strings.Contains(name, "@") || name == "Nihongo Learner" {
+	if name == "" || strings.Contains(name, "@") || name == "Bahasa Learner" {
 		return ""
 	}
 	if runes := []rune(name); len(runes) > 40 {

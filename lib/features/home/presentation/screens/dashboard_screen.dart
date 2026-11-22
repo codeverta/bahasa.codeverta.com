@@ -1,28 +1,28 @@
 import 'dart:math' as math;
 
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/offline/network_status.dart';
+import 'package:bahasa_master/core/theme/app_theme.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/home/domain/home_banner_content.dart';
+import 'package:bahasa_master/features/home/domain/home_dashboard.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/home/presentation/widgets/home_banner_carousel.dart';
+import 'package:bahasa_master/features/home/presentation/widgets/home_notification_card.dart';
+import 'package:bahasa_master/features/home/presentation/widgets/home_quick_menu.dart';
+import 'package:bahasa_master/features/home/presentation/widgets/home_skeleton.dart';
+import 'package:bahasa_master/features/leaderboard/data/leaderboard_repository.dart';
+import 'package:bahasa_master/features/leaderboard/presentation/home_leaderboard_widgets.dart';
+import 'package:bahasa_master/features/learn/activity/continue_learning_section.dart';
+import 'package:bahasa_master/features/learn/activity/learning_history.dart';
+import 'package:bahasa_master/features/news/data/news_repository.dart';
+import 'package:bahasa_master/features/news/presentation/news_screens.dart';
+import 'package:bahasa_master/features/profile/presentation/widgets/profile_avatar.dart';
+import 'package:bahasa_master/shared/presentation/widgets/auth_gate.dart';
+import 'package:bahasa_master/shared/presentation/widgets/motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/offline/network_status.dart';
-import 'package:nihongo_master/core/theme/app_theme.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/home/domain/home_banner_content.dart';
-import 'package:nihongo_master/features/home/domain/home_dashboard.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:nihongo_master/features/home/presentation/widgets/home_banner_carousel.dart';
-import 'package:nihongo_master/features/home/presentation/widgets/home_notification_card.dart';
-import 'package:nihongo_master/features/home/presentation/widgets/home_quick_menu.dart';
-import 'package:nihongo_master/features/home/presentation/widgets/home_skeleton.dart';
-import 'package:nihongo_master/features/leaderboard/data/leaderboard_repository.dart';
-import 'package:nihongo_master/features/leaderboard/presentation/home_leaderboard_widgets.dart';
-import 'package:nihongo_master/features/learn/activity/continue_learning_section.dart';
-import 'package:nihongo_master/features/learn/activity/learning_history.dart';
-import 'package:nihongo_master/features/news/data/news_repository.dart';
-import 'package:nihongo_master/features/news/presentation/news_screens.dart';
-import 'package:nihongo_master/features/profile/presentation/widgets/profile_avatar.dart';
-import 'package:nihongo_master/shared/presentation/widgets/auth_gate.dart';
-import 'package:nihongo_master/shared/presentation/widgets/motion.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({

@@ -1,10 +1,10 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/dictionary/data/dictionary_repository.dart';
+import 'package:bahasa_master/features/dictionary/domain/dictionary_models.dart';
+import 'package:bahasa_master/features/dictionary/presentation/dictionary_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/dictionary/data/dictionary_repository.dart';
-import 'package:nihongo_master/features/dictionary/domain/dictionary_models.dart';
-import 'package:nihongo_master/features/dictionary/presentation/dictionary_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Uri jishoSearchUri(String query) => Uri.https('jisho.org', '/search/$query');
@@ -412,7 +412,7 @@ void showDictionarySources(BuildContext context) {
         ),
         const SizedBox(height: 16),
         Text(
-          'Kamus ini memakai sumber gratis tanpa API key. Ketersediaannya mengikuti layanan sumber. Contoh kalimat lengkap, pencarian radikal, dan diagram goresan dibuka di Jisho. Nihongo Master tidak berafiliasi dengan Jisho.org.'
+          'Kamus ini memakai sumber gratis tanpa API key. Ketersediaannya mengikuti layanan sumber. Contoh kalimat lengkap, pencarian radikal, dan diagram goresan dibuka di Jisho. Bahasa Master tidak berafiliasi dengan Jisho.org.'
               .localized(context),
         ),
         for (final link in [

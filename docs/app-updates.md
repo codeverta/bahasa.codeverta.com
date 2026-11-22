@@ -4,11 +4,11 @@ Aplikasi membaca `GET /v1/app-update-policy` sebelum membuka konten, saat kembal
 
 ## Pengaturan di server
 
-Buka `https://nihongo.codeverta.com/admin/app-updates`. Gunakan admin token branding yang sudah ada, atau atur `APP_UPDATE_ADMIN_TOKEN` terpisah di `.env` server. Token tidak dimasukkan ke aplikasi, repository, atau URL. `PUT /v1/admin/app-update-policy` membutuhkan Bearer admin token. Halaman pengaturan hanya menampilkan nilai yang memang publik; akses untuk menyimpan tetap membutuhkan token.
+Buka `https://bahasa.codeverta.com/admin/app-updates`. Gunakan admin token branding yang sudah ada, atau atur `APP_UPDATE_ADMIN_TOKEN` terpisah di `.env` server. Token tidak dimasukkan ke aplikasi, repository, atau URL. `PUT /v1/admin/app-update-policy` membutuhkan Bearer admin token. Halaman pengaturan hanya menampilkan nilai yang memang publik; akses untuk menyimpan tetap membutuhkan token.
 
 Perubahan tersimpan secara atomik di `APP_UPDATE_CONFIG_PATH` (default `data/app-updates.json`) dan langsung berlaku tanpa restart. File berada di server dan tetap ada setelah deployment binary. Menurunkan build minimum ke `0` atau mematikan pemeriksaan platform membatalkan kewajiban update pada pengecekan berikutnya.
 
-Default Android: aktif, build minimum `0` (belum memaksa update), URL untuk `com.codeverta.nihongomaster`. Default iOS: nonaktif sampai Apple ID angka dan URL App Store resminya tersedia. Jangan mengganti URL iOS dengan URL pencarian atau ID aplikasi lain.
+Default Android: aktif, build minimum `0` (belum memaksa update), URL untuk `com.codeverta.bahasa`. Default iOS: nonaktif sampai Apple ID angka dan URL App Store resminya tersedia. Jangan mengganti URL iOS dengan URL pencarian atau ID aplikasi lain.
 
 ## Urutan menerbitkan rilis
 

@@ -27,20 +27,12 @@ class AppTypography {
 
   /// Teks Hiragana / Katakana / Kanji ukuran besar (Hero Display).
   static TextStyle jpKanjiHero({Color? color}) {
-    return japanese(
-      fontSize: 48,
-      fontWeight: FontWeight.bold,
-      color: color,
-    );
+    return japanese(fontSize: 48, fontWeight: FontWeight.bold, color: color);
   }
 
   /// Teks Kanji / Vocab ukuran kartu/flashcard.
   static TextStyle jpCardTitle({Color? color}) {
-    return japanese(
-      fontSize: 28,
-      fontWeight: FontWeight.w700,
-      color: color,
-    );
+    return japanese(fontSize: 28, fontWeight: FontWeight.w700, color: color);
   }
 
   /// Teks Furigana / Sub-teks Kanji.
@@ -259,7 +251,7 @@ class AppMotion {
       reduced(context) ? Duration.zero : duration;
 }
 
-/// System Design Theme untuk Aplikasi 'Nihongo Master'.
+/// System Design Theme untuk Aplikasi 'Bahasa Master'.
 /// Tema **Sakura Pagi**: kertas washi hangat, merah vermilion, indigo ai-iro,
 /// dengan mode gelap ungu-tinta.
 class AppTheme {
@@ -299,9 +291,7 @@ class AppTheme {
   static const Color darkPrimaryText = Color(0xFFFF8593);
 
   static ColorScheme get _lightScheme =>
-      ColorScheme.fromSeed(
-        seedColor: primaryColor,
-      ).copyWith(
+      ColorScheme.fromSeed(seedColor: primaryColor).copyWith(
         primary: primaryColor,
         onPrimary: Colors.white,
         primaryContainer: const Color(0xFFFCE8EA),
@@ -554,9 +544,7 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: chipColor,
         selectedColor: dark ? const Color(0xFFA9B0FF) : secondaryColor,
-        secondarySelectedColor: dark
-            ? const Color(0xFFA9B0FF)
-            : secondaryColor,
+        secondarySelectedColor: dark ? const Color(0xFFA9B0FF) : secondaryColor,
         checkmarkColor: dark ? darkBackground : Colors.white,
         side: BorderSide(color: scheme.outlineVariant),
         shape: pill,
@@ -634,7 +622,9 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: cardColor,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: dark ? const Color(0x26FF6B7D) : const Color(0xFFFCE8EA),
+        indicatorColor: dark
+            ? const Color(0x26FF6B7D)
+            : const Color(0xFFFCE8EA),
         indicatorShape: pill,
       ),
 

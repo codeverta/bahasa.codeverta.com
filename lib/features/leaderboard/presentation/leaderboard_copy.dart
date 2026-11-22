@@ -1,5 +1,5 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
 import 'package:flutter/widgets.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
 
 /// Leaderboard copy that contains numbers. Static strings use `.localized()`;
 /// these build both languages directly because they are interpolated.

@@ -177,7 +177,7 @@ Catatan untuk review:
 ### Konfigurasi server
 
 - `MAP_ADMIN_TOKEN` (fallback `BRANDING_ADMIN_TOKEN`) untuk `/admin/map`.
-- `MAP_SOURCE_USER_AGENT` (opsional). Default `NihongoMaster/1.0 (+https://nihongo.codeverta.com/support)`, sesuai kebijakan User-Agent Wikimedia.
+- `MAP_SOURCE_USER_AGENT` (opsional). Default `BahasaMaster/1.0 (+https://bahasa.codeverta.com/support)`, sesuai kebijakan User-Agent Wikimedia.
 - Foto disimpan di COS (prefix `map/images/`) bila COS terkonfigurasi; jika tidak, di folder `map-images` di samping konfigurasi branding dan disajikan dari `/map-images/`.
 - Izinkan egress HTTPS ke `www.wikidata.org`, `id.wikipedia.org`, `en.wikipedia.org`, `en.wikivoyage.org`, `id.wikivoyage.org`, `commons.wikimedia.org`, `upload.wikimedia.org`.
 - Tabel `map_spots` dibuat otomatis saat startup (GORM migrate).

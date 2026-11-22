@@ -12,8 +12,8 @@ import (
 	"sync"
 	"testing"
 
-	"nihongo-master-backend/internal/notifications"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/notifications"
+	"bahasa-master-backend/internal/store"
 )
 
 type fakeNotificationSender struct {

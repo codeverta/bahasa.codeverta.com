@@ -1,10 +1,11 @@
 import 'dart:convert';
+
+import 'package:bahasa_master/core/storage/shared_preferences_provider.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/dictionary/data/dictionary_repository.dart';
+import 'package:bahasa_master/features/dictionary/domain/dictionary_models.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nihongo_master/core/storage/shared_preferences_provider.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/dictionary/data/dictionary_repository.dart';
-import 'package:nihongo_master/features/dictionary/domain/dictionary_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DictionaryState {

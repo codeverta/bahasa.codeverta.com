@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"nihongo-master-backend/internal/database"
+	"bahasa-master-backend/internal/database"
 )
 
 type Repository struct {

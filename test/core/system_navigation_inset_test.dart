@@ -1,6 +1,6 @@
+import 'package:bahasa_master/core/widgets/system_navigation_inset.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nihongo_master/core/widgets/system_navigation_inset.dart';
 
 const _screen = Size(390, 800);
 const _navBar = 48.0;

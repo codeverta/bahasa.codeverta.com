@@ -151,12 +151,12 @@ func englishNewsErrorMessage(code string) string {
 }
 
 var newsChangesTranslations = map[string]string{
-	"Furigana ditambahkan oleh Nihongo Master; media eksternal tidak disertakan.":                                                                                          "Furigana added by Nihongo Master; external media is not included.",
-	"Furigana ditambahkan oleh Nihongo Master. Gambar berizin disalin dan dikonversi ke JPEG bila tersedia.":                                                               "Furigana added by Nihongo Master. Licensed images are copied and converted to JPEG when available.",
-	"Furigana ditambahkan oleh Nihongo Master. Gambar artikel disalin ke penyimpanan Nihongo Master dan dikonversi ke JPEG bila tersedia; kredit gambar mengikuti sumber.": "Furigana added by Nihongo Master. Article images are copied to Nihongo Master storage and converted to JPEG when available; image credits follow the source.",
-	"Teks dari 首相官邸ホームページ (PDL1.0), diolah oleh Nihongo Master: furigana ditambahkan; foto artikel disalin dan dikonversi ke JPEG bila tersedia.":                          "Text from the Prime Minister's Office of Japan website (首相官邸, PDL1.0), edited by Nihongo Master: furigana added; article photos are copied and converted to JPEG when available.",
-	"Teks HTML Osaka City; furigana ditambahkan oleh Nihongo Master. Gambar artikel disalin ke penyimpanan Nihongo Master; lampiran tidak disertakan.":                     "Osaka City HTML text; furigana added by Nihongo Master. Article images are copied to Nihongo Master storage; attachments are not included.",
-	"Teks HTML Osaka City; furigana ditambahkan oleh Nihongo Master. Hanya gambar dengan lisensi tersendiri yang disalin; lampiran tidak disertakan.":                      "Osaka City HTML text; furigana added by Nihongo Master. Only images with a separate license are copied; attachments are not included.",
+	"Furigana ditambahkan oleh Bahasa Master; media eksternal tidak disertakan.":                                                                                          "Furigana added by Bahasa Master; external media is not included.",
+	"Furigana ditambahkan oleh Bahasa Master. Gambar berizin disalin dan dikonversi ke JPEG bila tersedia.":                                                               "Furigana added by Bahasa Master. Licensed images are copied and converted to JPEG when available.",
+	"Furigana ditambahkan oleh Bahasa Master. Gambar artikel disalin ke penyimpanan Bahasa Master dan dikonversi ke JPEG bila tersedia; kredit gambar mengikuti sumber.": "Furigana added by Bahasa Master. Article images are copied to Bahasa Master storage and converted to JPEG when available; image credits follow the source.",
+	"Teks dari 首相官邸ホームページ (PDL1.0), diolah oleh Bahasa Master: furigana ditambahkan; foto artikel disalin dan dikonversi ke JPEG bila tersedia.":                          "Text from the Prime Minister's Office of Japan website (首相官邸, PDL1.0), edited by Bahasa Master: furigana added; article photos are copied and converted to JPEG when available.",
+	"Teks HTML Osaka City; furigana ditambahkan oleh Bahasa Master. Gambar artikel disalin ke penyimpanan Bahasa Master; lampiran tidak disertakan.":                     "Osaka City HTML text; furigana added by Bahasa Master. Article images are copied to Bahasa Master storage; attachments are not included.",
+	"Teks HTML Osaka City; furigana ditambahkan oleh Bahasa Master. Hanya gambar dengan lisensi tersendiri yang disalin; lampiran tidak disertakan.":                      "Osaka City HTML text; furigana added by Bahasa Master. Only images with a separate license are copied; attachments are not included.",
 }
 
 var newsErrorTranslations = map[string]string{

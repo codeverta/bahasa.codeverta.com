@@ -1,19 +1,19 @@
 import 'dart:async';
 
+import 'package:bahasa_master/core/ads/ads_config.dart';
+import 'package:bahasa_master/core/ads/completion_ads.dart';
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/features/exam/data/diagnostic_repository.dart';
+import 'package:bahasa_master/features/exam/data/simulation_repository.dart';
+import 'package:bahasa_master/features/exam/presentation/screens/simulation_result_view.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
+import 'package:bahasa_master/features/exam/presentation/widgets/simulation_text.dart';
+import 'package:bahasa_master/features/home/presentation/controllers/home_controller.dart';
+import 'package:bahasa_master/features/profile/data/gamification_repository.dart';
+import 'package:bahasa_master/features/ssw/presentation/ssw_assessment_screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/features/exam/data/diagnostic_repository.dart';
-import 'package:nihongo_master/features/exam/data/simulation_repository.dart';
-import 'package:nihongo_master/features/exam/presentation/screens/simulation_result_view.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/diagnostic_widgets.dart';
-import 'package:nihongo_master/features/exam/presentation/widgets/simulation_text.dart';
-import 'package:nihongo_master/features/home/presentation/controllers/home_controller.dart';
-import 'package:nihongo_master/features/profile/data/gamification_repository.dart';
-import 'package:nihongo_master/features/ssw/presentation/ssw_assessment_screens.dart';
-import 'package:nihongo_master/core/ads/completion_ads.dart';
-import 'package:nihongo_master/core/ads/ads_config.dart';
 
 class SimulationAttemptScreen extends ConsumerStatefulWidget {
   const SimulationAttemptScreen({

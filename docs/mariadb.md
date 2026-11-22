@@ -10,7 +10,7 @@ menghentikan startup.
 
 Database lokal sudah dibuat pada server MariaDB yang berjalan di port 3306
 (container `fitapp-mariadb-1`): database dan user aplikasi bernama
-`nihongo_master`. Password acak tersimpan di `backend/.env` yang diabaikan Git.
+`bahasa_master`. Password acak tersimpan di `backend/.env` yang diabaikan Git.
 Backend tidak menggunakan akun root. Data database mengikuti volume server
 MariaDB tersebut; volume Compose backend hanya menyimpan branding.
 
@@ -19,8 +19,8 @@ Konfigurasi backend:
 ```dotenv
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_NAME=nihongo_master
-DB_USER=nihongo_master
+DB_NAME=bahasa_master
+DB_USER=bahasa_master
 DB_PASSWORD=PASSWORD_DATABASE
 DB_TLS=false
 ```
@@ -40,9 +40,9 @@ go run ./cmd/api
 Di server lain, buat database/user menggunakan akun administrator MariaDB:
 
 ```sql
-CREATE DATABASE nihongo_master CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-CREATE USER 'nihongo_master'@'%' IDENTIFIED BY 'GANTI_DENGAN_PASSWORD_KUAT';
-GRANT ALL PRIVILEGES ON nihongo_master.* TO 'nihongo_master'@'%';
+CREATE DATABASE bahasa_master CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+CREATE USER 'bahasa_master'@'%' IDENTIFIED BY 'GANTI_DENGAN_PASSWORD_KUAT';
+GRANT ALL PRIVILEGES ON bahasa_master.* TO 'bahasa_master'@'%';
 ```
 
 Isi `.env` dengan host, user, dan password server tersebut. Compose production
@@ -112,7 +112,7 @@ mengulang export, gunakan nama file output baru.
 Jalankan dengan client MariaDB; password akan diminta:
 
 ```sh
-mariadb-dump --host=127.0.0.1 --port=3306 --user=nihongo_master --password --single-transaction nihongo_master > backup.sql
+mariadb-dump --host=127.0.0.1 --port=3306 --user=bahasa_master --password --single-transaction bahasa_master > backup.sql
 ```
 
 ## Pengujian

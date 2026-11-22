@@ -20,7 +20,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"nihongo-master-backend/internal/database"
+	"bahasa-master-backend/internal/database"
 )
 
 var ErrInvalid = errors.New("invalid news input")

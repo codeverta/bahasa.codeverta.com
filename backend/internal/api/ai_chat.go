@@ -12,11 +12,11 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"nihongo-master-backend/internal/aichat"
-	"nihongo-master-backend/internal/unlock"
-	"nihongo-master-backend/internal/diagnostics"
-	"nihongo-master-backend/internal/domain"
-	"nihongo-master-backend/internal/store"
+	"bahasa-master-backend/internal/aichat"
+	"bahasa-master-backend/internal/unlock"
+	"bahasa-master-backend/internal/diagnostics"
+	"bahasa-master-backend/internal/domain"
+	"bahasa-master-backend/internal/store"
 )
 
 // aiChatRetention is how long chat rows are kept (also for audit after a

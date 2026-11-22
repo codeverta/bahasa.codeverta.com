@@ -1,15 +1,15 @@
+import 'package:bahasa_master/core/localization/app_localizations.dart';
+import 'package:bahasa_master/core/network/dio_client.dart';
+import 'package:bahasa_master/core/unlock/locked_content.dart';
+import 'package:bahasa_master/core/unlock/unlock_sheet.dart';
+import 'package:bahasa_master/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:bahasa_master/features/billing/data/billing_repository.dart';
+import 'package:bahasa_master/features/jobs/data/jobs_repository.dart';
+import 'package:bahasa_master/features/jobs/domain/job_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nihongo_master/core/localization/app_localizations.dart';
-import 'package:nihongo_master/core/network/dio_client.dart';
-import 'package:nihongo_master/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:nihongo_master/features/billing/data/billing_repository.dart';
-import 'package:nihongo_master/features/jobs/domain/job_models.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:nihongo_master/core/unlock/locked_content.dart';
-import 'package:nihongo_master/core/unlock/unlock_sheet.dart';
-import 'package:nihongo_master/features/jobs/data/jobs_repository.dart';
 
 typedef JobApplicationAccess = Future<bool> Function();
 final jobApplicationAccessProvider = Provider<JobApplicationAccess>((ref) {

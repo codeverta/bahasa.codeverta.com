@@ -7,9 +7,8 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:bahasa_master/core/offline/learning_cache.dart';
 import 'package:dio/dio.dart';
-
-import 'package:nihongo_master/core/offline/learning_cache.dart';
 
 typedef CurrentLearningUserId = FutureOr<String?> Function();
 typedef CanReadPremiumCache = FutureOr<bool> Function(String userId);

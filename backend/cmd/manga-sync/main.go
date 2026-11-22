@@ -5,9 +5,9 @@ package main
 import (
 	"context"
 	"log"
-	"nihongo-master-backend/internal/config"
-	"nihongo-master-backend/internal/database"
-	"nihongo-master-backend/internal/manga"
+	"bahasa-master-backend/internal/config"
+	"bahasa-master-backend/internal/database"
+	"bahasa-master-backend/internal/manga"
 	"os"
 	"time"
 )
